@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'appbar.dart';
 import 'bottombar.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
+import 'package:flutter/rendering.dart';
 
 class MyHome extends StatelessWidget {
   const MyHome({super.key});
@@ -11,7 +12,12 @@ class MyHome extends StatelessWidget {
     return Scaffold(
       appBar: MyAppBar(),
       body: Column(
-        children: [Pet(), Text('미친놈')],
+        children: [
+          Expanded(child: Pet()),
+          Expanded(
+            child: ToDoList(),
+          )
+        ],
       ),
       bottomNavigationBar: MyBottomNav(),
     );
@@ -26,8 +32,6 @@ class Pet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height / 2,
       child: Stack(children: [
         Image.asset(
           'assets/background.png',
@@ -37,9 +41,6 @@ class Pet extends StatelessWidget {
         ModelViewer(
           loading: Loading.eager,
           shadowIntensity: 1,
-
-          // skyboxImage:
-          //     "https://modelviewer.dev/shared-assets/environments/spruit_sunrise_1k_HDR.hdr",
           src: 'assets/cat.glb',
           alt: 'A 3D model of an astronaut',
           autoRotate: true,
@@ -48,6 +49,56 @@ class Pet extends StatelessWidget {
           disableZoom: true,
         ),
       ]),
+    );
+  }
+}
+
+class ToDoList extends StatefulWidget {
+  const ToDoList({super.key});
+
+  @override
+  State<ToDoList> createState() => _ToDoListState();
+}
+
+class _ToDoListState extends State<ToDoList> {
+  var scroll = ScrollController();
+
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   scroll.addListener(() { })
+  // }
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        width: MediaQuery.of(context).size.width,
+        // height: MediaQuery.of(context).size.height / 2,
+
+        child: ListView.builder(
+            itemCount: 80,
+            itemBuilder: (c, i) {
+              return Todo();
+            }));
+  }
+}
+
+class Todo extends StatelessWidget {
+  const Todo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.center,
+      // padding: EdgeInsets.all(10),
+      child: Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Checkbox(value: false, onChanged: (c) {}),
+            Text("하루 30분 운동하기"),
+            Icon(Icons.query_builder_outlined)
+          ]),
     );
   }
 }
