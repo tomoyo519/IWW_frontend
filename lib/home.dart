@@ -10,11 +10,31 @@ class MyHome extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(),
-      body: Stack(children: [
-        Positioned(
-            child: Image.asset('assets/background.png'), top: 50, left: 30),
-        Expanded(
-            child: ModelViewer(
+      body: Column(
+        children: [Pet(), Text('미친놈')],
+      ),
+      bottomNavigationBar: MyBottomNav(),
+    );
+  }
+}
+
+class Pet extends StatelessWidget {
+  const Pet({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height / 2,
+      child: Stack(children: [
+        Image.asset(
+          'assets/background.png',
+          fit: BoxFit.cover,
+          width: MediaQuery.of(context).size.width,
+        ),
+        ModelViewer(
           loading: Loading.eager,
           shadowIntensity: 1,
 
@@ -26,9 +46,8 @@ class MyHome extends StatelessWidget {
           autoPlay: true,
           iosSrc: 'assets/cat2.usdz',
           disableZoom: true,
-        )),
+        ),
       ]),
-      bottomNavigationBar: MyBottomNav(),
     );
   }
 }
