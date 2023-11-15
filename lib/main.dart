@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tailwind/tailwind.dart';
+import 'appbar.dart';
+import 'bottombar.dart';
 
 void main() async {
   await TwService.init();
@@ -15,15 +17,10 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Text('안녕'),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: "홈"),
-          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: "샵")
-        ],
-      ),
+    return const Scaffold(
+      appBar: MyAppBar(),
+      body: Text('안녕 클레오파트라, main 함수의 body입니다.'),
+      bottomNavigationBar: MyBottomNav(),
     );
   }
 }
