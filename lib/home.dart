@@ -9,6 +9,8 @@ import 'calendar.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'listWidget.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 enum SampleItem { itemOne, itemTwo, itemThree }
 
@@ -64,16 +66,28 @@ class Pet extends StatelessWidget {
 class ToDoList extends StatefulWidget {
   ToDoList({super.key});
   var showAddTodo = false;
+
   @override
   State<ToDoList> createState() => _ToDoListState();
 }
 
 class _ToDoListState extends State<ToDoList> {
   var scroll = ScrollController();
+  List myTodoList = [];
+  getData() async {
+    var result =
+        await http.get(Uri.parse('http://yousayrun.store:8088/todo/${1}'));
+    print('get result = ${jsonDecode(result.body)} 🥰');
+    if (result.statusCode == 200) {
+      setState(() {
+        myTodoList = jsonDecode(result.body);
+      });
+    }
+  }
 
   @override
   void initState() {
-    // TODO: implement initState
+    // Todo list 맨 마지막에 가면 '추가하기 버튼.
 
     scroll.addListener(() {
       if (scroll.position.pixels == scroll.position.maxScrollExtent) {
@@ -83,6 +97,7 @@ class _ToDoListState extends State<ToDoList> {
         });
       }
     });
+    getData();
   }
 
   @override
@@ -94,9 +109,29 @@ class _ToDoListState extends State<ToDoList> {
           // height: MediaQuery.of(context).size.height / 2,
           child: ListView.builder(
               controller: scroll,
-              itemCount: 10,
+              itemCount: myTodoList.isNotEmpty ? myTodoList.length : 0,
               itemBuilder: (c, i) {
-                return Todo();
+                return Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.black26, width: 1)),
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.all(10),
+                  padding: EdgeInsets.all(10),
+                  child: myTodoList.isNotEmpty
+                      ? Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                              Checkbox(value: false, onChanged: (c) {}),
+                              Text(myTodoList[i]["todo_name"]),
+                              myTodoList[i]["grp_id"] == null
+                                  ? Icon(Icons.query_builder_outlined)
+                                  : Icon(Icons.groups_outlined)
+                            ])
+                      : Container(),
+                );
+                ;
               }),
         ),
         // TODO - 실제파일 들어오면 버튼 위치 변경하기
@@ -256,7 +291,7 @@ class _AddTodoState extends State<AddTodo> {
                                                 children: [
                                                   TextButton(
                                                       onPressed: () {
-                                                        Navigator.pop();
+                                                        Navigator.pop(context);
                                                       },
                                                       child: Text("완료")),
                                                   TextField(
@@ -309,29 +344,5 @@ class _AddTodoState extends State<AddTodo> {
         );
       },
     ));
-  }
-}
-
-class Todo extends StatelessWidget {
-  const Todo({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.black26, width: 1)),
-      alignment: Alignment.center,
-      margin: EdgeInsets.all(10),
-      padding: EdgeInsets.all(10),
-      child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Checkbox(value: false, onChanged: (c) {}),
-            Text("하루 30분 운동하기"),
-            Icon(Icons.query_builder_outlined)
-          ]),
-    );
   }
 }
