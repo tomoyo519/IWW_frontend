@@ -1,14 +1,13 @@
 // msg: 가능하면 건드리지 말자 by 다희 소정
 import 'package:flutter/material.dart';
-import 'package:tailwind/tailwind.dart';
 import 'appbar.dart';
 import 'bottombar.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
-  await TwService.init();
   runApp(MaterialApp(
     home: const MyApp(),
-    key: TwService.appKey,
+    // key: TwService.appKey,
   ));
 }
 

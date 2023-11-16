@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'appbar.dart';
 import 'bottombar.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:flutter/rendering.dart';
+import 'package:table_calendar/table_calendar.dart';
+import 'calendar.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 
 class MyHome extends StatelessWidget {
   const MyHome({super.key});
@@ -38,11 +43,11 @@ class Pet extends StatelessWidget {
           fit: BoxFit.cover,
           width: MediaQuery.of(context).size.width,
         ),
-        ModelViewer(
+        const ModelViewer(
           loading: Loading.eager,
           shadowIntensity: 1,
           src: 'assets/cat.glb',
-          alt: 'A 3D model of an astronaut',
+          alt: 'cuttest pet ever',
           autoRotate: true,
           autoPlay: true,
           iosSrc: 'assets/cat2.usdz',
@@ -68,7 +73,6 @@ class _ToDoListState extends State<ToDoList> {
     // TODO: implement initState
 
     scroll.addListener(() {
-      // print('어떻게 사랑이 변하니');
       if (scroll.position.pixels == scroll.position.maxScrollExtent) {
         print('잡았다 요놈');
         setState(() {
@@ -99,14 +103,34 @@ class _ToDoListState extends State<ToDoList> {
   }
 }
 
-class AddTodo extends StatelessWidget {
-  const AddTodo({super.key});
+class AddTodo extends StatefulWidget {
+  AddTodo({super.key});
+  DateTime? _selectedDay;
+
+  DateTime _focusedDay = DateTime.now();
+  @override
+  State<AddTodo> createState() => _AddTodoState();
+}
+
+class _AddTodoState extends State<AddTodo> {
+  final _formKey = GlobalKey<FormState>();
+  // TODO - form data 핸들링
+  DateTime? selectedDay;
+  DateTime focusedDay = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
     return Container(
         child: TextButton(
-      child: Text('내가보여?'),
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.black26, width: 1)),
+        alignment: Alignment.center,
+        margin: EdgeInsets.all(10),
+        padding: EdgeInsets.all(10),
+        child: Row(children: [Icon(Icons.add_outlined), Text('할일추가 하기?')]),
+      ),
       onPressed: () {
         showModalBottomSheet(
           context: context,
@@ -114,7 +138,77 @@ class AddTodo extends StatelessWidget {
             return Container(
               height: MediaQuery.of(context).size.height / 2,
               child: Center(
-                child: Text('Hello, this is a modal bottom sheet'),
+                child: Column(
+                  children: [
+                    Form(
+                      key: _formKey,
+                      child: Column(children: [
+                        Container(
+                          alignment: Alignment.center,
+                          margin: EdgeInsets.all(10),
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            children: [
+                              TextFormField(
+                                decoration: InputDecoration(
+                                  fillColor: Colors.grey[200],
+                                  hintText: "새로운 작업을 추가합니다.",
+                                  filled: false,
+                                  // enabledBorder: InputBorder.none,
+                                  focusColor: Color(0xFF3A00E5),
+                                  border: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.black, width: 1)),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return '새로운 작업을 추가해주세요!';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: Icon(Icons.alarm_outlined),
+                                    onPressed: () {
+                                      showModalBottomSheet(
+                                          context: context,
+                                          builder: (c) {
+                                            return Calendar();
+                                          });
+                                    },
+                                  ),
+                                  Text("오늘")
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                        TextButton(
+                          style: TextButton.styleFrom(
+                              backgroundColor: Color(0xFF3A00E5),
+                              padding: EdgeInsets.all(20),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10)))),
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('Processing Data')));
+                            }
+                          },
+                          child: Text("추가하기",
+                              style: TextStyle(color: Colors.white)),
+                        )
+                      ]),
+                    )
+                  ],
+                ),
               ),
             );
           },
