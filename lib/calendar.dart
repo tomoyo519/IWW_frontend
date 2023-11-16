@@ -18,9 +18,7 @@ class _CalendarState extends State<Calendar> {
       borderRadius: BorderRadius.circular(20.0),
     );
 
-    final defaultTextStyle = TextStyle(
-      fontWeight: FontWeight.w700,
-    );
+    final defaultTextStyle = TextStyle(fontWeight: FontWeight.w700);
 
     return TableCalendar(
       // 언어를 한글로 설정 (포스팅 아래 내용 확인 -> intl 라이브러리 )
@@ -51,10 +49,10 @@ class _CalendarState extends State<Calendar> {
           weekendDecoration: defaultBoxDeco,
           // 선택한 날짜 배경 스타일링
           selectedDecoration: BoxDecoration(
-            color: Colors.white,
+            color: Colors.purple,
             borderRadius: BorderRadius.circular(20.0),
             border: Border.all(
-              color: Colors.black,
+              color: Colors.purple,
               width: 1.0,
             ),
           ),
@@ -72,6 +70,7 @@ class _CalendarState extends State<Calendar> {
           this.selectedDay = selectedDay;
           // 우리가 달력 내에서 전 달 날짜를 클릭 할 때 옮겨주도록 state를 변경시켜 줌
           this.focusedDay = selectedDay;
+          Navigator.pop(context);
         });
       },
 

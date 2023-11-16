@@ -8,6 +8,9 @@ import 'package:table_calendar/table_calendar.dart';
 import 'calendar.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'listWidget.dart';
+
+enum SampleItem { itemOne, itemTwo, itemThree }
 
 class MyHome extends StatelessWidget {
   const MyHome({super.key});
@@ -108,6 +111,7 @@ class AddTodo extends StatefulWidget {
   DateTime? _selectedDay;
 
   DateTime _focusedDay = DateTime.now();
+  var selectedMenu = "라벨";
   @override
   State<AddTodo> createState() => _AddTodoState();
 }
@@ -117,7 +121,8 @@ class _AddTodoState extends State<AddTodo> {
   // TODO - form data 핸들링
   DateTime? selectedDay;
   DateTime focusedDay = DateTime.now();
-
+  var dropdownValue = '라벨을 선택해보세요!';
+  bool isDescription = false;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -183,6 +188,95 @@ class _AddTodoState extends State<AddTodo> {
                                     },
                                   ),
                                   Text("오늘")
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  IconButton(
+                                      onPressed: () {
+                                        showModalBottomSheet(
+                                            context: context,
+                                            builder: (c) {
+                                              return LabelList(
+                                                  content: "label");
+                                            });
+                                      },
+                                      icon: Icon(Icons.label_outline)),
+                                  Text("라벨")
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: Icon(Icons.alarm_outlined),
+                                    onPressed: () {
+                                      Future<TimeOfDay?> selectedTime =
+                                          showTimePicker(
+                                        initialTime: TimeOfDay.now(),
+                                        context: context,
+                                      );
+                                      if (selectedTime != null) {
+                                        print("시간설정완료 ${selectedTime}");
+                                      }
+                                    },
+                                  ),
+                                  Text("시간 설정")
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: Icon(Icons.star_outline),
+                                    onPressed: () {
+                                      showModalBottomSheet(
+                                          context: context,
+                                          builder: (c) {
+                                            return LabelList(
+                                                content: "routine");
+                                          });
+                                    },
+                                  ),
+                                  Text("매일 반복")
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: Icon(Icons.sticky_note_2_outlined),
+                                    onPressed: () {
+                                      showModalBottomSheet(
+                                          context: context,
+                                          builder: (c) {
+                                            return Container(
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height /
+                                                  2,
+                                              child: Column(
+                                                children: [
+                                                  TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop();
+                                                      },
+                                                      child: Text("완료")),
+                                                  TextField(
+                                                    maxLines: null,
+                                                    decoration: InputDecoration(
+                                                      border: OutlineInputBorder(
+                                                          borderSide:
+                                                              BorderSide(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  width: 1)),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          });
+                                    },
+                                  ),
+                                  Text("작업 설명 추가"),
                                 ],
                               )
                             ],
