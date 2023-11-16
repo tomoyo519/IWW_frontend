@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'appbar.dart';
 import 'bottombar.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'home.dart';
 
 void main() async {
   runApp(MaterialApp(
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       appBar: MyAppBar(),
-      body: Text('안녕 클레오파트라, main 함수의 body입니다.'),
+      body: MyHome(),
       bottomNavigationBar: MyBottomNav(),
     );
   }
