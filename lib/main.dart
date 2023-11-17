@@ -4,7 +4,7 @@ import 'appbar.dart';
 import 'bottombar.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'home.dart';
-import 'package:iww_frontend/utils/loginPreview.dart';
+import 'package:iww_frontend/utils/appEntries.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_template.dart';
 // import 'package:tailwind/tailwind.dart';
@@ -38,7 +38,8 @@ class MyApp extends StatelessWidget {
         width: double.infinity,
         height: double.infinity,
         padding: const EdgeInsets.all(20),
-        child: LoginPreview(),
+        // 유저 로그인 여부에 따른 앱 진입 시나리오
+        child: AppEntries(),
       ),
     );
   }

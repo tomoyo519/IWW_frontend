@@ -24,11 +24,11 @@ class _SignUpTest {
   }
 }
 
-// 로그인 케이스별 실행버튼
-class LoginPreview extends StatelessWidget {
+// 유저 로그인 여부에 따른 앱 진입 시나리오
+class AppEntries extends StatelessWidget {
   final _signInTest = _SignUpTest();
   static final _webService = WebService.instance;
-  LoginPreview({super.key});
+  AppEntries({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +64,7 @@ class LoginPreview extends StatelessWidget {
                     .hello()
                     .then((response) => {log("Hello? ${response.toString()}")});
               },
-              child: const Text("🐹 로컬 서버 연결 체크"))
+              child: const Text("🐹 테스트 서버 연결 체크"))
         ]);
   }
 }
