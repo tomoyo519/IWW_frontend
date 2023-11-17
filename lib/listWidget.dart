@@ -17,17 +17,22 @@ class LabelList extends StatelessWidget {
   final List<String> routines = ['매일', '평일', '주말', '매주'];
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: ListView.builder(
-          itemCount: content == "label" ? labels.length : routines.length,
-          itemBuilder: (c, i) {
-            return TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child:
-                    content == "label" ? Text(labels[i]) : Text(routines[i]));
-          }),
+    return Column(
+      children: [
+        Expanded(
+          child: ListView.builder(
+              itemCount: content == "label" ? labels.length : routines.length,
+              itemBuilder: (c, i) {
+                return TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: content == "label"
+                        ? Text(labels[i])
+                        : Text(routines[i]));
+              }),
+        ),
+      ],
     );
   }
 }

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:iww_frontend/add_todo.dart';
+import 'package:iww_frontend/appbar.dart';
+import 'package:iww_frontend/bottombar.dart';
+import 'package:iww_frontend/main.dart';
 import 'package:iww_frontend/pet.dart';
 import 'package:flutter/rendering.dart';
 
@@ -15,6 +18,7 @@ class MyHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: MyAppBar(),
       body: Column(
         children: [
           Expanded(child: Pet()),
@@ -23,6 +27,7 @@ class MyHome extends StatelessWidget {
           ),
         ],
       ),
+      bottomNavigationBar: MyBottomNav(),
     );
   }
 }
@@ -40,16 +45,14 @@ class _ToDoListState extends State<ToDoList> {
   List myTodoList = [];
   getData() async {
     // TODO - 환경변수로 domain 빼놓기, user_id 수정해야 함
-    var result =
-        await http.get(Uri.parse('http://yousayrun.store:8088/todo/${1}'));
+    // TODO - 서버가 맛이 갔을때는 어떤 화면을 보여줘야 하는가?
+    var result = await http
+        .get(Uri.parse('http://yousayrun.store:8088/todo/${1}'))
+        .catchError((error, stackTrace) => print(error));
 
-    if (result.statusCode == 200) {
-      setState(() {
-        myTodoList = jsonDecode(result.body);
-      });
-    } else {
-      print('서버잘못임');
-    }
+    setState(() {
+      myTodoList = jsonDecode(result.body);
+    });
   }
 
   @override
@@ -101,7 +104,8 @@ class _ToDoListState extends State<ToDoList> {
               }),
         ),
         // TODO - 실제파일 들어오면 버튼 위치 변경하기
-        if (widget.showAddTodo) AddTodo()
+        // if (widget.showAddTodo) AddTodo()
+        AddTodo()
       ],
     );
   }

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter/services.dart';
 import 'calendar.dart';
 import 'listWidget.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class AddTodo extends StatefulWidget {
   AddTodo({super.key});
@@ -21,6 +22,19 @@ class _AddTodoState extends State<AddTodo> {
   DateTime focusedDay = DateTime.now();
   var dropdownValue = '라벨을 선택해보세요!';
   bool isDescription = false;
+  String todoName = "";
+  String desc = "";
+  newTodo() async {
+    // var data = {
+    //   "user_id": 1,
+    //   "todo_name": todoName,
+    //   "todo_done": false,
+    //   "todo_desc": desc
+    // };
+    // var result = await http.post(Uri.parse('http://yousayrun.store:8088/todo'),
+    //     body: data);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -56,6 +70,11 @@ class _AddTodoState extends State<AddTodo> {
                           child: Column(
                             children: [
                               TextFormField(
+                                onChanged: (value) {
+                                  setState(() {
+                                    todoName = value;
+                                  });
+                                },
                                 decoration: InputDecoration(
                                   fillColor: Colors.grey[200],
                                   hintText: "새로운 작업을 추가합니다.",
@@ -156,6 +175,11 @@ class _AddTodoState extends State<AddTodo> {
                                                       },
                                                       child: Text("완료")),
                                                   TextField(
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        desc = value;
+                                                      });
+                                                    },
                                                     maxLines: null,
                                                     decoration: InputDecoration(
                                                       border: OutlineInputBorder(
@@ -178,22 +202,23 @@ class _AddTodoState extends State<AddTodo> {
                             ],
                           ),
                         ),
-                        TextButton(
-                          style: TextButton.styleFrom(
-                              backgroundColor: Color(0xFF3A00E5),
-                              padding: EdgeInsets.all(20),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10)))),
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text('Processing Data')));
-                            }
-                          },
-                          child: Text("추가하기",
-                              style: TextStyle(color: Colors.white)),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.7,
+                          height: 40,
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                                backgroundColor: Color(0xFF3A00E5),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10)))),
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                newTodo();
+                              }
+                            },
+                            child: Text("추가하기",
+                                style: TextStyle(color: Colors.white)),
+                          ),
                         )
                       ]),
                     )
