@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/home.dart';
 import 'package:iww_frontend/screens/landing.dart';
 import 'package:iww_frontend/screens/signup.dart';
 import 'package:iww_frontend/utils/kakaoLogin.dart';
@@ -53,7 +54,7 @@ class LoginPreview extends StatelessWidget {
               onPressed: () async {
                 if (await _signInTest.autoLogin() && context.mounted) {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => SignUp()));
+                      MaterialPageRoute(builder: (context) => MyHome()));
                 }
               },
               child: const Text("👀 일반적인 자동 로그인")),

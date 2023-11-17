@@ -1,11 +1,16 @@
+// msg: 가능하면 건드리지 말자 by 다희 소정
 import 'package:flutter/material.dart';
+import 'appbar.dart';
+import 'bottombar.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'home.dart';
 import 'package:iww_frontend/utils/loginPreview.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_template.dart';
-import 'package:tailwind/tailwind.dart';
+// import 'package:tailwind/tailwind.dart';
 
 void main() async {
-  await TwService.init();
+  // await TwService.init();
 
   // 웹 환경에서 카카오 로그인을 정상적으로 완료하려면 runApp() 호출 전 아래 메서드 호출 필요
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +23,7 @@ void main() async {
 
   runApp(MaterialApp(
     home: const MyApp(),
-    key: TwService.appKey,
+    // key: TwService.appKey,
   ));
 }
 

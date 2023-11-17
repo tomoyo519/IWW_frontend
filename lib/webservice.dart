@@ -18,8 +18,8 @@ class WebService {
     return http.get(Uri.parse(server), headers: defaultHeaders);
   }
 
-  // Future<http.Response> createUser(UserLoginModel userLoginModel) {
-  //   return http.post(Uri.parse("$server/auth"),
-  //       headers: defaultHeaders, body: userLoginModel);
-  // }
+  Future<http.Response> createUser(UserLoginModel userLoginModel) {
+    return http.post(Uri.parse("$server/auth"),
+        headers: defaultHeaders, body: userLoginModel);
+  }
 }
