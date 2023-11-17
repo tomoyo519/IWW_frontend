@@ -1,11 +1,14 @@
+// msg: 가능하면 건드리지 말자 by 다희 소정
 import 'package:flutter/material.dart';
-import 'package:tailwind/tailwind.dart';
+import 'appbar.dart';
+import 'bottombar.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'home.dart';
 
 void main() async {
-  await TwService.init();
   runApp(MaterialApp(
     home: const MyApp(),
-    key: TwService.appKey,
+    // key: TwService.appKey,
   ));
 }
 
@@ -15,15 +18,10 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Text('안녕'),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: "홈"),
-          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: "샵")
-        ],
-      ),
+    return const Scaffold(
+      // appBar: MyAppBar(),
+      body: MyHome(),
+      // bottomNavigationBar: MyBottomNav(),
     );
   }
 }
