@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/screens/landing.model.dart';
-import 'package:iww_frontend/screens/user.repository.dart';
+import 'package:iww_frontend/repository/user.repository.dart';
 
 class SignUpViewModel extends ChangeNotifier {
   final UserRemoteRepository userRemoteRepository = UserRemoteRepository();

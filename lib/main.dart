@@ -1,5 +1,11 @@
 // msg: 가능하면 건드리지 말자 by 다희 소정
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/screens/findContact.dart';
+import 'package:iww_frontend/screens/findContact.viewmodel.dart';
+import 'package:iww_frontend/screens/landing.dart';
+import 'package:iww_frontend/screens/signup.dart';
+import 'package:iww_frontend/screens/signup.viewmodel.dart';
+import 'package:provider/provider.dart';
 import 'appbar.dart';
 import 'bottombar.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -22,6 +28,19 @@ void main() async {
   );
 
   runApp(MaterialApp(
+    // 라우트 정의
+    routes: {
+      '/landing': (context) => const Landing(),
+      '/signup': (context) => ChangeNotifierProvider<SignUpViewModel>(
+            create: (context) => SignUpViewModel(),
+            child: SignUp(),
+          ),
+      '/home': (context) => const MyHome(),
+      '/contact': (context) => ChangeNotifierProvider<FindContactViewModel>(
+            create: (context) => FindContactViewModel(),
+            child: FindContact(),
+          )
+    },
     home: const MyApp(),
     // key: TwService.appKey,
   ));

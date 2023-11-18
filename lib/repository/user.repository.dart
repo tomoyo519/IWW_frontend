@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:iww_frontend/screens/landing.model.dart';
-import 'package:iww_frontend/webservice.dart';
+import 'package:iww_frontend/utils/webservice.dart';
 
 /// 유저 관련 서버 리포지토리
 class UserRemoteRepository {

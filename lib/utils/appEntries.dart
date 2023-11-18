@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/home.dart';
 import 'package:iww_frontend/screens/landing.dart';
 import 'package:iww_frontend/screens/signup.dart';
+import 'package:iww_frontend/screens/signup.viewmodel.dart';
 import 'package:iww_frontend/utils/kakaoLogin.dart';
-import 'package:iww_frontend/webservice.dart';
+import 'package:iww_frontend/utils/webservice.dart';
+import 'package:provider/provider.dart';
 
 /// 메인에서 여러 가지 인증 로직을 테스트합니다.
 class _SignUpTest {
@@ -39,26 +41,31 @@ class AppEntries extends StatelessWidget {
           ElevatedButton(
               onPressed: () {
                 _signInTest.newUser();
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const Landing()));
+                Navigator.pushNamed(context, '/signup');
               },
-              child: const Text("👏 유저가 앱을 처음으로 방문")),
+              child: const Text("🐤 회원가입")),
           ElevatedButton(
               onPressed: () {
                 _signInTest.expiredToken();
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const Landing()));
+                Navigator.pushNamed(context, '/landing');
               },
               child: const Text("🤔 액세스 토큰이 없거나 만료된 유저")),
           ElevatedButton(
+              onPressed: () {
+                _signInTest.expiredToken();
+                Navigator.pushNamed(context, '/contact');
+              },
+              child: const Text("🤔 연락처 기반 친구추가")),
+          ElevatedButton(
               onPressed: () async {
                 if (await _signInTest.autoLogin() && context.mounted) {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => MyHome()));
+                  Navigator.pushNamed(context, '/home');
                 }
               },
-              child: const Text("👀 일반적인 자동 로그인")),
+              child: const Text("👀 메인 랜딩 페이지")),
           ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepOrange.shade400),
               onPressed: () async {
                 await _webService
                     .hello()

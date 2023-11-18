@@ -9,7 +9,7 @@ class WebService {
   static final _instance = WebService._internal();
   static WebService get instance => _instance;
 
-  static String server = Secrets.LOCAL_SERVER_URL;
+  static String server = Secrets.TEST_SERVER_URL;
   static final Map<String, String> defaultHeaders = {
     "Content-Type": "application/json; charset=UTF-8",
   };
