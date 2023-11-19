@@ -25,6 +25,7 @@ class KaKaoLogin {
         _saveAccessToken(true, token, pref);
         return await _getUserInfo().then((info) {
           int kakaoId = info!.id;
+          // TODO: profile pic 가져오기
           _saveUserKakaoId(kakaoId, pref);
           return info;
         });
@@ -59,6 +60,12 @@ class KaKaoLogin {
     }
   }
 
+  // // 카카오 아이디 로컬에서 불러오기
+  // Future<int?> getUserKakaoId() async {
+  //   final SharedPreferences pref = await SharedPreferences.getInstance();
+  //   return pref.getInt("user_kakao_id");
+  // }
+
   // 디바이스에 저장된 토큰이 있는지 확인하고
   // 없거나 만료된 경우 새로운 로그인을 시도합니다
   Future<int?> autoLogin() async {
@@ -90,7 +97,9 @@ class KaKaoLogin {
     }
 
     // 있으면 로컬에서 읽어오기
-    return pref.getInt("kakao_id");
+    int? kakaoId = pref.getInt("user_kakao_id");
+    log("User auto login: $kakaoId");
+    return kakaoId;
   }
 
   // 디바이스 토큰으로부터 정보 읽어오기
@@ -116,15 +125,6 @@ class KaKaoLogin {
     }
   }
 
-  // 현재 Flutter SDK에 저장 중인 액세스 토큰의 정보 조회
-  Future<AccessTokenInfo?> _accessTokenInfo() async {
-    try {
-      return await UserApi.instance.accessTokenInfo();
-    } catch (error) {
-      return null;
-    }
-  }
-
   // 로그인 성공 시 처리
   void _saveAccessToken(
       bool isTalk, OAuthToken token, SharedPreferences pref) async {
@@ -143,7 +143,7 @@ class KaKaoLogin {
 
   // 로컬에 카카오 아이디 저장
   void _saveUserKakaoId(int kakaoId, SharedPreferences pref) async {
-    await pref.setInt("kakao_id", kakaoId);
+    await pref.setInt("user_kakao_id", kakaoId);
     log("Saved in SharedPreferences: {kakao_id: $kakaoId}");
   }
 
