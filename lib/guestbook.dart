@@ -9,10 +9,12 @@ class Comment {
   String userImage;
   String username;
   String content;
+  num authorId;
   bool isModified;
 
   Comment(
-      {required this.userImage,
+      {required this.authorId,
+      required this.userImage,
       required this.username,
       required this.content,
       required this.isModified});
@@ -63,6 +65,7 @@ class CommentsBottomSheet extends StatelessWidget {
                     ),
                     title: Text(comment.username),
                     subtitle: Text(comment.content),
+                    
                   );
                 },
               ),
