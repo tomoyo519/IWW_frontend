@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/appbar.dart';
 import 'package:iww_frontend/screens/findContact.viewmodel.dart';
@@ -10,7 +12,13 @@ class FindContact extends StatelessWidget {
   Widget build(BuildContext context) {
     // final viewModel = context.watch<FindContactViewModel>();
     return Scaffold(
-      appBar: MyAppBar(),
+      appBar: MyAppBar(title: Text("친구 찾아보기"), actions: [
+        TextButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/home');
+            },
+            child: Text("건너뛰기"))
+      ]),
       body: SizedBox(
         width: double.infinity,
         height: double.infinity,
@@ -37,10 +45,13 @@ class _ContactList extends StatelessWidget {
     final contacts = viewModel.contacts;
     return ListView.builder(
         itemCount: contacts.length,
-        itemBuilder: (context, idx) => _ContactListTile(
-            name: contacts[idx].name ?? '',
-            nickName: contacts[idx].nickName,
-            profileImage: contacts[idx].profileImage));
+        itemBuilder: (context, idx) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: _ContactListTile(
+                  name: contacts[idx].name ?? '',
+                  nickName: contacts[idx].nickName,
+                  profileImage: contacts[idx].profileImage),
+            ));
   }
 }
 
@@ -55,34 +66,49 @@ class _ContactListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.read<FindContactViewModel>();
+
+    onClickAddFriend(BuildContext context) async {
+      // save friend
+      log(viewModel.contacts.toString());
+      await viewModel.addFriend();
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Row(
           // 데이터 부분
-
           children: [
             SizedBox(
               width: 50,
               height: 50,
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(100),
                 child: Image.asset(profileImage ?? "assets/profile.jpg"),
               ),
             ),
             SizedBox(
               width: 10,
             ),
-            Text(style: TextStyle(fontWeight: FontWeight.bold), nickName),
-            SizedBox(
-              width: 10,
-            ),
-            Text(name)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    nickName),
+                SizedBox(
+                  width: 10,
+                ),
+                Text(style: TextStyle(color: Colors.grey, fontSize: 12), name)
+              ],
+            )
           ],
         ),
         IconButton(
+            iconSize: 20,
             style: ElevatedButton.styleFrom(),
-            onPressed: () {},
+            onPressed: () => onClickAddFriend(context),
             icon: Icon(Icons.person_add_alt_1_rounded))
       ],
     );

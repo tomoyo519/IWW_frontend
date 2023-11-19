@@ -25,6 +25,10 @@ class FindContactViewModel extends ChangeNotifier {
 
   List<ContactDataObj> get contacts => _dummy;
 
+  addFriend() async {
+    // TODO:
+  }
+
   // Future<void> getContacts() async {
   // 연락처를 기준으로 서버에서 유저를 찾아 반환 (유저 아이디만)
   //   if (await Permission.contacts.request().isGranted) {

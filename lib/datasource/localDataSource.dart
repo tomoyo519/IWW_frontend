@@ -4,17 +4,19 @@ import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Local DataSource로는 sqlite 사용
 
 // @DriftDatabase()
 // class LocalDatabase extends _$AppDatabase {}
 
+class LocalDataSource {
+  LocalDataSource._internal();
+  static final _instance = LocalDataSource._internal();
+  static LocalDataSource get instanct => _instance;
 
-// class LocalDataSource {
-// LocalDataSource._internal();
-// static final _instance = LocalDataSource._internal();
-
+  // Future
 // static Database? _db;
 // static Database? get db => _db;
 
@@ -34,4 +36,4 @@ import 'package:path/path.dart' as p;
 //         ''');
 //   }, version: 1);
 // }
-// }
+}

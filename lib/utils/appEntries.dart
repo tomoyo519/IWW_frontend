@@ -58,9 +58,11 @@ class AppEntries extends StatelessWidget {
               child: const Text("🤔 연락처 기반 친구추가")),
           ElevatedButton(
               onPressed: () async {
-                if (await _signInTest.autoLogin() && context.mounted) {
-                  Navigator.pushNamed(context, '/home');
-                }
+                _signInTest.autoLogin().then((result) {
+                  if (result && context.mounted) {
+                    Navigator.pushNamed(context, '/home');
+                  }
+                });
               },
               child: const Text("👀 메인 랜딩 페이지")),
           ElevatedButton(
@@ -68,7 +70,7 @@ class AppEntries extends StatelessWidget {
                   backgroundColor: Colors.deepOrange.shade400),
               onPressed: () async {
                 await _webService
-                    .hello()
+                    .test()
                     .then((response) => {log("Hello? ${response.toString()}")});
               },
               child: const Text("🐹 테스트 서버 연결 체크"))
