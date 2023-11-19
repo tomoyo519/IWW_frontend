@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:iww_frontend/add_todo.dart';
@@ -42,23 +43,58 @@ class ToDoList extends StatefulWidget {
 
 class _ToDoListState extends State<ToDoList> {
   var scroll = ScrollController();
-  List myTodoList = [];
+  List<dynamic> myTodoList = [];
   getData() async {
     // TODO - 환경변수로 domain 빼놓기, user_id 수정해야 함
     // TODO - 서버가 맛이 갔을때는 어떤 화면을 보여줘야 하는가?
     var result = await http
-        .get(Uri.parse('http://yousayrun.store:8088/todo/${1}'))
-        .catchError((error, stackTrace) => print(error));
+        .get(Uri.parse('http://yousayrun.store:8088/todo/user/${6}'))
+        .catchError((error, stackTrace) {
+      print(error);
+      return null;
+    });
+    // ignore: unnecessary_null_comparison
+    if (result == null) {
+      print('웹요청중에 에러가 발생했습니다.');
+      return;
+    }
 
     setState(() {
       myTodoList = jsonDecode(result.body);
     });
   }
 
+  deleteTodo() {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) => CupertinoActionSheet(
+        title: Text('할일을 삭제하시겠어요?'),
+        actions: <Widget>[
+          CupertinoActionSheetAction(
+            child: Text('할일을 삭제할래요!'),
+            isDestructiveAction: true,
+            onPressed: () {
+              // TODO - 할일 삭제
+              print('옵션 1 선택');
+              Navigator.pop(context);
+            },
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          child: Text('취소'),
+          isDefaultAction: true,
+          onPressed: () {
+            print('취소 선택');
+            Navigator.pop(context);
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   void initState() {
-    // Todo list 맨 마지막에 가면 '추가하기 버튼.
-
+    getData();
     scroll.addListener(() {
       if (scroll.position.pixels == scroll.position.maxScrollExtent) {
         setState(() {
@@ -66,7 +102,6 @@ class _ToDoListState extends State<ToDoList> {
         });
       }
     });
-    getData();
   }
 
   @override
@@ -80,27 +115,42 @@ class _ToDoListState extends State<ToDoList> {
               controller: scroll,
               itemCount: myTodoList.isNotEmpty ? myTodoList.length : 0,
               itemBuilder: (c, i) {
-                return Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.black26, width: 1)),
-                  alignment: Alignment.center,
-                  margin: EdgeInsets.all(10),
-                  padding: EdgeInsets.all(10),
-                  child: myTodoList.isNotEmpty
-                      ? Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                              Checkbox(value: false, onChanged: (c) {}),
-                              Text(myTodoList[i]["todo_name"]),
-                              myTodoList[i]["grp_id"] == null
-                                  ? Icon(Icons.query_builder_outlined)
-                                  : Icon(Icons.groups_outlined)
-                            ])
-                      : Container(),
+                return GestureDetector(
+                  onLongPress: () {
+                    //
+                    print('길게 눌렀을떄,');
+                    deleteTodo();
+                  },
+                  onTap: () {
+                    print("클릭됨");
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.black26, width: 1)),
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.all(10),
+                    padding: EdgeInsets.all(10),
+                    child: myTodoList.isNotEmpty
+                        ? Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                                Checkbox(
+                                    value: false,
+                                    onChanged: (c) {
+                                      //TODO - onclick시 todo 완료 체크 해야함
+                                    }),
+                                Text(myTodoList[i]["todo_name"]),
+                                myTodoList[i]["grp_id"] == null
+                                    ? Icon(Icons.query_builder_outlined)
+                                    : Icon(Icons.groups_outlined)
+                              ])
+                        : Container(
+                            child: Text("아직 등록된 할 일이 없습니다. 등록해볼까요?"),
+                          ),
+                  ),
                 );
-                ;
               }),
         ),
         // TODO - 실제파일 들어오면 버튼 위치 변경하기

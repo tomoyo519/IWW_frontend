@@ -25,14 +25,21 @@ class _AddTodoState extends State<AddTodo> {
   String todoName = "";
   String desc = "";
   newTodo() async {
-    // var data = {
-    //   "user_id": 1,
-    //   "todo_name": todoName,
-    //   "todo_done": false,
-    //   "todo_desc": desc
-    // };
-    // var result = await http.post(Uri.parse('http://yousayrun.store:8088/todo'),
-    //     body: data);
+    var data = {
+      "user_id": 6,
+      "todo_name": todoName,
+      "todo_done": false,
+      "todo_desc": desc
+    };
+    var json = jsonEncode(data);
+    print(json);
+    var result = await http.post(Uri.parse('http://yousayrun.store:8088/todo'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: json);
+    print(result.body);
+    // Navigator.pop(context);
   }
 
   @override
