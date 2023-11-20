@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class Calendar extends StatefulWidget {
-  const Calendar({Key? key}) : super(key: key);
-
+  Calendar({required this.setSelectedDay, Key? key}) : super(key: key);
+  Function(DateTime) setSelectedDay;
   @override
   State<Calendar> createState() => _CalendarState();
 }
@@ -66,7 +66,10 @@ class _CalendarState extends State<Calendar> {
       // 원하는 날짜 클릭 시 이벤트
       onDaySelected: (DateTime selectedDay, DateTime focusedDay) {
         // 클릭 할 때 state를 변경
+        print('클릭됨');
+        widget.setSelectedDay(selectedDay);
         setState(() {
+          widget.setSelectedDay(selectedDay);
           this.selectedDay = selectedDay;
           // 우리가 달력 내에서 전 달 날짜를 클릭 할 때 옮겨주도록 state를 변경시켜 줌
           this.focusedDay = selectedDay;

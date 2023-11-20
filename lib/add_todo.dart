@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:iww_frontend/home.dart';
+import 'package:provider/provider.dart';
 import 'calendar.dart';
 import 'listWidget.dart';
 import 'package:http/http.dart' as http;
@@ -18,7 +20,16 @@ class AddTodo extends StatefulWidget {
 class _AddTodoState extends State<AddTodo> {
   final _formKey = GlobalKey<FormState>();
   // TODO - form data 핸들링
-  DateTime? selectedDay;
+  String? selectedDay;
+
+  setSelectedDay(DateTime newDate) {
+    setState(() {
+      selectedDay = newDate.toString();
+    });
+    print('selectedDay: ${selectedDay}');
+    print('newDate:${newDate}');
+  }
+
   DateTime focusedDay = DateTime.now();
   var dropdownValue = '라벨을 선택해보세요!';
   bool isDescription = false;
@@ -32,13 +43,13 @@ class _AddTodoState extends State<AddTodo> {
       "todo_desc": desc
     };
     var json = jsonEncode(data);
-    print(json);
+
     var result = await http.post(Uri.parse('http://yousayrun.store:8088/todo'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: json);
-    print(result.body);
+
     // Navigator.pop(context);
   }
 
@@ -102,12 +113,14 @@ class _AddTodoState extends State<AddTodo> {
                               Row(
                                 children: [
                                   IconButton(
-                                    icon: Icon(Icons.alarm_outlined),
+                                    icon: Icon(Icons.calendar_today_outlined),
                                     onPressed: () {
                                       showModalBottomSheet(
                                           context: context,
                                           builder: (c) {
-                                            return Calendar();
+                                            return Calendar(
+                                              setSelectedDay: setSelectedDay,
+                                            );
                                           });
                                     },
                                   ),
@@ -122,6 +135,13 @@ class _AddTodoState extends State<AddTodo> {
                                             context: context,
                                             builder: (c) {
                                               return LabelList(
+                                                  setLabel: (newLabel) {
+                                                    Provider.of<SelectedDate>(
+                                                            context,
+                                                            listen: false)
+                                                        .setSelectedDate(
+                                                            newLabel as String);
+                                                  },
                                                   content: "label");
                                             });
                                       },
@@ -154,6 +174,13 @@ class _AddTodoState extends State<AddTodo> {
                                           context: context,
                                           builder: (c) {
                                             return LabelList(
+                                                setLabel: (newLabel) {
+                                                  Provider.of<SelectedDate>(
+                                                          context,
+                                                          listen: false)
+                                                      .setSelectedDate(
+                                                          newLabel as String);
+                                                },
                                                 content: "routine");
                                           });
                                     },

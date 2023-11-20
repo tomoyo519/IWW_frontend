@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 class LabelList extends StatelessWidget {
-  LabelList({this.content, super.key});
+  LabelList({this.content, required this.setLabel, super.key});
   var content;
+  Function(int) setLabel;
   final List<String> labels = [
     '운동',
     '식단',
@@ -25,6 +26,7 @@ class LabelList extends StatelessWidget {
               itemBuilder: (c, i) {
                 return TextButton(
                     onPressed: () {
+                      setLabel(i);
                       Navigator.pop(context);
                     },
                     child: content == "label"
