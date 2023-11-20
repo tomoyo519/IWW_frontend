@@ -14,7 +14,7 @@ class Comment {
   String userImage;
   String username;
   String content;
-  bool isModified;
+  bool isMod;
 
   Comment(
       {required this.comId,
@@ -22,7 +22,7 @@ class Comment {
       required this.userImage,
       required this.username,
       required this.content,
-      required this.isModified});
+      required this.isMod});
 }
 
 class CommentsProvider with ChangeNotifier {
@@ -51,7 +51,7 @@ void showCommentsBottomSheet(BuildContext context,
 
 Future<void> fetchComments(
     CommentsProvider commentsProvider, String ownerId) async {
-  final url = 'https://your-backend.com/user/$ownerId/guestbook/comments';
+  final url = '/user/$ownerId/guestbook/comments';
   try {
     final response = await http.get(Uri.parse(url));
 
@@ -59,12 +59,12 @@ Future<void> fetchComments(
       List<dynamic> data = jsonDecode(response.body);
       List<Comment> fetchedComments = data.map((commentData) {
         return Comment(
-          comId: commentData['comId'],
-          authorId: commentData['authorId'],
-          userImage: commentData['userImage'],
-          username: commentData['username'],
+          comId: commentData['com_id'],
+          authorId: commentData['author_id'],
+          userImage: commentData['user_image'],
+          username: commentData['user_name'],
           content: commentData['content'],
-          isModified: commentData['isModified'],
+          isMod: commentData['is_mod'],
         );
       }).toList();
 
@@ -76,7 +76,7 @@ Future<void> fetchComments(
 }
 
 Future<bool> addComment(String ownerId, String authorId, String content) async {
-  final url = 'https://your-backend.com/user/$ownerId/guestbook/comments';
+  final url = 'yousayrun.store/user/$ownerId/guestbook/comments';
   try {
     final response = await http.post(
       Uri.parse(url),
@@ -99,7 +99,7 @@ Future<bool> addComment(String ownerId, String authorId, String content) async {
 
 Future<bool> deleteComment(String ownerId, String comId) async {
   final url =
-      'https://your-backend.com/user/$ownerId/guestbook/comments/$comId'; // 백엔드 URL
+      'yousayrun.store/user/$ownerId/guestbook/comments/$comId'; // 백엔드 URL
 
   try {
     final response = await http.patch(
@@ -159,7 +159,7 @@ class CommentsBottomSheet extends StatelessWidget {
                     title: Row(
                       children: [
                         Text(comment.username),
-                        if (comment.isModified)
+                        if (comment.isMod)
                           Padding(
                             padding: EdgeInsets.only(left: 8),
                             child: Text(
@@ -300,7 +300,7 @@ class CommentInputField extends StatelessWidget {
 
 Future<bool> updateComment(String ownerId, String comId, String content) async {
   final url =
-      'https://your-backend.com/user/$ownerId/guestbook/comments/$comId'; // 백엔드 URL
+      'yousayrun.store/user/$ownerId/guestbook/comments/$comId'; // 백엔드 URL
 
   try {
     final response = await http.put(
