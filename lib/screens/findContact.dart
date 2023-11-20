@@ -19,7 +19,7 @@ class AddFriends extends StatelessWidget {
             onPressed: () {
               Navigator.pushNamed(context, '/home');
             },
-            child: Text("건너뛰기"))
+            child: Text(viewModel.friendCnt > 0 ? "완료" : "건너뛰기"))
       ]),
       body: SizedBox(
         width: double.infinity,
@@ -46,6 +46,7 @@ class AddFriends extends StatelessWidget {
                       itemBuilder: (context, idx) => Padding(
                         padding: const EdgeInsets.symmetric(vertical: 3),
                         child: _ContactListTile(
+                          friendId: contacts[idx].user_id,
                           name: contacts[idx].user_name,
                           profileImage:
                               "${Secrets.TEST_SERVER_URL}/image/${contacts[idx].user_kakao_id}.jpg",
@@ -53,7 +54,6 @@ class AddFriends extends StatelessWidget {
                       ),
                     ));
                   } else {
-                    // Navigator.pushNamed(context, "/home");
                     return Text("연락처 데이터 없음");
                   }
                 })
@@ -64,18 +64,41 @@ class AddFriends extends StatelessWidget {
   }
 }
 
-class _ContactListTile extends StatelessWidget {
+class _ContactListTile extends StatefulWidget {
+  final int friendId;
   final String name;
   final String? profileImage;
 
-  _ContactListTile({Key? key, required this.name, this.profileImage})
+  _ContactListTile(
+      {Key? key, required this.friendId, required this.name, this.profileImage})
       : super(key: key);
 
-  _onClickAddFriend(BuildContext context) async {
+  @override
+  State<_ContactListTile> createState() => _ContactListTileState();
+}
+
+class _ContactListTileState extends State<_ContactListTile> {
+  bool isAdded = false;
+
+  Future<void> _onClickAddFriend(BuildContext context) async {
     final viewModel = context.read<FindContactViewModel>();
-    // save friend
-    log(viewModel.contacts.toString());
-    await viewModel.addFriend();
+    if (isAdded == false) {
+      // 기존 친구가 아닌 경우 추가
+      if (await viewModel.createFriend(widget.friendId)) {
+        setState(() {
+          isAdded = true;
+          viewModel.friendCnt++;
+        });
+      }
+    } else {
+      // 친구로 추가되었던 경우 삭제
+      if (await viewModel.deleteFriend(widget.friendId)) {
+        setState(() {
+          isAdded = false;
+          viewModel.friendCnt--;
+        });
+      }
+    }
   }
 
   @override
@@ -93,7 +116,7 @@ class _ContactListTile extends StatelessWidget {
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(100),
                   child: Image.network(
-                    profileImage!,
+                    widget.profileImage!,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Image.asset("assets/profile.jpg");
@@ -108,7 +131,7 @@ class _ContactListTile extends StatelessWidget {
               children: [
                 Text(
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                    name),
+                    widget.name),
                 SizedBox(
                   width: 10,
                 ),
@@ -119,11 +142,18 @@ class _ContactListTile extends StatelessWidget {
             )
           ],
         ),
-        IconButton(
-            iconSize: 20,
-            style: ElevatedButton.styleFrom(),
-            onPressed: () => _onClickAddFriend(context),
-            icon: Icon(Icons.person_add_alt_1_rounded))
+        Ink(
+          decoration: BoxDecoration(
+            color: isAdded ? Colors.blue.shade900 : Colors.white,
+            shape: BoxShape.circle,
+          ),
+          child: IconButton(
+              iconSize: 20,
+              color: isAdded ? Colors.white : Colors.black87,
+              onPressed: () => _onClickAddFriend(context),
+              icon:
+                  Icon(isAdded ? Icons.check : Icons.person_add_alt_1_rounded)),
+        )
       ],
     );
   }

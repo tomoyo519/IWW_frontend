@@ -1,5 +1,7 @@
 // msg: 가능하면 건드리지 말자 by 다희 소정
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/repository/friend.repository.dart';
+import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/screens/findContact.dart';
 import 'package:iww_frontend/screens/findContact.viewmodel.dart';
 import 'package:iww_frontend/screens/landing.dart';
@@ -27,22 +29,29 @@ void main() async {
     javaScriptAppKey: Secrets.KAKAO_JS_APP_KEY,
   );
 
-  runApp(MaterialApp(
-    // 라우트 정의
-    routes: {
-      '/landing': (context) => const Landing(),
-      '/signup': (context) => ChangeNotifierProvider<SignUpViewModel>(
-            create: (context) => SignUpViewModel(),
-            child: SignUp(),
-          ),
-      '/home': (context) => const MyHome(),
-      '/contact': (context) => ChangeNotifierProvider<FindContactViewModel>(
-            create: (context) => FindContactViewModel(),
-            child: AddFriends(),
-          )
-    },
-    home: const MyApp(),
-    // key: TwService.appKey,
+  runApp(MultiProvider(
+    providers: [
+      Provider<UserRepository>(create: (_) => UserRepository()),
+      Provider<FriendRepository>(create: (_) => FriendRepository()),
+    ],
+    child: MaterialApp(
+        // 라우트 정의
+        routes: {
+          '/landing': (context) => const Landing(),
+          '/home': (context) => const MyHome(),
+          '/signup': (context) => ChangeNotifierProvider<SignUpViewModel>(
+                create: (_) => SignUpViewModel(
+                    Provider.of<UserRepository>(_, listen: false)),
+                child: SignUp(),
+              ),
+          '/contact': (context) => ChangeNotifierProvider<FindContactViewModel>(
+                create: (_) => FindContactViewModel(
+                    Provider.of<UserRepository>(_, listen: false),
+                    Provider.of<FriendRepository>(_, listen: false)),
+                child: AddFriends(),
+              )
+        },
+        home: MyApp()),
   ));
 }
 

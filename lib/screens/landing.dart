@@ -15,13 +15,7 @@ class Landing extends StatelessWidget {
     try {
       var userDto = await Landing.viewModel.handleKakaoLogin();
       if (userDto != null && context.mounted) {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ChangeNotifierProvider<SignUpViewModel>(
-                      create: (context) => SignUpViewModel(),
-                      child: SignUp(),
-                    )));
+        Navigator.pushNamed(context, "/signup");
       }
     } catch (error) {
       // TODO: handle error

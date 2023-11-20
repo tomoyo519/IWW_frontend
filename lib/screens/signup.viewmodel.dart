@@ -5,6 +5,9 @@ import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 
 class SignUpViewModel extends ChangeNotifier {
+  final UserRepository userRepository;
+  SignUpViewModel(this.userRepository);
+
   // User information
   String _name = '';
   String _tel = '';
@@ -41,6 +44,6 @@ class SignUpViewModel extends ChangeNotifier {
 
   // 회원가입
   Future<bool?> signUp() async {
-    return await UserRepository.createUser(_name, _tel);
+    return await userRepository.createUser(_name, _tel);
   }
 }

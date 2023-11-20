@@ -14,12 +14,12 @@ import 'package:http/http.dart' as http;
 /// 유저 관련 리포지토리
 /// TODO: provider 패턴으로 바꾸기
 class UserRepository {
-  UserRepository._internal();
-  static final _instance = UserRepository._internal();
-  static UserRepository get instance => _instance;
+  // UserRepository._internal();
+  // static final _instance = UserRepository._internal();
+  // static UserRepository get instance => _instance;
 
   // TODO: 테스트용 유저 생성
-  static Future<bool?> createTestUser(CreateUserDto user) async {
+  Future<bool?> createTestUser(CreateUserDto user) async {
     return await RemoteDataSource.post("/user",
         body: jsonEncode({
           'user_name': user.user_name,
@@ -36,7 +36,7 @@ class UserRepository {
   }
 
   // 현재 로그인한 유저 생성
-  static Future<bool?> createUser(String name, String tel) async {
+  Future<bool?> createUser(String name, String tel) async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
 
     // Local
@@ -56,7 +56,7 @@ class UserRepository {
     // 로컬 스토리지에 저장해둔 파일 불러오기
     File image = await LocalStorage.read("$userKakaoId.jpg");
 
-    var response = await RemoteDataSource.postFormData("user",
+    var response = await RemoteDataSource.postFormData("/user",
         body: {
           "user_name": name,
           "user_tel": tel,
@@ -68,10 +68,10 @@ class UserRepository {
     final responseString = await response.stream.bytesToString();
     final jsonResponse = json.decode(responseString);
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       // JSON 데이터를 User 객체로 변환
       final userResponse = UserInfo.fromJson(jsonResponse);
-      log("User created: ${userResponse.toString()}");
+      log("User created: ${userResponse.user_id}");
 
       // SharedPreference에 아이디 저장하고 결과 반환
       return pref
@@ -84,8 +84,7 @@ class UserRepository {
   }
 
   // 연락처 기준으로 유저 정보 조회
-  static Future<List<UserInfo>?> getUsersByContacts(
-      GetUsersByContactsDto body) async {
+  Future<List<UserInfo>?> getUsersByContacts(GetUsersByContactsDto body) async {
     return await RemoteDataSource.post("/user/contacts", body: body.toJson())
         .then((response) {
       if (response.statusCode == 201) {
@@ -98,10 +97,5 @@ class UserRepository {
         return null;
       }
     });
-  }
-
-  static addFriendByTel(String tel) async {
-    // 네트워크 연결 검사
-    // await RemoteDataSource.get("")
   }
 }

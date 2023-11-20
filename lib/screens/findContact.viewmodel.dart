@@ -1,25 +1,25 @@
 import 'dart:developer';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/user/get-user-by-contact.dto.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
+import 'package:iww_frontend/repository/friend.repository.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:contacts_service/contacts_service.dart';
 
-// ViewModel에서 받아오는 UI 구성에 필요한 정보
-class ContactDataObj {
-  int id;
-  String? name;
-  String nickName;
-  String? profileImage;
-
-  ContactDataObj(this.id, this.name, this.nickName, this.profileImage);
-}
-
-class CreateFreind {}
-
 class FindContactViewModel extends ChangeNotifier {
+  final UserRepository userRepository;
+  final FriendRepository friendRepository;
+
+  FindContactViewModel(this.userRepository, this.friendRepository);
+
+  // UI State
+  int _friendCnt = 0;
+  int get friendCnt => _friendCnt;
+  set friendCnt(int val) => _friendCnt = val;
+
   // 연락처 접근 권한이 허용되었는지 여부
   Future<bool> get isContactGranted async {
     if (await Permission.contacts.isDenied) {
@@ -49,13 +49,19 @@ class FindContactViewModel extends ChangeNotifier {
         return [];
       }
 
-      return await UserRepository.getUsersByContacts(
-          GetUsersByContactsDto(phoneNumbers));
+      return await userRepository
+          .getUsersByContacts(GetUsersByContactsDto(phoneNumbers));
     }
     return [];
   }
 
-  addFriend() async {
-    // TODO: Not implemented
+  // 친구추가
+  Future<bool> createFriend(int friendId) async {
+    return await friendRepository.createFriend(friendId);
+  }
+
+  // 친구삭제
+  Future<bool> deleteFriend(int friendId) async {
+    return await friendRepository.deleteFriend(friendId);
   }
 }
