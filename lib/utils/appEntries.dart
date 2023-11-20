@@ -73,7 +73,18 @@ class AppEntries extends StatelessWidget {
                     .test()
                     .then((response) => {log("Hello? ${response.toString()}")});
               },
-              child: const Text("🐹 테스트 서버 연결 체크"))
+              child: const Text("🐹 테스트 서버 연결 체크")),
+          ElevatedButton(
+              style:
+                  ElevatedButton.styleFrom(backgroundColor: Colors.lightBlue),
+              onPressed: () {
+                _signInTest.autoLogin().then((result) {
+                  if (result && context.mounted) {
+                    Navigator.pushNamed(context, '/myroom');
+                  }
+                });
+              },
+              child: const Text("🚪 마이 룸")),
         ]);
   }
 }
