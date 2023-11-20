@@ -1,48 +1,10 @@
 import 'dart:developer';
-
-import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/appbar.dart';
+import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/screens/findContact.viewmodel.dart';
+import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:provider/provider.dart';
-
-// class AddFriends extends StatefulWidget {
-//   const AddFriends({super.key});
-
-//   @override
-//   State<AddFriends> createState() => _AddFriendsState();
-// }
-
-// class _AddFriendsState extends State<AddFriends> {
-//   @override
-//   void initState() {
-//     super.initState();
-//   }
-
-//   void _checkContactAvailable() async {
-//     final viewModel = context.read<FindContactViewModel>();
-//     bool isAvailable = (await viewModel.isNetworkConnected &&
-//         await viewModel.isContactGranted);
-
-//     if (isAvailable) {
-//       // 연락처 조회가 가능한 경우
-//       Navigator.of(context).pushReplacement(
-//         MaterialPageRoute(builder: (context) => _AddFriends()),
-//       );
-//     } else {
-//       Navigator.pushNamed(context, "/home");
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: Center(
-//         child: CircularProgressIndicator(),
-//       ),
-//     );
-//   }
-// }
 
 class AddFriends extends StatelessWidget {
   const AddFriends({super.key});
@@ -76,16 +38,18 @@ class AddFriends extends StatelessWidget {
                     return Text("Error: ${snapshot.error}");
                   } else if (snapshot.hasData) {
                     // 데이터 로드 완료
-                    List<Contact> contacts = snapshot.data!;
+                    List<UserInfo> contacts = snapshot.data!;
+
                     return Expanded(
                         child: ListView.builder(
                       itemCount: contacts.length,
-                      itemBuilder: (context, idx) =>
-                          // Text(contacts[idx].displayName ?? 'name')
-                          _ContactListTile(
-                        name: contacts[idx].displayName ?? '',
-                        nickName: contacts[idx].displayName!,
-                        profileImage: null,
+                      itemBuilder: (context, idx) => Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 3),
+                        child: _ContactListTile(
+                          name: contacts[idx].user_name,
+                          profileImage:
+                              "${Secrets.TEST_SERVER_URL}/image/${contacts[idx].user_kakao_id}.jpg",
+                        ),
                       ),
                     ));
                   } else {
@@ -102,11 +66,9 @@ class AddFriends extends StatelessWidget {
 
 class _ContactListTile extends StatelessWidget {
   final String name;
-  final String nickName;
   final String? profileImage;
 
-  _ContactListTile(
-      {Key? key, required this.name, required this.nickName, this.profileImage})
+  _ContactListTile({Key? key, required this.name, this.profileImage})
       : super(key: key);
 
   _onClickAddFriend(BuildContext context) async {
@@ -126,12 +88,17 @@ class _ContactListTile extends StatelessWidget {
           // 데이터 부분
           children: [
             SizedBox(
-              width: 50,
-              height: 50,
+              width: 40,
+              height: 40,
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(100),
-                child: Image.asset(profileImage ?? "assets/profile.jpg"),
-              ),
+                  borderRadius: BorderRadius.circular(100),
+                  child: Image.network(
+                    profileImage!,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset("assets/profile.jpg");
+                    },
+                  )),
             ),
             SizedBox(
               width: 10,
@@ -141,11 +108,13 @@ class _ContactListTile extends StatelessWidget {
               children: [
                 Text(
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                    nickName),
+                    name),
                 SizedBox(
                   width: 10,
                 ),
-                Text(style: TextStyle(color: Colors.grey, fontSize: 12), name)
+                const Text(
+                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                    "연락처 기반 추천")
               ],
             )
           ],

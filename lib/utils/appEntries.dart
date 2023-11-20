@@ -1,8 +1,9 @@
 import "dart:developer";
 
 import "package:flutter/material.dart";
+import "package:iww_frontend/model/user/create-user.dto.dart";
 import "package:iww_frontend/repository/user.repository.dart";
-import "package:iww_frontend/screens/user.model.dart";
+import 'package:iww_frontend/model/user/user-info.model.dart';
 import "package:iww_frontend/utils/kakaoLogin.dart";
 
 /// 메인에서 여러 가지 인증 로직을 테스트합니다.
@@ -22,38 +23,38 @@ class _SignUpTest {
   }
 
   Future<bool> createUserData() async {
-    final List<UserRequest> dummy = [
-      UserRequest("Tom", "010-0000-0000", "1"),
-      UserRequest("Tom2", "010-1111-1111", "2"),
-      UserRequest("Tom3", "010-1213-2342", "3"),
-      UserRequest("Tom4", "010-2342-2342", "4"),
-      UserRequest("Tom5", "010-2343-0043", "5"),
-      UserRequest("Tom6", "010-3455-4432", "6"),
-      UserRequest("Tom7", "010-0003-0000", "7"),
-      UserRequest("Tom8", "010-3111-1111", "8"),
-      UserRequest("Tom9", "010-1413-2342", "9"),
-      UserRequest("Tom10", "010-2342-5342", "10"),
-      UserRequest("Tom11", "010-2383-0043", "11"),
-      UserRequest("Tom12", "010-3155-4432", "12"),
-      UserRequest("Tom13", "010-8888-0009", "13"),
-      UserRequest("Tom14", "010-8899-0039", "14"),
-      UserRequest("Tom15", "010-4502-0934", "15"),
-      UserRequest("Tom16", "010-4534-9239", "16"),
-      UserRequest("Tom17", "010-1111-1112", "17"),
-      UserRequest("Tom18", "010-1111-1113", "18"),
-      UserRequest("Tom19", "010-1111-1114", "19"),
-      UserRequest("Tom20", "010-1111-1115", "20"),
-      UserRequest("Tom21", "010-1111-1116", "21"),
-      UserRequest("Tom22", "010-1111-1117", "22"),
-      UserRequest("Tom23", "010-1111-1118", "23"),
-      UserRequest("Tom24", "010-1111-1119", "24"),
-      UserRequest("Tom25", "010-1111-1120", "25"),
-      UserRequest("Tom26", "010-1111-1121", "26"),
-      UserRequest("Tom27", "010-1111-1122", "27"),
-      UserRequest("Tom28", "010-1111-1123", "28"),
-      UserRequest("Tom29", "010-1111-1124", "29"),
-      UserRequest("Tom30", "010-1111-1125", "30"),
-      UserRequest("Tom31", "010-1111-1126", "31")
+    final List<CreateUserDto> dummy = [
+      CreateUserDto("Tom", "010-0000-0000", "1"),
+      CreateUserDto("Tom2", "010-1111-1111", "2"),
+      CreateUserDto("Tom3", "010-1213-2342", "3"),
+      CreateUserDto("Tom4", "010-2342-2342", "4"),
+      CreateUserDto("Tom5", "010-2343-0043", "5"),
+      CreateUserDto("Tom6", "010-3455-4432", "6"),
+      CreateUserDto("Tom7", "010-0003-0000", "7"),
+      CreateUserDto("Tom8", "010-3111-1111", "8"),
+      CreateUserDto("Tom9", "010-1413-2342", "9"),
+      CreateUserDto("Tom10", "010-2342-5342", "10"),
+      CreateUserDto("Tom11", "010-2383-0043", "11"),
+      CreateUserDto("Tom12", "010-3155-4432", "12"),
+      CreateUserDto("Tom13", "010-8888-0009", "13"),
+      CreateUserDto("Tom14", "010-8899-0039", "14"),
+      CreateUserDto("Tom15", "010-4502-0934", "15"),
+      CreateUserDto("Tom16", "010-4534-9239", "16"),
+      CreateUserDto("Tom17", "010-1111-1112", "17"),
+      CreateUserDto("Tom18", "010-1111-1113", "18"),
+      CreateUserDto("Tom19", "010-1111-1114", "19"),
+      CreateUserDto("Tom20", "010-1111-1115", "20"),
+      CreateUserDto("Tom21", "010-1111-1116", "21"),
+      CreateUserDto("Tom22", "010-1111-1117", "22"),
+      CreateUserDto("Tom23", "010-1111-1118", "23"),
+      CreateUserDto("Tom24", "010-1111-1119", "24"),
+      CreateUserDto("Tom25", "010-1111-1120", "25"),
+      CreateUserDto("Tom26", "010-1111-1121", "26"),
+      CreateUserDto("Tom27", "010-1111-1122", "27"),
+      CreateUserDto("Tom28", "010-1111-1123", "28"),
+      CreateUserDto("Tom29", "010-1111-1124", "29"),
+      CreateUserDto("Tom30", "010-1111-1125", "30"),
+      CreateUserDto("Tom31", "010-1111-1126", "31")
     ];
 
     try {

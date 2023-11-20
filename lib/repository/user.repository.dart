@@ -4,8 +4,10 @@ import 'dart:io';
 
 import 'package:iww_frontend/datasource/localStorage.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
-import 'package:iww_frontend/screens/user.model.dart';
-import 'package:iww_frontend/secrets/secrets.dart';
+import 'package:iww_frontend/model/user/create-user.dto.dart';
+import 'package:iww_frontend/model/user/get-user-by-contact.dto.dart';
+import 'package:iww_frontend/model/user/user-info.model.dart';
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk_talk.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -17,7 +19,7 @@ class UserRepository {
   static UserRepository get instance => _instance;
 
   // TODO: 테스트용 유저 생성
-  static Future<bool?> createTestUser(UserRequest user) async {
+  static Future<bool?> createTestUser(CreateUserDto user) async {
     return await RemoteDataSource.post("/user",
         body: jsonEncode({
           'user_name': user.user_name,
@@ -44,50 +46,58 @@ class UserRepository {
     await pref.setInt("user_hp", 0);
     log("Saved in SharedPreferences: $name");
 
-    String? user_kakao_id = pref.getString("user_kakao_id");
-    if (user_kakao_id == null || user_kakao_id.isEmpty) {
+    String? userKakaoId = pref.getString("user_kakao_id");
+    if (userKakaoId == null || userKakaoId.isEmpty) {
       log("No saved user kakao id in device");
       return false;
     }
 
     // Remote
     // 로컬 스토리지에 저장해둔 파일 불러오기
-    File image = await LocalStorage.read("$user_kakao_id.jpg");
+    File image = await LocalStorage.read("$userKakaoId.jpg");
 
-    try {
-      var response = await RemoteDataSource.postFormData("user",
-          body: {
-            "user_name": name,
-            "user_tel": tel,
-            "user_kakao_id": user_kakao_id
-          },
-          file: image,
-          filename: '$user_kakao_id.jpg');
-      final responseString = await response.stream.bytesToString();
-      final jsonResponse = json.decode(responseString);
+    var response = await RemoteDataSource.postFormData("user",
+        body: {
+          "user_name": name,
+          "user_tel": tel,
+          "user_kakao_id": userKakaoId
+        },
+        file: image,
+        filename: '$userKakaoId.jpg');
 
-      if (response.statusCode == 200) {
-        // JSON 데이터를 User 객체로 변환
-        final userResponse = UserResponse.fromJson(jsonResponse);
-        log("User created: ${userResponse.toString()}");
+    final responseString = await response.stream.bytesToString();
+    final jsonResponse = json.decode(responseString);
 
-        // SharedPreference에 아이디 저장하고 결과 반환
-        return pref
-            .setInt("user_id", userResponse.user_id)
-            .then((result) => result);
-      } else {
-        log("Error while creating user: ${jsonResponse.toString()}");
-        return false;
-      }
-    } catch (error) {
-      log("Server response error: $error");
+    if (response.statusCode == 200) {
+      // JSON 데이터를 User 객체로 변환
+      final userResponse = UserInfo.fromJson(jsonResponse);
+      log("User created: ${userResponse.toString()}");
+
+      // SharedPreference에 아이디 저장하고 결과 반환
+      return pref
+          .setInt("user_id", userResponse.user_id)
+          .then((result) => result);
+    } else {
+      log("Error while creating user: ${jsonResponse.toString()}");
       return false;
     }
   }
 
-  static Future<String?> getUserKakaoId() async {
-    final SharedPreferences pref = await SharedPreferences.getInstance();
-    return pref.getString("user_kakao_id");
+  // 연락처 기준으로 유저 정보 조회
+  static Future<List<UserInfo>?> getUsersByContacts(
+      GetUsersByContactsDto body) async {
+    return await RemoteDataSource.post("/user/contacts", body: body.toJson())
+        .then((response) {
+      if (response.statusCode == 201) {
+        var jsonData = json.decode(response.body); // JSON 문자열을 Dart 객체로 변환
+        return (jsonData as List)
+            .map((item) => UserInfo.fromJson(item as Map<String, dynamic>))
+            .toList();
+      } else {
+        log("Fail to fetch user infos");
+        return null;
+      }
+    });
   }
 
   static addFriendByTel(String tel) async {
