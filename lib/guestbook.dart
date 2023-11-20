@@ -1,28 +1,25 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:path/path.dart';
-import 'calendar.dart';
-import 'listWidget.dart';
 import 'package:http/http.dart' as http;
+import 'package:iww_frontend/secrets/secrets.dart';
 import 'dart:convert';
 
 class Comment {
   String comId;
   String authorId;
-  String userImage;
+  late String userImage;
   String username;
   String content;
   bool isMod;
 
-  Comment(
-      {required this.comId,
-      required this.authorId,
-      required this.userImage,
-      required this.username,
-      required this.content,
-      required this.isMod});
+  Comment({
+    required this.comId,
+    required this.authorId,
+    required this.username,
+    required this.content,
+    required this.isMod,
+  }) {
+    userImage = '${Secrets.REMOTE_SERVER_URL}/image/$authorId.jpg';
+  }
 }
 
 class CommentsProvider with ChangeNotifier {
@@ -51,7 +48,7 @@ void showCommentsBottomSheet(BuildContext context,
 
 Future<void> fetchComments(
     CommentsProvider commentsProvider, String ownerId) async {
-  final url = '/user/$ownerId/guestbook/comments';
+  final url = '${Secrets.REMOTE_SERVER_URL}/user/$ownerId/guestbook/comments';
   try {
     final response = await http.get(Uri.parse(url));
 
@@ -61,7 +58,6 @@ Future<void> fetchComments(
         return Comment(
           comId: commentData['com_id'],
           authorId: commentData['author_id'],
-          userImage: commentData['user_image'],
           username: commentData['user_name'],
           content: commentData['content'],
           isMod: commentData['is_mod'],
@@ -76,7 +72,7 @@ Future<void> fetchComments(
 }
 
 Future<bool> addComment(String ownerId, String authorId, String content) async {
-  final url = 'yousayrun.store/user/$ownerId/guestbook/comments';
+  final url = '${Secrets.REMOTE_SERVER_URL}/user/$ownerId/guestbook/comments';
   try {
     final response = await http.post(
       Uri.parse(url),
@@ -98,8 +94,7 @@ Future<bool> addComment(String ownerId, String authorId, String content) async {
 }
 
 Future<bool> deleteComment(String ownerId, String comId) async {
-  final url =
-      'yousayrun.store/user/$ownerId/guestbook/comments/$comId'; // 백엔드 URL
+  final url = '${Secrets.REMOTE_SERVER_URL}/user/$ownerId/guestbook/comments/$comId'; // 백엔드 URL
 
   try {
     final response = await http.patch(
@@ -300,7 +295,7 @@ class CommentInputField extends StatelessWidget {
 
 Future<bool> updateComment(String ownerId, String comId, String content) async {
   final url =
-      'yousayrun.store/user/$ownerId/guestbook/comments/$comId'; // 백엔드 URL
+      '${Secrets.REMOTE_SERVER_URL}/user/$ownerId/guestbook/comments/$comId'; // 백엔드 URL
 
   try {
     final response = await http.put(
