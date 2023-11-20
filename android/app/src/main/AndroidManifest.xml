@@ -1,9 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 연락처 권한 설정-->
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
     <!-- 네트워크 사용 설정 -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="iww_frontend"
-        android:name="${applicationName}"
+        
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">
 
@@ -21,20 +23,6 @@
                 <data android:scheme="${kakaoUrlScheme}" android:host="oauth"/>
             </intent-filter>
         </activity>
-
-        <!-- 카카오톡 공유, 카카오톡 메시지 커스텀 URL 스킴 설정 -->
-<!--        <activity-->
-<!--            android:name=".MainActivity"-->
-<!--            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"-->
-<!--            android:exported="true"-->
-<!--            android:hardwareAccelerated="true"-->
-<!--            android:launchMode="singleTop"-->
-<!--            android:theme="@style/LaunchTheme"-->
-<!--            android:windowSoftInputMode="adjustResize">-->
-<!--            &lt;!&ndash; 생략 &ndash;&gt;-->
-
-
-<!--        </activity>-->
         
 
         <activity
@@ -56,8 +44,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-            <intent-filter>
+
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />

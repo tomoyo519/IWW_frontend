@@ -1,4 +1,4 @@
-import 'package:iww_frontend/screens/landing.model.dart';
+import 'package:iww_frontend/screens/user.model.dart';
 import 'package:iww_frontend/utils/kakaoLogin.dart';
 
 /// 뷰모델

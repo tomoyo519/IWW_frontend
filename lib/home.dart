@@ -18,7 +18,15 @@ class MyHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(),
+      appBar: MyAppBar(
+        actions: [
+          IconButton(
+            icon: Icon(Icons.notifications_outlined),
+            onPressed: () {},
+            color: (Colors.black),
+          )
+        ],
+      ),
       body: Column(
         children: [
           Expanded(child: Pet()),
@@ -51,7 +59,7 @@ class _ToDoListState extends State<ToDoList> {
         .catchError((error, stackTrace) => print(error));
 
     setState(() {
-      myTodoList = jsonDecode(result.body);
+      // myTodoList = jsonDecode(result.body);
     });
   }
 
