@@ -39,11 +39,8 @@ class SignUpViewModel extends ChangeNotifier {
     log("문자를 보냈다고 치자");
   }
 
-  void signUp() {
-    UserRepository.createUser(UserLoginModel(_kakaoId, _name, _tel));
+  // 회원가입
+  Future<bool?> signUp() async {
+    return await UserRepository.createUser(_name, _tel);
   }
-
-  void checkUniqueNickname() {}
-
-  // void check
 }

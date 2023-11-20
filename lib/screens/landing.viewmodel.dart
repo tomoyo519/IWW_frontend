@@ -6,13 +6,14 @@ class LandingViewModel {
   static final KaKaoLogin kakaoLogin = KaKaoLogin.instance;
 
   // 카카오 로그인 버튼을 누르면 실행
-  Future<UserLoginModel?> handleKakaoLogin() async {
+  Future<UserRequest?> handleKakaoLogin() async {
     var user = await kakaoLogin.login();
-    if (user?.id == null) {
+    if (user == null) {
       throw Exception("잘못된 카카오계정 정보");
+    } else {
+      // TODO: 여기서 로컬에 쌓을 것 있는지 확인
+      return UserRequest(
+          user.kakaoAccount?.profile?.nickname, null, user.id.toString());
     }
-
-    // TODO: 여기서 로컬에 쌓을 것 있는지 확인
-    return UserLoginModel(user!.id, user.kakaoAccount?.profile?.nickname, null);
   }
 }

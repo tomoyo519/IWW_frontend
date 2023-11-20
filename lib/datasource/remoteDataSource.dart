@@ -1,8 +1,23 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:iww_frontend/secrets/secrets.dart';
-import 'package:path/path.dart';
+
+// 콘텐트 타입
+enum ContentType {
+  json,
+  formdata;
+
+  String get type {
+    switch (this) {
+      case ContentType.json:
+        return "application/json; charset=UTF-8";
+      case ContentType.formdata:
+        return "multipart/form-data";
+    }
+  }
+}
 
 /// 서버 통신쪽 코드
 class RemoteDataSource {
@@ -17,19 +32,36 @@ class RemoteDataSource {
     "Content-Type": "application/json; charset=UTF-8",
   };
 
+  static Future<http.StreamedResponse> postFormData(String url,
+      {Map<String, dynamic>? body, File? file, String? filename}) async {
+    var request = http.MultipartRequest('POST', Uri.parse(server + url));
+    if (body != null) {
+      // 요청 본문
+      for (String key in body.keys) {
+        request.fields[key] = body[key];
+      }
+    }
+    if (file != null) {
+      // 파일
+      request.files.add(http.MultipartFile(
+          'file', file.readAsBytes().asStream(), file.lengthSync(),
+          filename: filename));
+    }
+    return await request.send();
+  }
+
   // POST
   static Future<http.Response> post(String url,
-      {Map<String, String>? headers, Object? body, Encoding? encoding}) {
-    // URL 수정
-    url = join(server, url);
-    // 기본 헤더 추가
+      {Map<String, String>? headers, Object? body, Encoding? encoding}) async {
     if (headers != null) {
+      // 기본 헤더 추가
       headers.addAll(defaultHeaders);
     } else {
       headers = defaultHeaders;
     }
-    // TODO: 여기서 response 형식을 수정할 수 있습니다.
-    return http.post(Uri.parse(url),
+
+    // headers['Content-Type'] = ContentType.json.type;
+    return await http.post(Uri.parse(server + url),
         headers: headers, body: body, encoding: encoding);
   }
 

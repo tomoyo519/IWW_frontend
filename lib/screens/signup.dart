@@ -14,51 +14,62 @@ class SignUp extends StatelessWidget {
   // 닉네임 입력, 연락처 인증
   final _nameFormKey = GlobalKey<FormState>();
   final _telFormKey = GlobalKey<FormState>();
+
   SignUp({super.key});
 
-  // 문자 인증 버튼 클릭
-  void _getSms(
-    BuildContext context,
-  ) {
-    final viewModel = context.read<SignUpViewModel>();
-    viewModel.sendSms();
-
-    const snackBar = SnackBar(content: Text("인증번호는 0000입니다."));
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
-  // 페이지 이동
+  // 연락처 페이지로 이동
   void _nextPage(BuildContext context) {
     final viewModel = context.read<SignUpViewModel>();
-    final currPage = _pageController.page;
 
-    if (_pageController.page == 0) {
-      // 닉네임 입력 화면 처리
-      // TODO 중복검사 필요
-      if (_nameFormKey.currentState!.validate()) {
-        // ViewModel로 데이터 전송
-        viewModel.name = _nameController.text;
-        log("currpage: ${_pageController.page}, data: ${viewModel.name}");
+    // 닉네임 입력 화면 처리
+    // TODO: 중복검사 필요
+    if (_nameFormKey.currentState!.validate()) {
+      // ViewModel로 데이터 전송
+      viewModel.name = _nameController.text;
 
-        // UI 업데이트
-        _pageController.nextPage(
-            duration: Duration(milliseconds: 300), curve: Curves.ease);
-        log("currpage: ${_pageController.page}, data: ${viewModel.name}");
+      // UI 업데이트
+      _pageController.nextPage(
+          duration: Duration(milliseconds: 300), curve: Curves.ease);
+    }
+  }
 
-        // viewModel.pageIdx++;
-      }
-    } else if (currPage == 1) {
-      // 연락처 인증 완료 후 화면 처리
-      if (_telFormKey.currentState!.validate()) {
-        viewModel.tel = _telController.text;
+  // 인증번호 받기 버튼 클릭
+  void _getCode(BuildContext context) {
+    if (_telFormKey.currentState!.validate()) {
+      final viewModel = context.read<SignUpViewModel>();
+      viewModel.sendSms();
 
-        // 회원가입 완료
-        viewModel.signUp();
+      const snackBar = SnackBar(content: Text("인증번호는 0000입니다."));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
-        // UI 업데이트
-        _pageController.dispose();
-        // viewModel.pageIdx++;
-      }
+      viewModel.isCodeFieldVisible = true;
+    }
+  }
+
+  // 인증하기 버튼 클릭
+  void _doAuth(BuildContext context) {
+    final viewModel = context.read<SignUpViewModel>();
+    if (_telFormKey.currentState!.validate()) {
+      // 데이터 전송
+      viewModel.tel = _telController.text;
+      // UI 업데이트
+      const snackBar = SnackBar(content: Text("인증이 완료되었습니다"));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      viewModel.isRegisterBtnEnabled = true;
+    }
+  }
+
+  // 회원가입 버튼 클릭
+  void _signup(BuildContext context) async {
+    if (_telFormKey.currentState!.validate()) {
+      final viewModel = context.read<SignUpViewModel>();
+      await viewModel.signUp().then((value) {
+        _pageController.dispose(); // 해제
+        log("User created ${(value == true) ? "success" : "failed"}");
+        Navigator.pushNamed(context, "/contact");
+      });
+    } else {
+      // TODO: 예외처리?
     }
   }
 
@@ -107,6 +118,7 @@ class SignUp extends StatelessWidget {
                               validator: (value) {
                                 return (value == null ||
                                         value.isEmpty ||
+                                        // TODO regex
                                         !value.contains("010"))
                                     ? "연락처를 입력해 주세요"
                                     : null;
@@ -119,73 +131,48 @@ class SignUp extends StatelessWidget {
                             width: 10,
                           ),
                           ElevatedButton(
-                              onPressed: () {
-                                _getSms(context);
-                                viewModel.isCodeFieldVisible = true;
-                              },
+                              onPressed: () => _getCode(context),
                               style: ElevatedButton.styleFrom(
                                   minimumSize: Size(100, 45)),
                               child: const Text("인증번호 받기")),
                         ],
+                      ),
+                      Visibility(
+                        visible: viewModel.isCodeFieldVisible,
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextFormField(
+                                    validator: (value) {
+                                      return (value == null ||
+                                              value.isEmpty ||
+                                              value != "0000")
+                                          ? "인증번호를 확인해 주세요"
+                                          : null;
+                                    },
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                ElevatedButton(
+                                    onPressed: () => _doAuth(context),
+                                    style: ElevatedButton.styleFrom(
+                                        minimumSize: Size(100, 45)),
+                                    child: const Text("인증하기")),
+                              ],
+                            ),
+                            ElevatedButton(
+                                onPressed: viewModel.isRegisterBtnEnabled
+                                    ? () => _signup(context)
+                                    : null,
+                                child: const Text("회원가입")),
+                          ],
+                        ),
                       )
                     ])),
-                Text("hehe"),
-
-                // Form(
-                //     key: _telFormKey,
-                //     child: Column(
-                //       children: [
-                //         Row(
-                //           children: [
-                //             TextFormField(
-                //               controller: _telController,
-                //               validator: (value) {
-                //                 return (value == null ||
-                //                         value.isEmpty ||
-                //                         !value.contains("010"))
-                //                     ? "연락처를 입력해 주세요"
-                //                     : null;
-                //               },
-                //               decoration:
-                //                   const InputDecoration(label: Text("연락처")),
-                //             ),
-                //             ElevatedButton(
-                //                 onPressed: () {
-                //                   _getSms(context);
-                //                   viewModel.isCodeFieldVisible = true;
-                //                 },
-                //                 child: const Text("인증번호 받기")),
-                //           ],
-                //         ),
-                // Visibility(
-                //     visible: viewModel.isCodeFieldVisible,
-                //     child: Column(
-                //       children: [
-                //         Row(
-                //           children: [
-                //             TextFormField(
-                //               validator: (value) {
-                //                 return (value == null ||
-                //                         value.isEmpty ||
-                //                         value != "0000")
-                //                     ? "인증번호를 확인해 주세요"
-                //                     : null;
-                //               },
-                //             ),
-                //             ElevatedButton(
-                //                 onPressed: () => _nextPage(context),
-                //                 child: const Text("인증하기"))
-                //           ],
-                //         ),
-                //         ElevatedButton(
-                //             onPressed: viewModel.isRegisterBtnEnabled
-                //                 ? () => _nextPage(context)
-                //                 : null,
-                //             child: const Text("회원가입")),
-                //       ],
-                //     ))
-                //       ],
-                //     )),
               ],
             ),
           ),

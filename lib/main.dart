@@ -38,7 +38,7 @@ void main() async {
       '/home': (context) => const MyHome(),
       '/contact': (context) => ChangeNotifierProvider<FindContactViewModel>(
             create: (context) => FindContactViewModel(),
-            child: FindContact(),
+            child: AddFriends(),
           )
     },
     home: const MyApp(),
