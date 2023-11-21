@@ -108,7 +108,7 @@ class _ToDoListState extends State<ToDoList> {
     }
 
     setState(() {
-      // myTodoList = jsonDecode(result.body);
+      myTodoList = jsonDecode(result.body);
     });
 
     // TODO - 서버 맛 간경우
@@ -356,27 +356,6 @@ class _ToDoListState extends State<ToDoList> {
                                 ),
                               ],
                             ),
-                            // Row(
-                            //   children: [
-                            //     IconButton(
-                            //       icon: Icon(Icons.alarm_outlined),
-                            //       onPressed: () {
-                            //         Future<TimeOfDay?> selectedTime =
-                            //             showTimePicker(
-                            //           initialTime: TimeOfDay.now(),
-                            //           context: context,
-                            //         );
-                            //         if (selectedTime != null) {}
-                            //       },
-                            //     ),
-                            //     Consumer<SelectedDate>(
-                            //       builder: (context, selectedDate, child) {
-                            //         return Text(
-                            //             '${selectedDate.selectedAlarmTime.toString()} 분 전 알림');
-                            //       },
-                            //     )
-                            //   ],
-                            // ),
                             Row(
                               children: [
                                 Container(
@@ -389,11 +368,7 @@ class _ToDoListState extends State<ToDoList> {
                                             return LabelList(
                                               content: "routine",
                                               setLabel: (newLabel) {
-                                                Provider.of<SelectedDate>(
-                                                        context,
-                                                        listen: false)
-                                                    .setSelectedDate(
-                                                        newLabel as String);
+                                                print('진행중');
                                               },
                                             );
                                           });
@@ -410,46 +385,55 @@ class _ToDoListState extends State<ToDoList> {
                             ),
                             Row(
                               children: [
-                                IconButton(
-                                  icon: Icon(Icons.sticky_note_2_outlined),
-                                  onPressed: () {
-                                    showModalBottomSheet(
-                                        context: context,
-                                        builder: (c) {
-                                          return Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height /
-                                                2,
-                                            child: Column(
-                                              children: [
-                                                TextButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
+                                Container(
+                                  padding: EdgeInsets.all(10),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      showModalBottomSheet(
+                                          context: context,
+                                          builder: (c) {
+                                            return Container(
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height /
+                                                  2,
+                                              child: Column(
+                                                children: [
+                                                  TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: Text("완료")),
+                                                  TextFormField(
+                                                    initialValue: desc,
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        desc = value;
+                                                      });
                                                     },
-                                                    child: Text("완료")),
-                                                TextFormField(
-                                                  initialValue: desc,
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      desc = value;
-                                                    });
-                                                  },
-                                                  maxLines: null,
-                                                  decoration: InputDecoration(
-                                                    border: OutlineInputBorder(
-                                                        borderSide: BorderSide(
-                                                            color: Colors.black,
-                                                            width: 1)),
+                                                    maxLines: null,
+                                                    decoration: InputDecoration(
+                                                      border: OutlineInputBorder(
+                                                          borderSide:
+                                                              BorderSide(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  width: 1)),
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        });
-                                  },
+                                                ],
+                                              ),
+                                            );
+                                          });
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.sticky_note_2_outlined),
+                                        Text("작업 설명 추가"),
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                                Text("작업 설명 추가"),
                               ],
                             )
                           ],
@@ -491,7 +475,22 @@ class _ToDoListState extends State<ToDoList> {
                                         'application/json; charset=UTF-8',
                                   },
                                   body: json);
-                              print(result.body);
+
+                              if (result.statusCode == 200) {
+                                Navigator.pop(context);
+                                getData();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: const Text('변경이 완료 되었어요!'),
+                                    // action: SnackBarAction(
+                                    //   label: 'Action',
+                                    //   onPressed: () {
+                                    //     // Code to execute.
+                                    //   },
+                                    // ),
+                                  ),
+                                );
+                              }
                             }
                           },
                           child: Text("변경하기",
@@ -536,7 +535,7 @@ class _ToDoListState extends State<ToDoList> {
                     ? GestureDetector(
                         onLongPress: () {
                           //
-                          print('길게 눌렀을떄,');
+                          print('길게 눌렀을떄, ${i}');
                           deleteTodo();
                         },
                         onTap: () {
@@ -577,28 +576,6 @@ class _ToDoListState extends State<ToDoList> {
                         padding: EdgeInsets.all(10),
                         child: Text("아직 등록된 할 일이 없습니다. 등록해볼까요?"),
                       );
-
-                return Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.black26, width: 1)),
-                  alignment: Alignment.center,
-                  margin: EdgeInsets.all(10),
-                  padding: EdgeInsets.all(10),
-                  child: myTodoList.isNotEmpty
-                      ? Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                              Checkbox(value: false, onChanged: (c) {}),
-                              Text(myTodoList[i]["todo_name"]),
-                              myTodoList[i]["grp_id"] == null
-                                  ? Icon(Icons.query_builder_outlined)
-                                  : Icon(Icons.groups_outlined)
-                            ])
-                      : Container(),
-                );
-
               }),
         ),
         // TODO - 실제파일 들어오면 버튼 위치 변경하기
