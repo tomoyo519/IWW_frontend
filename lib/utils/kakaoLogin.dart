@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/services.dart';
+import 'package:iww_frontend/datasource/localStorage.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_talk.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -24,9 +25,9 @@ class KaKaoLogin {
         OAuthToken token = await UserApi.instance.loginWithKakaoTalk();
         _saveAccessToken(true, token, pref);
         return await _getUserInfo().then((info) {
-          int kakaoId = info!.id;
-          // TODO: profile pic 가져오기
-          _saveUserKakaoId(kakaoId, pref);
+          String? kakaoId = info?.id.toString();
+          String? profilePic = info?.kakaoAccount?.profile?.profileImageUrl;
+          _saveUserKakaoProfile(kakaoId, profilePic, pref);
           return info;
         });
       } catch (error) {
@@ -50,9 +51,9 @@ class KaKaoLogin {
   Future<bool> logout() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     try {
+      await _removeLoginInfos(pref);
       await UserApi.instance.logout();
       log('로그아웃 성공, SDK에서 토큰 삭제');
-      _removeLoginInfos(pref);
       return true;
     } catch (error) {
       log('로그아웃 실패, SDK에서 토큰 삭제 $error');
@@ -60,15 +61,9 @@ class KaKaoLogin {
     }
   }
 
-  // // 카카오 아이디 로컬에서 불러오기
-  // Future<int?> getUserKakaoId() async {
-  //   final SharedPreferences pref = await SharedPreferences.getInstance();
-  //   return pref.getInt("user_kakao_id");
-  // }
-
   // 디바이스에 저장된 토큰이 있는지 확인하고
   // 없거나 만료된 경우 새로운 로그인을 시도합니다
-  Future<int?> autoLogin() async {
+  Future<String?> autoLogin() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     final now = DateTime.now();
 
@@ -78,7 +73,7 @@ class KaKaoLogin {
 
     // 만약 토큰이 없으면 로그인
     if (accessToken == null) {
-      return await login().then((user) => user?.id);
+      return await login().then((user) => user?.id.toString());
     }
 
     // 만료가 지났는지 확인
@@ -89,32 +84,32 @@ class KaKaoLogin {
       expire = DateTime.fromMicrosecondsSinceEpoch(tokenExpire);
     } else {
       // 만료기간이 이상하면 로그인
-      return await login().then((user) => user?.id);
+      return await login().then((user) => user?.id.toString());
     }
 
     if (expire.isBefore(now)) {
-      return await login().then((user) => user?.id);
+      return await login().then((user) => user?.id.toString());
     }
 
     // 있으면 로컬에서 읽어오기
-    int? kakaoId = pref.getInt("user_kakao_id");
+    String? kakaoId = pref.getString("user_kakao_id");
     log("User auto login: $kakaoId");
     return kakaoId;
   }
 
-  // 디바이스 토큰으로부터 정보 읽어오기
+  // 카카오계정과 연결 끊기
   void disconnect() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     try {
+      await _removeLoginInfos(pref);
       await UserApi.instance.unlink();
-      _removeLoginInfos(pref);
       log('연결 끊기 성공, SDK에서 토큰 삭제');
     } catch (error) {
       log('연결 끊기 실패 $error');
     }
   }
 
-  // 인증 토큰으로 유저 정보를 반환합니다
+  // 인증 토큰으로 유저 정보를 반환
   Future<User?> _getUserInfo() async {
     try {
       User user = await UserApi.instance.me();
@@ -141,10 +136,21 @@ class KaKaoLogin {
     log("Saved in SharedPreferences, refresh expires at: ${token.refreshTokenExpiresAt}");
   }
 
-  // 로컬에 카카오 아이디 저장
-  void _saveUserKakaoId(int kakaoId, SharedPreferences pref) async {
-    await pref.setInt("user_kakao_id", kakaoId);
-    log("Saved in SharedPreferences: {kakao_id: $kakaoId}");
+  // 로컬에 카카오 프로필 저장
+  void _saveUserKakaoProfile(
+      String? kakaoId, String? imgUrl, SharedPreferences pref) async {
+    // 카카오 아이디
+    if (kakaoId != null && kakaoId.isNotEmpty) {
+      await pref.setString("user_kakao_id", kakaoId);
+    }
+
+    // 카카오 프로필 이미지
+    var imgPath;
+    if (imgUrl != null && imgUrl.isNotEmpty) {
+      imgPath = await LocalStorage.save(imgUrl, '$kakaoId.jpg');
+    }
+
+    log("Saved in SharedPreferences: {user_kakao_id: $kakaoId, profile: $imgPath}");
   }
 
   // 로그인 실패 시 로직
@@ -159,8 +165,9 @@ class KaKaoLogin {
       OAuthToken token = await UserApi.instance.loginWithKakaoAccount();
       _saveAccessToken(true, token, pref);
       return await _getUserInfo().then((info) {
-        int kakaoId = info!.id;
-        _saveUserKakaoId(kakaoId, pref);
+        String? kakaoId = info?.id.toString();
+        String? profilePic = info?.kakaoAccount?.profile?.profileImageUrl;
+        _saveUserKakaoProfile(kakaoId, profilePic, pref);
         return info;
       });
     } catch (error) {
@@ -170,13 +177,18 @@ class KaKaoLogin {
   }
 
   // 로그아웃 성공 시 처리
-  void _removeLoginInfos(SharedPreferences pref) async {
-    log('카카오 로그아웃');
-
-    await pref.remove("kakao_id");
-    await pref.remove("access_token");
-    await pref.remove("token_expire");
-    await pref.remove("refresh_expire");
-    log("Clear SharedPreferences");
+  Future<bool> _removeLoginInfos(SharedPreferences pref) async {
+    try {
+      await pref.remove("user_kakao_id");
+      await pref.remove("access_token");
+      await pref.remove("token_expire");
+      await pref.remove("refresh_expire");
+      await LocalStorage.delete("profile.jpg");
+      log('Remove local user info: ${pref.getString("user_kakao_id") == null}');
+      return true;
+    } catch (error) {
+      log('Error removing user info: $error');
+      return false;
+    }
   }
 }

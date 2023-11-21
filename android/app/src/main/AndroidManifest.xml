@@ -3,14 +3,17 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <!-- 네트워크 사용 설정 -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- 로컬 스토리지 사용 설정 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
     <application
         android:label="iww_frontend"
-        
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">
 
         <!-- 카카오 로그인 커스텀 URL 스킴 설정 -->
-        <activity 
+        <activity
             android:name="com.kakao.sdk.flutter.AuthCodeCustomTabsActivity"
             android:exported="true">
             <intent-filter android:label="flutter_web_auth">
@@ -23,8 +26,6 @@
                 <data android:scheme="${kakaoUrlScheme}" android:host="oauth"/>
             </intent-filter>
         </activity>
-        
-
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -1,20 +1,20 @@
 // msg: 가능하면 건드리지 말자 by 다희 소정
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/myroom.dart';
-import 'package:iww_frontend/screens/findContact.dart';
-import 'package:iww_frontend/screens/findContact.viewmodel.dart';
-import 'package:iww_frontend/screens/landing.dart';
-import 'package:iww_frontend/screens/signup.dart';
-import 'package:iww_frontend/screens/signup.viewmodel.dart';
+import 'package:iww_frontend/view/widget/add_todo.dart';
+import 'package:iww_frontend/repository/friend.repository.dart';
+import 'package:iww_frontend/repository/user.repository.dart';
+import 'package:iww_frontend/view/screens/myroom.dart';
+import 'package:iww_frontend/view/screens/findContact.dart';
+import 'package:iww_frontend/viewmodel/findContact.viewmodel.dart';
+import 'package:iww_frontend/view/screens/landing.dart';
+import 'package:iww_frontend/view/screens/signup.dart';
+import 'package:iww_frontend/viewmodel/landing.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/signup.viewmodel.dart';
 import 'package:provider/provider.dart';
-import 'appbar.dart';
-import 'bottombar.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'home.dart';
+import 'package:iww_frontend/view/widget/home.dart';
 import 'package:iww_frontend/utils/appEntries.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_template.dart';
-// import 'package:tailwind/tailwind.dart';
 
 void main() async {
   // await TwService.init();
@@ -28,23 +28,39 @@ void main() async {
     javaScriptAppKey: Secrets.KAKAO_JS_APP_KEY,
   );
 
-  runApp(MaterialApp(
-    // 라우트 정의
-    routes: {
-      '/landing': (context) => const Landing(),
-      '/signup': (context) => ChangeNotifierProvider<SignUpViewModel>(
-            create: (context) => SignUpViewModel(),
-            child: SignUp(),
-          ),
-      '/home': (context) => const MyHome(),
-      '/contact': (context) => ChangeNotifierProvider<FindContactViewModel>(
-            create: (context) => FindContactViewModel(),
-            child: FindContact(),
-          ),
-      '/myroom': (context) => MyRoom(),
-    },
-    home: const MyApp(),
-    // key: TwService.appKey,
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider<SelectedDate>(
+        create: (context) => SelectedDate(),
+      ),
+      ChangeNotifierProvider<NewTodo>(create: (context) => NewTodo()),
+      Provider<UserRepository>(create: (_) => UserRepository()),
+      Provider<FriendRepository>(create: (_) => FriendRepository()),
+    ],
+    child: MaterialApp(
+        theme: ThemeData(useMaterial3: true),
+        // 라우트 정의
+        routes: {
+          '/landing': (context) => ChangeNotifierProvider<LandingViewModel>(
+              create: (_) => LandingViewModel(
+                  Provider.of<UserRepository>(_, listen: false)),
+              child: Landing()),
+          '/home': (context) => const MyHome(),
+          '/signup': (context) => ChangeNotifierProvider<SignUpViewModel>(
+                create: (_) => SignUpViewModel(
+                    Provider.of<UserRepository>(_, listen: false)),
+                child: SignUp(),
+              ),
+          '/contact': (context) => ChangeNotifierProvider<FindContactViewModel>(
+                create: (_) => FindContactViewModel(
+                    Provider.of<UserRepository>(_, listen: false),
+                    Provider.of<FriendRepository>(_, listen: false)),
+                child: AddFriends(),
+              ),
+          '/myroom': (context) =>
+              MyRoom(Provider.of<UserRepository>(context, listen: false)),
+        },
+        home: MyApp()),
   ));
 }
 
