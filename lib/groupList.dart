@@ -1,48 +1,37 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/groupDetail.dart';
 import 'groupDetail.dart';
 import 'newGroup.dart';
+import 'package:http/http.dart' as http;
 
-class GroupList extends StatelessWidget {
+class GroupList extends StatefulWidget {
   const GroupList({super.key});
-  final List<dynamic> groups = const [
-    {
-      "grp_id": 1,
-      "grp_name": "당신의 게으름 여기서 해결",
-      "grp_decs": "게으름뱅이들의 모임",
-      "owner": "이인복",
-      "cat_id": 2,
-      "cat_name": "공부",
-      "mem_cnt": "6"
-    },
-    {
-      "grp_id": 2,
-      "grp_name": "Miracle Morning을 아십니까?",
-      "grp_decs": "인증 필수 입니다.",
-      "owner": "신병철",
-      "cat_id": 4,
-      "cat_name": "맛집 탐방",
-      "mem_cnt": "5"
-    },
-    {
-      "grp_id": 3,
-      "grp_name": "과매기 팟 구함",
-      "grp_decs": "제곧네",
-      "owner": "박세준",
-      "cat_id": 2,
-      "cat_name": "공부",
-      "mem_cnt": "4"
-    },
-    {
-      "grp_id": 11,
-      "grp_name": "등산 갑니다",
-      "grp_decs": "매주 토요일 12시 등산 ㄱㄱ",
-      "owner": "김지성",
-      "cat_id": 3,
-      "cat_name": "자기개발",
-      "mem_cnt": "3"
-    }
-  ];
+
+  @override
+  State<GroupList> createState() => _GroupListState();
+}
+
+class _GroupListState extends State<GroupList> {
+  List<dynamic> groups = const [];
+
+  getList() async {
+    var result = await http
+        .get(Uri.parse('http://yousayrun.store:8088/todo'))
+        .catchError((err) {
+      print(err);
+      return null;
+    });
+    groups = jsonDecode(result.body);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getList();
+  }
 
   @override
   Widget build(BuildContext context) {
