@@ -69,3 +69,31 @@ class RenderMyRoom extends StatelessWidget {
     ]);
   }
 }
+
+// class MyRoom extends StatelessWidget {`
+//   final UserRepository userRepository;
+//   MyRoom(this.userRepository, {Key? key}) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     CommentsProvider commentsProvider = CommentsProvider();
+
+//     final userId = ModalRoute.of(context)!.settings.arguments as String;
+
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('My Room'),
+//       ),
+//       body: Center(
+//         child: ElevatedButton(
+//           onPressed: () async {
+//             int? currentUserId = await userRepository.getUserId();
+//             showCommentsBottomSheet(
+//                 context, commentsProvider, currentUserId.toString(), userId);
+//           },
+//           child: Text('방명록 보기'),
+//         ),
+//       ),
+//     );
+//   }
+// }
