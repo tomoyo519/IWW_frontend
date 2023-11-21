@@ -53,7 +53,15 @@ class MyHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(),
+      appBar: MyAppBar(
+        actions: [
+          IconButton(
+            icon: Icon(Icons.notifications_outlined),
+            onPressed: () {},
+            color: (Colors.black),
+          )
+        ],
+      ),
       body: Column(
         children: [
           Expanded(child: Pet()),
@@ -100,7 +108,7 @@ class _ToDoListState extends State<ToDoList> {
     }
 
     setState(() {
-      myTodoList = jsonDecode(result.body);
+      // myTodoList = jsonDecode(result.body);
     });
 
     // TODO - 서버 맛 간경우
@@ -569,6 +577,28 @@ class _ToDoListState extends State<ToDoList> {
                         padding: EdgeInsets.all(10),
                         child: Text("아직 등록된 할 일이 없습니다. 등록해볼까요?"),
                       );
+
+                return Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.black26, width: 1)),
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.all(10),
+                  padding: EdgeInsets.all(10),
+                  child: myTodoList.isNotEmpty
+                      ? Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                              Checkbox(value: false, onChanged: (c) {}),
+                              Text(myTodoList[i]["todo_name"]),
+                              myTodoList[i]["grp_id"] == null
+                                  ? Icon(Icons.query_builder_outlined)
+                                  : Icon(Icons.groups_outlined)
+                            ])
+                      : Container(),
+                );
+
               }),
         ),
         // TODO - 실제파일 들어오면 버튼 위치 변경하기
