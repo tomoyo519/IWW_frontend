@@ -34,8 +34,9 @@ class RenderMyRoom extends StatelessWidget {
         disableZoom: true,
         cameraControls: false,
         animationName: "walk",
-        cameraOrbit: "30deg 60deg 2m", // theta, phi, radius
-        cameraTarget: "1m 2m 2m", // x, y ,z
+        cameraOrbit: "30deg 60deg 0m", // theta, phi, radius
+        cameraTarget: "1m 4m 3m", // x(왼쪽 위), y(높이) ,z (오른쪽 위)
+        // TODO 오브젝트 위치를 어떻게 이동시킬지 고민해보자
       ),
       Positioned(
         bottom: 0,
