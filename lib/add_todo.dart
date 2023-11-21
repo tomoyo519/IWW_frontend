@@ -83,21 +83,18 @@ class _AddTodoState extends State<AddTodo> {
       print(error);
     });
     if (result.statusCode == 201) {
-      return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('할일 추가가 완료 되었어요!'),
-            actions: <Widget>[
-              ElevatedButton(
-                child: Text('Close'),
-                onPressed: () {
-                  Navigator.of(context).popAndPushNamed('/');
-                },
-              ),
-            ],
-          );
-        },
+      Navigator.pop(context);
+      widget.getData();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('추가가 완료 되었어요!'),
+          // action: SnackBarAction(
+          //   label: 'Action',
+          //   onPressed: () {
+          //     // Code to execute.
+          //   },
+          // ),
+        ),
       );
     } else {
       print('서버 실패');
@@ -186,13 +183,13 @@ class _AddTodoState extends State<AddTodo> {
                                           Consumer<NewTodo>(
                                             builder:
                                                 (context, selectedDate, child) {
-                                              // final format = DateFormat(
-                                              //     'yyyy년 M월 d일'); // 문자열을 파싱하는 형식
-                                              // DateTime dateTime = format
-                                              //     .parse(selectedDate.selectedDate);
-                                              return Text(selectedDate
-                                                  .selectedDate
-                                                  .toString());
+                                              DateTime dateTime =
+                                                  DateTime.parse(selectedDate
+                                                      .selectedDate);
+                                              String formattedDate =
+                                                  DateFormat('yyyy년 MM월 dd일')
+                                                      .format(dateTime);
+                                              return Text(formattedDate);
                                             },
                                           )
                                         ],

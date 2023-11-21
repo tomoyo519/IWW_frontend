@@ -5,7 +5,6 @@ import 'guestbook.dart'; // guestbook.dart 임포트
 
 class MyRoom extends StatelessWidget {
   final UserRepository userRepository;
-
   MyRoom(this.userRepository, {Key? key}) : super(key: key);
 
   @override
