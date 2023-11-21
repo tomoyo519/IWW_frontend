@@ -1,15 +1,11 @@
 // msg: 가능하면 건드리지 말자 by 다희 소정
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/view/widget/add_todo.dart';
-import 'package:iww_frontend/repository/friend.repository.dart';
+import 'package:iww_frontend/providers.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/view/screens/myroom.dart';
 import 'package:iww_frontend/view/screens/findContact.dart';
-import 'package:iww_frontend/viewmodel/findContact.viewmodel.dart';
 import 'package:iww_frontend/view/screens/landing.dart';
 import 'package:iww_frontend/view/screens/signup.dart';
-import 'package:iww_frontend/viewmodel/landing.viewmodel.dart';
-import 'package:iww_frontend/viewmodel/signup.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/view/widget/home.dart';
 import 'package:iww_frontend/utils/appEntries.dart';
@@ -17,8 +13,6 @@ import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_template.dart';
 
 void main() async {
-  // await TwService.init();
-
   // 웹 환경에서 카카오 로그인을 정상적으로 완료하려면 runApp() 호출 전 아래 메서드 호출 필요
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -29,38 +23,28 @@ void main() async {
   );
 
   runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider<SelectedDate>(
-        create: (context) => SelectedDate(),
+    // Repository Providers
+    providers: getRepositories(),
+    child: MultiProvider(
+      // Service Providers
+      providers: getServices(),
+      child: MultiProvider(
+        // ViewModel Providers
+        providers: getChangeNotifiers(),
+        child: MaterialApp(
+            theme: ThemeData(useMaterial3: true),
+            // 라우트 정의
+            routes: {
+              '/home': (context) => const MyHome(),
+              '/landing': (context) => LandingPage(),
+              '/signup': (context) => SignUpPage(),
+              '/contact': (context) => AddFriendsPage(),
+              '/myroom': (context) =>
+                  MyRoom(Provider.of<UserRepository>(context, listen: false)),
+            },
+            home: MyApp()),
       ),
-      ChangeNotifierProvider<NewTodo>(create: (context) => NewTodo()),
-      Provider<UserRepository>(create: (_) => UserRepository()),
-      Provider<FriendRepository>(create: (_) => FriendRepository()),
-    ],
-    child: MaterialApp(
-        theme: ThemeData(useMaterial3: true),
-        // 라우트 정의
-        routes: {
-          '/landing': (context) => ChangeNotifierProvider<LandingViewModel>(
-              create: (_) => LandingViewModel(
-                  Provider.of<UserRepository>(_, listen: false)),
-              child: Landing()),
-          '/home': (context) => const MyHome(),
-          '/signup': (context) => ChangeNotifierProvider<SignUpViewModel>(
-                create: (_) => SignUpViewModel(
-                    Provider.of<UserRepository>(_, listen: false)),
-                child: SignUp(),
-              ),
-          '/contact': (context) => ChangeNotifierProvider<FindContactViewModel>(
-                create: (_) => FindContactViewModel(
-                    Provider.of<UserRepository>(_, listen: false),
-                    Provider.of<FriendRepository>(_, listen: false)),
-                child: AddFriends(),
-              ),
-          '/myroom': (context) =>
-              MyRoom(Provider.of<UserRepository>(context, listen: false)),
-        },
-        home: MyApp()),
+    ),
   ));
 }
 

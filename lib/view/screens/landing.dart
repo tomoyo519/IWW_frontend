@@ -1,6 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/utils/auth.service.dart';
 import 'package:iww_frontend/viewmodel/landing.viewmodel.dart';
 import 'package:provider/provider.dart';
+
+// 의존성 주입을 위한 위젯 분리
+class LandingPage extends StatelessWidget {
+  const LandingPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context, listen: false);
+    return ChangeNotifierProvider<LandingViewModel>(
+      create: (context) => LandingViewModel(authService),
+      child: Landing(),
+    );
+  }
+}
 
 /// 앱 초기 랜딩 페이지 화면
 /// 디바이스에 카카오 토큰이 없거나 최초 설치한 유저
@@ -11,27 +26,13 @@ class Landing extends StatelessWidget {
   void handleKakaoLogin(BuildContext context) async {
     LandingViewModel viewModel = context.read<LandingViewModel>();
 
-    // 디바이스에 로그인 정보가 있는지 확인
-    // if (await viewModel.isLoggedIn() && context.mounted) {
-    //   // TODO: && await getUserById from server
-    //   Navigator.pushReplacementNamed(context, "/home");
-    //   return;
-    // }
+    // 로그인 수행
+    bool isLoggedIn = await viewModel.login() != null;
 
-    var user = await viewModel.handleKakaoLogin();
-    if (user == null || user.user_kakao_id == null) {
-      // TODO: 예외처리 UI update
-      return;
-    }
-
-    // 이미 가입한 사용자인지 확인
-    if (await viewModel.isRegistered(user.user_kakao_id!) && context.mounted) {
+    if (!isLoggedIn && context.mounted) {
+      Navigator.pushReplacementNamed(context, "/signup");
+    } else if (context.mounted) {
       Navigator.pushReplacementNamed(context, "/home");
-    }
-
-    // 가입이 필요한 사용자
-    if (context.mounted) {
-      Navigator.pushNamed(context, "/signup");
     }
   }
 

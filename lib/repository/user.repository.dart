@@ -9,57 +9,80 @@ import 'package:iww_frontend/model/user/get-user-by-contact.dto.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// 유저 관련 리포지토리
+/// 로컬 캐시 및 DB에서 유저 데이터를 관리합니다.
 class UserRepository {
+  /// ================== ///
+  ///       Create       ///
+  /// ================== ///
+
   // 현재 로그인한 유저 생성
-  Future<bool?> createUser(String name, String tel) async {
-    final SharedPreferences pref = await SharedPreferences.getInstance();
+  Future<UserInfo?> createUser(
+      String userName, String userTel, String userKakaoId) async {
+    // 서버로 유저 정보 전송
+    Response response = await RemoteDataSource.post(
+      "/user",
+      body: {
+        "user_name": userName,
+        "user_tel": userTel,
+        "user_kakao_id": userKakaoId
+      },
+    );
 
-    // Local
-    // user_kakao_id는 로그인 완료 후 저장됨
-    await pref.setString("user_name", name);
-    await pref.setString("user_tel", tel);
-    await pref.setInt("user_hp", 0);
-    log("Saved in SharedPreferences: $name");
-
-    String? kakaoId = pref.getString("user_kakao_id");
-    if (kakaoId == null || kakaoId.isEmpty) {
-      log("No saved user kakao id in device");
-      return false;
+    if (response.statusCode != 201) {
+      return null;
     }
 
-    // Remote
-    Response response = await RemoteDataSource.post("/user",
-        body: {"user_name": name, "user_tel": tel, "user_kakao_id": kakaoId});
+    var remoteUserInfo = UserInfo.fromJson(json.decode(response.body));
+    var isLocallySaved = await saveUserInLocal(remoteUserInfo);
+    if (!isLocallySaved) {
+      // 로컬에서 저장되지 않았으면 DB에서 삭제
+      await deleteUserByKakaoId(userKakaoId);
+      return null;
+    }
 
-    final jsonData = json.decode(response.body);
+    return remoteUserInfo;
+  }
 
-    if (response.statusCode == 201) {
-      // JSON 데이터를 User 객체로 변환
-      final userResponse = UserInfo.fromJson(jsonData);
-      log("User created: ${userResponse.user_id}");
+  // 유저 프로필 이미지 서버로 전송
+  Future<bool> createUserProfile(int userId) async {
+    // 로컬 스토리지에 저장해둔 파일 불러오기
+    File image = await LocalStorage.read("$userId.jpg");
 
-      // SharedPreference에 아이디 저장하고 결과 반환
-      if (await pref.setInt("user_id", userResponse.user_id)) {
-        // 로컬에 아이디 저장 완료후 이미지 서버로 전송
-        // 로컬 저장 경로는 카카오 아이디, 서버 저장 경로는 유저 아이디 참고
-        return await _createUserProfile(kakaoId, userResponse.user_id);
-      }
-      return false;
-    } else {
-      log("Error while creating user: ${jsonData.toString()}");
+    return await RemoteDataSource.postFormData(
+            "/user/$userId/profile", 'profile',
+            file: image, filename: '$userId.jpg')
+        .then((response) => response.statusCode == 201);
+  }
+
+  // 유저 정보를 SharedPreference에 저장
+  Future<bool> saveUserInLocal(UserInfo user) async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    try {
+      await pref.setInt("user_id", user.user_id);
+      await pref.setString("user_name", user.user_name);
+      await pref.setString("user_tel", user.user_tel);
+      await pref.setString("user_kakao_id", user.user_kakao_id);
+      await pref.setInt("user_hp", user.user_hp);
+      return true;
+    } catch (error) {
+      log("Failed to save user in shared preference: $error");
       return false;
     }
   }
 
+  /// ================== ///
+  ///        Read        ///
+  /// ================== ///
+
   // 카카오 아이디 기준으로 유저 정보 조회
-  Future<UserInfo?> getUserByKakaoId(String kakaoId) async {
-    return await RemoteDataSource.get("/user?user_kakao_id=$kakaoId")
+  Future<UserInfo?> getUserByKakaoId(String userKakaoId) async {
+    return await RemoteDataSource.get("/user?user_kakao_id=$userKakaoId")
         .then((response) {
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 && response.body.isNotEmpty) {
         var jsonData = json.decode(response.body);
         return UserInfo.fromJson(jsonData);
       } else {
+        // 해당 유저가 없거나 예외 반환한 경우
         return null;
       }
     });
@@ -68,10 +91,11 @@ class UserRepository {
   // 이름을 기준으로 유저 정보 조회
   Future<UserInfo?> getUserByName(String name) async {
     return await RemoteDataSource.get("/user?user_name=$name").then((response) {
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 && response.body.isNotEmpty) {
         var jsonData = json.decode(response.body);
         return UserInfo.fromJson(jsonData);
       } else {
+        // 해당 유저가 없거나 예외 반환한 경우
         return null;
       }
     });
@@ -82,7 +106,8 @@ class UserRepository {
     return await RemoteDataSource.post("/user/contacts", body: body.toJson())
         .then((response) {
       if (response.statusCode == 201) {
-        var jsonData = json.decode(response.body); // JSON 문자열을 Dart 객체로 변환
+        // JSON 문자열을 Dart 객체로 변환
+        var jsonData = json.decode(response.body);
         return (jsonData as List)
             .map((item) => UserInfo.fromJson(item as Map<String, dynamic>))
             .toList();
@@ -93,20 +118,71 @@ class UserRepository {
     });
   }
 
-  // 유저 프로필 이미지 서버로 전송
-  Future<bool?> _createUserProfile(kakaoId, userId) async {
-    // 로컬 스토리지에 저장해둔 파일 불러오기
-    File image = await LocalStorage.read("$kakaoId.jpg");
+  // SharedPreference에서 유저 정보를 가져옴
+  Future<UserInfo?> getUserFromLocal() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    int? userId = pref.getInt("user_id");
+    String? userName = pref.getString("user_name");
+    String? userTel = pref.getString("user_tel");
+    String? userKakaoId = pref.getString("user_kakao_id");
+    int? userHp = pref.getInt("user_hp");
 
-    return await RemoteDataSource.postFormData(
-            "/user/$userId/profile", 'profile',
-            file: image, filename: '$userId.jpg')
-        .then((response) => response.statusCode == 201);
+    if (userId != null &&
+        userName != null &&
+        userTel != null &&
+        userKakaoId != null &&
+        userHp != null) {
+      return UserInfo(
+          user_id: userId,
+          user_name: userName,
+          user_tel: userTel,
+          user_kakao_id: userKakaoId,
+          user_hp: userHp);
+    }
+    return null;
   }
 
   // 로컬 SharedPreference에서 유저 아이디 가져오기
-  Future<int?> getUserId() async {
+  // Future<int?> getUserId() async {
+  //   final SharedPreferences pref = await SharedPreferences.getInstance();
+  //   return pref.getInt("user_id");
+  // }
+
+  /// ================== ///
+  ///       Update       ///
+  /// ================== ///
+
+  // TODO:
+
+  /// ================== ///
+  ///       Delete       ///
+  /// ================== ///
+
+  // 유저 아이디를 기준으로 DB에서 삭제 처리
+  Future<bool> deleteUserById(int userId) async {
+    return RemoteDataSource.delete("/user/$userId")
+        .then((response) => response.statusCode == 200);
+  }
+
+  // 유저 카카오 아이디를 기준으로 DB에서 삭제 처리
+  Future<bool> deleteUserByKakaoId(String kakaoId) async {
+    log("@@ $kakaoId");
+    return RemoteDataSource.delete("/user?user_kakao_id=$kakaoId")
+        .then((response) => response.statusCode == 200);
+  }
+
+  // 로컬 캐시에서 유저 정보 클리어
+  Future<bool> deleteUserInLocal() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
-    return pref.getInt("user_id");
+    try {
+      await pref.remove("user_id");
+      await pref.remove("user_name");
+      await pref.remove("user_tel");
+      await pref.remove("user_kakao_id");
+      await pref.remove("user_hp");
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 }

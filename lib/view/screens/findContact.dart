@@ -1,10 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/repository/friend.repository.dart';
+import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/view/widget/appbar.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/viewmodel/findContact.viewmodel.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:provider/provider.dart';
 
+class AddFriendsPage extends StatelessWidget {
+  const AddFriendsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider<FindContactViewModel>(
+      create: (_) => FindContactViewModel(
+          Provider.of<UserRepository>(_, listen: false),
+          Provider.of<FriendRepository>(_, listen: false)),
+      child: AddFriends(),
+    );
+  }
+}
+
+// 연락처 기반 친구추가
 class AddFriends extends StatelessWidget {
   const AddFriends({super.key});
 

@@ -1,21 +1,27 @@
+import "dart:developer";
+
 import "package:flutter/material.dart";
-import "package:iww_frontend/utils/kakaoLogin.dart";
-import "package:iww_frontend/view/screens/myroom.dart";
+import "package:iww_frontend/utils/auth.service.dart";
+import "package:provider/provider.dart";
 
 /// 메인에서 여러 가지 인증 로직을 테스트합니다.
 class _SignUpTest {
-  static final kakaoLogin = KaKaoLogin.instance;
-
-  newUser() {
-    kakaoLogin.disconnect();
+  Future<void> newUser(BuildContext context) async {
+    final authService = context.read<AuthService>();
+    // 로컬에 저장된 유저정보 가져옴
+    await authService.disconnect();
+    log("[TEST] User first installed the app.");
   }
 
-  expiredToken() {
-    kakaoLogin.logout();
+  Future<void> expiredToken(BuildContext context) async {
+    final authService = context.read<AuthService>();
+    await authService.logout();
+    log("[TEST] User logged out.");
   }
 
-  Future<bool> autoLogin() async {
-    return await kakaoLogin.autoLogin() != null;
+  Future<bool> autoLogin(BuildContext context) async {
+    final authService = context.read<AuthService>();
+    return await authService.login() != null;
   }
 }
 
@@ -32,16 +38,16 @@ class AppEntries extends StatelessWidget {
         children: [
           ElevatedButton(
               onPressed: () {
-                _signInTest.newUser();
+                _signInTest.newUser(context);
                 Navigator.pushNamed(context, "/landing");
               },
               child: const Text("🐤 회원가입")),
           ElevatedButton(
               onPressed: () {
-                _signInTest.expiredToken();
+                _signInTest.expiredToken(context);
                 Navigator.pushNamed(context, "/landing");
               },
-              child: const Text("🤔 액세스 토큰이 없거나 만료된 유저")),
+              child: const Text("🤔 로그아웃된 유저")),
           ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(context, "/contact");
@@ -49,7 +55,7 @@ class AppEntries extends StatelessWidget {
               child: const Text("🤔 연락처 기반 친구추가")),
           ElevatedButton(
               onPressed: () async {
-                _signInTest.autoLogin().then((result) {
+                _signInTest.autoLogin(context).then((result) {
                   if (result && context.mounted) {
                     Navigator.pushNamed(context, "/home");
                   }
