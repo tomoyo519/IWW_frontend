@@ -6,45 +6,72 @@ import 'listWidget.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+final List<String> labels = [
+  '운동',
+  '식단',
+  '회사업무',
+  '가족행사',
+  '저녁약속',
+  '청첩장모임',
+  '루틴',
+  '개발공부'
+];
+
 class GroupDetail extends StatefulWidget {
   GroupDetail({this.group, super.key});
   final group;
-  TextEditingController controller =
-      TextEditingController(text: "우리 그룹의 규칙이에요!");
+  TextEditingController controller = TextEditingController(text: "");
 
   @override
   State<GroupDetail> createState() => _GroupDetailState();
 }
 
 class _GroupDetailState extends State<GroupDetail> {
-  List<dynamic> groutRoutine = [];
+  List<dynamic> groupRoutine = [];
   List<dynamic> groupMems = [];
 
   getData() async {
-    print(widget.group["grp_id"]);
+    print(widget.group);
     var result = await http.get(Uri.parse(
         'http://yousayrun.store:8088/group/${widget.group["grp_id"]}'));
 
     var resultJson = jsonDecode(result.body);
+
     if (result.body.isNotEmpty) {
       setState(() {
-        groutRoutine = resultJson["rout_detail"];
+        groupRoutine = resultJson["rout_detail"];
       });
 
       setState(() => groupMems = resultJson["grp_mems"]);
     }
   }
 
-  joinGroup() {
-    print("api 진행 중");
+  joinGroup(grp_id) async {
+    // TODO - user_id 수정하기.
+    var data = jsonEncode({
+      "user_id": "6",
+      "grp_id": grp_id.toString(),
+    });
+
+    var result = await http
+        .post(Uri.parse('http://yousayrun.store:8088/group/${grp_id}/join/6'),
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+            },
+            body: data)
+        .catchError((err) {
+      print(err);
+      return null;
+    });
+    print(result.body);
   }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    widget.controller =
-        TextEditingController(text: widget.group["grp_decs"] ?? "");
+    // widget.controller =
+    //     TextEditingController(text: widget.group["grp_decs"] ?? "");
 
     getData();
   }
@@ -55,9 +82,14 @@ class _GroupDetailState extends State<GroupDetail> {
         appBar: MyAppBar(),
         body: Container(
             margin: EdgeInsets.all(10),
-            padding: EdgeInsets.all(10),
+            // padding: EdgeInsets.all(10),
+
             child: Column(children: [
-              Text(widget.group["grp_name"]),
+              Text(
+                widget.group["grp_name"],
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+              ),
+              Divider(color: Colors.grey, thickness: 1, indent: 10),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -72,7 +104,7 @@ class _GroupDetailState extends State<GroupDetail> {
                               setLabel: (newLabel) {
                                 Provider.of<SelectedDate>(context,
                                         listen: false)
-                                    .setSelectedDate(newLabel as String);
+                                    .setSelectedLabel(newLabel);
                               },
                             );
                           });
@@ -80,6 +112,7 @@ class _GroupDetailState extends State<GroupDetail> {
                     child: Container(
                       width: MediaQuery.of(context).size.width * 0.15,
                       alignment: Alignment.center,
+                      // TODO - 수정되어야 함.
                       child: Text("카테고리"),
                     ),
                   ),
@@ -88,35 +121,60 @@ class _GroupDetailState extends State<GroupDetail> {
               TextField(
                 controller: widget.controller,
                 decoration: InputDecoration(
+                  hintText: "우리 그룹에 대한 설명이에요",
                   contentPadding: EdgeInsets.symmetric(vertical: 60),
                   border: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.black, width: 1)),
                 ),
               ),
-              Text("기본 루틴"),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "기본 루틴",
+                      style: TextStyle(fontSize: 16),
+                    )),
+              ),
               Divider(color: Colors.grey, thickness: 1, indent: 10),
-              Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.black26, width: 1)),
-                  alignment: Alignment.center,
-                  margin: EdgeInsets.all(10),
-                  padding: EdgeInsets.all(10),
-                  child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Checkbox(
-                            value: false,
-                            onChanged: (c) {
-                              //TODO - onclick시 todo 완료 체크 해야함
-                            }),
-                        // Text(groutRoutine[i]["todo_name"]),
-                        // groutRoutine[i]["grp_id"] == null
-                        //     ? Icon(Icons.query_builder_outlined)
-                        //     : Icon(Icons.groups_outlined)
-                      ])),
-              Text("참가자"),
+              Expanded(
+                child: ListView.builder(
+                    itemCount: groupRoutine.length,
+                    itemBuilder: (c, i) {
+                      return groupRoutine.isNotEmpty
+                          ? Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                      color: Colors.black26, width: 1)),
+                              alignment: Alignment.center,
+                              margin: EdgeInsets.all(10),
+                              padding: EdgeInsets.all(10),
+                              child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Checkbox(
+                                      onChanged: null,
+                                      value: false,
+                                    ),
+                                    Text(groupRoutine[i]["rout_name"]),
+                                    Icon(Icons.groups_outlined)
+                                  ]),
+                            )
+                          : Text("비었음");
+                    }),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "참가자",
+                      style: TextStyle(fontSize: 16),
+                    )),
+              ),
               Divider(color: Colors.grey, thickness: 1, indent: 10),
               Expanded(
                 child: GridView.builder(
@@ -127,7 +185,22 @@ class _GroupDetailState extends State<GroupDetail> {
                     return Column(
                       children: [
                         groupMems.isNotEmpty
-                            ? Text(groupMems[index]["user_name"])
+                            ? Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                        color: Colors.orangeAccent, width: 5)),
+                                alignment: Alignment.center,
+                                margin: EdgeInsets.all(10),
+                                padding: EdgeInsets.all(10),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Icon(Icons.account_circle_rounded),
+                                    Text(groupMems[index]["user_name"]),
+                                  ],
+                                ))
                             : Text("텅")
                       ],
                     );
@@ -143,7 +216,7 @@ class _GroupDetailState extends State<GroupDetail> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10)))),
                   onPressed: () {
-                    joinGroup();
+                    joinGroup(widget.group["grp_id"]);
                   },
                   child: Text("참가하기", style: TextStyle(color: Colors.white)),
                 ),

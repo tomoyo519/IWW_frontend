@@ -91,7 +91,6 @@ class _ToDoListState extends State<ToDoList> {
   List<dynamic> myTodoList = [];
 
   getData() async {
-    print('getData 실행됨');
     // TODO - 환경변수로 domain 빼놓기, user_id 수정해야 함
     // TODO - 서버가 맛이 갔을때는 어떤 화면을 보여줘야 하는가?
     var result = await http
@@ -541,8 +540,6 @@ class _ToDoListState extends State<ToDoList> {
     return Column(
       children: [
         Expanded(
-          // width: MediaQuery.of(context).size.width,
-          // height: MediaQuery.of(context).size.height / 2,
           child: ListView.builder(
               controller: scroll,
               itemCount: myTodoList.isNotEmpty ? myTodoList.length : 1,
@@ -550,12 +547,9 @@ class _ToDoListState extends State<ToDoList> {
                 return myTodoList.isNotEmpty
                     ? GestureDetector(
                         onLongPress: () {
-                          //
-                          print('길게 눌렀을떄, ${i}');
                           deleteTodo(myTodoList[i]["todo_id"]);
                         },
                         onTap: () {
-                          print('그냥 짧게 눌렀을때,');
                           editTodo(myTodoList[i]);
                         },
                         child: Container(
@@ -572,8 +566,28 @@ class _ToDoListState extends State<ToDoList> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Checkbox(
-                                      value: false,
-                                      onChanged: (c) {
+                                      value: myTodoList[i]["todo_done"],
+                                      onChanged: (c) async {
+                                        bool todoDone =
+                                            myTodoList[i]["todo_done"];
+                                        print(todoDone);
+                                        var result = await http
+                                            .patch(
+                                                Uri.parse(
+                                                    "http://yousayrun.store:8088/todo/${myTodoList[i]["todo_id"]}"),
+                                                headers: <String, String>{
+                                                  'Content-Type':
+                                                      'application/json; charset=UTF-8',
+                                                },
+                                                body: jsonEncode({
+                                                  "todo_done": !todoDone,
+                                                }))
+                                            .catchError((err) {
+                                          print(err);
+                                          return null;
+                                        });
+                                        getData();
+
                                         //TODO - onclick시 todo 완료 체크 해야함
                                       }),
                                   Text(myTodoList[i]["todo_name"]),
@@ -594,8 +608,6 @@ class _ToDoListState extends State<ToDoList> {
                       );
               }),
         ),
-        // TODO - 실제파일 들어오면 버튼 위치 변경하기
-        // if (widget.showAddTodo) AddTodo()
         AddTodo(getData: getData)
       ],
     );
