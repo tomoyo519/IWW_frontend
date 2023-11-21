@@ -1,10 +1,13 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/screens/user.model.dart';
+import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 
 class SignUpViewModel extends ChangeNotifier {
+  final UserRepository userRepository;
+  SignUpViewModel(this.userRepository);
+
   // User information
   String _name = '';
   String _tel = '';
@@ -39,11 +42,8 @@ class SignUpViewModel extends ChangeNotifier {
     log("문자를 보냈다고 치자");
   }
 
-  void signUp() {
-    UserRepository.createUser(UserLoginModel(_kakaoId, _name, _tel));
+  // 회원가입
+  Future<bool?> signUp() async {
+    return await userRepository.createUser(_name, _tel);
   }
-
-  void checkUniqueNickname() {}
-
-  // void check
 }

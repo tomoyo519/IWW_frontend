@@ -30,6 +30,7 @@ environment:
 dependencies:
   contacts_service: ^0.6.3
   cupertino_icons: ^1.0.2
+  drift: ^2.13.0
   flutter:
     sdk: flutter
   flutter_localizations:
@@ -38,26 +39,22 @@ dependencies:
   intl: any
   kakao_flutter_sdk: ^1.7.0
   model_viewer_plus: ^1.6.0
+  path: ^1.8.3
+  path_provider: ^2.0.15
   permission_handler: ^11.0.1
   provider: ^6.1.1
   shared_preferences: ^2.2.2
+  sqlite3_flutter_libs: ^0.5.0
   table_calendar: ^3.0.8
 
-  # For local database
-  drift: ^2.13.0
-  sqlite3_flutter_libs: ^0.5.0
-  path_provider: ^2.0.0
-  path: ^1.8.3
-
 dev_dependencies:
-  flutter_lints: ^2.0.0
-  flutter_test:
-    sdk: flutter
-  tailwind_cli: ^0.7.1
+  build_runner: ^2.4.6
 
   # For local database
   drift_dev: ^2.13.0
-  build_runner: ^2.4.6
+  flutter_lints: ^2.0.0
+  flutter_test:
+    sdk: flutter
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

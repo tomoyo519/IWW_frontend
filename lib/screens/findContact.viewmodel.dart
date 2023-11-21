@@ -1,41 +1,62 @@
-import 'package:contacts_service/contacts_service.dart';
+import 'dart:developer';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/model/user/get-user-by-contact.dto.dart';
+import 'package:iww_frontend/model/user/user-info.model.dart';
+import 'package:iww_frontend/repository/friend.repository.dart';
+import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-// ViewModel에서 받아오는 UI 구성에 필요한 정보
-class ContactDataObj {
-  int id;
-  String? name;
-  String nickName;
-  String? profileImage;
-
-  ContactDataObj(this.id, this.name, this.nickName, this.profileImage);
-}
+import 'package:contacts_service/contacts_service.dart';
 
 class FindContactViewModel extends ChangeNotifier {
-  // Get contacts from user device
+  final UserRepository userRepository;
+  final FriendRepository friendRepository;
 
-  final List<ContactDataObj> _dummy = [
-    ContactDataObj(1, "김지연", "세상만사귀찮", null),
-    ContactDataObj(2, "혜린", "뿅뿅고양이", null),
-    ContactDataObj(3, "정글 7기 신병철님", "미라클펄슨", null),
-    ContactDataObj(4, null, "문지캠대장", null),
-    ContactDataObj(5, "이현우", "whysoserious", null),
-  ];
+  FindContactViewModel(this.userRepository, this.friendRepository);
 
-  List<ContactDataObj> get contacts => _dummy;
-
-  addFriend() async {
-    // TODO:
+  // UI State
+  int _friendCnt = 0;
+  int get friendCnt => _friendCnt;
+  set friendCnt(int val) {
+    _friendCnt = val;
+    notifyListeners();
   }
 
-  // Future<void> getContacts() async {
+  // 네트워크가 연결되었는지 여부
+  Future<bool> get isNetworkConnected async {
+    // TODO: Not implemented
+    return true;
+  }
+
   // 연락처를 기준으로 서버에서 유저를 찾아 반환 (유저 아이디만)
-  //   if (await Permission.contacts.request().isGranted) {
-  //     _contacts = await ContactsService.getContacts(withThumbnails: true);
-  //   } else {
-  //     // TODO: 접근 권한을 얻지 못한 경우
-  //     // 메인화면으로 전환
-  //   }
-  // }
+  Future<List<UserInfo>?> get contacts async {
+    if (await Permission.contacts.request().isGranted) {
+      List<Contact> contacts =
+          await ContactsService.getContacts(withThumbnails: false);
+
+      // 모든 연락처의 전화번호를 단일 리스트로 평탄화
+      var phoneNumbers = contacts
+          .expand((contact) => contact.phones!.map((phone) => phone.value!))
+          .toList();
+
+      if (phoneNumbers.isEmpty) {
+        return [];
+      }
+
+      return await userRepository
+          .getUsersByContacts(GetUsersByContactsDto(phoneNumbers));
+    }
+    return [];
+  }
+
+  // 친구추가
+  Future<bool> createFriend(int friendId) async {
+    return await friendRepository.createFriend(friendId);
+  }
+
+  // 친구삭제
+  Future<bool> deleteFriend(int friendId) async {
+    return await friendRepository.deleteFriend(friendId);
+  }
 }
