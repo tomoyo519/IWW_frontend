@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:iww_frontend/view/widget/home.dart';
 import 'package:provider/provider.dart';
 import 'calendar.dart';
@@ -113,13 +112,13 @@ class _AddTodoState extends State<AddTodo> {
         alignment: Alignment.center,
         margin: EdgeInsets.all(10),
         padding: EdgeInsets.all(10),
-        child: Row(children: [Icon(Icons.add_outlined), Text('할일추가 하기')]),
+        child: Row(children: const [Icon(Icons.add_outlined), Text('할일추가 하기')]),
       ),
       onPressed: () {
         showModalBottomSheet(
           context: context,
           builder: (BuildContext context) {
-            return Container(
+            return SizedBox(
               height: MediaQuery.of(context).size.height / 2,
               child: Center(
                 child: Column(
@@ -291,7 +290,7 @@ class _AddTodoState extends State<AddTodo> {
                                             });
                                       },
                                       child: Row(
-                                        children: [
+                                        children: const [
                                           Icon(Icons.star_outline),
                                           Text("매일 반복")
                                         ],
@@ -309,7 +308,7 @@ class _AddTodoState extends State<AddTodo> {
                                         showModalBottomSheet(
                                             context: context,
                                             builder: (c) {
-                                              return Container(
+                                              return SizedBox(
                                                 height: MediaQuery.of(context)
                                                         .size
                                                         .height /
@@ -345,7 +344,7 @@ class _AddTodoState extends State<AddTodo> {
                                             });
                                       },
                                       child: Row(
-                                        children: [
+                                        children: const [
                                           Icon(Icons.sticky_note_2_outlined),
                                           Text("작업 설명 추가"),
                                         ],

@@ -210,7 +210,7 @@ class CommentsBottomSheet extends StatelessWidget {
 
   void _showEditCommentDialog(BuildContext context, Comment comment,
       CommentsProvider commentsProvider) {
-    TextEditingController _controller =
+    TextEditingController controller =
         TextEditingController(text: comment.content);
 
     showDialog(
@@ -219,7 +219,7 @@ class CommentsBottomSheet extends StatelessWidget {
         return AlertDialog(
           title: Text('댓글 수정'),
           content: TextField(
-            controller: _controller,
+            controller: controller,
             decoration: InputDecoration(hintText: "댓글을 입력하세요"),
           ),
           actions: <Widget>[
@@ -230,10 +230,10 @@ class CommentsBottomSheet extends StatelessWidget {
               },
             ),
             TextButton(
-              onPressed: _controller.text != comment.content
+              onPressed: controller.text != comment.content
                   ? () async {
                       bool success = await updateComment(
-                          ownerId, comment.comId, _controller.text);
+                          ownerId, comment.comId, controller.text);
                       if (success) {
                         fetchComments(commentsProvider, ownerId);
                       }
@@ -263,27 +263,27 @@ class CommentInputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController _controller = TextEditingController();
+    TextEditingController controller = TextEditingController();
 
     return Container(
       padding: EdgeInsets.all(8.0),
       child: TextField(
-        controller: _controller,
+        controller: controller,
         decoration: InputDecoration(
           hintText: '댓글을 입력해주세요',
           suffixIcon: IconButton(
             icon: Icon(Icons.send),
             onPressed: () async {
-              if (_controller.text.isNotEmpty) {
+              if (controller.text.isNotEmpty) {
                 String ownerID = ownerId; // 방명록 주인의 ID
                 String currentUserID = authorId; // 현재 사용자 ID
 
                 bool success =
-                    await addComment(ownerID, currentUserID, _controller.text);
+                    await addComment(ownerID, currentUserID, controller.text);
                 if (success) {
                   fetchComments(commentsProvider, ownerID); // 댓글 목록을 새로고침
                 }
-                _controller.clear();
+                controller.clear();
               }
             },
           ),

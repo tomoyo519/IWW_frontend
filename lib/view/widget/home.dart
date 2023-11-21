@@ -4,7 +4,6 @@ import 'package:iww_frontend/view/widget/add_todo.dart';
 import 'package:iww_frontend/view/widget/appbar.dart';
 import 'package:iww_frontend/view/widget/bottombar.dart';
 import 'package:iww_frontend/view/widget/pet.dart';
-import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'calendar.dart';
@@ -160,20 +159,19 @@ class _ToDoListState extends State<ToDoList> {
     // });
   }
 
-  deleteTodo(todo_id) {
+  deleteTodo(todoId) {
     showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) => CupertinoActionSheet(
         title: Text('할일을 삭제하시겠어요?'),
         actions: <Widget>[
           CupertinoActionSheetAction(
-            child: Text('할일을 삭제할래요!'),
             isDestructiveAction: true,
             onPressed: () {
               // TODO - 할일 삭제
               Navigator.pop(context);
               var result = http.delete(
-                  Uri.parse('http://yousayrun.store:8088/todo/${todo_id}'),
+                  Uri.parse('http://yousayrun.store:8088/todo/$todoId'),
                   headers: <String, String>{
                     'Content-Type': 'application/json; charset=UTF-8',
                   });
@@ -190,15 +188,16 @@ class _ToDoListState extends State<ToDoList> {
                 ),
               );
             },
+            child: Text('할일을 삭제할래요!'),
           ),
         ],
         cancelButton: CupertinoActionSheetAction(
-          child: Text('취소'),
           isDefaultAction: true,
           onPressed: () {
             print('취소 선택');
             Navigator.pop(context);
           },
+          child: Text('취소'),
         ),
       ),
     );
@@ -221,7 +220,7 @@ class _ToDoListState extends State<ToDoList> {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return Container(
+        return SizedBox(
           height: MediaQuery.of(context).size.height / 2,
           child: Center(
             child: Builder(builder: (context) {
@@ -390,7 +389,7 @@ class _ToDoListState extends State<ToDoList> {
                                           });
                                     },
                                     child: Row(
-                                      children: [
+                                      children: const [
                                         Icon(Icons.star_outline),
                                         Text("매일 반복")
                                       ],
@@ -408,7 +407,7 @@ class _ToDoListState extends State<ToDoList> {
                                       showModalBottomSheet(
                                           context: context,
                                           builder: (c) {
-                                            return Container(
+                                            return SizedBox(
                                               height: MediaQuery.of(context)
                                                       .size
                                                       .height /
@@ -443,7 +442,7 @@ class _ToDoListState extends State<ToDoList> {
                                           });
                                     },
                                     child: Row(
-                                      children: [
+                                      children: const [
                                         Icon(Icons.sticky_note_2_outlined),
                                         Text("작업 설명 추가"),
                                       ],
@@ -485,7 +484,7 @@ class _ToDoListState extends State<ToDoList> {
                               var json = jsonEncode(data);
                               var result = await http.put(
                                   Uri.parse(
-                                      'http://yousayrun.store:8088/todo/${id}'),
+                                      'http://yousayrun.store:8088/todo/$id'),
                                   headers: <String, String>{
                                     'Content-Type':
                                         'application/json; charset=UTF-8',
@@ -551,7 +550,7 @@ class _ToDoListState extends State<ToDoList> {
                     ? GestureDetector(
                         onLongPress: () {
                           //
-                          print('길게 눌렀을떄, ${i}');
+                          print('길게 눌렀을떄, $i');
                           deleteTodo(myTodoList[i]["todo_id"]);
                         },
                         onTap: () {

@@ -1,10 +1,6 @@
-import "dart:developer";
-
 import "package:flutter/material.dart";
-import "package:iww_frontend/model/user/create-user.dto.dart";
-import "package:iww_frontend/repository/user.repository.dart";
-import 'package:iww_frontend/model/user/user-info.model.dart';
 import "package:iww_frontend/utils/kakaoLogin.dart";
+import "package:iww_frontend/view/screens/myroom.dart";
 
 /// 메인에서 여러 가지 인증 로직을 테스트합니다.
 class _SignUpTest {

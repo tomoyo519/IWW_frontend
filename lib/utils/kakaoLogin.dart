@@ -1,10 +1,8 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:iww_frontend/datasource/localStorage.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_talk.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // OAuth 로그인 유틸 클래스
@@ -140,19 +138,19 @@ class KaKaoLogin {
 
   // 로컬에 카카오 프로필 저장
   void _saveUserKakaoProfile(
-      String? kakao_id, String? imgUrl, SharedPreferences pref) async {
+      String? kakaoId, String? imgUrl, SharedPreferences pref) async {
     // 카카오 아이디
-    if (kakao_id != null && kakao_id.isNotEmpty) {
-      await pref.setString("user_kakao_id", kakao_id);
+    if (kakaoId != null && kakaoId.isNotEmpty) {
+      await pref.setString("user_kakao_id", kakaoId);
     }
 
     // 카카오 프로필 이미지
     var imgPath;
     if (imgUrl != null && imgUrl.isNotEmpty) {
-      imgPath = await LocalStorage.save(imgUrl, '$kakao_id.jpg');
+      imgPath = await LocalStorage.save(imgUrl, '$kakaoId.jpg');
     }
 
-    log("Saved in SharedPreferences: {user_kakao_id: $kakao_id, profile: $imgPath}");
+    log("Saved in SharedPreferences: {user_kakao_id: $kakaoId, profile: $imgPath}");
   }
 
   // 로그인 실패 시 로직

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/view/widget/add_todo.dart';
 import 'package:iww_frontend/repository/friend.repository.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
-import 'package:iww_frontend/view/widget/myroom.dart';
+import 'package:iww_frontend/view/screens/myroom.dart';
 import 'package:iww_frontend/view/screens/findContact.dart';
 import 'package:iww_frontend/viewmodel/findContact.viewmodel.dart';
 import 'package:iww_frontend/view/screens/landing.dart';

@@ -13,7 +13,7 @@ class MyGroup extends StatelessWidget {
         length: 2,
         child: Scaffold(
           appBar: AppBar(
-            bottom: TabBar(tabs: [
+            bottom: TabBar(tabs: const [
               Tab(icon: Icon(Icons.groups_outlined)),
               Tab(icon: Icon(Icons.manage_search_outlined))
             ]),

@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:iww_frontend/view/widget/appbar.dart';
 import 'package:provider/provider.dart';
 import 'home.dart';
 import 'listWidget.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class NewGroup extends StatefulWidget {
   const NewGroup({super.key});
@@ -77,7 +74,7 @@ class _NewGroupState extends State<NewGroup> {
                   alignment: Alignment.center,
                   margin: EdgeInsets.all(10),
                   padding: EdgeInsets.all(10),
-                  child: Row(children: [
+                  child: Row(children: const [
                     Icon(Icons.add_outlined),
                     Text('그룹 루틴 추가 하기')
                   ]),
@@ -86,7 +83,7 @@ class _NewGroupState extends State<NewGroup> {
                   showModalBottomSheet(
                     context: context,
                     builder: (BuildContext context) {
-                      return Container(
+                      return SizedBox(
                         height: MediaQuery.of(context).size.height / 2,
                         child: Center(
                           child: Column(
@@ -164,7 +161,6 @@ class _NewGroupState extends State<NewGroup> {
                                                   initialTime: TimeOfDay.now(),
                                                   context: context,
                                                 );
-                                                if (selectedTime != null) {}
                                               },
                                             ),
                                             Text("시간 설정")
@@ -204,7 +200,7 @@ class _NewGroupState extends State<NewGroup> {
                                                 showModalBottomSheet(
                                                     context: context,
                                                     builder: (c) {
-                                                      return Container(
+                                                      return SizedBox(
                                                         height: MediaQuery.of(
                                                                     context)
                                                                 .size

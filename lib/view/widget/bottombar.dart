@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/repository/user.repository.dart';
 import 'home.dart';
 import 'groupMain.dart';
 import 'package:iww_frontend/view/screens/myroom.dart';
@@ -12,7 +13,6 @@ class MyBottomNav extends StatelessWidget implements PreferredSizeWidget {
 // TODO : 다른 페이지 라우팅은 여기서!
 // 이미 home인디 Home 으로 이동하는 경우는 아무것도 하지않도록 하는 코드 추가 필요
   void goHome(context, uri) {
-
     switch (uri) {
       case 0:
         Navigator.push(context, MaterialPageRoute(builder: (c) => MyHome()));
@@ -21,7 +21,7 @@ class MyBottomNav extends StatelessWidget implements PreferredSizeWidget {
         Navigator.push(context, MaterialPageRoute(builder: (c) => MyGroup()));
         break;
       case 2:
-        Navigator.push(context, MaterialPageRoute(builder: (c) => MyRoom()));
+        Navigator.pushNamed(context, "/myroom");
         break;
       default:
         throw UnimplementedError('no widget for uri $uri');

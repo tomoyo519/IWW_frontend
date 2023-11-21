@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/view/widget/guestbook.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:iww_frontend/view/widget/bottombar.dart';
+import 'package:iww_frontend/repository/user.repository.dart';
 
 class MyRoom extends StatelessWidget {
-  const MyRoom({super.key});
+  final UserRepository userRepository;
+  MyRoom(this.userRepository, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    CommentsProvider commentsProvider = CommentsProvider();
+    final userId = ModalRoute.of(context)!.settings.arguments as String;
+
     return Scaffold(body: RenderMyRoom(), bottomNavigationBar: MyBottomNav());
   }
 }
@@ -70,7 +76,7 @@ class RenderMyRoom extends StatelessWidget {
   }
 }
 
-// class MyRoom extends StatelessWidget {`
+// class MyRoom extends StatelessWidget {
 //   final UserRepository userRepository;
 //   MyRoom(this.userRepository, {Key? key}) : super(key: key);
 
