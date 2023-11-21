@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home.dart';
 import 'groupMain.dart';
+import 'myroom.dart';
 
 class MyBottomNav extends StatelessWidget implements PreferredSizeWidget {
   const MyBottomNav({super.key});
@@ -14,8 +15,11 @@ class MyBottomNav extends StatelessWidget implements PreferredSizeWidget {
     if (uri == 0) {
       Navigator.push(context, MaterialPageRoute(builder: (c) => MyHome()));
     }
-    if (uri == 1) {
+    else if (uri == 1) {
       Navigator.push(context, MaterialPageRoute(builder: (c) => MyGroup()));
+    }
+    else if (uri == 2) {
+      Navigator.push(context, MaterialPageRoute(builder: (c) => MyRoom()));
     }
   }
 

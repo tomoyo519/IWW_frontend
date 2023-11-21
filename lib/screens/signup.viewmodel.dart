@@ -1,29 +1,36 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/screens/landing.model.dart';
-import 'package:iww_frontend/screens/user.repository.dart';
+import 'package:iww_frontend/screens/user.model.dart';
+import 'package:iww_frontend/repository/user.repository.dart';
 
 class SignUpViewModel extends ChangeNotifier {
-  final UserRemoteRepository userRemoteRepository = UserRemoteRepository();
+  // User information
+  String _name = '';
+  String _tel = '';
+  int _kakaoId = 0;
+  String get name => _name;
+  set name(String val) => _name = val;
+  set tel(String val) => _tel = val;
+  set kakaoId(int val) => _kakaoId = val;
 
-  // 회원가입 화면 상태
-  // TODO: encapsulate?
-  String name = '';
-  String tel = '';
-  int kakaoId = 0;
+  // Page index
+  int _pageIdx = 0;
+  int get pageIdx => _pageIdx;
+  set pageIdx(int val) => _pageIdx = val;
 
+  // Visibility
   bool _isCodeFieldVisible = false;
   bool get isCodeFieldVisible => _isCodeFieldVisible;
-
-  int pageIdx = 0;
-
-  void showCodeField() {
-    _isCodeFieldVisible = true;
+  set isCodeFieldVisible(bool val) {
+    _isCodeFieldVisible = val;
+    notifyListeners();
   }
 
-  void setPage(int idx) {
-    pageIdx = idx;
+  bool _isRegisterBtnEnabled = false;
+  bool get isRegisterBtnEnabled => _isCodeFieldVisible;
+  set isRegisterBtnEnabled(bool val) {
+    _isRegisterBtnEnabled = val;
     notifyListeners();
   }
 
@@ -32,7 +39,11 @@ class SignUpViewModel extends ChangeNotifier {
     log("문자를 보냈다고 치자");
   }
 
-  void signIn() {
-    userRemoteRepository.createUser(UserLoginModel(kakaoId, name, tel));
+  void signUp() {
+    UserRepository.createUser(UserLoginModel(_kakaoId, _name, _tel));
   }
+
+  void checkUniqueNickname() {}
+
+  // void check
 }
