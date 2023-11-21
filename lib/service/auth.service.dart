@@ -152,7 +152,6 @@ class AuthService {
   }
 
   /// ==== helpers ==== ///
-
   // 로컬 로그인
   Future<bool> _localLogin() async {
     // 디바이스에 캐시된 유저 정보가 있고

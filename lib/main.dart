@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/providers.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/view/screens/myroom.dart';
-import 'package:iww_frontend/view/screens/findContact.dart';
+import 'package:iww_frontend/view/screens/addFriends.dart';
 import 'package:iww_frontend/view/screens/landing.dart';
 import 'package:iww_frontend/view/screens/signup.dart';
 import 'package:provider/provider.dart';
