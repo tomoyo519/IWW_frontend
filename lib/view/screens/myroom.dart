@@ -10,20 +10,25 @@ class MyRoom extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    CommentsProvider commentsProvider = CommentsProvider();
-    final userId = ModalRoute.of(context)!.settings.arguments as String;
-
-    return Scaffold(body: RenderMyRoom(), bottomNavigationBar: MyBottomNav());
+    return Scaffold(
+        body: RenderMyRoom(userRepository: userRepository),
+        bottomNavigationBar: MyBottomNav());
   }
 }
 
 class RenderMyRoom extends StatelessWidget {
+  final UserRepository userRepository;
+
   const RenderMyRoom({
-    super.key,
-  });
+    Key? key,
+    required this.userRepository,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    CommentsProvider commentsProvider = CommentsProvider();
+    final userId = ModalRoute.of(context)!.settings.arguments as String;
+
     return Stack(alignment: Alignment.center, children: [
       Image.asset(
         'assets/background.png',
@@ -64,7 +69,13 @@ class RenderMyRoom extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            ElevatedButton(onPressed: () {}, child: Text('방명록')),
+            ElevatedButton(
+                onPressed: () async {
+                  int? currentUserId = await userRepository.getUserId();
+                  showCommentsBottomSheet(context, commentsProvider,
+                      currentUserId.toString(), userId);
+                },
+                child: Text('방명록')),
             SizedBox(width: 20),
             ElevatedButton(onPressed: () {}, child: Text('인벤토리')),
             SizedBox(width: 20),
