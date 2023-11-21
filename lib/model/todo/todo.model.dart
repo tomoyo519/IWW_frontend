@@ -1,6 +1,5 @@
 import "dart:convert";
 import "package:http/http.dart" as http;
-import "package:iww_frontend/model/todo/create-todo.dto.dart";
 
 class Todo {
   int? todoId;
@@ -48,24 +47,6 @@ class Todo {
     });
 
     return result.statusCode == 200;
-  }
-
-  static Future<bool> createTodo(CreateTodoDto dto) async {
-    return await http
-        .post(
-      Uri.parse('http://yousayrun.store:8088/todo'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(dto.toJson()),
-    )
-        .then((response) {
-      if (response.statusCode == 200) {
-        return true;
-      } else {
-        throw Exception('Failed to create todo');
-      }
-    });
   }
 
   static Future<bool> requestCreate(Map<String, dynamic> json) async {
