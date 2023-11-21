@@ -1,5 +1,6 @@
 // msg: 가능하면 건드리지 말자 by 다희 소정
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/add_todo.dart';
 import 'package:iww_frontend/repository/friend.repository.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/myroom.dart';
@@ -32,6 +33,10 @@ void main() async {
 
   runApp(MultiProvider(
     providers: [
+      ChangeNotifierProvider<SelectedDate>(
+        create: (context) => SelectedDate(),
+      ),
+      ChangeNotifierProvider<NewTodo>(create: (context) => NewTodo())
       Provider<UserRepository>(create: (_) => UserRepository()),
       Provider<FriendRepository>(create: (_) => FriendRepository()),
     ],
