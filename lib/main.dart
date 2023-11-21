@@ -1,5 +1,6 @@
 // msg: 가능하면 건드리지 말자 by 다희 소정
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/myroom.dart';
 import 'package:iww_frontend/screens/findContact.dart';
 import 'package:iww_frontend/screens/findContact.viewmodel.dart';
 import 'package:iww_frontend/screens/landing.dart';
@@ -39,7 +40,8 @@ void main() async {
       '/contact': (context) => ChangeNotifierProvider<FindContactViewModel>(
             create: (context) => FindContactViewModel(),
             child: FindContact(),
-          )
+          ),
+      '/myroom': (context) => MyRoom(),
     },
     home: const MyApp(),
     // key: TwService.appKey,

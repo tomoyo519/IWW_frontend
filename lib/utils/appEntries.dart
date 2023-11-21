@@ -78,11 +78,7 @@ class AppEntries extends StatelessWidget {
               style:
                   ElevatedButton.styleFrom(backgroundColor: Colors.lightBlue),
               onPressed: () {
-                _signInTest.autoLogin().then((result) {
-                  if (result && context.mounted) {
-                    Navigator.pushNamed(context, '/myroom');
-                  }
-                });
+                Navigator.pushNamed(context, '/myroom');
               },
               child: const Text("🚪 마이 룸")),
         ]);
