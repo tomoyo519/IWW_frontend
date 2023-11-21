@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kakao_flutter_sdk/kakao_flutter_sdk_template.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:iww_frontend/bottombar.dart';
 
