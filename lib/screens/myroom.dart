@@ -24,19 +24,32 @@ class RenderMyRoom extends StatelessWidget {
         fit: BoxFit.cover,
         width: MediaQuery.of(context).size.width,
       ),
+      // layer of 3d objects
+      // TODO 오브젝트 위치를 어떻게 이동시킬지 고민해보자
+      ModelViewer(
+        // loading: Loading.eager,
+        shadowIntensity: 1,
+        src: 'assets/koi_fish.glb',
+        alt: 'koi fish',
+        autoPlay: true,
+        disableZoom: true,
+        cameraControls: false,
+        animationName: "morphBake",
+        cameraOrbit: "30deg 60deg 0m", // theta, phi, radius
+        cameraTarget: "4m 6m 2m", // x(왼쪽 위), y(높이) ,z (오른쪽 위)
+      ),
       ModelViewer(
         // loading: Loading.eager,
         shadowIntensity: 1,
         src: 'assets/Astronaut.glb',
-        alt: 'cuttest pet ever',
+        alt: 'astronaut',
         // autoRotate: true,
         autoPlay: true,
         disableZoom: true,
         cameraControls: false,
-        animationName: "walk",
+        // animationName: "walk",
         cameraOrbit: "30deg 60deg 0m", // theta, phi, radius
-        cameraTarget: "1m 4m 3m", // x(왼쪽 위), y(높이) ,z (오른쪽 위)
-        // TODO 오브젝트 위치를 어떻게 이동시킬지 고민해보자
+        cameraTarget: "1m 4m 4m", // x(왼쪽 위), y(높이) ,z (오른쪽 위)
       ),
       Positioned(
         bottom: 0,
