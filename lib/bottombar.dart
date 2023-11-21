@@ -14,12 +14,11 @@ class MyBottomNav extends StatelessWidget implements PreferredSizeWidget {
   void goHome(context, uri) {
     if (uri == 0) {
       Navigator.push(context, MaterialPageRoute(builder: (c) => MyHome()));
-    }
-    else if (uri == 1) {
+    } else if (uri == 1) {
       Navigator.push(context, MaterialPageRoute(builder: (c) => MyGroup()));
-    }
-    else if (uri == 2) {
-      Navigator.push(context, MaterialPageRoute(builder: (c) => MyRoom()));
+    } else if (uri == 2) {
+      // Navigator.push(context, MaterialPageRoute(builder: (c) => MyRoom()));
+      Navigator.pushNamed(context, "/myroom");
     }
   }
 

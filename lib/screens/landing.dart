@@ -1,24 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/screens/landing.viewmodel.dart';
-import 'package:iww_frontend/screens/signup.dart';
-import 'package:iww_frontend/screens/signup.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/landing.viewmodel.dart';
 import 'package:provider/provider.dart';
 
 /// 앱 초기 랜딩 페이지 화면
 /// 디바이스에 카카오 토큰이 없거나 최초 설치한 유저
 class Landing extends StatelessWidget {
   const Landing({super.key});
-  static final LandingViewModel viewModel = LandingViewModel();
 
   // 카카오 로그인 버튼 클릭
   void handleKakaoLogin(BuildContext context) async {
-    try {
-      var userDto = await Landing.viewModel.handleKakaoLogin();
-      if (userDto != null && context.mounted) {
-        Navigator.pushNamed(context, "/signup");
-      }
-    } catch (error) {
-      // TODO: handle error
+    LandingViewModel viewModel = context.read<LandingViewModel>();
+
+    // 디바이스에 로그인 정보가 있는지 확인
+    // if (await viewModel.isLoggedIn() && context.mounted) {
+    //   // TODO: && await getUserById from server
+    //   Navigator.pushReplacementNamed(context, "/home");
+    //   return;
+    // }
+
+    var user = await viewModel.handleKakaoLogin();
+    if (user == null || user.user_kakao_id == null) {
+      // TODO: 예외처리 UI update
+      return;
+    }
+
+    // 이미 가입한 사용자인지 확인
+    if (await viewModel.isRegistered(user.user_kakao_id!) && context.mounted) {
+      Navigator.pushReplacementNamed(context, "/home");
+    }
+
+    // 가입이 필요한 사용자
+    if (context.mounted) {
+      Navigator.pushNamed(context, "/signup");
     }
   }
 

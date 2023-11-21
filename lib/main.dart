@@ -5,10 +5,11 @@ import 'package:iww_frontend/repository/friend.repository.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/myroom.dart';
 import 'package:iww_frontend/screens/findContact.dart';
-import 'package:iww_frontend/screens/findContact.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/findContact.viewmodel.dart';
 import 'package:iww_frontend/screens/landing.dart';
 import 'package:iww_frontend/screens/signup.dart';
-import 'package:iww_frontend/screens/signup.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/landing.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/signup.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'appbar.dart';
 import 'bottombar.dart';
@@ -36,14 +37,18 @@ void main() async {
       ChangeNotifierProvider<SelectedDate>(
         create: (context) => SelectedDate(),
       ),
-      ChangeNotifierProvider<NewTodo>(create: (context) => NewTodo())
+      ChangeNotifierProvider<NewTodo>(create: (context) => NewTodo()),
       Provider<UserRepository>(create: (_) => UserRepository()),
       Provider<FriendRepository>(create: (_) => FriendRepository()),
     ],
     child: MaterialApp(
+        theme: ThemeData(useMaterial3: true),
         // 라우트 정의
         routes: {
-          '/landing': (context) => const Landing(),
+          '/landing': (context) => ChangeNotifierProvider<LandingViewModel>(
+              create: (_) => LandingViewModel(
+                  Provider.of<UserRepository>(_, listen: false)),
+              child: Landing()),
           '/home': (context) => const MyHome(),
           '/signup': (context) => ChangeNotifierProvider<SignUpViewModel>(
                 create: (_) => SignUpViewModel(
@@ -56,7 +61,8 @@ void main() async {
                     Provider.of<FriendRepository>(_, listen: false)),
                 child: AddFriends(),
               ),
-          '/myroom': (context) => MyRoom(),
+          '/myroom': (context) =>
+              MyRoom(Provider.of<UserRepository>(context, listen: false)),
         },
         home: MyApp()),
   ));
