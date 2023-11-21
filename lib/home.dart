@@ -160,7 +160,7 @@ class _ToDoListState extends State<ToDoList> {
     // });
   }
 
-  deleteTodo() {
+  deleteTodo(todo_id) {
     showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) => CupertinoActionSheet(
@@ -171,8 +171,24 @@ class _ToDoListState extends State<ToDoList> {
             isDestructiveAction: true,
             onPressed: () {
               // TODO - 할일 삭제
-              print('옵션 1 선택');
               Navigator.pop(context);
+              var result = http.delete(
+                  Uri.parse('http://yousayrun.store:8088/todo/${todo_id}'),
+                  headers: <String, String>{
+                    'Content-Type': 'application/json; charset=UTF-8',
+                  });
+              getData();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: const Text('삭제가 완료 되었어요!'),
+                  // action: SnackBarAction(
+                  //   label: 'Action',
+                  //   onPressed: () {
+                  //     // Code to execute.
+                  //   },
+                  // ),
+                ),
+              );
             },
           ),
         ],
@@ -536,7 +552,7 @@ class _ToDoListState extends State<ToDoList> {
                         onLongPress: () {
                           //
                           print('길게 눌렀을떄, ${i}');
-                          deleteTodo();
+                          deleteTodo(myTodoList[i]["todo_id"]);
                         },
                         onTap: () {
                           print('그냥 짧게 눌렀을때,');
