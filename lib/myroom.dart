@@ -4,7 +4,8 @@ import 'package:iww_frontend/repository/user.repository.dart';
 import 'guestbook.dart'; // guestbook.dart 임포트
 
 class MyRoom extends StatelessWidget {
-  MyRoom({Key? key}) : super(key: key);
+  final UserRepository userRepository;
+  MyRoom(this.userRepository, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +20,7 @@ class MyRoom extends StatelessWidget {
       body: Center(
         child: ElevatedButton(
           onPressed: () async {
-            int? currentUserId = await UserRepository.getUserId();
+            int? currentUserId = await userRepository.getUserId();
             showCommentsBottomSheet(
                 context, commentsProvider, currentUserId.toString(), userId);
           },

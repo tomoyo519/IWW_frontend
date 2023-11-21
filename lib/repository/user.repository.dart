@@ -52,6 +52,31 @@ class UserRepository {
     }
   }
 
+  // 카카오 아이디 기준으로 유저 정보 조회
+  Future<UserInfo?> getUserByKakaoId(String kakaoId) async {
+    return await RemoteDataSource.get("/user?user_kakao_id=$kakaoId")
+        .then((response) {
+      if (response.statusCode == 200) {
+        var jsonData = json.decode(response.body);
+        return UserInfo.fromJson(jsonData);
+      } else {
+        return null;
+      }
+    });
+  }
+
+  // 이름을 기준으로 유저 정보 조회
+  Future<UserInfo?> getUserByName(String name) async {
+    return await RemoteDataSource.get("/user?user_name=$name").then((response) {
+      if (response.statusCode == 200) {
+        var jsonData = json.decode(response.body);
+        return UserInfo.fromJson(jsonData);
+      } else {
+        return null;
+      }
+    });
+  }
+
   // 연락처 기준으로 유저 정보 조회
   Future<List<UserInfo>?> getUsersByContacts(GetUsersByContactsDto body) async {
     return await RemoteDataSource.post("/user/contacts", body: body.toJson())
@@ -79,13 +104,9 @@ class UserRepository {
         .then((response) => response.statusCode == 201);
   }
 
-  static Future<int?> getUserId() async {
+  // 로컬 SharedPreference에서 유저 아이디 가져오기
+  Future<int?> getUserId() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     return pref.getInt("user_id");
-  }
-
-  static addFriendByTel(String tel) async {
-    // 네트워크 연결 검사
-    // await RemoteDataSource.get("")
   }
 }
