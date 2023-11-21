@@ -24,7 +24,6 @@ class MyBottomNav extends StatelessWidget implements PreferredSizeWidget {
         break;
       default:
         throw UnimplementedError('no widget for uri $uri');
-    }
   }
 
   // 무조건 있어야함!

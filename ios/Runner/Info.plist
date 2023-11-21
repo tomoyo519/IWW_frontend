@@ -71,17 +71,20 @@
             <dict>
                 <key>localhost</key>
                 <dict>
-                <!-- HTTP 통신 허용 -->
-                <key>NSExceptionAllowsInsecureHTTPLoads</key>
+                    <!-- HTTP 통신 허용 -->
+                    <key>NSExceptionAllowsInsecureHTTPLoads</key>
                 <true/>
-                <!-- 필요한 경우 추가 설정 -->
-                <!-- <key>NSIncludesSubdomains</key>
-                <true/>
-                <key>NSExceptionRequiresForwardSecrecy</key>
-                <false/> -->
+                    <!-- 필요한 경우 추가 설정 -->
+                    <!-- <key>NSIncludesSubdomains</key>
+                    <true/>
+                    <key>NSExceptionRequiresForwardSecrecy</key>
+                    <false/> -->
             </dict>
         </dict>
     </dict>
+
+    <key>NSContactsUsageDescription</key>  
+    <string>연락처 권한이 필요합니다.</string>  
 
 </dict>
 </plist>

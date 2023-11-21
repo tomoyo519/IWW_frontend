@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/screens/landing.viewmodel.dart';
 import 'package:iww_frontend/screens/signup.dart';
+import 'package:iww_frontend/screens/signup.viewmodel.dart';
+import 'package:provider/provider.dart';
 
 /// 앱 초기 랜딩 페이지 화면
 /// 디바이스에 카카오 토큰이 없거나 최초 설치한 유저
@@ -13,8 +15,7 @@ class Landing extends StatelessWidget {
     try {
       var userDto = await Landing.viewModel.handleKakaoLogin();
       if (userDto != null && context.mounted) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => SignUp()));
+        Navigator.pushNamed(context, "/signup");
       }
     } catch (error) {
       // TODO: handle error
