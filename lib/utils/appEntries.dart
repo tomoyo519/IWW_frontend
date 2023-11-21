@@ -1,7 +1,7 @@
 import "dart:developer";
 
 import "package:flutter/material.dart";
-import "package:iww_frontend/utils/auth.service.dart";
+import 'package:iww_frontend/service/auth.service.dart';
 import "package:provider/provider.dart";
 
 /// 메인에서 여러 가지 인증 로직을 테스트합니다.

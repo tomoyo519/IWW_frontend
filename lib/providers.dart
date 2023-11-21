@@ -1,7 +1,7 @@
 // providers.dart
 import 'package:iww_frontend/repository/friend.repository.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
-import 'package:iww_frontend/utils/auth.service.dart';
+import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/utils/kakaoLogin.dart';
 import 'package:iww_frontend/view/widget/add_todo.dart';
 import 'package:iww_frontend/view/widget/home.dart';

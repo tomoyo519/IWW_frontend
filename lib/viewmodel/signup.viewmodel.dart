@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
-import 'package:iww_frontend/utils/auth.service.dart';
+import 'package:iww_frontend/service/auth.service.dart';
 
 class SignUpViewModel extends ChangeNotifier {
   final AuthService authService;

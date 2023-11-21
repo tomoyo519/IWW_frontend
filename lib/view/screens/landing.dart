@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/utils/auth.service.dart';
+import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/viewmodel/landing.viewmodel.dart';
 import 'package:provider/provider.dart';
 
