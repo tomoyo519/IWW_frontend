@@ -1,24 +1,20 @@
 // msg: 가능하면 건드리지 말자 by 다희 소정
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/add_todo.dart';
+import 'package:iww_frontend/view/widget/add_todo.dart';
 import 'package:iww_frontend/repository/friend.repository.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
-import 'package:iww_frontend/myroom.dart';
-import 'package:iww_frontend/screens/findContact.dart';
+import 'package:iww_frontend/view/widget/myroom.dart';
+import 'package:iww_frontend/view/screens/findContact.dart';
 import 'package:iww_frontend/viewmodel/findContact.viewmodel.dart';
-import 'package:iww_frontend/screens/landing.dart';
-import 'package:iww_frontend/screens/signup.dart';
+import 'package:iww_frontend/view/screens/landing.dart';
+import 'package:iww_frontend/view/screens/signup.dart';
 import 'package:iww_frontend/viewmodel/landing.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/signup.viewmodel.dart';
 import 'package:provider/provider.dart';
-import 'appbar.dart';
-import 'bottombar.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'home.dart';
+import 'package:iww_frontend/view/widget/home.dart';
 import 'package:iww_frontend/utils/appEntries.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_template.dart';
-// import 'package:tailwind/tailwind.dart';
 
 void main() async {
   // await TwService.init();

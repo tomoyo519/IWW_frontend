@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home.dart';
 import 'groupMain.dart';
-import 'package:iww_frontend/screens/myroom.dart';
+import 'package:iww_frontend/view/screens/myroom.dart';
 
 class MyBottomNav extends StatelessWidget implements PreferredSizeWidget {
   const MyBottomNav({super.key});

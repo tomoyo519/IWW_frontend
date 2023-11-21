@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/add_todo.dart';
-import 'package:iww_frontend/appbar.dart';
-import 'package:iww_frontend/bottombar.dart';
-import 'package:iww_frontend/pet.dart';
+import 'package:iww_frontend/view/widget/add_todo.dart';
+import 'package:iww_frontend/view/widget/appbar.dart';
+import 'package:iww_frontend/view/widget/bottombar.dart';
+import 'package:iww_frontend/view/widget/pet.dart';
 import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';

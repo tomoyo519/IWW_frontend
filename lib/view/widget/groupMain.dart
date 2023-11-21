@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/bottombar.dart';
+import 'package:iww_frontend/view/widget/bottombar.dart';
 
 import 'groupList.dart';
 

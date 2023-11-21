@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:iww_frontend/home.dart';
+import 'package:iww_frontend/view/widget/home.dart';
 import 'package:provider/provider.dart';
 import 'calendar.dart';
 import 'listWidget.dart';

@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/appbar.dart';
+import 'package:iww_frontend/view/widget/appbar.dart';
 import 'package:iww_frontend/viewmodel/signup.viewmodel.dart';
 import 'package:provider/provider.dart';
 

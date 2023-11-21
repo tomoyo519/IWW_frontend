@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
-import 'package:iww_frontend/bottombar.dart';
+import 'package:iww_frontend/view/widget/bottombar.dart';
 
 class MyRoom extends StatelessWidget {
   const MyRoom({super.key});
