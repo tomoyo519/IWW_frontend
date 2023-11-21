@@ -83,6 +83,7 @@ class _ToDoListState extends State<ToDoList> {
   List<dynamic> myTodoList = [];
 
   getData() async {
+    print('getData 실행됨');
     // TODO - 환경변수로 domain 빼놓기, user_id 수정해야 함
     // TODO - 서버가 맛이 갔을때는 어떤 화면을 보여줘야 하는가?
     var result = await http
@@ -239,41 +240,47 @@ class _ToDoListState extends State<ToDoList> {
                               },
                             ),
                             Builder(builder: (context) {
-                              return Row(
-                                children: [
-                                  IconButton(
-                                    icon: Icon(Icons.calendar_today_outlined),
-                                    onPressed: () {
-                                      showModalBottomSheet(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return Calendar(
-                                              setSelectedDay: (newDate) {
-                                                Provider.of<SelectedDate>(
-                                                        context,
-                                                        listen: false)
-                                                    .setSelectedDate(
-                                                        newDate.toString());
-                                              },
-                                            );
-                                          });
-                                    },
+                              return Container(
+                                padding: EdgeInsets.all(10),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    showModalBottomSheet(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return Calendar(
+                                            setSelectedDay: (newDate) {
+                                              Provider.of<SelectedDate>(context,
+                                                      listen: false)
+                                                  .setSelectedDate(
+                                                      newDate.toString());
+                                            },
+                                          );
+                                        });
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.calendar_today_outlined),
+                                      Consumer<SelectedDate>(
+                                        builder:
+                                            (context, selectedDate, child) {
+                                          final format =
+                                              DateFormat('yyyy년 M월 d일');
+                                          DateTime dateTime = DateTime.parse(
+                                              selectedDate.selectedDate);
+                                          return Text(format.format(dateTime));
+                                        },
+                                      ),
+                                    ],
                                   ),
-                                  Consumer<SelectedDate>(
-                                    builder: (context, selectedDate, child) {
-                                      final format = DateFormat('yyyy년 M월 d일');
-                                      DateTime dateTime = DateTime.parse(
-                                          selectedDate.selectedDate);
-                                      return Text(format.format(dateTime));
-                                    },
-                                  ),
-                                ],
+                                ),
                               );
                             }),
                             Row(
                               children: [
-                                IconButton(
-                                    onPressed: () {
+                                Container(
+                                  padding: EdgeInsets.all(10),
+                                  child: GestureDetector(
+                                    onTap: () {
                                       showModalBottomSheet(
                                           context: context,
                                           builder: (c) {
@@ -288,41 +295,57 @@ class _ToDoListState extends State<ToDoList> {
                                             );
                                           });
                                     },
-                                    icon: Icon(Icons.label_outline)),
-                                Consumer<SelectedDate>(
-                                  builder: (context, selectedDate, child) {
-                                    return Text(
-                                        labels[selectedDate.selectedLabel]);
-                                  },
-                                )
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.label_outline),
+                                        Consumer<SelectedDate>(
+                                          builder:
+                                              (context, selectedDate, child) {
+                                            return Text(labels[
+                                                selectedDate.selectedLabel]);
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+
                                 // Text(labels[label])
                               ],
                             ),
                             Row(
                               children: [
-                                IconButton(
-                                  icon: Icon(Icons.alarm_outlined),
-                                  onPressed: () async {
-                                    final TimeOfDay? selectedTime =
-                                        await showTimePicker(
-                                      initialTime: TimeOfDay.now(),
-                                      context: context,
-                                    );
+                                Container(
+                                  padding: EdgeInsets.all(10),
+                                  child: GestureDetector(
+                                    onTap: () async {
+                                      final TimeOfDay? selectedTime =
+                                          await showTimePicker(
+                                        initialTime: TimeOfDay.now(),
+                                        context: context,
+                                      );
 
-                                    if (selectedTime != null) {
-                                      Provider.of<SelectedDate>(context,
-                                              listen: false)
-                                          .setSelectedAlarmTime(selectedTime);
-                                    }
-                                  },
+                                      if (selectedTime != null) {
+                                        Provider.of<SelectedDate>(context,
+                                                listen: false)
+                                            .setSelectedAlarmTime(selectedTime);
+                                      }
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.alarm_outlined),
+                                        Consumer<SelectedDate>(
+                                          builder:
+                                              (context, selectedDate, child) {
+                                            String timeString =
+                                                '${selectedDate.selectedAlarmTime.hour}시 ${selectedDate.selectedAlarmTime.minute}분';
+                                            return Text(timeString.toString());
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                                Consumer<SelectedDate>(
-                                  builder: (context, selectedDate, child) {
-                                    String timeString =
-                                        '${selectedDate.selectedAlarmTime.hour}시 ${selectedDate.selectedAlarmTime.minute}분';
-                                    return Text(timeString.toString());
-                                  },
-                                )
                               ],
                             ),
                             // Row(
@@ -348,25 +371,33 @@ class _ToDoListState extends State<ToDoList> {
                             // ),
                             Row(
                               children: [
-                                IconButton(
-                                  icon: Icon(Icons.star_outline),
-                                  onPressed: () {
-                                    showModalBottomSheet(
-                                        context: context,
-                                        builder: (c) {
-                                          return LabelList(
-                                            content: "routine",
-                                            setLabel: (newLabel) {
-                                              Provider.of<SelectedDate>(context,
-                                                      listen: false)
-                                                  .setSelectedDate(
-                                                      newLabel as String);
-                                            },
-                                          );
-                                        });
-                                  },
+                                Container(
+                                  padding: EdgeInsets.all(10),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      showModalBottomSheet(
+                                          context: context,
+                                          builder: (c) {
+                                            return LabelList(
+                                              content: "routine",
+                                              setLabel: (newLabel) {
+                                                Provider.of<SelectedDate>(
+                                                        context,
+                                                        listen: false)
+                                                    .setSelectedDate(
+                                                        newLabel as String);
+                                              },
+                                            );
+                                          });
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.star_outline),
+                                        Text("매일 반복")
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                                Text("매일 반복")
                               ],
                             ),
                             Row(
@@ -542,7 +573,7 @@ class _ToDoListState extends State<ToDoList> {
         ),
         // TODO - 실제파일 들어오면 버튼 위치 변경하기
         // if (widget.showAddTodo) AddTodo()
-        AddTodo()
+        AddTodo(getData: getData)
       ],
     );
   }

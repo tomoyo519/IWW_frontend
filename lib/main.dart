@@ -1,5 +1,6 @@
 // msg: 가능하면 건드리지 말자 by 다희 소정
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/add_todo.dart';
 import 'package:provider/provider.dart';
 import 'appbar.dart';
 import 'bottombar.dart';
@@ -22,8 +23,13 @@ void main() async {
     javaScriptAppKey: Secrets.KAKAO_JS_APP_KEY,
   );
 
-  runApp(ChangeNotifierProvider(
-    create: (c) => SelectedDate(),
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider<SelectedDate>(
+        create: (context) => SelectedDate(),
+      ),
+      ChangeNotifierProvider<NewTodo>(create: (context) => NewTodo())
+    ],
     child: MaterialApp(
       home: const MyApp(),
       // key: TwService.appKey,
