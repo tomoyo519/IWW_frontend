@@ -18,7 +18,7 @@ class Comment {
     required this.content,
     required this.isMod,
   }) {
-    userImage = '${Secrets.REMOTE_SERVER_URL}/image/$authorId.jpg';
+    userImage = '${Secrets.TEST_SERVER_URL}/image/$authorId.jpg';
   }
 }
 
@@ -48,7 +48,7 @@ void showCommentsBottomSheet(BuildContext context,
 
 Future<void> fetchComments(
     CommentsProvider commentsProvider, String ownerId) async {
-  final url = '${Secrets.REMOTE_SERVER_URL}/user/$ownerId/guestbook/comments';
+  final url = '${Secrets.TEST_SERVER_URL}/user/$ownerId/guestbook/comments';
   try {
     final response = await http.get(Uri.parse(url));
 
@@ -72,7 +72,7 @@ Future<void> fetchComments(
 }
 
 Future<bool> addComment(String ownerId, String authorId, String content) async {
-  final url = '${Secrets.REMOTE_SERVER_URL}/user/$ownerId/guestbook/comments';
+  final url = '${Secrets.TEST_SERVER_URL}/user/$ownerId/guestbook/comments';
   try {
     final response = await http.post(
       Uri.parse(url),
@@ -94,7 +94,7 @@ Future<bool> addComment(String ownerId, String authorId, String content) async {
 }
 
 Future<bool> deleteComment(String ownerId, String comId) async {
-  final url = '${Secrets.REMOTE_SERVER_URL}/user/$ownerId/guestbook/comments/$comId'; // 백엔드 URL
+  final url = '${Secrets.TEST_SERVER_URL}/user/$ownerId/guestbook/comments/$comId'; // 백엔드 URL
 
   try {
     final response = await http.patch(
@@ -295,7 +295,7 @@ class CommentInputField extends StatelessWidget {
 
 Future<bool> updateComment(String ownerId, String comId, String content) async {
   final url =
-      '${Secrets.REMOTE_SERVER_URL}/user/$ownerId/guestbook/comments/$comId'; // 백엔드 URL
+      '${Secrets.TEST_SERVER_URL}/user/$ownerId/guestbook/comments/$comId'; // 백엔드 URL
 
   try {
     final response = await http.put(
