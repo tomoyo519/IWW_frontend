@@ -1,6 +1,5 @@
 // ignore_for_file: non_constant_identifier_names
 
-
 class UserInfo {
   final int user_id;
   final String user_name;
