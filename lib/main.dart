@@ -36,7 +36,7 @@ void main() async {
       ChangeNotifierProvider<SelectedDate>(
         create: (context) => SelectedDate(),
       ),
-      ChangeNotifierProvider<NewTodo>(create: (context) => NewTodo())
+      ChangeNotifierProvider<NewTodo>(create: (context) => NewTodo()),
       Provider<UserRepository>(create: (_) => UserRepository()),
       Provider<FriendRepository>(create: (_) => FriendRepository()),
     ],
