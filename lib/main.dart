@@ -5,14 +5,12 @@ import 'package:iww_frontend/repository/friend.repository.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/myroom.dart';
 import 'package:iww_frontend/screens/findContact.dart';
-import 'package:iww_frontend/screens/room.dart';
 import 'package:iww_frontend/viewmodel/findContact.viewmodel.dart';
 import 'package:iww_frontend/screens/landing.dart';
 import 'package:iww_frontend/screens/signup.dart';
 import 'package:iww_frontend/viewmodel/landing.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/signup.viewmodel.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'appbar.dart';
 import 'bottombar.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -64,7 +62,7 @@ void main() async {
                 child: AddFriends(),
               ),
           '/myroom': (context) =>
-              Room(Provider.of<UserRepository>(context, listen: false)),
+              MyRoom(Provider.of<UserRepository>(context, listen: false)),
         },
         home: MyApp()),
   ));
