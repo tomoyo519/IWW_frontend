@@ -18,14 +18,9 @@ class FindContactViewModel extends ChangeNotifier {
   // UI State
   int _friendCnt = 0;
   int get friendCnt => _friendCnt;
-  set friendCnt(int val) => _friendCnt = val;
-
-  // 연락처 접근 권한이 허용되었는지 여부
-  Future<bool> get isContactGranted async {
-    if (await Permission.contacts.isDenied) {
-      return Permission.contacts.request().isGranted;
-    }
-    return true;
+  set friendCnt(int val) {
+    _friendCnt = val;
+    notifyListeners();
   }
 
   // 네트워크가 연결되었는지 여부

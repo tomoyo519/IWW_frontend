@@ -11,7 +11,7 @@ class AddFriends extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<FindContactViewModel>();
+    final viewModel = context.read<FindContactViewModel>();
 
     return Scaffold(
       appBar: MyAppBar(title: Text("친구 찾아보기"), actions: [
@@ -19,7 +19,11 @@ class AddFriends extends StatelessWidget {
             onPressed: () {
               Navigator.pushNamed(context, '/home');
             },
-            child: Text(viewModel.friendCnt > 0 ? "완료" : "건너뛰기"))
+            child: Selector<FindContactViewModel, int>(
+                selector: (_, model) => model.friendCnt,
+                builder: (_, friendCnt, __) {
+                  return Text(viewModel.friendCnt > 0 ? "완료" : "건너뛰기");
+                }))
       ]),
       body: SizedBox(
         width: double.infinity,

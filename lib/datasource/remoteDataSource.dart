@@ -33,7 +33,7 @@ class RemoteDataSource {
   };
 
   // POST form data
-  static Future<http.StreamedResponse> postFormData(String url,
+  static Future<http.StreamedResponse> postFormData(String url, String field,
       {Map<String, dynamic>? body, File? file, String? filename}) async {
     var request = http.MultipartRequest('POST', Uri.parse(server + url));
     if (body != null) {
@@ -45,7 +45,7 @@ class RemoteDataSource {
     if (file != null) {
       // 파일
       request.files.add(http.MultipartFile(
-          'file', file.readAsBytes().asStream(), file.lengthSync(),
+          field, file.readAsBytes().asStream(), file.lengthSync(),
           filename: filename));
     }
     return await request.send();

@@ -2,83 +2,52 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:http/http.dart';
 import 'package:iww_frontend/datasource/localStorage.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
-import 'package:iww_frontend/model/user/create-user.dto.dart';
 import 'package:iww_frontend/model/user/get-user-by-contact.dto.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
-import 'package:kakao_flutter_sdk/kakao_flutter_sdk_talk.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 
 /// 유저 관련 리포지토리
-/// TODO: provider 패턴으로 바꾸기
 class UserRepository {
-  // UserRepository._internal();
-  // static final _instance = UserRepository._internal();
-  // static UserRepository get instance => _instance;
-
-  // TODO: 테스트용 유저 생성
-  Future<bool?> createTestUser(CreateUserDto user) async {
-    return await RemoteDataSource.post("/user",
-        body: jsonEncode({
-          'user_name': user.user_name,
-          'user_tel': user.user_tel,
-          'user_kakao_id': user.user_kakao_id
-        })).then((response) {
-      if (response.statusCode == 200) {
-        log("Create user: ${json.decode(response.body).toString()}");
-        return true;
-      } else {
-        return false;
-      }
-    });
-  }
-
   // 현재 로그인한 유저 생성
   Future<bool?> createUser(String name, String tel) async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
 
     // Local
-    // kakao_id는 로그인 완료 후 저장됨
+    // user_kakao_id는 로그인 완료 후 저장됨
     await pref.setString("user_name", name);
     await pref.setString("user_tel", tel);
     await pref.setInt("user_hp", 0);
     log("Saved in SharedPreferences: $name");
 
-    String? userKakaoId = pref.getString("user_kakao_id");
-    if (userKakaoId == null || userKakaoId.isEmpty) {
+    String? kakaoId = pref.getString("user_kakao_id");
+    if (kakaoId == null || kakaoId.isEmpty) {
       log("No saved user kakao id in device");
       return false;
     }
 
     // Remote
-    // 로컬 스토리지에 저장해둔 파일 불러오기
-    File image = await LocalStorage.read("$userKakaoId.jpg");
+    Response response = await RemoteDataSource.post("/user",
+        body: {"user_name": name, "user_tel": tel, "user_kakao_id": kakaoId});
 
-    var response = await RemoteDataSource.postFormData("/user",
-        body: {
-          "user_name": name,
-          "user_tel": tel,
-          "user_kakao_id": userKakaoId
-        },
-        file: image,
-        filename: '$userKakaoId.jpg');
-
-    final responseString = await response.stream.bytesToString();
-    final jsonResponse = json.decode(responseString);
+    final jsonData = json.decode(response.body);
 
     if (response.statusCode == 201) {
       // JSON 데이터를 User 객체로 변환
-      final userResponse = UserInfo.fromJson(jsonResponse);
+      final userResponse = UserInfo.fromJson(jsonData);
       log("User created: ${userResponse.user_id}");
 
       // SharedPreference에 아이디 저장하고 결과 반환
-      return pref
-          .setInt("user_id", userResponse.user_id)
-          .then((result) => result);
+      if (await pref.setInt("user_id", userResponse.user_id)) {
+        // 로컬에 아이디 저장 완료후 이미지 서버로 전송
+        // 로컬 저장 경로는 카카오 아이디, 서버 저장 경로는 유저 아이디 참고
+        return await _createUserProfile(kakaoId, userResponse.user_id);
+      }
+      return false;
     } else {
-      log("Error while creating user: ${jsonResponse.toString()}");
+      log("Error while creating user: ${jsonData.toString()}");
       return false;
     }
   }
@@ -97,5 +66,16 @@ class UserRepository {
         return null;
       }
     });
+  }
+
+  // 유저 프로필 이미지 서버로 전송
+  Future<bool?> _createUserProfile(kakaoId, userId) async {
+    // 로컬 스토리지에 저장해둔 파일 불러오기
+    File image = await LocalStorage.read("$kakaoId.jpg");
+
+    return await RemoteDataSource.postFormData(
+            "/user/$userId/profile", 'profile',
+            file: image, filename: '$userId.jpg')
+        .then((response) => response.statusCode == 201);
   }
 }
