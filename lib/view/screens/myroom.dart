@@ -179,10 +179,7 @@ class RenderMyRoom extends StatelessWidget {
           ElevatedButton(
               onPressed: () {
                 Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    "/myroom",
-                    arguments: !_isMyRoom,
-                    (route) => false);
+                  context, '/friends', (Route<dynamic> route) => false);
               },
               child: Text('친구목록')),
         ],

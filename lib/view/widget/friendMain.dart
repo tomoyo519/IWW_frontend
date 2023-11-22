@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/repository/friend.repository.dart';
 import 'package:iww_frontend/view/widget/bottombar.dart';
 
 import 'friendList.dart';
@@ -19,7 +20,10 @@ class MyFriend extends StatelessWidget {
               Tab(icon: Icon(Icons.leaderboard))
             ]),
           ),
-          body: const TabBarView(children: [FriendList(), FriendRank()]),
+          body: TabBarView(children: [
+            FriendList(),
+            FriendRank()
+          ]),
           bottomNavigationBar: MyBottomNav(),
         ));
   }
