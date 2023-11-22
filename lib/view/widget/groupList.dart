@@ -18,12 +18,12 @@ class _GroupListState extends State<GroupList> {
   getList() async {
     // TODO - user_id 변경해야해
     var result = await http
-        .get(Uri.parse('http://yousayrun.store:8088/group/1/groups'))
+        .get(Uri.parse('http://yousayrun.store:8088/group/6/groups'))
         .catchError((err) {
       print(err);
       return null;
     });
-
+    print(result.body);
     setState(() {
       groups = jsonDecode(result.body);
     });

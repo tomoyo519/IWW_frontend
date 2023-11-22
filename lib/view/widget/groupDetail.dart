@@ -20,7 +20,6 @@ final List<String> labels = [
 class GroupDetail extends StatefulWidget {
   GroupDetail({this.group, super.key});
   final group;
-  TextEditingController controller = TextEditingController(text: "");
 
   @override
   State<GroupDetail> createState() => _GroupDetailState();
@@ -29,7 +28,7 @@ class GroupDetail extends StatefulWidget {
 class _GroupDetailState extends State<GroupDetail> {
   List<dynamic> groupRoutine = [];
   List<dynamic> groupMems = [];
-
+  late TextEditingController _controller;
   getData() async {
     print(widget.group);
     var result = await http.get(Uri.parse(
@@ -70,10 +69,9 @@ class _GroupDetailState extends State<GroupDetail> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    // widget.controller =
-    //     TextEditingController(text: widget.group["grp_decs"] ?? "");
-
     getData();
+    print(widget.group["grp_desc"]);
+    _controller = TextEditingController(text: widget.group["grp_decs"]);
   }
 
   @override
@@ -119,7 +117,7 @@ class _GroupDetailState extends State<GroupDetail> {
                 ],
               ),
               TextField(
-                controller: widget.controller,
+                controller: _controller,
                 decoration: InputDecoration(
                   hintText: "우리 그룹에 대한 설명이에요",
                   contentPadding: EdgeInsets.symmetric(vertical: 60),
