@@ -6,6 +6,7 @@ import 'package:iww_frontend/view/screens/myroom.dart';
 import 'package:iww_frontend/view/screens/addFriends.dart';
 import 'package:iww_frontend/view/screens/landing.dart';
 import 'package:iww_frontend/view/screens/signup.dart';
+import 'package:iww_frontend/view/screens/myPage.dart';
 import 'package:iww_frontend/view/widget/groupMain.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
@@ -42,7 +43,8 @@ void main() async {
               '/signup': (context) => SignUpPage(),
               '/contact': (context) => AddFriendsPage(),
               '/myroom': (context) => MyRoom(),
-              '/group': (context) => MyGroup()
+              '/group': (context) => MyGroup(),
+              '/mypage': (context) => MyPage(),
             },
             home: MyApp()),
       ),

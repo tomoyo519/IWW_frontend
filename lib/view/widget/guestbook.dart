@@ -7,8 +7,8 @@ import 'package:iww_frontend/repository/room.repository.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:iww_frontend/model/comment/comment.model.dart';
 import 'dart:convert';
-
 import 'package:iww_frontend/service/auth.service.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
 // 방명록 상태관리
@@ -18,7 +18,7 @@ class CommentsProvider with ChangeNotifier {
   final CommentRepository _commentRepository;
 
   // 방을 클릭할때마다 유지되는 상태
-  String _roomOwnerId = "1";
+  final _roomOwnerId = "1";
   String get roomOwnerId => _roomOwnerId;
 
   CommentsProvider(
@@ -99,72 +99,143 @@ class CommentsBottomSheet extends StatelessWidget {
     return DraggableScrollableSheet(
       expand: false,
       builder: (BuildContext context, ScrollController scrollController) {
-        return Column(
-          children: [
-            Expanded(
-                child: ListView.builder(
-              controller: scrollController,
-              itemCount: comments.length,
-              itemBuilder: (BuildContext context, int index) {
-                Comment comment = comments[index];
-                bool isCurrentUserComment = (comment.authorId == userId);
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: NetworkImage(comment.userImage),
-                  ),
-                  title: Row(
-                    children: [
-                      Text(comment.username),
-                      if (comment.isMod)
-                        Padding(
-                          padding: EdgeInsets.only(left: 8),
-                          child: Text(
-                            "(수정됨)",
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
-                          ),
-                        ),
-                    ],
-                  ),
-                  subtitle: Text(comment.content),
-                  trailing: isCurrentUserComment
-                      ? Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: Icon(Icons.edit),
-                              onPressed: () {
-                                _showEditCommentDialog(
-                                    context, comment, commentsProvider);
-                              },
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.delete),
-                              onPressed: () async {
-                                bool success = await commentsProvider
-                                    .deleteComment(ownerId, comment.comId);
-                                if (success) {
-                                  // 삭제 성공 시, UI 업데이트
-                                  commentsProvider.fetchComment(ownerId);
-                                } else {
-                                  // 삭제 실패 시, 사용자에게 알림
-                                }
-                              },
-                            ),
-                          ],
-                        )
-                      : SizedBox.shrink(),
-                );
-              },
-            )),
-            if (!isOwner)
-              CommentInputField(
-                  commentsProvider: commentsProvider,
-                  ownerId: ownerId,
-                  authorId: userId),
-          ],
+        return ClipRRect(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(25.0),
+            topRight: Radius.circular(25.0),
+          ),
+          child: Scaffold(
+              body: Column(
+            children: <Widget>[
+              Expanded(
+                  child: ListView.builder(
+                controller: scrollController,
+                itemCount: comments.length,
+                itemBuilder: (BuildContext context, int index) {
+                  Comment comment = comments[index];
+                  bool isCurrentUserComment = (comment.authorId == userId);
+                  return isCurrentUserComment
+                      ? _buildDismissibleComment(comment, context)
+                      : _buildListTile(comment);
+                },
+              )),
+              if (!isOwner)
+                CommentInputField(
+                    commentsProvider: commentsProvider,
+                    ownerId: ownerId,
+                    authorId: userId),
+            ],
+          )),
         );
       },
     );
+  }
+
+  Widget _buildDismissibleComment(Comment comment, BuildContext context) {
+    return Dismissible(
+      key: Key(comment.comId),
+      direction: DismissDirection.horizontal,
+      background: Container(
+        color: Colors.green,
+        child: Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Icon(Icons.edit, color: Colors.white),
+            )),
+      ),
+      secondaryBackground: Container(
+        color: Colors.red,
+        child: Align(
+            alignment: Alignment.centerRight,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Icon(Icons.delete, color: Colors.white),
+            )),
+      ),
+      confirmDismiss: (direction) async {
+        if (direction == DismissDirection.endToStart) {
+          // 오른쪽으로 밀었을 때 (삭제)
+          bool confirm =
+              await _showConfirmationDialog(context, comment, commentsProvider);
+          if (confirm) {
+            bool success =
+                await commentsProvider.deleteComment(ownerId, comment.comId);
+            if (success) {
+              commentsProvider.fetchComment(ownerId);
+            }
+            return success;
+          }
+          return false;
+        } else {
+          // 왼쪽으로 밀었을 때 (수정)
+          _showEditCommentDialog(context, comment, commentsProvider);
+          return false;
+        }
+      },
+      child: _buildListTile(comment),
+    );
+  }
+
+  Widget _buildListTile(Comment comment) {
+    return ListTile(
+      leading: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 8.0),
+        child: CircleAvatar(
+          radius: 20,
+          backgroundImage: NetworkImage(comment.userImage),
+          onBackgroundImageError: (exception, stackTrace) {},
+          child: Image.network(
+            comment.userImage,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return CircleAvatar(
+                radius: 20,
+                backgroundImage: AssetImage("assets/profile.jpg"),
+              );
+            },
+          ),
+        ),
+      ),
+      title: Row(
+        children: [
+          Text(comment.username),
+          if (comment.isMod)
+            Padding(
+              padding: EdgeInsets.only(left: 8),
+              child: Text(
+                "(수정됨)",
+                style: TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+            ),
+        ],
+      ),
+      subtitle: Text(comment.content),
+    );
+  }
+
+  Future<bool> _showConfirmationDialog(BuildContext context, Comment comment,
+      CommentsProvider commentsProvider) async {
+    return await showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('확인'),
+              content: Text('댓글을 삭제하시겠습니까?'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('취소'),
+                  onPressed: () => Navigator.of(context).pop(false),
+                ),
+                TextButton(
+                  child: Text('확인'),
+                  onPressed: () => Navigator.of(context).pop(true),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
   }
 
   void _showEditCommentDialog(BuildContext context, Comment comment,
