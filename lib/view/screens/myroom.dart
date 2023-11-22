@@ -17,13 +17,15 @@ class MyRoom extends StatelessWidget {
     final roomRepository = Provider.of<RoomRepository>(context, listen: false);
     final commentRepository =
         Provider.of<CommentRepository>(context, listen: false);
+
     return Scaffold(
         body: ChangeNotifierProvider<CommentsProvider>(
-          create: (context) =>
-              CommentsProvider(authService, roomRepository, commentRepository),
-          child: RenderMyRoom(),
-        ),
-        bottomNavigationBar: MyBottomNav());
+            create: (context) => CommentsProvider(
+                  authService,
+                  roomRepository,
+                  commentRepository,
+                ),
+            child: RenderMyRoom()));
   }
 }
 
@@ -32,8 +34,9 @@ class RenderMyRoom extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    CommentsProvider commentsProvider = context.read<CommentsProvider>();
-    // final userId = ModalRoute.of(context)!.settings.arguments as String;
+    // 여기서 비동기 연산 수행
+    final authService = Provider.of<AuthService>(context);
+    final commentsProvider = context.read<CommentsProvider>();
 
     return Stack(alignment: Alignment.center, children: [
       Image.asset(
@@ -76,14 +79,22 @@ class RenderMyRoom extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             ElevatedButton(
-                // onPressed: () {},
                 onPressed: () async {
-                  int? currentUserId = await commentsProvider.getUserId();
                   String? roomOwenerId = commentsProvider.roomOwnerId;
 
+                  final currentUser = await authService.getCurrentUser();
+                  // 로그인 유저 없으면 6
+                  var userId = (currentUser != null)
+                      ? currentUser.user_id.toString()
+                      : '6';
+
                   if (context.mounted) {
-                    showCommentsBottomSheet(context, commentsProvider,
-                        currentUserId.toString(), roomOwenerId);
+                    showCommentsBottomSheet(
+                      context,
+                      commentsProvider,
+                      userId,
+                      roomOwenerId,
+                    );
                   }
                 },
                 child: Text('방명록')),

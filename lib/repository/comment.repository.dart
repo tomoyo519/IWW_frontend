@@ -88,6 +88,35 @@ class CommentRepository {
     }
   }
 
+  Future<bool> updateComment(
+      String ownerId, String comId, String content) async {
+    final url =
+        '${Secrets.TEST_SERVER_URL}/user/$ownerId/guestbook/comments/$comId'; // 백엔드 URL
+
+    try {
+      final response = await http.put(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'content': content,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // 성공적으로 업데이트된 경우
+        return true;
+      } else {
+        // 실패 처리
+        return false;
+      }
+    } catch (e) {
+      // 오류 처리
+      return false;
+    }
+  }
+
   Future<bool> deleteComment(String ownerId, String comId) async {
     final url =
         '${Secrets.TEST_SERVER_URL}/user/$ownerId/guestbook/comments/$comId'; // 백엔드 URL

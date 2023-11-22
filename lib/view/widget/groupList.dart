@@ -1,9 +1,10 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/view/widget/groupDetail.dart';
 import 'newGroup.dart';
-import 'package:http/http.dart' as http;
 
 class GroupList extends StatefulWidget {
   const GroupList({super.key});
@@ -15,14 +16,20 @@ class GroupList extends StatefulWidget {
 class _GroupListState extends State<GroupList> {
   List<dynamic> groups = const [];
 
-  getList() async {
-    var result = await http
-        .get(Uri.parse('http://yousayrun.store:8088/todo'))
-        .catchError((err) {
-      print(err);
-      return null;
-    });
-    groups = jsonDecode(result.body);
+  // 그룹 목록 조회
+  Future<void> getList() async {
+    try {
+      // 응답 형식이 리스트라서 에러 decode시 문제
+      var response = await RemoteDataSource.get("/group");
+      if (response.statusCode == 200) {
+        log(response.body);
+        groups = jsonDecode(response.body);
+      } else {
+        log("Failed to fetch group data: ${response.body}");
+      }
+    } catch (error) {
+      log("Failed to fetch group data: $error");
+    }
   }
 
   @override
