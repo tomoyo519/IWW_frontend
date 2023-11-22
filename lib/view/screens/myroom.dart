@@ -31,9 +31,14 @@ class MyRoom extends StatelessWidget {
   }
 }
 
-class RenderMyRoom extends StatelessWidget {
+class RenderMyRoom extends StatefulWidget {
   RenderMyRoom({Key? key}) : super(key: key);
 
+  @override
+  State<RenderMyRoom> createState() => _RenderMyRoomState();
+}
+
+class _RenderMyRoomState extends State<RenderMyRoom> {
   bool _isMyRoom = true;
 
   var sources = {
@@ -124,8 +129,6 @@ class RenderMyRoom extends StatelessWidget {
     // 여기서 비동기 연산 수행
     final authService = Provider.of<AuthService>(context);
     final commentsProvider = context.read<CommentsProvider>();
-
-    var HP = 0.5;
 
     // get argument from navigator, context
     try {
