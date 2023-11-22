@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/view/widget/bottombar.dart';
 
 import 'groupList.dart';
+import 'groupSearch.dart';
 
 class MyGroup extends StatelessWidget {
   const MyGroup({super.key});
@@ -18,7 +19,7 @@ class MyGroup extends StatelessWidget {
               Tab(icon: Icon(Icons.manage_search_outlined))
             ]),
           ),
-          body: const TabBarView(children: [GroupList(), Text("야호2")]),
+          body: const TabBarView(children: [GroupList(), GroupSearch()]),
           bottomNavigationBar: MyBottomNav(),
         ));
   }
