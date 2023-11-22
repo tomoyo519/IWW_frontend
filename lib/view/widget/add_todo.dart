@@ -86,7 +86,7 @@ class _AddTodoState extends State<AddTodo> {
       widget.getData();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('추가가 완료 되었어요!'),
+          content: const Text('변경이 완료 되었어요!'),
           // action: SnackBarAction(
           //   label: 'Action',
           //   onPressed: () {

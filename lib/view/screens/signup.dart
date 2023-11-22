@@ -1,9 +1,24 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/view/widget/appbar.dart';
 import 'package:iww_frontend/viewmodel/signup.viewmodel.dart';
 import 'package:provider/provider.dart';
+
+class SignUpPage extends StatelessWidget {
+  const SignUpPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context, listen: false);
+
+    return ChangeNotifierProvider<SignUpViewModel>(
+      create: (_) => SignUpViewModel(authService),
+      child: SignUp(),
+    );
+  }
+}
 
 /// 회원가입
 class SignUp extends StatelessWidget {
@@ -63,10 +78,14 @@ class SignUp extends StatelessWidget {
   void _signup(BuildContext context) async {
     if (_telFormKey.currentState!.validate()) {
       final viewModel = context.read<SignUpViewModel>();
-      await viewModel.signUp().then((value) {
-        _pageController.dispose(); // 해제
-        log("User created ${(value == true) ? "success" : "failed"}");
-        Navigator.pushNamed(context, "/contact");
+      // 회원가입 요청
+      await viewModel.signUp().then((userInfo) {
+        if (userInfo != null) {
+          _pageController.dispose(); // 해제
+          log("Succeeded in signing up");
+          Navigator.pushNamed(context, "/contact");
+        }
+        log("Succeeded to signup");
       });
     } else {
       // TODO: 예외처리?

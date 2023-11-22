@@ -45,3 +45,6 @@ app.*.map.json
 
 # Secret Keys
 /lib/secrets/
+
+# Gradlew dependencies
+/node_modules/

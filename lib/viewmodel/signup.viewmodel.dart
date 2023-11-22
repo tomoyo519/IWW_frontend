@@ -1,25 +1,19 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/repository/user.repository.dart';
+import 'package:iww_frontend/model/user/user-info.model.dart';
+import 'package:iww_frontend/service/auth.service.dart';
 
 class SignUpViewModel extends ChangeNotifier {
-  final UserRepository userRepository;
-  SignUpViewModel(this.userRepository);
+  final AuthService authService;
+  SignUpViewModel(this.authService);
 
   // User information
   String _name = '';
   String _tel = '';
-  int _kakaoId = 0;
   String get name => _name;
   set name(String val) => _name = val;
   set tel(String val) => _tel = val;
-  set kakaoId(int val) => _kakaoId = val;
-
-  // Page index
-  int _pageIdx = 0;
-  int get pageIdx => _pageIdx;
-  set pageIdx(int val) => _pageIdx = val;
 
   // Visibility
   bool _isCodeFieldVisible = false;
@@ -42,7 +36,7 @@ class SignUpViewModel extends ChangeNotifier {
   }
 
   // 회원가입
-  Future<bool?> signUp() async {
-    return await userRepository.createUser(_name, _tel);
+  Future<UserInfo?> signUp() async {
+    return await authService.signup(_name, _tel);
   }
 }
