@@ -70,6 +70,9 @@ class MyHome extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: MyBottomNav(),
+      floatingActionButton: AddTodo(
+        getData: () {},
+      ),
     );
   }
 }
@@ -143,6 +146,34 @@ class _ToDoListState extends State<ToDoList> {
     //     },
     //     {
     //       "todo_id": 3,
+    //       "user_id": 1,
+    //       "todo_name": "3miracle evening으로 변경되었다!!3",
+    //       "todo_desc": "test",
+    //       "todo_label": 2,
+    //       "todo_date": "2023-11-20T10:33:23.959Z",
+    //       "todo_done": true,
+    //       "todo_start": "2023-11-20T10:33:23.959Z",
+    //       "todo_end": "2023-11-20T10:33:24.959Z",
+    //       "grp_id": null,
+    //       "todo_img": null,
+    //       "todo_deleted": false
+    //     },
+    //     {
+    //       "todo_id": 4,
+    //       "user_id": 1,
+    //       "todo_name": "3miracle evening으로 변경되었다!!3",
+    //       "todo_desc": "test",
+    //       "todo_label": 2,
+    //       "todo_date": "2023-11-20T10:33:23.959Z",
+    //       "todo_done": true,
+    //       "todo_start": "2023-11-20T10:33:23.959Z",
+    //       "todo_end": "2023-11-20T10:33:24.959Z",
+    //       "grp_id": null,
+    //       "todo_img": null,
+    //       "todo_deleted": false
+    //     },
+    //     {
+    //       "todo_id": 5,
     //       "user_id": 1,
     //       "todo_name": "3miracle evening으로 변경되었다!!3",
     //       "todo_desc": "test",
@@ -595,7 +626,6 @@ class _ToDoListState extends State<ToDoList> {
         ),
         // TODO - 실제파일 들어오면 버튼 위치 변경하기
         // if (widget.showAddTodo) AddTodo()
-        AddTodo(getData: getData)
       ],
     );
   }

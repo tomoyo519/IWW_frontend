@@ -20,12 +20,12 @@ class _GroupListState extends State<GroupList> {
   getList() async {
     // TODO - user_id 변경해야해
     var result = await http
-        .get(Uri.parse('http://yousayrun.store:8088/group/1/groups'))
+        .get(Uri.parse('http://yousayrun.store:8088/group/6/groups'))
         .catchError((err) {
       print(err);
       return null;
     });
-
+    print(result.body);
     setState(() {
       groups = jsonDecode(result.body);
     });
@@ -80,24 +80,6 @@ class _GroupListState extends State<GroupList> {
                     );
             }),
       ),
-      Container(
-        padding: EdgeInsets.all(10),
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.7,
-          height: 40,
-          child: TextButton(
-            style: TextButton.styleFrom(
-                backgroundColor: Color(0xFF3A00E5),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10)))),
-            onPressed: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (c) => NewGroup()));
-            },
-            child: Text("새로운 그룹 만들기", style: TextStyle(color: Colors.white)),
-          ),
-        ),
-      )
     ]);
   }
 }

@@ -3,6 +3,7 @@ import 'package:iww_frontend/view/widget/bottombar.dart';
 
 import 'groupList.dart';
 import 'groupSearch.dart';
+import 'newGroup.dart';
 
 class MyGroup extends StatelessWidget {
   const MyGroup({super.key});
@@ -21,6 +22,12 @@ class MyGroup extends StatelessWidget {
           ),
           body: const TabBarView(children: [GroupList(), GroupSearch()]),
           bottomNavigationBar: MyBottomNav(),
+          floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (c) => NewGroup()));
+              },
+              child: Icon(Icons.add)),
         ));
   }
 }
