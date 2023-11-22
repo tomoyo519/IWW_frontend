@@ -7,7 +7,6 @@ import 'package:iww_frontend/repository/room.repository.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:iww_frontend/model/comment/comment.model.dart';
 import 'dart:convert';
-
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:provider/provider.dart';
 
@@ -18,7 +17,7 @@ class CommentsProvider with ChangeNotifier {
   final CommentRepository _commentRepository;
 
   // 방을 클릭할때마다 유지되는 상태
-  String _roomOwnerId = "1";
+  final _roomOwnerId = "1";
   String get roomOwnerId => _roomOwnerId;
 
   CommentsProvider(
@@ -102,59 +101,72 @@ class CommentsBottomSheet extends StatelessWidget {
         return Column(
           children: [
             Expanded(
-                child: ListView.builder(
-              controller: scrollController,
-              itemCount: comments.length,
-              itemBuilder: (BuildContext context, int index) {
-                Comment comment = comments[index];
-                bool isCurrentUserComment = (comment.authorId == userId);
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: NetworkImage(comment.userImage),
-                  ),
-                  title: Row(
-                    children: [
-                      Text(comment.username),
-                      if (comment.isMod)
-                        Padding(
-                          padding: EdgeInsets.only(left: 8),
-                          child: Text(
-                            "(수정됨)",
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
+              child: ListView.builder(
+                controller: scrollController,
+                itemCount: comments.length,
+                itemBuilder: (BuildContext context, int index) {
+                  Comment comment = comments[index];
+                  bool isCurrentUserComment = (comment.authorId == userId);
+                  // return isCurrentUserComment
+                  //   ? _buildDismissibleComment(comment, context)
+                  //   : _buildListTile(comment);
+                  return ListTile (
+                    leading: CircleAvatar(
+                      radius: 20,
+                      backgroundImage: NetworkImage(comment.userImage),
+                      onBackgroundImageError: (exception, stackTrace) {},
+                      child: Image.network(comment.userImage, fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return CircleAvatar(
+                            radius: 20,
+                            backgroundImage: AssetImage("assets/profile.jpg"),
+                          );
+                        },
+                      ),
+                    ),
+                    title: Row(
+                      children: [
+                        Text(comment.username),
+                        if (comment.isMod)
+                          Padding(
+                            padding: EdgeInsets.only(left: 8),
+                            child: Text(
+                              "(수정됨)",
+                              style: TextStyle(fontSize: 12, color: Colors.grey),
+                            ),
                           ),
-                        ),
-                    ],
-                  ),
-                  subtitle: Text(comment.content),
-                  trailing: isCurrentUserComment
-                      ? Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: Icon(Icons.edit),
-                              onPressed: () {
-                                _showEditCommentDialog(
-                                    context, comment, commentsProvider);
-                              },
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.delete),
-                              onPressed: () async {
-                                bool success = await commentsProvider
-                                    .deleteComment(ownerId, comment.comId);
-                                if (success) {
-                                  // 삭제 성공 시, UI 업데이트
-                                  commentsProvider.fetchComment(ownerId);
-                                } else {
-                                  // 삭제 실패 시, 사용자에게 알림
-                                }
-                              },
-                            ),
-                          ],
-                        )
-                      : SizedBox.shrink(),
-                );
-              },
+                      ],
+                    ),
+                    subtitle: Text(comment.content),
+                    trailing: isCurrentUserComment
+                        ? Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: Icon(Icons.edit),
+                                onPressed: () {
+                                  _showEditCommentDialog(
+                                      context, comment, commentsProvider);
+                                },
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.delete),
+                                onPressed: () async {
+                                  bool success = await commentsProvider
+                                      .deleteComment(ownerId, comment.comId);
+                                  if (success) {
+                                    // 삭제 성공 시, UI 업데이트
+                                    commentsProvider.fetchComment(ownerId);
+                                  } else {
+                                    // 삭제 실패 시, 사용자에게 알림
+                                  }
+                                },
+                              ),
+                            ],
+                          )
+                        : SizedBox.shrink(),
+                  );
+                },
             )),
             if (!isOwner)
               CommentInputField(
@@ -166,6 +178,111 @@ class CommentsBottomSheet extends StatelessWidget {
       },
     );
   }
+
+  // Widget _buildDismissibleComment(Comment comment, BuildContext context) {
+  //   return Dismissible(
+  //     key: Key(comment.comId),
+  //     direction: DismissDirection.endToStart,
+  //     background: Container(
+  //       color: Colors.transparent,
+  //     ),
+  //     secondaryBackground: Container(
+  //       color: Colors.red,
+  //       child: Row(
+  //         mainAxisAlignment: MainAxisAlignment.end,
+  //         children: [
+  //           _buildActionButton(Icons.edit, Colors.green, () {
+  //             _showEditCommentDialog(context, comment, commentsProvider);
+  //           }),
+  //           _buildActionButton(Icons.delete, Colors.red, () async {
+  //             bool success = await commentsProvider.deleteComment(ownerId, comment.comId);
+  //             if (success) {
+  //               commentsProvider.fetchComment(ownerId);
+  //             }
+  //           }),
+  //         ],
+  //       ),
+  //     ),
+  //     onDismissed: (direction) {
+  //       // 슬라이드 방향에 따른 액션 추가
+  //     },
+  //     child: _buildListTile(comment),
+  //   );
+  // }
+
+  // Widget _buildActionButton(IconData icon, Color color, VoidCallback onPressed) {
+  //   return Container(
+  //     color: color,
+  //     child: IconButton(
+  //       icon: Icon(icon, color: Colors.white),
+  //       onPressed: onPressed,
+  //     ),
+  //   );
+  // }
+
+  // Widget _buildListTile(Comment comment) {
+  //   return ListTile(
+  //     leading: Padding(
+  //       padding: EdgeInsets.symmetric(horizontal: 8.0),
+  //       child: CircleAvatar(
+  //         radius: 20,
+  //         backgroundImage: NetworkImage(comment.userImage),
+  //         onBackgroundImageError: (exception, stackTrace) {},
+  //         child: Image.network(
+  //           comment.userImage,
+  //           fit: BoxFit.cover,
+  //           errorBuilder: (context, error, stackTrace) {
+  //             return CircleAvatar(
+  //               radius: 20,
+  //               backgroundImage: AssetImage("assets/profile.jpg"),
+  //             );
+  //           },
+  //         ),
+  //       ),
+  //     ),
+  //     title: Row(
+  //       children: [
+  //         Text(comment.username),
+  //         if (comment.isMod)
+  //           Padding(
+  //             padding: EdgeInsets.only(left: 8),
+  //             child: Text(
+  //               "(수정됨)",
+  //               style: TextStyle(fontSize: 12, color: Colors.grey),
+  //             ),
+  //           ),
+  //       ],
+  //     ),
+  //     subtitle: Text(comment.content),
+  //     // trailing: isCurrentUserComment
+  //     //     ? Row(
+  //     //         mainAxisSize: MainAxisSize.min,
+  //     //         children: [
+  //     //           IconButton(
+  //     //             icon: Icon(Icons.edit),
+  //     //             onPressed: () {
+  //     //               _showEditCommentDialog(
+  //     //                   context, comment, commentsProvider);
+  //     //             },
+  //     //           ),
+  //     //           IconButton(
+  //     //             icon: Icon(Icons.delete),
+  //     //             onPressed: () async {
+  //     //               bool success = await commentsProvider
+  //     //                   .deleteComment(ownerId, comment.comId);
+  //     //               if (success) {
+  //     //                 // 삭제 성공 시, UI 업데이트
+  //     //                 commentsProvider.fetchComment(ownerId);
+  //     //               } else {
+  //     //                 // 삭제 실패 시, 사용자에게 알림
+  //     //               }
+  //     //             },
+  //     //           ),
+  //     //         ],
+  //     //       )
+  //     //     : SizedBox.shrink(),
+  //   );
+  // }
 
   void _showEditCommentDialog(BuildContext context, Comment comment,
       CommentsProvider commentsProvider) {
