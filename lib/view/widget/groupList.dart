@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/view/widget/groupDetail.dart';
@@ -15,7 +16,6 @@ class GroupList extends StatefulWidget {
 
 class _GroupListState extends State<GroupList> {
   List<dynamic> groups = [];
-
 
   getList() async {
     // TODO - user_id 변경해야해

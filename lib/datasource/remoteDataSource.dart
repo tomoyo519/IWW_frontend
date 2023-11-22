@@ -37,8 +37,12 @@ class RemoteDataSource {
   }
 
   // POST json
-  static Future<http.Response> post(String url,
-      {Map<String, String>? headers, Object? body, Encoding? encoding}) async {
+  static Future<http.Response> post(
+    String url, {
+    Map<String, String>? headers,
+    Object? body,
+    Encoding? encoding,
+  }) async {
     // 기본 헤더 추가
     headers = (headers != null) ? {...headers, ...baseHeaders} : baseHeaders;
 
@@ -50,17 +54,38 @@ class RemoteDataSource {
   }
 
   // GET json
-  static Future<http.Response> get(String url,
-      {Map<String, String>? headers}) async {
+  static Future<http.Response> get(
+    String url, {
+    Map<String, String>? headers,
+  }) async {
     // 기본 헤더 추가
     headers = (headers != null) ? {...headers, ...baseHeaders} : baseHeaders;
 
     return await http.get(Uri.parse(server + url), headers: headers);
   }
 
+  // PUT json
+  static Future<http.Response> put(
+    String url, {
+    Map<String, String>? headers,
+    Object? body,
+    Encoding? encoding,
+  }) async {
+    // 기본 헤더 추가
+    headers = (headers != null) ? {...headers, ...baseHeaders} : baseHeaders;
+    // Json string으로 변환하여 요청
+    String bodyString = body is Map ? json.encode(body) : body.toString();
+    return await http.put(Uri.parse(server + url),
+        headers: headers, body: bodyString, encoding: encoding);
+  }
+
   // DELETE json
-  static Future<http.Response> delete(String url,
-      {Map<String, String>? headers, Object? body, Encoding? encoding}) async {
+  static Future<http.Response> delete(
+    String url, {
+    Map<String, String>? headers,
+    Object? body,
+    Encoding? encoding,
+  }) async {
     // 기본 헤더 추가
     headers = (headers != null) ? {...headers, ...baseHeaders} : baseHeaders;
     // Json string으로 변환하여 요청

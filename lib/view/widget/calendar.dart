@@ -4,6 +4,7 @@ import 'package:table_calendar/table_calendar.dart';
 class Calendar extends StatefulWidget {
   Calendar({required this.setSelectedDay, Key? key}) : super(key: key);
   Function(DateTime) setSelectedDay;
+
   @override
   State<Calendar> createState() => _CalendarState();
 }

@@ -34,10 +34,14 @@ void main() async {
         // ViewModel Providers
         providers: getChangeNotifiers(),
         child: MaterialApp(
-            theme: ThemeData(useMaterial3: true),
+            theme: ThemeData(
+                useMaterial3: true,
+                colorScheme: ColorScheme.fromSeed(
+                  seedColor: Colors.orange,
+                )),
             // 라우트 정의
             routes: {
-              '/home': (context) => const MyHome(),
+              '/home': (context) => const MyHomePage(),
               '/landing': (context) => LandingPage(),
               '/signup': (context) => SignUpPage(),
               '/contact': (context) => AddFriendsPage(),
