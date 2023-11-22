@@ -1,33 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/repository/comment.repository.dart';
+import 'package:iww_frontend/repository/room.repository.dart';
+import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/view/widget/guestbook.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:iww_frontend/view/widget/bottombar.dart';
-import 'package:iww_frontend/repository/user.repository.dart';
+import 'package:provider/provider.dart';
 
 class MyRoom extends StatelessWidget {
-  final UserRepository userRepository;
-  MyRoom(this.userRepository, {Key? key}) : super(key: key);
+  MyRoom({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // 의존성
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final roomRepository = Provider.of<RoomRepository>(context, listen: false);
+    final commentRepository =
+        Provider.of<CommentRepository>(context, listen: false);
+
     return Scaffold(
-        body: RenderMyRoom(userRepository: userRepository),
-        bottomNavigationBar: MyBottomNav());
+        body: ChangeNotifierProvider<CommentsProvider>(
+            create: (context) => CommentsProvider(
+                  authService,
+                  roomRepository,
+                  commentRepository,
+                ),
+            child: RenderMyRoom()));
   }
 }
 
 class RenderMyRoom extends StatelessWidget {
-  final UserRepository userRepository;
-
-  const RenderMyRoom({
-    Key? key,
-    required this.userRepository,
-  }) : super(key: key);
+  const RenderMyRoom({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    CommentsProvider commentsProvider = CommentsProvider();
-    // final userId = ModalRoute.of(context)!.settings.arguments as String;
+    // 여기서 비동기 연산 수행
+    final authService = Provider.of<AuthService>(context);
+    final commentsProvider = context.read<CommentsProvider>();
 
     return Stack(alignment: Alignment.center, children: [
       Image.asset(
@@ -70,12 +79,24 @@ class RenderMyRoom extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             ElevatedButton(
-                onPressed: () {},
-                // onPressed: () async {
-                //   int? currentUserId = await userRepository.getUserId();
-                //   showCommentsBottomSheet(context, commentsProvider,
-                //       currentUserId.toString(), userId);
-                // },
+                onPressed: () async {
+                  String? roomOwenerId = commentsProvider.roomOwnerId;
+
+                  final currentUser = await authService.getCurrentUser();
+                  // 로그인 유저 없으면 6
+                  var userId = (currentUser != null)
+                      ? currentUser.user_id.toString()
+                      : '6';
+
+                  if (context.mounted) {
+                    showCommentsBottomSheet(
+                      context,
+                      commentsProvider,
+                      userId,
+                      roomOwenerId,
+                    );
+                  }
+                },
                 child: Text('방명록')),
             SizedBox(width: 20),
             ElevatedButton(onPressed: () {}, child: Text('인벤토리')),

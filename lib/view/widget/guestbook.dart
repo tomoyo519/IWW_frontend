@@ -1,207 +1,166 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:iww_frontend/repository/comment.repository.dart';
+import 'package:iww_frontend/repository/room.repository.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
+import 'package:iww_frontend/model/comment/comment.model.dart';
 import 'dart:convert';
 
-class Comment {
-  String comId;
-  String authorId;
-  late String userImage;
-  String username;
-  String content;
-  bool isMod;
+import 'package:iww_frontend/service/auth.service.dart';
+import 'package:provider/provider.dart';
 
-  Comment({
-    required this.comId,
-    required this.authorId,
-    required this.username,
-    required this.content,
-    required this.isMod,
-  }) {
-    userImage = '${Secrets.TEST_SERVER_URL}/image/$authorId.jpg';
-  }
-}
-
+// 방명록 상태관리
 class CommentsProvider with ChangeNotifier {
+  final AuthService _authService;
+  final RoomRepository _roomRepository;
+  final CommentRepository _commentRepository;
+
+  // 방을 클릭할때마다 유지되는 상태
+  String _roomOwnerId = "1";
+  String get roomOwnerId => _roomOwnerId;
+
+  CommentsProvider(
+    this._authService,
+    this._roomRepository,
+    this._commentRepository,
+  );
+
   List<Comment> comments = [];
 
-  void setComment(List<Comment> newComments) {
-    comments = newComments;
+  // 댓글 데이터 불러오기
+  Future<void> fetchComment(String ownerId) async {
+    comments = await _commentRepository.fetchComments(ownerId);
     notifyListeners(); // 상태 변경 알림
   }
+
+  // 댓글 생성
+  Future<bool> addComment(
+      String ownerId, String authorId, String content) async {
+    return await _commentRepository.addComment(ownerId, authorId, content);
+  }
+
+  // 댓글 수정
+  Future<bool> updateComment(
+      String ownerId, String authorId, String content) async {
+    return await _commentRepository.updateComment(ownerId, authorId, content);
+  }
+
+  // 댓글 삭제
+  Future<bool> deleteComment(String ownerId, String comId) async {
+    return await _commentRepository.deleteComment(ownerId, comId);
+  }
+
+  // 현재 유저 정보 반환
+  Future<int?> getUserId() async {
+    return await _authService.getCurrentUser().then((user) => user?.user_id);
+  }
 }
 
+// 방명록 bottom sheet 트리거
 void showCommentsBottomSheet(BuildContext context,
-    CommentsProvider commentsProvider, String currentUserID, ownerId) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    builder: (BuildContext context) {
-      return CommentsBottomSheet(
-        commentsProvider: commentsProvider,
-        ownerId: ownerId,
-        currentUserId: currentUserID,
-      );
-    },
-  );
-}
+    CommentsProvider commentsProvider, userId, ownerId) async {
+  // 댓글 데이터 가져오기
+  await commentsProvider.fetchComment(ownerId);
 
-Future<void> fetchComments(
-    CommentsProvider commentsProvider, String ownerId) async {
-  final url = '${Secrets.TEST_SERVER_URL}/user/$ownerId/guestbook/comments';
-  try {
-    final response = await http.get(Uri.parse(url));
-
-    if (response.statusCode == 200) {
-      List<dynamic> data = jsonDecode(response.body);
-      List<Comment> fetchedComments = data.map((commentData) {
-        return Comment(
-          comId: commentData['com_id'],
-          authorId: commentData['author_id'],
-          username: commentData['user_name'],
-          content: commentData['content'],
-          isMod: commentData['is_mod'],
-        );
-      }).toList();
-
-      commentsProvider.setComment(fetchedComments);
-    }
-  } catch (e) {
-    // 오류 처리
+  if (context.mounted) {
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return CommentsBottomSheet(
+            commentsProvider: commentsProvider,
+            userId: userId,
+            ownerId: ownerId,
+          );
+        });
   }
 }
 
-Future<bool> addComment(String ownerId, String authorId, String content) async {
-  final url = '${Secrets.TEST_SERVER_URL}/user/$ownerId/guestbook/comments';
-  try {
-    final response = await http.post(
-      Uri.parse(url),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'owner_id': ownerId,
-        'author_id': authorId,
-        'content': content,
-      }),
-    );
-
-    return response.statusCode == 200;
-  } catch (e) {
-    // 오류 처리
-    return false;
-  }
-}
-
-Future<bool> deleteComment(String ownerId, String comId) async {
-  final url = '${Secrets.TEST_SERVER_URL}/user/$ownerId/guestbook/comments/$comId'; // 백엔드 URL
-
-  try {
-    final response = await http.patch(
-      Uri.parse(url),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'com_id': comId,
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      // 성공적으로 삭제된 경우
-      return true;
-    } else {
-      // 실패 처리
-      return false;
-    }
-  } catch (e) {
-    // 오류 처리
-    return false;
-  }
-}
-
+// 방명록 bottom sheet 뷰
 class CommentsBottomSheet extends StatelessWidget {
   final CommentsProvider commentsProvider;
   final String ownerId;
-  final String currentUserId;
+  final String userId;
 
   const CommentsBottomSheet({
     Key? key,
     required this.commentsProvider,
     required this.ownerId,
-    required this.currentUserId,
+    required this.userId,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    bool isOwner = ownerId == currentUserId;
+    bool isOwner = ownerId == userId;
+    final comments = commentsProvider.comments;
+
     return DraggableScrollableSheet(
       expand: false,
       builder: (BuildContext context, ScrollController scrollController) {
         return Column(
           children: [
             Expanded(
-              child: ListView.builder(
-                controller: scrollController,
-                itemCount: commentsProvider.comments.length,
-                itemBuilder: (BuildContext context, int index) {
-                  Comment comment = commentsProvider.comments[index];
-                  bool isCurrentUserComment = comment.authorId == currentUserId;
-                  return ListTile(
-                    leading: CircleAvatar(
-                      backgroundImage: NetworkImage(comment.userImage),
-                    ),
-                    title: Row(
-                      children: [
-                        Text(comment.username),
-                        if (comment.isMod)
-                          Padding(
-                            padding: EdgeInsets.only(left: 8),
-                            child: Text(
-                              "(수정됨)",
-                              style:
-                                  TextStyle(fontSize: 12, color: Colors.grey),
-                            ),
+                child: ListView.builder(
+              controller: scrollController,
+              itemCount: comments.length,
+              itemBuilder: (BuildContext context, int index) {
+                Comment comment = comments[index];
+                bool isCurrentUserComment = (comment.authorId == userId);
+                return ListTile(
+                  leading: CircleAvatar(
+                    backgroundImage: NetworkImage(comment.userImage),
+                  ),
+                  title: Row(
+                    children: [
+                      Text(comment.username),
+                      if (comment.isMod)
+                        Padding(
+                          padding: EdgeInsets.only(left: 8),
+                          child: Text(
+                            "(수정됨)",
+                            style: TextStyle(fontSize: 12, color: Colors.grey),
                           ),
-                      ],
-                    ),
-                    subtitle: Text(comment.content),
-                    trailing: isCurrentUserComment
-                        ? Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                icon: Icon(Icons.edit),
-                                onPressed: () {
-                                  _showEditCommentDialog(
-                                      context, comment, commentsProvider);
-                                },
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.delete),
-                                onPressed: () async {
-                                  bool success = await deleteComment(
-                                      ownerId, comment.comId);
-                                  if (success) {
-                                    // 삭제 성공 시, UI 업데이트
-                                    fetchComments(commentsProvider, ownerId);
-                                  } else {
-                                    // 삭제 실패 시, 사용자에게 알림
-                                  }
-                                },
-                              ),
-                            ],
-                          )
-                        : SizedBox.shrink(),
-                  );
-                },
-              ),
-            ),
+                        ),
+                    ],
+                  ),
+                  subtitle: Text(comment.content),
+                  trailing: isCurrentUserComment
+                      ? Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.edit),
+                              onPressed: () {
+                                _showEditCommentDialog(
+                                    context, comment, commentsProvider);
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () async {
+                                bool success = await commentsProvider
+                                    .deleteComment(ownerId, comment.comId);
+                                if (success) {
+                                  // 삭제 성공 시, UI 업데이트
+                                  commentsProvider.fetchComment(ownerId);
+                                } else {
+                                  // 삭제 실패 시, 사용자에게 알림
+                                }
+                              },
+                            ),
+                          ],
+                        )
+                      : SizedBox.shrink(),
+                );
+              },
+            )),
             if (!isOwner)
               CommentInputField(
                   commentsProvider: commentsProvider,
                   ownerId: ownerId,
-                  authorId: currentUserId),
+                  authorId: userId),
           ],
         );
       },
@@ -232,12 +191,15 @@ class CommentsBottomSheet extends StatelessWidget {
             TextButton(
               onPressed: controller.text != comment.content
                   ? () async {
-                      bool success = await updateComment(
+                      bool success = await commentsProvider.updateComment(
                           ownerId, comment.comId, controller.text);
                       if (success) {
-                        fetchComments(commentsProvider, ownerId);
+                        // 댓글 새로고침
+                        commentsProvider.fetchComment(ownerId);
                       }
-                      Navigator.of(context).pop();
+                      if (context.mounted) {
+                        Navigator.of(context).pop();
+                      }
                     }
                   : null,
               child: Text('수정'),
@@ -278,10 +240,11 @@ class CommentInputField extends StatelessWidget {
                 String ownerID = ownerId; // 방명록 주인의 ID
                 String currentUserID = authorId; // 현재 사용자 ID
 
-                bool success =
-                    await addComment(ownerID, currentUserID, controller.text);
+                bool success = await commentsProvider.addComment(
+                    ownerID, currentUserID, controller.text);
                 if (success) {
-                  fetchComments(commentsProvider, ownerID); // 댓글 목록을 새로고침
+                  // 댓글 새로고침
+                  commentsProvider.fetchComment(ownerId);
                 }
                 controller.clear();
               }
@@ -290,33 +253,5 @@ class CommentInputField extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-Future<bool> updateComment(String ownerId, String comId, String content) async {
-  final url =
-      '${Secrets.TEST_SERVER_URL}/user/$ownerId/guestbook/comments/$comId'; // 백엔드 URL
-
-  try {
-    final response = await http.put(
-      Uri.parse(url),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'content': content,
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      // 성공적으로 업데이트된 경우
-      return true;
-    } else {
-      // 실패 처리
-      return false;
-    }
-  } catch (e) {
-    // 오류 처리
-    return false;
   }
 }

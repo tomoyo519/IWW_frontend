@@ -4,28 +4,13 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:iww_frontend/secrets/secrets.dart';
 
-// 콘텐트 타입
-enum ContentType {
-  json,
-  formdata;
-
-  String get type {
-    switch (this) {
-      case ContentType.json:
-        return "application/json; charset=UTF-8";
-      case ContentType.formdata:
-        return "multipart/form-data";
-    }
-  }
-}
-
 /// 서버 통신쪽 코드
 class RemoteDataSource {
   // 싱글톤 객체
   RemoteDataSource._internal();
   static final _instance = RemoteDataSource._internal();
 
-  static const String server = Secrets.TEST_SERVER_URL;
+  static const String server = Secrets.REMOTE_SERVER_URL;
   static RemoteDataSource get instance => _instance;
   static const Map<String, String> baseHeaders = {
     // TODO: 여기에 기본 헤더를 정의합니다.

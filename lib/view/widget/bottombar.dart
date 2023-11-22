@@ -13,13 +13,16 @@ class MyBottomNav extends StatelessWidget implements PreferredSizeWidget {
   void goHome(context, uri) {
     switch (uri) {
       case 0:
-        Navigator.push(context, MaterialPageRoute(builder: (c) => MyHome()));
+        Navigator.pushNamedAndRemoveUntil(
+            context, "/home", (Route<dynamic> route) => false);
         break;
       case 1:
-        Navigator.push(context, MaterialPageRoute(builder: (c) => MyGroup()));
+        Navigator.pushNamedAndRemoveUntil(
+            context, "/group", (Route<dynamic> route) => false);
         break;
       case 2:
-        Navigator.pushNamed(context, "/myroom");
+        Navigator.pushNamedAndRemoveUntil(
+            context, "/myroom", (Route<dynamic> route) => false);
         break;
       default:
         throw UnimplementedError('no widget for uri $uri');

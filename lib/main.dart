@@ -6,6 +6,8 @@ import 'package:iww_frontend/view/screens/myroom.dart';
 import 'package:iww_frontend/view/screens/addFriends.dart';
 import 'package:iww_frontend/view/screens/landing.dart';
 import 'package:iww_frontend/view/screens/signup.dart';
+import 'package:iww_frontend/view/widget/groupMain.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/view/widget/home.dart';
 import 'package:iww_frontend/utils/appEntries.dart';
@@ -39,8 +41,8 @@ void main() async {
               '/landing': (context) => LandingPage(),
               '/signup': (context) => SignUpPage(),
               '/contact': (context) => AddFriendsPage(),
-              '/myroom': (context) =>
-                  MyRoom(Provider.of<UserRepository>(context, listen: false)),
+              '/myroom': (context) => MyRoom(),
+              '/group': (context) => MyGroup()
             },
             home: MyApp()),
       ),
