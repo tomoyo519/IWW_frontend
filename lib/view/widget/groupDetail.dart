@@ -62,6 +62,7 @@ class _GroupDetailState extends State<GroupDetail> {
       print(err);
       return null;
     });
+
     print(result.body);
   }
 
@@ -120,7 +121,7 @@ class _GroupDetailState extends State<GroupDetail> {
                 controller: _controller,
                 decoration: InputDecoration(
                   hintText: "우리 그룹에 대한 설명이에요",
-                  contentPadding: EdgeInsets.symmetric(vertical: 60),
+                  contentPadding: EdgeInsets.symmetric(vertical: 30),
                   border: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.black, width: 1)),
                 ),
@@ -175,36 +176,45 @@ class _GroupDetailState extends State<GroupDetail> {
               ),
               Divider(color: Colors.grey, thickness: 1, indent: 10),
               Expanded(
-                child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2),
-                  itemCount: groupMems.isEmpty ? 0 : groupMems.length,
-                  itemBuilder: (context, index) {
-                    return Column(
-                      children: [
-                        groupMems.isNotEmpty
-                            ? Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                        color: Colors.orangeAccent, width: 5)),
-                                alignment: Alignment.center,
-                                margin: EdgeInsets.all(10),
-                                padding: EdgeInsets.all(10),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Icon(Icons.account_circle_rounded),
-                                    Text(groupMems[index]["user_name"]),
-                                  ],
-                                ))
-                            : Text("텅")
-                      ],
-                    );
-                  },
+                child: Container(
+                  height: 200,
+                  child: GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        childAspectRatio: 2 / 1, crossAxisCount: 3),
+                    itemCount: groupMems.isEmpty ? 0 : groupMems.length,
+                    itemBuilder: (context, index) {
+                      print(groupMems[index]);
+                      return Column(
+                        children: [
+                          groupMems.isNotEmpty
+                              ? Container(
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                          color: Colors.orangeAccent,
+                                          width: 5)),
+                                  alignment: Alignment.center,
+                                  margin: EdgeInsets.all(2),
+                                  padding: EdgeInsets.all(2),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Icon(Icons.account_circle_rounded),
+                                      Text(groupMems[index]["user_name"]
+                                          ? groupMems[index]["user_name"]
+                                          : "정다희"),
+                                    ],
+                                  ))
+                              : Text("텅")
+                        ],
+                      );
+                    },
+                  ),
                 ),
               ),
+              Divider(color: Colors.grey, thickness: 1, indent: 10),
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.7,
                 height: 40,

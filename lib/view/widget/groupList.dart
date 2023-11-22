@@ -78,24 +78,6 @@ class _GroupListState extends State<GroupList> {
                     );
             }),
       ),
-      Container(
-        padding: EdgeInsets.all(10),
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.7,
-          height: 40,
-          child: TextButton(
-            style: TextButton.styleFrom(
-                backgroundColor: Color(0xFF3A00E5),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10)))),
-            onPressed: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (c) => NewGroup()));
-            },
-            child: Text("새로운 그룹 만들기", style: TextStyle(color: Colors.white)),
-          ),
-        ),
-      )
     ]);
   }
 }
