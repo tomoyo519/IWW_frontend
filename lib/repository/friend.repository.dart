@@ -6,25 +6,55 @@ import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FriendRepository {
-  // 친구 조회
-  Future<List<UserInfo>?> getFriends() async {
-    int? userId = await _getUser();
+  List<UserInfo> dummy = [
+    UserInfo(
+        user_id: 1,
+        user_name: '신병철',
+        user_tel: '010-1111-1111',
+        user_kakao_id: '1',
+        user_hp: 70),
+    UserInfo(
+        user_id: 2,
+        user_name: '정다희',
+        user_tel: '010-2222-2222',
+        user_kakao_id: '2',
+        user_hp: 80),
+    UserInfo(
+        user_id: 13,
+        user_name: '이인복',
+        user_tel: '010-3333-3333',
+        user_kakao_id: '3',
+        user_hp: 60),
+    UserInfo(
+        user_id: 5,
+        user_name: '이소정',
+        user_tel: '010-5555-5555',
+        user_kakao_id: '5',
+        user_hp: 90),
+  ];
 
-    if (userId == null) {
-      // TODO: 예외처리 (백그라운드 로그인)
-      return null;
-    }
-    return await RemoteDataSource.get("/friend/$userId").then((response) {
-      if (response.statusCode == 200) {
-        var jsonData = json.decode(response.body);
-        return (jsonData as List)
-            .map((item) => UserInfo.fromJson(item as Map<String, dynamic>))
-            .toList();
-      } else {
-        log("Fail to fetch friend data.");
-        return null;
-      }
-    });
+  // 친구 조회
+  // Future<List<UserInfo>?> getFriends() async {
+  //   int? userId = await _getUser();
+
+  //   if (userId == null) {
+  //     // TODO: 예외처리 (백그라운드 로그인)
+  //     return null;
+  //   }
+  //   return await RemoteDataSource.get("/friend/$userId").then((response) {
+  //     if (response.statusCode == 200) {
+  //       var jsonData = json.decode(response.body);
+  //       return (jsonData as List)
+  //           .map((item) => UserInfo.fromJson(item as Map<String, dynamic>))
+  //           .toList();
+  //     } else {
+  //       log("Fail to fetch friend data.");
+  //       return null;
+  //     }
+  //   });
+  // }
+  Future<List<UserInfo>> getFriends() async {
+    return dummy;
   }
 
   // 친구 생성

@@ -136,6 +136,8 @@ class RenderMyRoom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var myRoomState = context.watch<MyRoomState>();
+    final authService = Provider.of<AuthService>(context);
+    final commentsProvider = context.read<CommentsProvider>();
 
     // get argument from navigator, context
     try {
@@ -156,6 +158,51 @@ class RenderMyRoom extends StatelessWidget {
       layers.children.add(sources['fish']!);
       layers.children.add(sources['astronaut']!);
     }
+
+    // bottom buttons
+    layers.children.add(Positioned(
+      bottom: 0,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          ElevatedButton(
+              onPressed: () async {
+                String? roomOwenerId = commentsProvider.roomOwnerId;
+
+                final currentUser = await authService.getCurrentUser();
+                // 로그인 유저 없으면 6
+                var userId = (currentUser != null)
+                    ? currentUser.user_id.toString()
+                    : '6';
+
+                if (context.mounted) {
+                  showCommentsBottomSheet(
+                    context,
+                    commentsProvider,
+                    userId,
+                    roomOwenerId,
+                  );
+                }
+              },
+              child: Text('방명록')),
+          SizedBox(width: 20),
+          ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/inventory');
+              },
+              child: Text('인벤토리')),
+          SizedBox(width: 20),
+          ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamedAndRemoveUntil(
+                  context, '/friends', (Route<dynamic> route) => false);
+              },
+              child: Text('친구목록')),
+        ],
+      ),
+    ));
 
     return layers;
   }

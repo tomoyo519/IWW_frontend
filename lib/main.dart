@@ -2,11 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/providers.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
+import 'package:iww_frontend/repository/friend.repository.dart';
 import 'package:iww_frontend/view/screens/myroom.dart';
 import 'package:iww_frontend/view/screens/addFriends.dart';
 import 'package:iww_frontend/view/screens/landing.dart';
 import 'package:iww_frontend/view/screens/signup.dart';
 import 'package:iww_frontend/view/screens/myPage.dart';
+import 'package:iww_frontend/view/widget/friendMain.dart';
 import 'package:iww_frontend/view/widget/groupMain.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
@@ -45,6 +47,7 @@ void main() async {
               '/myroom': (context) => MyRoom(),
               '/group': (context) => MyGroup(),
               '/mypage': (context) => MyPage(),
+              '/friends': (context) => MyFriend(),
             },
             home: MyApp()),
       ),
