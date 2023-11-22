@@ -602,10 +602,33 @@ class _ToDoListState extends State<ToDoList> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Checkbox(
-                                      value: false,
-                                      onChanged: (c) {
+                                      value: myTodoList[i]["todo_done"],
+                                      onChanged: (c) async {
+                                        print("눌림");
+                                        bool todoDone =
+                                            myTodoList[i]["todo_done"];
+                                        print(todoDone);
+                                        var result = await http
+                                            .patch(
+                                                Uri.parse(
+                                                    "http://yousayrun.store:8088/todo/${myTodoList[i]["todo_id"]}"),
+                                                headers: <String, String>{
+                                                  'Content-Type':
+                                                      'application/json; charset=UTF-8',
+                                                },
+                                                body: jsonEncode({
+                                                  "todo_done": !todoDone,
+                                                }))
+                                            .catchError((err) {
+                                          print(err);
+                                          return null;
+                                        });
+                                        getData();
+
                                         //TODO - onclick시 todo 완료 체크 해야함
                                       }),
+                                  //TODO - onclick시 todo 완료 체크 해야함
+
                                   Text(myTodoList[i]["todo_name"]),
                                   myTodoList[i]["grp_id"] == null
                                       ? Icon(Icons.query_builder_outlined)
