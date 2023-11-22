@@ -9,31 +9,30 @@ import 'package:iww_frontend/repository/room.repository.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:iww_frontend/model/comment/comment.model.dart';
 import 'dart:convert';
-
 import 'package:iww_frontend/service/auth.service.dart';
 
 class CommentRepository {
   List<Comment> dummy = [
     Comment(
-        authorId: '1',
+        authorId: '2',
         comId: '1',
         username: "피카츄",
         content: "댓글1",
         isMod: false),
     Comment(
-        authorId: '1',
+        authorId: '3',
         comId: '2',
         username: "라이츄",
         content: "댓글2",
-        isMod: false),
+        isMod: true),
     Comment(
-        authorId: '1',
+        authorId: '6',
         comId: '3',
         username: "파이리",
         content: "댓글3",
         isMod: false),
     Comment(
-        authorId: '1',
+        authorId: '4',
         comId: '4',
         username: "꼬부기",
         content: "댓글4",

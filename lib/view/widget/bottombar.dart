@@ -24,6 +24,9 @@ class MyBottomNav extends StatelessWidget implements PreferredSizeWidget {
         Navigator.pushNamedAndRemoveUntil(
             context, "/myroom", arguments: true, (Route<dynamic> route) => false);
         break;
+      case 4:
+        Navigator.pushNamedAndRemoveUntil(
+            context, '/mypage', (Route<dynamic> route) => false);
       default:
         throw UnimplementedError('no widget for uri $uri');
     }
