@@ -12,7 +12,7 @@ class Todo {
   String? todoStart;
   String? todoEnd;
   String? todoImg;
-  String? grpId;
+  int? grpId;
   String? todoDeleted;
 
   Todo(
@@ -30,6 +30,23 @@ class Todo {
       this.todoDeleted});
 
   bool get isDone => todoDone ?? false;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'todo_id': todoId,
+      'user_id': userId,
+      'todo_name': todoName,
+      'todo_desc': todoDesc,
+      'todo_label': todoLabel,
+      'todo_date': todoDate?.toIso8601String(),
+      'todo_done': todoDone,
+      'todo_start': todoStart,
+      'todo_end': todoEnd,
+      'todo_img': todoImg,
+      'grp_id': grpId,
+      'todo_deleted': todoDeleted,
+    };
+  }
 
   Future<bool> setDone(bool value) async {
     todoDone = value;
