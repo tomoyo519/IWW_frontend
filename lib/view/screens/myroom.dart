@@ -8,7 +8,7 @@ import 'package:iww_frontend/view/widget/bottombar.dart';
 import 'package:provider/provider.dart';
 
 class MyRoom extends StatelessWidget {
-  MyRoom({Key? key}) : super(key: key);
+  const MyRoom({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,12 +25,95 @@ class MyRoom extends StatelessWidget {
                   roomRepository,
                   commentRepository,
                 ),
-            child: RenderMyRoom()));
+            child: RenderMyRoom()),
+        bottomNavigationBar: MyBottomNav());
   }
 }
 
 class RenderMyRoom extends StatelessWidget {
-  const RenderMyRoom({Key? key}) : super(key: key);
+  RenderMyRoom({Key? key}) : super(key: key);
+
+  bool _isMyRoom = true;
+
+  var sources = {
+    'bg1': Image.asset(
+      'assets/background.png',
+      fit: BoxFit.cover,
+    ),
+    'bg2': Image.asset(
+      'assets/bg2.png',
+      height: 500,
+      fit: BoxFit.fill,
+    ),
+    'fish': ModelViewer(
+      // loading: Loading.eager,
+      shadowIntensity: 1,
+      src: 'assets/koi_fish.glb',
+      alt: 'koi fish',
+      autoPlay: true,
+      disableZoom: true,
+      cameraControls: false,
+      animationName: 'morphBake',
+      cameraOrbit: '30deg 60deg 0m',
+      cameraTarget: '4m 6m 2m',
+    ),
+    'astronaut': ModelViewer(
+      // loading: Loading.eager,
+      shadowIntensity: 1,
+      src: 'assets/Astronaut.glb',
+      alt: 'astronaut',
+      // autoRotate: true,
+      autoPlay: true,
+      disableZoom: true,
+      cameraControls: false,
+      // animationName: "walk",
+      cameraOrbit: "40deg 60eg 0m", // theta, phi, radius
+      cameraTarget: "0.5m 1.5m 2m", // x(왼쪽 위), y(높이) ,z (오른쪽 위)
+    ),
+    'robot': ModelViewer(
+      // loading: Loading.eager,
+      shadowIntensity: 1,
+      src: 'assets/robot_walk_idle.usdz',
+      alt: 'robot',
+      // autoRotate: true,
+      autoPlay: true,
+      disableZoom: true,
+      cameraControls: false,
+      animationName: "walk",
+      cameraOrbit: "30deg 60deg 0m", // theta, phi, radius
+      cameraTarget: "1m 4m 4m", // x(왼쪽 위), y(높이) ,z (오른쪽 위)
+    ),
+    'animals': ModelViewer(
+      // loading: Loading.eager,
+      // shadowIntensity: 1,
+      src: 'assets/aa.glb',
+      alt: 'animals',
+      // autoRotate: true,
+      autoPlay: true,
+      disableZoom: true,
+      // cameraControls: false,
+      // animationName: "walk",
+      cameraOrbit: "30deg 30deg 2m", // theta, phi, radius
+      cameraTarget: "2m 2m 2m", // x(왼쪽 위), y(높이) ,z (오른쪽 위)
+    ),
+    'cat': ModelViewer(
+      // loading: Loading.eager,
+      shadowIntensity: 1,
+      src: 'assets/cat.glb',
+      alt: 'cuttest pet ever',
+      // autoRotate: true,
+      autoPlay: true,
+      // iosSrc: 'assets/cat2.usdz',
+      cameraOrbit: "30deg,180deg, 0m",
+      cameraTarget: "0m 300m 300m",
+      disableZoom: true,
+    ),
+  };
+
+  set _setMyRoom(bool val) {
+    _isMyRoom = val;
+    print('######## now my room is $_isMyRoom');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,74 +121,75 @@ class RenderMyRoom extends StatelessWidget {
     final authService = Provider.of<AuthService>(context);
     final commentsProvider = context.read<CommentsProvider>();
 
-    return Stack(alignment: Alignment.center, children: [
-      Image.asset(
-        'assets/background.png',
-        fit: BoxFit.cover,
-        width: MediaQuery.of(context).size.width,
-      ),
-      // layer of 3d objects
-      // TODO 오브젝트 위치를 어떻게 이동시킬지 고민해보자
-      ModelViewer(
-        // loading: Loading.eager,
-        shadowIntensity: 1,
-        src: 'assets/koi_fish.glb',
-        alt: 'koi fish',
-        autoPlay: true,
-        disableZoom: true,
-        cameraControls: false,
-        animationName: "morphBake",
-        cameraOrbit: "30deg 60deg 0m", // theta, phi, radius
-        cameraTarget: "4m 6m 2m", // x(왼쪽 위), y(높이) ,z (오른쪽 위)
-      ),
-      ModelViewer(
-        // loading: Loading.eager,
-        shadowIntensity: 1,
-        src: 'assets/Astronaut.glb',
-        alt: 'astronaut',
-        // autoRotate: true,
-        autoPlay: true,
-        disableZoom: true,
-        cameraControls: false,
-        // animationName: "walk",
-        cameraOrbit: "30deg 60deg 0m", // theta, phi, radius
-        cameraTarget: "1m 4m 4m", // x(왼쪽 위), y(높이) ,z (오른쪽 위)
-      ),
-      Positioned(
-        bottom: 0,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            ElevatedButton(
-                onPressed: () async {
-                  String? roomOwenerId = commentsProvider.roomOwnerId;
+    // set
+    try {
+      _isMyRoom = ModalRoute.of(context)!.settings.arguments as bool;
+    } catch (e) {
+      print(e);
+    }
 
-                  final currentUser = await authService.getCurrentUser();
-                  // 로그인 유저 없으면 6
-                  var userId = (currentUser != null)
-                      ? currentUser.user_id.toString()
-                      : '6';
+    Stack layers = Stack(alignment: Alignment.center, children: []);
 
-                  if (context.mounted) {
-                    showCommentsBottomSheet(
-                      context,
-                      commentsProvider,
-                      userId,
-                      roomOwenerId,
-                    );
-                  }
-                },
-                child: Text('방명록')),
-            SizedBox(width: 20),
-            ElevatedButton(onPressed: () {}, child: Text('인벤토리')),
-            SizedBox(width: 20),
-            ElevatedButton(onPressed: () {}, child: Text('친구목록')),
-          ],
-        ),
-      )
-    ]);
+    /* am i in my room? */
+    if (_isMyRoom) {
+      layers.children.add(sources['bg1']!);
+      layers.children.add(sources['fish']!);
+      layers.children.add(sources['cat']!);
+    } else {
+      layers.children.add(sources['bg2']!);
+      layers.children.add(sources['fish']!);
+      layers.children.add(sources['astronaut']!);
+    }
+
+    // bottom buttons
+    layers.children.add(Positioned(
+      bottom: 0,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          ElevatedButton(
+              onPressed: () async {
+                String? roomOwenerId = commentsProvider.roomOwnerId;
+
+                final currentUser = await authService.getCurrentUser();
+                // 로그인 유저 없으면 6
+                var userId = (currentUser != null)
+                    ? currentUser.user_id.toString()
+                    : '6';
+
+                if (context.mounted) {
+                  showCommentsBottomSheet(
+                    context,
+                    commentsProvider,
+                    userId,
+                    roomOwenerId,
+                  );
+                }
+              },
+              child: Text('방명록')),
+          SizedBox(width: 20),
+          ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/inventory');
+              },
+              child: Text('인벤토리')),
+          SizedBox(width: 20),
+          ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    "/myroom",
+                    arguments: !_isMyRoom,
+                    (route) => false);
+              },
+              child: Text('친구목록')),
+        ],
+      ),
+    ));
+
+    return layers;
   }
 }
 
