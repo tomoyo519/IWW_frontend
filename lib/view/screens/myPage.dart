@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/view/widget/appbar.dart';
 import 'package:iww_frontend/view/widget/bottombar.dart';
 import 'package:iww_frontend/view/widget/deceasedPet.dart';
+import 'package:iww_frontend/view/widget/revivalPet.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:iww_frontend/view/widget/evolutionPet.dart';
 import 'package:iww_frontend/view/widget/pet.dart';
@@ -94,6 +95,28 @@ class MyPage extends StatelessWidget {
               });
             },
             child: Text("죽음")),
+        ElevatedButton(
+            onPressed: () {
+              showGeneralDialog(
+                context: context,
+                pageBuilder: (BuildContext buildContext,
+                    Animation<double> animation,
+                    Animation<double> secondaryAnimation) {
+                  return Expanded(
+                    child: revivalPet(),
+                  );
+                },
+                barrierDismissible: true,
+                barrierLabel:
+                    MaterialLocalizations.of(context).modalBarrierDismissLabel,
+                barrierColor: Colors.black45,
+                transitionDuration: const Duration(milliseconds: 300),
+              );
+              Future.delayed(Duration(seconds: 3), () {
+                Navigator.of(context).pop();
+              });
+            },
+            child: Text("부활")),
       ]),
       bottomNavigationBar: MyBottomNav(),
     );
