@@ -1,32 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/repository/comment.repository.dart';
+import 'package:iww_frontend/repository/room.repository.dart';
+import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/view/widget/guestbook.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:iww_frontend/view/widget/bottombar.dart';
-import 'package:iww_frontend/repository/user.repository.dart';
+import 'package:provider/provider.dart';
 
 class MyRoom extends StatelessWidget {
-  final UserRepository userRepository;
-  MyRoom(this.userRepository, {Key? key}) : super(key: key);
+  MyRoom({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // 의존성
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final roomRepository = Provider.of<RoomRepository>(context, listen: false);
+    final commentRepository =
+        Provider.of<CommentRepository>(context, listen: false);
     return Scaffold(
-        body: RenderMyRoom(userRepository: userRepository),
+        body: ChangeNotifierProvider<CommentsProvider>(
+          create: (context) =>
+              CommentsProvider(authService, roomRepository, commentRepository),
+          child: RenderMyRoom(),
+        ),
         bottomNavigationBar: MyBottomNav());
   }
 }
 
 class RenderMyRoom extends StatelessWidget {
-  final UserRepository userRepository;
-
-  const RenderMyRoom({
-    Key? key,
-    required this.userRepository,
-  }) : super(key: key);
+  const RenderMyRoom({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    CommentsProvider commentsProvider = CommentsProvider();
+    CommentsProvider commentsProvider = context.read<CommentsProvider>();
     // final userId = ModalRoute.of(context)!.settings.arguments as String;
 
     return Stack(alignment: Alignment.center, children: [
@@ -70,12 +76,16 @@ class RenderMyRoom extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             ElevatedButton(
-                onPressed: () {},
-                // onPressed: () async {
-                //   int? currentUserId = await userRepository.getUserId();
-                //   showCommentsBottomSheet(context, commentsProvider,
-                //       currentUserId.toString(), userId);
-                // },
+                // onPressed: () {},
+                onPressed: () async {
+                  int? currentUserId = await commentsProvider.getUserId();
+                  String? roomOwenerId = commentsProvider.roomOwnerId;
+
+                  if (context.mounted) {
+                    showCommentsBottomSheet(context, commentsProvider,
+                        currentUserId.toString(), roomOwenerId);
+                  }
+                },
                 child: Text('방명록')),
             SizedBox(width: 20),
             ElevatedButton(onPressed: () {}, child: Text('인벤토리')),

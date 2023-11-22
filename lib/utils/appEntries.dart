@@ -54,12 +54,12 @@ class AppEntries extends StatelessWidget {
               },
               child: const Text("🤔 연락처 기반 친구추가")),
           ElevatedButton(
-              onPressed: () async {
-                _signInTest.autoLogin(context).then((result) {
-                  if (result && context.mounted) {
-                    Navigator.pushNamed(context, "/home");
-                  }
-                });
+              onPressed: () {
+                Navigator.pushNamed(context, "/home");
+                // _signInTest.autoLogin(context).then((result) {
+                //   if (result && context.mounted) {
+                //   }
+                // });
               },
               child: const Text("👀 메인 랜딩 페이지")),
           ElevatedButton(

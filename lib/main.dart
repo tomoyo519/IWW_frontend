@@ -39,8 +39,7 @@ void main() async {
               '/landing': (context) => LandingPage(),
               '/signup': (context) => SignUpPage(),
               '/contact': (context) => AddFriendsPage(),
-              '/myroom': (context) =>
-                  MyRoom(Provider.of<UserRepository>(context, listen: false)),
+              '/myroom': (context) => MyRoom(),
             },
             home: MyApp()),
       ),
