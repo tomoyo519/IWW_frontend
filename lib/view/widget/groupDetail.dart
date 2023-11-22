@@ -183,7 +183,7 @@ class _GroupDetailState extends State<GroupDetail> {
                         childAspectRatio: 2 / 1, crossAxisCount: 3),
                     itemCount: groupMems.isEmpty ? 0 : groupMems.length,
                     itemBuilder: (context, index) {
-                      print(groupMems[index]);
+                      print('groupMems[index]:${groupMems[index]}');
                       return Column(
                         children: [
                           groupMems.isNotEmpty
@@ -202,9 +202,9 @@ class _GroupDetailState extends State<GroupDetail> {
                                         MainAxisAlignment.spaceEvenly,
                                     children: [
                                       Icon(Icons.account_circle_rounded),
-                                      Text(groupMems[index]["user_name"]
-                                          ? groupMems[index]["user_name"]
-                                          : "정다희"),
+                                      groupMems[index]["user_name"] != null
+                                          ? Text(groupMems[index]["user_name"])
+                                          : Text("정다희"),
                                     ],
                                   ))
                               : Text("텅")
