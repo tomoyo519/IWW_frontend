@@ -1,4 +1,5 @@
 import "dart:convert";
+import "dart:developer";
 import "package:http/http.dart" as http;
 
 class Todo {
@@ -6,7 +7,7 @@ class Todo {
   int userId;
   String todoName;
   String? todoDesc;
-  int todoLabel;
+  int? todoLabel;
   String todoDate;
   bool todoDone;
   String? todoStart;
@@ -20,7 +21,7 @@ class Todo {
       required this.userId,
       required this.todoName,
       this.todoDesc,
-      required this.todoLabel,
+      this.todoLabel,
       required this.todoDate,
       required this.todoDone,
       this.todoStart,
@@ -74,7 +75,8 @@ class Todo {
       userId: body['user_id'],
       todoName: body['todo_name'],
       todoDesc: body['todo_desc'],
-      todoLabel: body['todo_label'],
+      todoLabel:
+          body['todo_label'] == 'etc' ? null : int.parse(body['todo_label']),
       todoDate: body['todo_date'],
       todoDone: body['todo_done'],
       todoStart: body['todo_start'],

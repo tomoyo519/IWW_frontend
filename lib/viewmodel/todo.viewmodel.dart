@@ -105,20 +105,18 @@ class TodoViewModel extends ChangeNotifier {
   List<Todo> todos = [];
 
   // 할일 가져오기
-  Future<List<Todo>> fetchTodos() async {
-    final user = await _authService.getCurrentUser();
-    if (user == null) {
-      log("No user authorized!");
+  Future fetchTodos() async {
+    // final user = await _authService.getCurrentUser();
+    // if (user == null) {
+    //   log("No user authorized!");
+    // }
 
-      // return [];
+    try {
+      todos = await _todoRepository.getTodos(null) ?? [];
+      notifyListeners();
+    } catch (error) {
+      log("fetch error $error");
     }
-    todos = await _todoRepository.getTodos(user?.user_id) ?? [];
-    return todos;
-  }
-
-  // 할일 리프레시
-  Future<void> updateTodos() async {
-    todos = await fetchTodos();
   }
 
   // 할일 삭제
