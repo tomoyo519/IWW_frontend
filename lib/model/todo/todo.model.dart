@@ -6,7 +6,7 @@ class Todo {
   int userId;
   String todoName;
   String? todoDesc;
-  String todoLabel;
+  int todoLabel;
   String todoDate;
   bool todoDone;
   String? todoStart;
