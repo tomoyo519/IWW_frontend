@@ -10,57 +10,53 @@ import 'package:iww_frontend/view/widget/todo/todo-list.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:provider/provider.dart';
 
-class TodoAdd extends StatelessWidget {
-  final _formKey = GlobalKey<FormState>();
-  TodoAdd({super.key});
+// class TodoAdd extends StatelessWidget {
+//   final _formKey = GlobalKey<FormState>();
+//   TodoAdd({super.key});
 
-  // 할일 가져오기
-  _fetchTodos(BuildContext context) async {
-    final viewModel = context.read<TodoViewModel>();
-    return await viewModel.fetchTodos();
-  }
+//   // 클릭하면 추가
+//   _onTap(BuildContext context) {
+//     final todoRepository = Provider.of<TodoRepository>(context, listen: false);
+//     final authService = Provider.of<AuthService>(context, listen: false);
+//     showModalBottomSheet(
+//         context: context,
+//         isScrollControlled: true,
+//         builder: (bottomSheetContext) {
+//           return ChangeNotifierProvider(
+//               create: (_) => TodoEditorViewModel(
+//                     todoRepository,
+//                     authService,
+//                     null,
+//                   ),
+//               child: TodoEditorModal(
+//                   todo: null,
+//                   title: "할일 추가",
+//                   formKey: _formKey,
+//                   todoViewModel: Provider.of<TodoViewModel>(
+//                     context,
+//                     listen: false,
+//                   )));
+//         });
+//   }
 
-  // 클릭하면 추가
-  _onTap(BuildContext context) {
-    final todoRepository = Provider.of<TodoRepository>(context, listen: false);
-    final authService = Provider.of<AuthService>(context, listen: false);
-    showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        builder: (bottomSheetContext) {
-          return ChangeNotifierProvider(
-              create: (_) => TodoEditorViewModel(
-                    todoRepository,
-                    authService,
-                    null,
-                  ),
-              child: TodoEditorModal(
-                todo: null,
-                title: "할일 추가",
-                formKey: _formKey,
-                refresh: _fetchTodos,
-              ));
-        });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: () => _onTap(context),
-      style: IconButton.styleFrom(
-        elevation: 120,
-        iconSize: 30,
-        shadowColor: Colors.black87,
-        backgroundColor: Colors.lime.shade700,
-      ),
-      icon: Icon(
-        Icons.add_circle_outline_rounded,
-        color: Colors.white,
-        size: 40,
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return IconButton(
+//       onPressed: () => _onTap(context),
+//       style: IconButton.styleFrom(
+//         elevation: 120,
+//         iconSize: 30,
+//         shadowColor: Colors.black87,
+//         backgroundColor: Colors.lime.shade700,
+//       ),
+//       icon: Icon(
+//         Icons.add_circle_outline_rounded,
+//         color: Colors.white,
+//         size: 40,
+//       ),
+//     );
+//   }
+// }
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
@@ -80,23 +76,31 @@ class MyHomePage extends StatelessWidget {
           )
         ],
       ),
-      body: Column(children: [
-        Expanded(
-          flex: 1,
-          child: Profile(),
-        ),
-        Expanded(
-            flex: 4,
-            child: ChangeNotifierProvider<TodoViewModel>(
-              create: (context) => TodoViewModel(
-                todoRepository,
-                authService,
-              ),
-              child: ToDoList(),
-            ))
-      ]),
+      body: Container(
+        decoration: BoxDecoration(
+            image: DecorationImage(
+          // 배경 이미지
+          image: AssetImage("assets/wallpaper.jpg"),
+          fit: BoxFit.cover,
+        )),
+        child: Column(children: [
+          Expanded(
+            flex: 1,
+            child: Profile(),
+          ),
+          Expanded(
+              flex: 4,
+              child: ChangeNotifierProvider<TodoViewModel>(
+                create: (context) => TodoViewModel(
+                  todoRepository,
+                  authService,
+                ),
+                child: ToDoList(),
+              ))
+        ]),
+      ),
       bottomNavigationBar: MyBottomNav(),
-      floatingActionButton: TodoAdd(),
+      // floatingActionButton: TodoAdd(),
     );
   }
 }

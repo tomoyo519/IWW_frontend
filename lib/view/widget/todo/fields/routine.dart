@@ -35,7 +35,7 @@ class TodoRoutineField extends StatelessWidget {
           icon: Icons.star_border_rounded,
           child: Consumer<TodoEditorViewModel>(
             builder: (context, viewModel, child) =>
-                Text(viewModel.todoRoutine.toString()),
+                Text(viewModel.todoRoutine ?? LabelListModal.routines[0]),
           )),
     );
   }

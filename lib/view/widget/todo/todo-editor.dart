@@ -16,16 +16,16 @@ import 'package:provider/provider.dart';
 // bottom sheet 내용
 class TodoEditorModal extends StatelessWidget {
   final Todo? todo;
-  final GlobalKey<FormState> formKey;
-  final refresh;
   final String title;
+  final GlobalKey<FormState> formKey;
+  final TodoViewModel todoViewModel;
 
   const TodoEditorModal({
     Key? key,
     required this.todo,
-    required this.formKey,
-    required this.refresh,
     required this.title,
+    required this.formKey,
+    required this.todoViewModel,
   }) : super(key: key);
 
   @override
@@ -43,23 +43,38 @@ class TodoEditorModal extends StatelessWidget {
       Navigator.pop(context);
 
       final viewModel = context.read<TodoEditorViewModel>();
+
+      // 신규 생성
+      if (viewModel.todoData['todo_id'] == null) {
+        await viewModel.createTodo().then((result) {
+          if (result == true && context.mounted) {
+            Navigator.pop(context);
+
+            // refresh data
+            todoViewModel.fetchTodos();
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text('할일이 추가되었어요!'),
+              ),
+            );
+          }
+        });
+
+        return;
+      }
+
+      // 수정
       await viewModel.updateTodo().then((result) {
         if (result == true && context.mounted) {
           Navigator.pop(context);
-          // final viewModel = context.read<TodoViewModel>();
 
           // refresh data
-          refresh();
+          todoViewModel.fetchTodos();
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: const Text('변경이 완료 되었어요!'),
-              // action: SnackBarAction(
-              //   label: 'Action',
-              //   onPressed: () {
-              //     // Code to execute.
-              //   },
-              // ),
             ),
           );
         }

@@ -37,7 +37,7 @@ void main() async {
             theme: ThemeData(
                 useMaterial3: true,
                 colorScheme: ColorScheme.fromSeed(
-                  seedColor: Colors.orange,
+                  seedColor: Colors.lightBlue,
                 )),
             // 라우트 정의
             routes: {

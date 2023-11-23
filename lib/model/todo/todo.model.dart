@@ -10,7 +10,7 @@ class Todo {
   String todoDate;
   bool todoDone;
   String? todoStart;
-  String todoEnd;
+  String? todoEnd;
   String? todoImg;
   int? grpId;
   bool todoDeleted;
@@ -24,7 +24,7 @@ class Todo {
       required this.todoDate,
       required this.todoDone,
       this.todoStart,
-      required this.todoEnd,
+      this.todoEnd,
       this.todoImg,
       this.grpId,
       required this.todoDeleted});

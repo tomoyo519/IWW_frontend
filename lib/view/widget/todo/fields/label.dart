@@ -22,7 +22,7 @@ class TodoLabelField extends StatelessWidget {
               Provider.of<TodoEditorViewModel>(
                 context,
                 listen: false,
-              ).todoLabel = LabelListModal.labels[newLabel];
+              ).todoLabel = newLabel;
             },
           );
         });
@@ -36,7 +36,9 @@ class TodoLabelField extends StatelessWidget {
           icon: Icons.label_important_outline,
           child: Consumer<TodoEditorViewModel>(
             builder: (context, viewModel, child) {
-              return Text(viewModel.todoData['todo_label'] ?? "");
+              return Text((viewModel.todoData['todo_label'] != null)
+                  ? LabelListModal.labels[viewModel.todoData['todo_label']]
+                  : LabelListModal.labels[0]);
             },
           )),
     );

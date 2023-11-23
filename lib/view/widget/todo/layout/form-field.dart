@@ -18,7 +18,7 @@ class TodoFormFieldLayout extends StatelessWidget {
       children: [
         DecoratedBox(
           decoration: BoxDecoration(
-            color: MyColors.highlight,
+            color: MyColors.light,
             borderRadius: BorderRadius.circular(15),
           ),
           child: Padding(

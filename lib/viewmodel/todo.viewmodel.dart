@@ -1,7 +1,7 @@
 import 'dart:developer';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
@@ -37,14 +37,14 @@ class TodoEditorViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  set todoLabel(String val) {
+  set todoLabel(int val) {
     _todoData['todo_label'] = val;
     notifyListeners();
   }
 
   set todoStart(TimeOfDay val) {
     _timeOfDay = val;
-    _todoData['todo_start'] = val.toString();
+    _todoData['todo_start'] = val;
     notifyListeners();
   }
 
@@ -59,10 +59,9 @@ class TodoEditorViewModel extends ChangeNotifier {
   }
 
   // 할일 저장
-  // 할일 수정
-  Future<bool> updateTodo() {
-    var id = todoData["todo_id"];
-    String timeString = "$hour시 $min분";
+  Future<bool> createTodo() async {
+    String timeString =
+        '${hour.toString().padLeft(2, '0')}:${min.toString().padLeft(2, '0')}:00';
 
     Map<String, dynamic> data = {
       "user_id": 6,
@@ -70,10 +69,28 @@ class TodoEditorViewModel extends ChangeNotifier {
       "todo_done": false,
       "todo_desc": todoData['todo_desc'],
       "todo_label": todoData['todo_label'],
-      "todo_start": timeString.toString(),
+      "todo_start": timeString,
+    };
+    return await _todoRepository.createTodo(data);
+  }
+
+  // 할일 수정
+  Future<bool> updateTodo() async {
+    var id = todoData["todo_id"];
+    // String timeString = "$hour시 $min분";
+    String timeString =
+        '${hour.toString().padLeft(2, '0')}:${min.toString().padLeft(2, '0')}:00';
+
+    Map<String, dynamic> data = {
+      "user_id": 6,
+      "todo_name": todoData['todo_name'],
+      "todo_done": false,
+      "todo_desc": todoData['todo_desc'],
+      "todo_label": todoData['todo_label'],
+      "todo_start": timeString,
     };
 
-    return _todoRepository.updateTodo(id.toString(), data);
+    return await _todoRepository.updateTodo(id.toString(), data);
   }
 }
 
@@ -85,18 +102,29 @@ class TodoViewModel extends ChangeNotifier {
   // 생성자
   TodoViewModel(this._todoRepository, this._authService);
 
+  List<Todo> todos = [];
+
   // 할일 가져오기
   Future<List<Todo>> fetchTodos() async {
     final user = await _authService.getCurrentUser();
     if (user == null) {
-      // return null;
       log("No user authorized!");
-      // notifyListeners();
+
       // return [];
     }
-    var todos = await _todoRepository.getTodos(user?.user_id);
-    // notifyListeners();
-    return todos ?? [];
+    todos = await _todoRepository.getTodos(user?.user_id) ?? [];
+    return todos;
+  }
+
+  // 할일 리프레시
+  Future<void> updateTodos() async {
+    todos = await fetchTodos();
+  }
+
+  // 할일 삭제
+  Future<bool> deleteTodo(int todoId) async {
+    // var id = todoData['todo_id'];
+    return await _todoRepository.deleteTodo(todoId.toString());
   }
 
   String _selectedDate = '';

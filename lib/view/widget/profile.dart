@@ -32,9 +32,9 @@ class Profile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.all(10),
+      margin: EdgeInsets.fromLTRB(10, 10, 10, 5),
       decoration: BoxDecoration(
-        color: MyColors.background,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(15),
       ),
       child: Padding(
@@ -49,11 +49,6 @@ class Profile extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(100),
                 child: MiniPet(),
-
-                // Image.asset(
-                //   "assets/thumbnail.png",
-                //   fit: BoxFit.cover,
-                // ),
               ),
             ),
             SizedBox(

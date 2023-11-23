@@ -39,7 +39,8 @@ class TodoDateField extends StatelessWidget {
             final format = DateFormat('yyyy년 M월 d일');
             final dateTimeString = DateTime.now().toString();
             final dateTime = DateTime.parse(
-                viewModel.todoData['todo_date'] ?? dateTimeString);
+              viewModel.todoData['todo_date'] ?? dateTimeString,
+            );
             return Text(format.format(dateTime));
           },
         ),

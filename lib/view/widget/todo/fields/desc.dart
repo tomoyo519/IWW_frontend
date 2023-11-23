@@ -31,12 +31,15 @@ class TodoDescField extends StatelessWidget {
                     },
                     child: Text("완료")),
                 TextFormField(
-                  initialValue: viewModel.todoData['todo_desc'],
+                  initialValue: viewModel.todoData['todo_desc'] ?? "",
                   onChanged: (value) => viewModel.todoDesc = value,
                   maxLines: null,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black, width: 1)),
+                        borderSide: BorderSide(
+                      color: Colors.black,
+                      width: 1,
+                    )),
                   ),
                 ),
               ],

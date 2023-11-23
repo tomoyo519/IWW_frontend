@@ -3,7 +3,6 @@ import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
@@ -11,6 +10,7 @@ import 'package:iww_frontend/style/colors.dart';
 import 'package:iww_frontend/view/widget/todo/layout/list-tile.dart';
 import 'package:iww_frontend/view/widget/todo/todo-editor.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 class ToDoList extends StatelessWidget {
@@ -19,14 +19,26 @@ class ToDoList extends StatelessWidget {
 
   ToDoList({super.key});
 
-  // 할일 가져오기
-  _fetchTodos(BuildContext context) async {
-    final viewModel = context.read<TodoViewModel>();
-    return await viewModel.fetchTodos();
-  }
-
   // 할일 삭제
   _deleteTodo(BuildContext context, int todoId) {
+    final viewModel = context.read<TodoViewModel>();
+
+    onPressed(BuildContext context) async {
+      // TODO - 할일 삭제
+      Navigator.pop(context);
+
+      await viewModel.deleteTodo(todoId).then((response) {
+        if (response == true) {
+          Provider.of<TodoViewModel>(context, listen: false).fetchTodos();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('삭제가 완료 되었어요!'),
+            ),
+          );
+        }
+      });
+    }
+
     showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) => CupertinoActionSheet(
@@ -34,31 +46,7 @@ class ToDoList extends StatelessWidget {
         actions: <Widget>[
           CupertinoActionSheetAction(
             isDestructiveAction: true,
-            onPressed: () async {
-              // TODO - 할일 삭제
-              Navigator.pop(context);
-
-              // TODO - repository로 옮김
-              await RemoteDataSource.delete('/todo/$todoId').then((response) {
-                if (response.statusCode != 200) {
-                  log("Failed to delete todo: ${response.body}");
-                } else {
-                  _fetchTodos(context);
-                }
-              });
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: const Text('삭제가 완료 되었어요!'),
-                    // action: SnackBarAction(
-                    //   label: 'Action',
-                    //   onPressed: () {
-                    //   },
-                    // ),
-                  ),
-                );
-              }
-            },
+            onPressed: () => onPressed(context),
             child: Text('할일을 삭제할래요!'),
           ),
         ],
@@ -74,9 +62,8 @@ class ToDoList extends StatelessWidget {
     );
   }
 
-  // TODO - todo_label 이 왜 etc로 되어있나...?
+  // 할일 수정
   _editTodo(BuildContext context, Todo todo) {
-    // todo 를 수정하는 화면에서 bottom modal
     final todoRepository = Provider.of<TodoRepository>(context, listen: false);
     final authService = Provider.of<AuthService>(context, listen: false);
 
@@ -94,7 +81,10 @@ class ToDoList extends StatelessWidget {
                 todo: todo,
                 title: "할일 수정",
                 formKey: _formKey,
-                refresh: _fetchTodos,
+                todoViewModel: Provider.of<TodoViewModel>(
+                  context,
+                  listen: false,
+                ),
               ));
         });
   }
@@ -110,46 +100,60 @@ class ToDoList extends StatelessWidget {
       Expanded(
         flex: 5,
         // for async data 렌더링
-        child: FutureBuilder(
-          future: viewModel.fetchTodos(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              // data fetch 대기
-              return Container(
-                width: 400,
-                height: 400,
-                padding: EdgeInsets.all(50),
-                child: CircularProgressIndicator(
-                  color: MyColors.primary,
-                ),
-              );
-            } else if (snapshot.hasError) {
-              // data fetch 오류
-              return Text("Error loading page ${snapshot.error}");
-            } else if (snapshot.hasData) {
-              // data fetch 완료
-              List<Todo> todos = snapshot.data!;
-              return ListView.builder(
-                  controller: scroll,
-                  itemCount: todos.length,
-                  itemBuilder: (context, idx) {
-                    return GestureDetector(
-                      onLongPress: () {
-                        print('길게 눌렀을떄, $idx');
-                        _deleteTodo(context, todos[idx].todoId);
-                      },
-                      onTap: () async {
-                        print('그냥 짧게 눌렀을때,');
-                        _editTodo(context, todos[idx]);
-                      },
-                      child: TodoListTileLayout(todo: todos[idx]),
-                    );
-                  });
-            } else {
-              // 만약 데이터가 없는 경우
-              return TodoListEmpty();
-            }
-          },
+        child: Container(
+          width: double.infinity,
+          margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: FutureBuilder(
+            future: viewModel.fetchTodos(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                // data fetch 대기
+                return Lottie.asset(
+                  'assets/spinner.json',
+                  repeat: true,
+                  animate: true,
+                  width: 50,
+                  height: 50,
+                );
+              } else if (snapshot.hasError) {
+                // data fetch 오류
+                return Text("Error loading page ${snapshot.error}");
+              } else if (snapshot.hasData) {
+                // data fetch 완료
+                List<Todo> todos = snapshot.data!;
+                return ListView.builder(
+                    controller: scroll,
+                    itemCount: todos.length,
+                    itemBuilder: (context, idx) {
+                      return GestureDetector(
+                        onLongPress: () {
+                          print('길게 눌렀을떄, $idx');
+                          _deleteTodo(context, todos[idx].todoId);
+                        },
+                        onTap: () async {
+                          print('그냥 짧게 눌렀을때,');
+                          _editTodo(context, todos[idx]);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                          ),
+                          child: TodoListTileLayout(
+                            todo: todos[idx],
+                          ),
+                        ),
+                      );
+                    });
+              } else {
+                // 만약 데이터가 없는 경우
+                return TodoListEmpty();
+              }
+            },
+          ),
         ),
       ),
 
@@ -162,14 +166,38 @@ class ToDoList extends StatelessWidget {
 
 // 할일 목록 헤더
 class TodoListHeader extends StatelessWidget {
-  const TodoListHeader({
-    super.key,
-  });
+  TodoListHeader({super.key});
+
+  final _formKey = GlobalKey<FormState>();
+
+  // 클릭하면 추가
+  _onTap(BuildContext context) {
+    final todoRepository = Provider.of<TodoRepository>(context, listen: false);
+    final authService = Provider.of<AuthService>(context, listen: false);
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (bottomSheetContext) {
+          return ChangeNotifierProvider(
+              create: (_) => TodoEditorViewModel(
+                    todoRepository,
+                    authService,
+                    null,
+                  ),
+              child: TodoEditorModal(
+                  todo: null,
+                  title: "할일 추가",
+                  formKey: _formKey,
+                  todoViewModel: Provider.of<TodoViewModel>(
+                    context,
+                    listen: false,
+                  )));
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
     var today = DateTime.now();
-    final viewModel = context.read<TodoViewModel>();
 
     return Container(
       padding: EdgeInsets.symmetric(
@@ -178,12 +206,9 @@ class TodoListHeader extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: Color.fromARGB(255, 228, 131, 35),
+        color: Colors.blue.shade700,
       ),
-      margin: EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 5,
-      ),
+      margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -215,15 +240,15 @@ class TodoListHeader extends StatelessWidget {
                 width: 40,
                 height: 40,
                 child: IconButton.filled(
-                  onPressed: () {},
+                  onPressed: () => _onTap(context),
                   style: IconButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      backgroundColor: Color.fromARGB(255, 219, 162, 109)),
+                      backgroundColor: Color.fromARGB(255, 255, 255, 255)),
                   icon: Icon(
                     Icons.add,
-                    color: Colors.white,
+                    color: Colors.blue.shade700,
                     size: 25,
                   ),
                 ),
