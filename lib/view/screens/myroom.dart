@@ -61,9 +61,9 @@ class RenderMyRoom extends StatelessWidget {
       fit: BoxFit.cover,
     ),
     'bg2': Image.asset(
-      'assets/bg2.png',
+      'assets/wallpaper.jpg',
       height: 500,
-      fit: BoxFit.fill,
+      fit: BoxFit.fitWidth,
     ),
     'fish': ModelViewer(
       // loading: Loading.eager,
@@ -131,6 +131,58 @@ class RenderMyRoom extends StatelessWidget {
       cameraTarget: "0m 300m 300m",
       disableZoom: true,
     ),
+    'kitsune': ModelViewer(
+      // loading: Loading.eager,
+      shadowIntensity: 1,
+      src: 'assets/kitsune.glb',
+      alt: 'kitsune',
+      // autoRotate: true,
+      autoPlay: true,
+      animationName: "walk",
+      cameraOrbit: "30deg, 0deg, 0m",
+      cameraTarget: "0m 1m 0.4m",
+      disableZoom: true,
+    ),
+    'kitsune_ani': ModelViewer(
+      // loading: Loading.eager,
+      shadowIntensity: 1,
+      src: 'assets/kitsune_ani.glb',
+      alt: 'kitsune',
+      // autoRotate: true,
+      // autoPlay: true,
+      // iosSrc: 'assets/cat2.usdz',
+      cameraOrbit: "330deg, 0deg, 0m",
+      cameraTarget: "0m 2m 1m",
+      disableZoom: true,
+    ),
+    'small_fox': ModelViewer(
+      // loading: Loading.eager,
+      shadowIntensity: 1,
+      src: 'assets/small_fox.glb',
+      alt: 'kitsune',
+      // autoRotate: true,
+      autoPlay: true,
+      // iosSrc: 'assets/cat2.usdz',
+      animationName: "Jump",
+      cameraTarget: "0.3m 1.2m 1m",
+      interactionPrompt: InteractionPrompt.none,
+      cameraOrbit: "330deg,0deg, 0m",
+      disableZoom: true,
+    ),
+    'mid_fox': ModelViewer(
+      // loading: Loading.eager,
+      shadowIntensity: 1,
+      src: 'assets/mid_fox.glb',
+      alt: 'kitsune',
+      // autoRotate: true,
+      autoPlay: true,
+      // iosSrc: 'assets/cat2.usdz',
+      cameraTarget: "0m 1m 0.6m",
+      animationName: "Idle_A",
+      cameraOrbit: "30deg, 150deg, 0m",
+      interactionPrompt: InteractionPrompt.none,
+      disableZoom: true,
+    ),
   };
 
   @override
@@ -151,12 +203,12 @@ class RenderMyRoom extends StatelessWidget {
     /* am i in my room? */
     if (myRoomState.isMyRoom) {
       layers.children.add(sources['bg1']!);
-      layers.children.add(sources['fish']!);
-      layers.children.add(sources['cat']!);
+      // layers.children.add(sources['mid_fox']!);
+      layers.children.add(sources['small_fox']!);
     } else {
       layers.children.add(sources['bg2']!);
-      layers.children.add(sources['fish']!);
-      layers.children.add(sources['astronaut']!);
+      layers.children.add(sources['mid_fox']!);
+      layers.children.add(sources['small_fox']!);
     }
 
     return layers;
