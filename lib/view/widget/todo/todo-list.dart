@@ -91,77 +91,62 @@ class ToDoList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 데이터 가져오기
     final viewModel = context.watch<TodoViewModel>();
+    viewModel.fetchTodos();
+
     return Column(children: [
       Expanded(
         flex: 1,
         child: TodoListHeader(),
       ),
       Expanded(
-        flex: 5,
-        // for async data 렌더링
-        child: Container(
-          width: double.infinity,
-          margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: FutureBuilder(
-            future: viewModel.fetchTodos(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                // data fetch 대기
-                return Lottie.asset(
-                  'assets/spinner.json',
-                  repeat: true,
-                  animate: true,
-                  width: 50,
-                  height: 50,
-                );
-              } else if (snapshot.hasError) {
-                // data fetch 오류
-                return Text("Error loading page ${snapshot.error}");
-              } else if (snapshot.hasData) {
-                // data fetch 완료
-                List<Todo> todos = snapshot.data!;
-                return ListView.builder(
-                    controller: scroll,
-                    itemCount: todos.length,
-                    itemBuilder: (context, idx) {
-                      return GestureDetector(
-                        onLongPress: () {
-                          print('길게 눌렀을떄, $idx');
-                          _deleteTodo(context, todos[idx].todoId);
-                        },
-                        onTap: () async {
-                          print('그냥 짧게 눌렀을때,');
-                          _editTodo(context, todos[idx]);
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
+          flex: 5,
+          // for async data 렌더링
+          child: Container(
+              width: double.infinity,
+              margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: viewModel.todos.isEmpty
+                  ? Lottie.asset(
+                      'assets/spinner.json',
+                      repeat: true,
+                      animate: true,
+                      width: 50,
+                      height: 50,
+                    )
+                  : ListView.builder(
+                      controller: scroll,
+                      itemCount: viewModel.todos.length,
+                      itemBuilder: (context, idx) {
+                        return GestureDetector(
+                          onLongPress: () {
+                            print('길게 눌렀을떄, $idx');
+                            _deleteTodo(context, viewModel.todos[idx].todoId);
+                          },
+                          onTap: () async {
+                            print('그냥 짧게 눌렀을때,');
+                            _editTodo(context, viewModel.todos[idx]);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                            ),
+                            child: TodoListTileLayout(
+                              todo: viewModel.todos[idx],
+                            ),
                           ),
-                          child: TodoListTileLayout(
-                            todo: todos[idx],
-                          ),
-                        ),
-                      );
-                    });
-              } else {
-                // 만약 데이터가 없는 경우
-                return TodoListEmpty();
-              }
-            },
-          ),
-        ),
-      ),
-
-      // TODO - 실제파일 들어오면 버튼 위치 변경하기
-      // if (widget.showAddTodo) AddTodo()
-      // AddTodo(getData: _fetchTodos(context))
+                        );
+                      })))
     ]);
   }
+
+  // TODO - 실제파일 들어오면 버튼 위치 변경하기
+  // if (widget.showAddTodo) AddTodo()
+  // AddTodo(getData: _fetchTodos(context))
 }
 
 // 할일 목록 헤더

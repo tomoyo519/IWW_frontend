@@ -80,7 +80,7 @@ class RenderMyRoom extends StatelessWidget {
     'astronaut': ModelViewer(
       // loading: Loading.eager,
       shadowIntensity: 1,
-      src: 'assets/Astronaut.glb',
+      src: 'assets/koi_fish.glb',
       alt: 'astronaut',
       // autoRotate: true,
       autoPlay: true,

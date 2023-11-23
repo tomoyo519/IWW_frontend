@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/style/colors.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 
 class MiniPet extends StatelessWidget {
@@ -60,13 +59,13 @@ class Profile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
                   Text(
-                    "사용자닉넴 추천받음",
+                    "프로갓생러",
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Text("data")
+                  // Text("data")
                 ],
               ),
             )
