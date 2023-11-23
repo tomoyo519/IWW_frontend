@@ -497,8 +497,26 @@ class _ToDoListState extends State<ToDoList> {
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
                               var id = info["todo_id"];
-                              String timeString =
-                                  '${Provider.of<SelectedDate>(context, listen: false).selectedAlarmTime.hour}시 ${Provider.of<SelectedDate>(context, listen: false).selectedAlarmTime.minute}분';
+                              print(Provider.of<SelectedDate>(context,
+                                      listen: false)
+                                  .selectedAlarmTime);
+                              // String timeOnlyIsoString = DateFormat('HH:mm:ss')
+                              //     .format(Provider.of<SelectedDate>(context,
+                              //             listen: false)
+                              //         .selectedAlarmTime);
+                              // String timeString =
+                              //     '${Provider.of<SelectedDate>(context, listen: false).selectedAlarmTime.hour}:${Provider.of<SelectedDate>(context, listen: false).selectedAlarmTime.minute}';
+
+                              TimeOfDay time = TimeOfDay(
+                                  hour: Provider.of<SelectedDate>(context,
+                                          listen: false)
+                                      .selectedAlarmTime
+                                      .hour,
+                                  minute: Provider.of<SelectedDate>(context,
+                                          listen: false)
+                                      .selectedAlarmTime
+                                      .minute);
+                              String timeString = time.format(context);
                               var data = {
                                 "user_id": 6,
                                 "todo_name": todoName,
@@ -513,6 +531,7 @@ class _ToDoListState extends State<ToDoList> {
                                 "todo_start": timeString.toString(),
                               };
                               var json = jsonEncode(data);
+                              print(json);
                               var result = await http.put(
                                   Uri.parse(
                                       'http://yousayrun.store:8088/todo/$id'),
