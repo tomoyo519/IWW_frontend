@@ -32,6 +32,7 @@ class UserRepository {
       return null;
     }
 
+    // log("이건가? ${response.body}, ${response.statusCode}");
     var remoteUserInfo = UserInfo.fromJson(json.decode(response.body));
     var isLocallySaved = await saveUserInLocal(remoteUserInfo);
     if (!isLocallySaved) {
@@ -105,12 +106,17 @@ class UserRepository {
   Future<List<UserInfo>?> getUsersByContacts(GetUsersByContactsDto body) async {
     return await RemoteDataSource.post("/user/contacts", body: body.toJson())
         .then((response) {
-      if (response.statusCode == 201) {
+      if (response.statusCode == 201 && response.body.isNotEmpty) {
         // JSON 문자열을 Dart 객체로 변환
         var jsonData = json.decode(response.body);
-        return (jsonData as List)
-            .map((item) => UserInfo.fromJson(item as Map<String, dynamic>))
-            .toList();
+        var listData = jsonData as List;
+        if (listData.isNotEmpty) {
+          return listData
+              .map((item) => UserInfo.fromJson(item as Map<String, dynamic>))
+              .toList();
+        } else {
+          return null;
+        }
       } else {
         log("Fail to fetch user infos");
         return null;

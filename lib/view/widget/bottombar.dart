@@ -36,7 +36,7 @@ class MyBottomNav extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-        selectedItemColor: Colors.purple[800],
+        selectedItemColor: Colors.blue.shade500,
         type: BottomNavigationBarType.fixed,
         showSelectedLabels: false, //  이 옵션 주면 라벨 text 뜨지않음
         showUnselectedLabels: false,

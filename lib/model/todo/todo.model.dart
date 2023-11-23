@@ -2,32 +2,32 @@ import "dart:convert";
 import "package:http/http.dart" as http;
 
 class Todo {
-  int? todoId;
+  int todoId;
   int userId;
   String todoName;
   String? todoDesc;
-  String? todoLabel;
-  DateTime? todoDate;
-  bool? todoDone;
+  String todoLabel;
+  String todoDate;
+  bool todoDone;
   String? todoStart;
   String? todoEnd;
   String? todoImg;
-  String? grpId;
-  String? todoDeleted;
+  int? grpId;
+  bool todoDeleted;
 
   Todo(
-      {this.todoId,
+      {required this.todoId,
       required this.userId,
       required this.todoName,
       this.todoDesc,
-      this.todoLabel,
-      this.todoDate,
-      this.todoDone,
+      required this.todoLabel,
+      required this.todoDate,
+      required this.todoDone,
       this.todoStart,
       this.todoEnd,
       this.todoImg,
       this.grpId,
-      this.todoDeleted});
+      required this.todoDeleted});
 
   bool get isDone => todoDone ?? false;
 
@@ -66,5 +66,39 @@ class Todo {
         throw Exception('Failed to create todo');
       }
     });
+  }
+
+  factory Todo.fromJson(Map<String, dynamic> body) {
+    return Todo(
+      todoId: body['todo_id'],
+      userId: body['user_id'],
+      todoName: body['todo_name'],
+      todoDesc: body['todo_desc'],
+      todoLabel: body['todo_label'],
+      todoDate: body['todo_date'],
+      todoDone: body['todo_done'],
+      todoStart: body['todo_start'],
+      todoEnd: body['todo_end'],
+      grpId: body['grp_id'],
+      todoImg: body['todo_img'],
+      todoDeleted: body['todo_deleted'],
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'todo_id': todoId,
+      'user_id': userId,
+      'todo_name': todoName,
+      'todo_desc': todoDesc,
+      'todo_label': todoLabel,
+      'todo_date': todoDate,
+      'todo_done': todoDone,
+      'todo_start': todoStart,
+      'todo_end': todoEnd,
+      'todo_img': todoImg,
+      'grp_id': grpId,
+      'todo_deleted': todoDeleted,
+    };
   }
 }

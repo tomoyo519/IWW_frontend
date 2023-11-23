@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/view/widget/home.dart';
+import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'calendar.dart';
-import 'listWidget.dart';
+import 'label-list-modal.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
@@ -103,6 +104,8 @@ class _AddTodoState extends State<AddTodo> {
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.watch<TodoViewModel>();
+
     return Container(
         child: FloatingActionButton(
       child: Icon(Icons.add),
@@ -198,7 +201,7 @@ class _AddTodoState extends State<AddTodo> {
                                           showModalBottomSheet(
                                               context: context,
                                               builder: (c) {
-                                                return LabelList(
+                                                return LabelListModal(
                                                   content: "label",
                                                   setLabel: (int newLabel) {
                                                     Provider.of<NewTodo>(
@@ -237,7 +240,7 @@ class _AddTodoState extends State<AddTodo> {
                                         );
 
                                         if (selectedTime != null) {
-                                          Provider.of<SelectedDate>(context,
+                                          Provider.of<TodoViewModel>(context,
                                                   listen: false)
                                               .setSelectedAlarmTime(
                                                   selectedTime);
@@ -246,7 +249,7 @@ class _AddTodoState extends State<AddTodo> {
                                       child: Row(
                                         children: [
                                           Icon(Icons.alarm_outlined),
-                                          Consumer<SelectedDate>(
+                                          Consumer<TodoViewModel>(
                                             builder:
                                                 (context, selectedDate, child) {
                                               String timeString =
@@ -270,9 +273,9 @@ class _AddTodoState extends State<AddTodo> {
                                         showModalBottomSheet(
                                             context: context,
                                             builder: (c) {
-                                              return LabelList(
+                                              return LabelListModal(
                                                   setLabel: (newLabel) {
-                                                    Provider.of<SelectedDate>(
+                                                    Provider.of<TodoViewModel>(
                                                             context,
                                                             listen: false)
                                                         .setSelectedDate(
