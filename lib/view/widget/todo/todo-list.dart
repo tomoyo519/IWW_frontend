@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
-import 'package:iww_frontend/style/colors.dart';
 import 'package:iww_frontend/view/widget/todo/layout/list-tile.dart';
 import 'package:iww_frontend/view/widget/todo/todo-editor.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
@@ -23,13 +22,14 @@ class ToDoList extends StatelessWidget {
   _deleteTodo(BuildContext context, int todoId) {
     final viewModel = context.read<TodoViewModel>();
 
-    onPressed(BuildContext context) async {
+    onPressed(BuildContext _) async {
       // TODO - 할일 삭제
       Navigator.pop(context);
 
       await viewModel.deleteTodo(todoId).then((response) {
         if (response == true) {
-          Provider.of<TodoViewModel>(context, listen: false).fetchTodos();
+          viewModel.fetchTodos();
+
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: const Text('삭제가 완료 되었어요!'),
