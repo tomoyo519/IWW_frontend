@@ -103,7 +103,7 @@ class TodoRepository {
       "/todo/$id",
       body: json,
     ).then((response) {
-      log("Create Todo: ${response.statusCode}, ${response.body}");
+      log("Update Todo: ${response.statusCode}, ${response.body}");
       if (response.statusCode == 200) {
         return true;
       }
@@ -118,7 +118,7 @@ class TodoRepository {
     return await RemoteDataSource.delete(
       "/todo/$id",
     ).then((response) {
-      log("Create Todo: ${response.statusCode}, ${response.body}");
+      log("Delete Todo: ${response.statusCode}, ${response.body}");
       if (response.statusCode == 200) {
         return true;
       }

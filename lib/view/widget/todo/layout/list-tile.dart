@@ -17,10 +17,10 @@ class TodoListTileLayout extends StatefulWidget {
 }
 
 class _TodoListTileLayoutState extends State<TodoListTileLayout> {
+  bool isChecked = false;
+
   @override
   Widget build(BuildContext context) {
-    bool isChecked = false;
-
     DateTime yesterday = DateTime.now().subtract(Duration(days: 1));
     bool isDelayed = DateTime.parse(widget.todo.todoDate).isBefore(yesterday);
 
@@ -52,13 +52,18 @@ class _TodoListTileLayoutState extends State<TodoListTileLayout> {
                   textAlign: TextAlign.start,
                   style: TextStyle(
                     fontSize: 13,
+                    color: isChecked ? Colors.black26 : Colors.black,
                   ),
                 ),
                 Text(
                   widget.todo.todoDate,
                   style: TextStyle(
                     fontSize: 11,
-                    color: isDelayed ? Colors.red.shade600 : Colors.black54,
+                    color: isChecked
+                        ? Colors.black26
+                        : isDelayed
+                            ? Colors.red.shade600
+                            : Colors.black54,
                   ),
                 )
               ],
