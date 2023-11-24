@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/view/widget/appbar.dart';
-import 'package:iww_frontend/view/widget/bottombar.dart';
-import 'package:iww_frontend/view/widget/deceasedPet.dart';
-import 'package:iww_frontend/view/widget/revivalPet.dart';
+import 'package:iww_frontend/view/appbar.dart';
+import 'package:iww_frontend/view/bottombar.dart';
+import 'package:iww_frontend/view/deceasedPet.dart';
+import 'package:iww_frontend/view/revivalPet.dart';
 import 'package:transparent_image/transparent_image.dart';
-import 'package:iww_frontend/view/widget/evolutionPet.dart';
-import 'package:iww_frontend/view/widget/pet.dart';
+import 'package:iww_frontend/view/evolutionPet.dart';
 
 class MyPage extends StatelessWidget {
   const MyPage({super.key});

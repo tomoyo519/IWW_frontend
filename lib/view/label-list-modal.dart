@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/view/widget/custom-bottom-sheet-header.dart';
-import 'package:iww_frontend/view/widget/home.dart';
+import 'package:iww_frontend/view/custom-bottom-sheet-header.dart';
 
 class LabelListModal extends StatelessWidget {
   final content;

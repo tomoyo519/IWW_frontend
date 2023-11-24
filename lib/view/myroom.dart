@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/comment.repository.dart';
 import 'package:iww_frontend/repository/room.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
-import 'package:iww_frontend/view/widget/guestbook.dart';
+import 'package:iww_frontend/view/guestbook/guestbook.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
-import 'package:iww_frontend/view/widget/bottombar.dart';
+import 'package:iww_frontend/view/bottombar.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 
