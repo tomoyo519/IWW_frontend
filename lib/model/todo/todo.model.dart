@@ -1,17 +1,19 @@
 import "dart:convert";
 import "dart:developer";
 import "package:http/http.dart" as http;
+import "package:intl/intl.dart";
+import 'package:iww_frontend/datasource/remoteDataSource.dart';
 
 class Todo {
   int todoId;
   int userId;
   String todoName;
   String? todoDesc;
-  int? todoLabel;
+  String todoLabel;
   String todoDate;
   bool todoDone;
-  String? todoStart;
-  String? todoEnd;
+  String todoStart;
+  String todoEnd;
   String? todoImg;
   int? grpId;
   bool todoDeleted;
@@ -21,16 +23,43 @@ class Todo {
       required this.userId,
       required this.todoName,
       this.todoDesc,
-      this.todoLabel,
-      required this.todoDate,
-      required this.todoDone,
-      this.todoStart,
-      this.todoEnd,
+      String? todoLabel,
+      String? todoDate,
+      bool? todoDone,
+      String? todoStart,
+      String? todoEnd,
       this.todoImg,
       this.grpId,
-      required this.todoDeleted});
+      bool? todoDeleted})
+      : todoDate = todoDate ?? defaultDate(),
+        todoDone = todoDone ?? false,
+        todoLabel = todoLabel ?? "",
+        todoStart = todoStart ?? "00:00",
+        todoEnd = todoEnd ?? "00:00",
+        todoDeleted = todoDeleted ?? false;
 
-  bool get isDone => todoDone ?? false;
+  bool get isDone => todoDone;
+
+  static defaultDate() {
+    return DateFormat('yyyy-MM-dd').format(DateTime.now()).toString();
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'todo_id': todoId,
+      'user_id': userId,
+      'todo_name': todoName,
+      'todo_desc': todoDesc,
+      'todo_label': todoLabel,
+      'todo_date': todoDate,
+      'todo_done': todoDone,
+      'todo_start': todoStart,
+      'todo_end': todoEnd,
+      'todo_img': todoImg,
+      'grp_id': grpId,
+      'todo_deleted': todoDeleted,
+    };
+  }
 
   Future<bool> setDone(bool value) async {
     todoDone = value;
@@ -75,8 +104,7 @@ class Todo {
       userId: body['user_id'],
       todoName: body['todo_name'],
       todoDesc: body['todo_desc'],
-      todoLabel:
-          body['todo_label'] == 'etc' ? null : int.parse(body['todo_label']),
+      todoLabel: body['todo_label'],
       todoDate: body['todo_date'],
       todoDone: body['todo_done'],
       todoStart: body['todo_start'],
