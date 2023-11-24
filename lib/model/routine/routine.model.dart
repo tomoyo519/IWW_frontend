@@ -19,6 +19,15 @@ class Routine {
       routSrt,
       routEnd});
 
+  Routine.fromJson(Map<String, dynamic> json)
+      : routName = json['rout_name'],
+        routDesc = json['rout_desc'],
+        routRepeat = json['rout_repeat'],
+        grpId = json['grp_id'],
+        routId = json['rout_id'],
+        routSrt = json['rout_srt'],
+        routEnd = json['rout_end'];
+
   // 오늘 날짜로 user_id를 매핑한 Todo를 생성해 반환한다.
   Todo generateTodo(int userId) {
     final Todo todo = Todo(

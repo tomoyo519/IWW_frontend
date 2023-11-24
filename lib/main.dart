@@ -16,8 +16,43 @@ import 'package:iww_frontend/view/widget/home.dart';
 import 'package:iww_frontend/utils/appEntries.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_template.dart';
+import 'package:iww_frontend/model/routine/routine.model.dart';
+import 'package:iww_frontend/model/todo/todo.model.dart';
 
 void main() async {
+  // >>> generate todo test
+  var routines = [
+    Routine.fromJson({
+      "rout_id": 1,
+      "rout_name": "routin1",
+      "rout_desc": "test",
+      "rout_repeat": "1111100",
+      "grp_id": 1
+    }),
+    Routine.fromJson({
+      "rout_id": 2,
+      "rout_name": "routin2",
+      "rout_desc": "test",
+      "rout_repeat": "0001000",
+      "grp_id": 1
+    }),
+    Routine.fromJson({
+      "rout_id": 3,
+      "rout_name": "routin3",
+      "rout_desc": "test",
+      "rout_repeat": "1111111",
+      "grp_id": 1
+    }),
+  ];
+  const int userId = 1;
+
+  for (var element in routines) {
+    Todo todo = element.generateTodo(userId);
+    Todo.requestCreate(todo.toJson());
+    print(todo..toJson());
+  }
+  // <<< generate todo test
+
   // 웹 환경에서 카카오 로그인을 정상적으로 완료하려면 runApp() 호출 전 아래 메서드 호출 필요
   WidgetsFlutterBinding.ensureInitialized();
 
