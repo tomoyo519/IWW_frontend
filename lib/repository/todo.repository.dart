@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
+import 'package:iww_frontend/utils/logger.dart';
 
 class TodoRepository {
   final List<Todo> dummy = [
@@ -86,7 +87,7 @@ class TodoRepository {
       "/todo",
       body: json,
     ).then((response) {
-      log("Create Todo: ${response.statusCode}, ${response.body}");
+      LOG.log("Create Todo: ${response.statusCode}, ${response.body}");
       if (response.statusCode == 200) {
         return true;
       }
@@ -103,7 +104,7 @@ class TodoRepository {
       "/todo/$id",
       body: json,
     ).then((response) {
-      log("Update Todo: ${response.statusCode}, ${response.body}");
+      LOG.log("Update Todo: ${response.statusCode}, ${response.body}");
       if (response.statusCode == 200) {
         return true;
       }
@@ -118,7 +119,7 @@ class TodoRepository {
     return await RemoteDataSource.delete(
       "/todo/$id",
     ).then((response) {
-      log("Delete Todo: ${response.statusCode}, ${response.body}");
+      LOG.log("Delete Todo: ${response.statusCode}, ${response.body}");
       if (response.statusCode == 200) {
         return true;
       }

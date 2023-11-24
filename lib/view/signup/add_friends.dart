@@ -3,8 +3,9 @@ import 'package:iww_frontend/repository/friend.repository.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
+import 'package:iww_frontend/view/_common/profile_image.dart';
+import 'package:iww_frontend/view/_common/spinner.dart';
 import 'package:iww_frontend/viewmodel/addFriends.viewmodel.dart';
-import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:provider/provider.dart';
 
 class AddFriendsPage extends StatelessWidget {
@@ -32,28 +33,34 @@ class AddFriends extends StatelessWidget {
     return Scaffold(
       appBar: MyAppBar(title: Text("친구 찾아보기"), actions: [
         TextButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/home');
+          onPressed: () {
+            Navigator.pushNamed(context, '/home');
+          },
+          child: Selector<FindContactViewModel, int>(
+            selector: (_, model) => model.friendCnt,
+            builder: (_, friendCnt, __) {
+              return Text(viewModel.friendCnt > 0 ? "완료" : "건너뛰기");
             },
-            child: Selector<FindContactViewModel, int>(
-                selector: (_, model) => model.friendCnt,
-                builder: (_, friendCnt, __) {
-                  return Text(viewModel.friendCnt > 0 ? "완료" : "건너뛰기");
-                }))
+          ),
+        )
       ]),
       body: SizedBox(
         width: double.infinity,
         height: double.infinity,
         child: Padding(
           padding: const EdgeInsets.all(20),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(style: TextStyle(fontSize: 15), "두윗에서 친구들을 찾아보세요!"),
-            FutureBuilder(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                style: TextStyle(fontSize: 15),
+                "두윗에서 친구들을 찾아보세요!",
+              ),
+              FutureBuilder(
                 future: viewModel.contacts,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
+                    return Spinner();
                   } else if (snapshot.hasError) {
                     return Text("Error: ${snapshot.error}");
                   } else if (snapshot.hasData) {
@@ -68,16 +75,18 @@ class AddFriends extends StatelessWidget {
                         child: _ContactListTile(
                           friendId: contacts[idx].user_id,
                           name: contacts[idx].user_name,
-                          profileImage:
-                              "${Secrets.TEST_SERVER_URL}/image/${contacts[idx].user_kakao_id}.jpg",
                         ),
                       ),
                     ));
                   } else {
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, "/home", (Route<dynamic> route) => false);
                     return Text("연락처 데이터 없음");
                   }
-                })
-          ]),
+                },
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -87,11 +96,12 @@ class AddFriends extends StatelessWidget {
 class _ContactListTile extends StatefulWidget {
   final int friendId;
   final String name;
-  final String? profileImage;
 
-  _ContactListTile(
-      {Key? key, required this.friendId, required this.name, this.profileImage})
-      : super(key: key);
+  _ContactListTile({
+    Key? key,
+    required this.friendId,
+    required this.name,
+  }) : super(key: key);
 
   @override
   State<_ContactListTile> createState() => _ContactListTileState();
@@ -130,18 +140,10 @@ class _ContactListTileState extends State<_ContactListTile> {
         Row(
           // 데이터 부분
           children: [
-            SizedBox(
+            ProfileImage(
               width: 40,
               height: 40,
-              child: ClipRRect(
-                  borderRadius: BorderRadius.circular(100),
-                  child: Image.network(
-                    widget.profileImage!,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Image.asset("assets/profile.jpg");
-                    },
-                  )),
+              userId: widget.friendId,
             ),
             SizedBox(
               width: 10,
@@ -150,13 +152,19 @@ class _ContactListTileState extends State<_ContactListTile> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
                     widget.name),
                 SizedBox(
                   width: 10,
                 ),
                 const Text(
-                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 12,
+                    ),
                     "연락처 기반 추천")
               ],
             )

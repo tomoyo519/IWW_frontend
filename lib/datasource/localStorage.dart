@@ -7,7 +7,7 @@ class LocalStorage {
   static final _instance = LocalStorage._internal();
   static LocalStorage get instance => _instance;
 
-  static Future<String?> save(String url, String path) async {
+  static Future<String?> saveFromUrl(String url, String path) async {
     // 네트워크에서 이미지 데이터 가져오기
     var response = await http.get(Uri.parse(url));
     var bytes = response.bodyBytes;

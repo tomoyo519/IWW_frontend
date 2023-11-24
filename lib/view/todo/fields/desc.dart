@@ -13,38 +13,39 @@ class TodoDescField extends StatelessWidget {
       listen: false,
     );
     showModalBottomSheet(
-        context: context,
-        builder: (bottomSheetContext) {
-          return SizedBox(
-            height: MediaQuery.of(context).size.height / 2,
-            child: Column(
-              children: [
-                BottomSheetModalHeader(
-                  title: "설명 추가",
-                  onCancel: () {},
-                  onSave: () {},
+      context: context,
+      builder: (bottomSheetContext) {
+        return SizedBox(
+          height: MediaQuery.of(context).size.height / 2,
+          child: Column(
+            children: [
+              BottomSheetModalHeader(
+                title: "설명 추가",
+                onCancel: () {},
+                onSave: () {},
+              ),
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text("완료")),
+              TextFormField(
+                initialValue: viewModel.todoData['todo_desc'] ?? "",
+                onChanged: (value) => viewModel.todoDesc = value,
+                maxLines: null,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                    color: Colors.black,
+                    width: 1,
+                  )),
                 ),
-                TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text("완료")),
-                TextFormField(
-                  initialValue: viewModel.todoData['todo_desc'] ?? "",
-                  onChanged: (value) => viewModel.todoDesc = value,
-                  maxLines: null,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderSide: BorderSide(
-                      color: Colors.black,
-                      width: 1,
-                    )),
-                  ),
-                ),
-              ],
-            ),
-          );
-        });
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override

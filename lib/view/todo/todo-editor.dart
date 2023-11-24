@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/style/colors.dart';
+import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_common/bottom_sheet_header.dart';
 import 'package:iww_frontend/view/todo/fields/date.dart';
 import 'package:iww_frontend/view/todo/fields/desc.dart';
@@ -37,7 +38,7 @@ class TodoEditorModal extends StatelessWidget {
     // 취소 버튼 클릭
     void onCancel(BuildContext context) {
       Navigator.pop(context);
-      log("취소");
+      LOG.log("취소");
     }
 
     // 저장 버튼 클릭

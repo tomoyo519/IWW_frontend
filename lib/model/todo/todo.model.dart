@@ -1,5 +1,4 @@
 import "dart:convert";
-import "dart:developer";
 import "package:http/http.dart" as http;
 
 class Todo {
@@ -16,19 +15,20 @@ class Todo {
   int? grpId;
   bool todoDeleted;
 
-  Todo(
-      {required this.todoId,
-      required this.userId,
-      required this.todoName,
-      this.todoDesc,
-      this.todoLabel,
-      required this.todoDate,
-      required this.todoDone,
-      this.todoStart,
-      this.todoEnd,
-      this.todoImg,
-      this.grpId,
-      required this.todoDeleted});
+  Todo({
+    required this.todoId,
+    required this.userId,
+    required this.todoName,
+    this.todoDesc,
+    this.todoLabel,
+    required this.todoDate,
+    required this.todoDone,
+    this.todoStart,
+    this.todoEnd,
+    this.todoImg,
+    this.grpId,
+    required this.todoDeleted,
+  });
 
   bool get isDone => todoDone ?? false;
 
