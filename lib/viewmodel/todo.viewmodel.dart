@@ -123,7 +123,7 @@ class TodoViewModel extends ChangeNotifier {
   // 할일 목록 가져오기
   Future<void> fetchTodos() async {
     try {
-      int? userId = _authService.currentUser?.user_id;
+      int? userId = _authService.user?.user_id;
       todos = (await _todoRepository.getTodos(userId)) ?? [];
       waiting = false;
     } catch (error) {

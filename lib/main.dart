@@ -103,11 +103,11 @@ class MyApp extends StatelessWidget {
       case AuthStatus.success:
         return MyHomePage();
       case AuthStatus.waiting:
-        return Loading();
+        return LoadingPage();
       case AuthStatus.failed:
-        return Landing(authService);
+        return LandingPage();
       case AuthStatus.permission:
-        return Landing(authService);
+        return LandingPage();
     }
   }
 }

@@ -7,6 +7,16 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk_talk.dart';
 // 카카오 서버와의 통신과 인증 토큰 발급을 담당하는 서비스 레이어
 class KaKaoLogin {
   // 카카오톡 로그인 후 사용자 정보 반환
+  Future<AuthStatus> backgroundLogin() async {
+    // 모달창 없이 백그라운드에서만 로그인
+    // Flutter SDK에 저장된 토큰의 유효성을 먼저 검사하고
+    if (await getTokenInfo() != null) {
+      return AuthStatus.success;
+    }
+    return AuthStatus.failed;
+  }
+
+  // 카카오톡 로그인 후 사용자 정보 반환
   Future<AuthStatus> login() async {
     // Flutter SDK에 저장된 토큰의 유효성을 먼저 검사하고
     if (await getTokenInfo() != null) {
