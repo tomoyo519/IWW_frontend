@@ -107,11 +107,6 @@ class TodoViewModel extends ChangeNotifier {
 
   // 할일 가져오기
   Future fetchTodos() async {
-    // final user = await _authService.getCurrentUser();
-    // if (user == null) {
-    //   LOG.log("No user authorized!");
-    // }
-
     try {
       todos = await _todoRepository.getTodos(null) ?? [];
       notifyListeners();
@@ -120,13 +115,11 @@ class TodoViewModel extends ChangeNotifier {
 
       print('wow');
       log("fetch error $error");
-
     }
   }
 
   // 할일 삭제
   Future<bool> deleteTodo(int todoId) async {
-    // var id = todoData['todo_id'];
     return await _todoRepository.deleteTodo(todoId.toString());
   }
 
