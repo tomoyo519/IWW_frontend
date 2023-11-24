@@ -13,7 +13,10 @@ class AuthService extends ChangeNotifier {
   final UserRepository userRepository;
 
   // 의존성 주입
-  AuthService(this.kakaoLogin, this.userRepository);
+  AuthService(this.kakaoLogin, this.userRepository) {
+    login();
+    LOG.log("Initialize user info");
+  }
 
   // 현재 로그인된 유저 상태
   final AuthUserStatus _authUserStatus = AuthUserStatus(
@@ -42,14 +45,20 @@ class AuthService extends ChangeNotifier {
   // 로컬로 로그인을 시도
   Future<void> autoLogin() async {
     // 로컬 로그인이 가능한 경우
-    UserInfo? userInfo = await userRepository.getUserFromLocal();
-    if (await _localLogin() && userInfo != null) {
+    LOG.log("진입");
+    if (await _localLogin()) {
+      LOG.log("여기?");
+      UserInfo? userInfo = await userRepository.getUserFromLocal();
+
       LOG.log("로컬에서 유저 로그인 성공!!");
-      _setUserLoggedIn(userInfo);
+      _setUserLoggedIn(userInfo!);
       return;
     }
+    LOG.log("호호?");
+
     // 불가능한 경우
     _setUserLoggedOut(AuthStatus.failed);
+    return;
   }
 
   // 네트워크 연결된 경우 로그인 로직
@@ -217,8 +226,6 @@ class AuthService extends ChangeNotifier {
       return false;
     }
 
-    // 상태 변경
-    _authUserStatus.user = null;
     return true;
   }
 }

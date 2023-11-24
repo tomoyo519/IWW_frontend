@@ -141,11 +141,12 @@ class UserRepository {
         userKakaoId != null &&
         userHp != null) {
       return UserInfo(
-          user_id: userId,
-          user_name: userName,
-          user_tel: userTel,
-          user_kakao_id: userKakaoId,
-          user_hp: userHp);
+        user_id: userId,
+        user_name: userName,
+        user_tel: userTel,
+        user_kakao_id: userKakaoId,
+        user_hp: userHp,
+      );
     }
     return null;
   }

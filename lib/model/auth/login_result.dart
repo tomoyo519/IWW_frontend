@@ -1,6 +1,5 @@
 // 유저의 로그인 상태
 import 'package:iww_frontend/model/user/user-info.model.dart';
-import 'package:kakao_flutter_sdk/kakao_flutter_sdk_talk.dart';
 
 enum AuthStatus {
   permission,
