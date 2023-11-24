@@ -22,6 +22,7 @@ class Routine {
   // 오늘 날짜로 user_id를 매핑한 Todo를 생성해 반환한다.
   Todo generateTodo(int userId) {
     final Todo todo = Todo(
+      todoId: 0,
       userId: userId,
       todoName: routName,
       todoDesc: routDesc,
