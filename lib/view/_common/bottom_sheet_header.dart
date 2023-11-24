@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/style/colors.dart';
 
 class BottomSheetModalHeader extends StatelessWidget {
-  final onSave;
-  final onCancel;
+  final void Function(BuildContext)? onSave;
+  final void Function(BuildContext)? onCancel;
   final String title;
   final Color? color;
 
@@ -34,7 +34,7 @@ class BottomSheetModalHeader extends StatelessWidget {
           children: [
             onCancel != null
                 ? TextButton(
-                    onPressed: () => onCancel(context),
+                    onPressed: () => onCancel!(context),
                     child: Text(
                       "취소",
                       style: TextStyle(
@@ -49,7 +49,7 @@ class BottomSheetModalHeader extends StatelessWidget {
             ),
             onSave != null
                 ? TextButton(
-                    onPressed: () => onSave(context),
+                    onPressed: () => onSave!(context),
                     child: Text(
                       "저장",
                       style: TextStyle(
