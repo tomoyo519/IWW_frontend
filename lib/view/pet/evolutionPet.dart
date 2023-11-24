@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 
-class evolPet extends StatelessWidget {
-  const evolPet({
+class EvolPet extends StatelessWidget {
+  const EvolPet({
     super.key,
   });
 

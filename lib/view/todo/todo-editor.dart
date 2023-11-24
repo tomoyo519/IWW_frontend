@@ -3,13 +3,13 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/style/colors.dart';
-import 'package:iww_frontend/view/custom-bottom-sheet-header.dart';
-import 'package:iww_frontend/view/widget/todo/fields/date.dart';
-import 'package:iww_frontend/view/widget/todo/fields/desc.dart';
-import 'package:iww_frontend/view/widget/todo/fields/label.dart';
-import 'package:iww_frontend/view/widget/todo/fields/name.dart';
-import 'package:iww_frontend/view/widget/todo/fields/routine.dart';
-import 'package:iww_frontend/view/widget/todo/fields/time.dart';
+import 'package:iww_frontend/view/_common/bottom_sheet_header.dart';
+import 'package:iww_frontend/view/todo/fields/date.dart';
+import 'package:iww_frontend/view/todo/fields/desc.dart';
+import 'package:iww_frontend/view/todo/fields/label.dart';
+import 'package:iww_frontend/view/todo/fields/name.dart';
+import 'package:iww_frontend/view/todo/fields/routine.dart';
+import 'package:iww_frontend/view/todo/fields/time.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -34,17 +34,19 @@ class TodoEditorModal extends StatelessWidget {
     // 키보드가 열려 있는지 확인
     final bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom != 0;
 
+    // 취소 버튼 클릭
     void onCancel(BuildContext context) {
       Navigator.pop(context);
       log("취소");
     }
 
+    // 저장 버튼 클릭
     void onSave(BuildContext context) async {
       Navigator.pop(context);
 
       final viewModel = context.read<TodoEditorViewModel>();
 
-      // 신규 생성
+      // 할일 신규 생성
       if (viewModel.todoData['todo_id'] == null) {
         await viewModel.createTodo().then((result) {
           if (result == true && context.mounted) {
@@ -64,7 +66,7 @@ class TodoEditorModal extends StatelessWidget {
         return;
       }
 
-      // 수정
+      // 기존 할일 수정
       await viewModel.updateTodo().then((result) {
         if (result == true && context.mounted) {
           Navigator.pop(context);
@@ -86,7 +88,7 @@ class TodoEditorModal extends StatelessWidget {
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Column(children: [
-          MyBottomSheetModalHeader(
+          BottomSheetModalHeader(
             title: title,
             onSave: onSave,
             onCancel: onCancel,
@@ -111,18 +113,21 @@ class TodoEditorModal extends StatelessWidget {
                       children: const [
                         TodoNameField(),
                         Padding(
-                            padding: EdgeInsets.symmetric(
-                              // horizontal: 10,
-                              vertical: 15,
-                            ),
-                            child: Column(children: [
+                          padding: EdgeInsets.symmetric(
+                            // horizontal: 10,
+                            vertical: 15,
+                          ),
+                          child: Column(
+                            children: [
                               // 할일 상세내용 입력 필드
                               TodoDateField(),
                               TodoLabelField(),
                               TodoTimeField(),
                               TodoRoutineField(),
                               TodoDescField(),
-                            ])),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   )),

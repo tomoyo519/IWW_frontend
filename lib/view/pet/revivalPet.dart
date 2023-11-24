@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 
-class revivalPet extends StatelessWidget {
-  const revivalPet({
+class RevivalPet extends StatelessWidget {
+  const RevivalPet({
     super.key,
   });
 

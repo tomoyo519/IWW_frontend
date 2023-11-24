@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/view/appbar.dart';
-import 'package:iww_frontend/view/bottombar.dart';
-import 'package:iww_frontend/view/deceasedPet.dart';
-import 'package:iww_frontend/view/revivalPet.dart';
+import 'package:iww_frontend/view/_common/appbar.dart';
+import 'package:iww_frontend/view/_common/bottombar.dart';
+import 'package:iww_frontend/view/pet/deceasedPet.dart';
+import 'package:iww_frontend/view/pet/evolutionPet.dart';
+import 'package:iww_frontend/view/pet/revivalPet.dart';
 import 'package:transparent_image/transparent_image.dart';
-import 'package:iww_frontend/view/evolutionPet.dart';
 
 class MyPage extends StatelessWidget {
   const MyPage({super.key});
@@ -22,7 +22,7 @@ class MyPage extends StatelessWidget {
                     Animation<double> animation,
                     Animation<double> secondaryAnimation) {
                   return Expanded(
-                    child: evolPet(),
+                    child: EvolPet(),
                   );
                 },
                 barrierDismissible: true,
@@ -80,7 +80,7 @@ class MyPage extends StatelessWidget {
                     Animation<double> animation,
                     Animation<double> secondaryAnimation) {
                   return Expanded(
-                    child: deceasedPet(),
+                    child: DeceasedPet(),
                   );
                 },
                 barrierDismissible: true,
@@ -102,7 +102,7 @@ class MyPage extends StatelessWidget {
                     Animation<double> animation,
                     Animation<double> secondaryAnimation) {
                   return Expanded(
-                    child: revivalPet(),
+                    child: RevivalPet(),
                   );
                 },
                 barrierDismissible: true,

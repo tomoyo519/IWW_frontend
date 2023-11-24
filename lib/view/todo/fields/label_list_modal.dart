@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/view/custom-bottom-sheet-header.dart';
+import 'package:iww_frontend/view/_common/bottom_sheet_header.dart';
 
 class LabelListModal extends StatelessWidget {
   final content;
@@ -30,7 +30,7 @@ class LabelListModal extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        MyBottomSheetModalHeader(
+        BottomSheetModalHeader(
           title: "라벨 선택",
         ),
         Expanded(

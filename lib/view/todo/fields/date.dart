@@ -3,8 +3,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
-import 'package:iww_frontend/view/widget/calendar.dart';
-import 'package:iww_frontend/view/widget/todo/layout/form-field.dart';
+import 'package:iww_frontend/view/todo/calendar.dart';
+import 'package:iww_frontend/view/todo/layout/form-field.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:provider/provider.dart';
 

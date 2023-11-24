@@ -1,13 +1,10 @@
-// 투두리스트 화면
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
-import 'package:iww_frontend/view/widget/todo/layout/list-tile.dart';
-import 'package:iww_frontend/view/widget/todo/todo-editor.dart';
+import 'package:iww_frontend/view/todo/layout/list-tile.dart';
+import 'package:iww_frontend/view/todo/todo-editor.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -68,25 +65,27 @@ class ToDoList extends StatelessWidget {
     final authService = Provider.of<AuthService>(context, listen: false);
 
     showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        builder: (bottomSheetContext) {
-          return ChangeNotifierProvider(
-              create: (_) => TodoEditorViewModel(
-                    todoRepository,
-                    authService,
-                    todo,
-                  ),
-              child: TodoEditorModal(
-                todo: todo,
-                title: "할일 수정",
-                formKey: _formKey,
-                todoViewModel: Provider.of<TodoViewModel>(
-                  context,
-                  listen: false,
-                ),
-              ));
-        });
+      context: context,
+      isScrollControlled: true,
+      builder: (bottomSheetContext) {
+        return ChangeNotifierProvider(
+          create: (_) => TodoEditorViewModel(
+            todoRepository,
+            authService,
+            todo,
+          ),
+          child: TodoEditorModal(
+            todo: todo,
+            title: "할일 수정",
+            formKey: _formKey,
+            todoViewModel: Provider.of<TodoViewModel>(
+              context,
+              listen: false,
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -95,53 +94,58 @@ class ToDoList extends StatelessWidget {
     final viewModel = context.watch<TodoViewModel>();
     viewModel.fetchTodos();
 
-    return Column(children: [
-      Expanded(
-        flex: 1,
-        child: TodoListHeader(),
-      ),
-      Expanded(
+    return Column(
+      children: [
+        Expanded(
+          flex: 1,
+          child: TodoListHeader(),
+        ),
+        Expanded(
           flex: 5,
           // for async data 렌더링
           child: Container(
-              width: double.infinity,
-              margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: viewModel.todos.isEmpty
-                  ? Lottie.asset(
-                      'assets/spinner.json',
-                      repeat: true,
-                      animate: true,
-                      width: 50,
-                      height: 50,
-                    )
-                  : ListView.builder(
-                      controller: scroll,
-                      itemCount: viewModel.todos.length,
-                      itemBuilder: (context, idx) {
-                        return GestureDetector(
-                          onLongPress: () {
-                            print('길게 눌렀을떄, $idx');
-                            _deleteTodo(context, viewModel.todos[idx].todoId);
-                          },
-                          onTap: () async {
-                            print('그냥 짧게 눌렀을때,');
-                            _editTodo(context, viewModel.todos[idx]);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                            ),
-                            child: TodoListTileLayout(
-                              todo: viewModel.todos[idx],
-                            ),
+            width: double.infinity,
+            margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: viewModel.todos.isEmpty
+                ? Lottie.asset(
+                    'assets/spinner.json',
+                    repeat: true,
+                    animate: true,
+                    width: 50,
+                    height: 50,
+                  )
+                : ListView.builder(
+                    controller: scroll,
+                    itemCount: viewModel.todos.length,
+                    itemBuilder: (context, idx) {
+                      return GestureDetector(
+                        onLongPress: () {
+                          print('길게 눌렀을떄, $idx');
+                          _deleteTodo(context, viewModel.todos[idx].todoId);
+                        },
+                        onTap: () async {
+                          print('그냥 짧게 눌렀을때,');
+                          _editTodo(context, viewModel.todos[idx]);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
                           ),
-                        );
-                      })))
-    ]);
+                          child: TodoListTileLayout(
+                            todo: viewModel.todos[idx],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        )
+      ],
+    );
   }
 
   // TODO - 실제파일 들어오면 버튼 위치 변경하기
@@ -160,24 +164,27 @@ class TodoListHeader extends StatelessWidget {
     final todoRepository = Provider.of<TodoRepository>(context, listen: false);
     final authService = Provider.of<AuthService>(context, listen: false);
     showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        builder: (bottomSheetContext) {
-          return ChangeNotifierProvider(
-              create: (_) => TodoEditorViewModel(
-                    todoRepository,
-                    authService,
-                    null,
-                  ),
-              child: TodoEditorModal(
-                  todo: null,
-                  title: "할일 추가",
-                  formKey: _formKey,
-                  todoViewModel: Provider.of<TodoViewModel>(
-                    context,
-                    listen: false,
-                  )));
-        });
+      context: context,
+      isScrollControlled: true,
+      builder: (bottomSheetContext) {
+        return ChangeNotifierProvider(
+          create: (_) => TodoEditorViewModel(
+            todoRepository,
+            authService,
+            null,
+          ),
+          child: TodoEditorModal(
+            todo: null,
+            title: "할일 추가",
+            formKey: _formKey,
+            todoViewModel: Provider.of<TodoViewModel>(
+              context,
+              listen: false,
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
