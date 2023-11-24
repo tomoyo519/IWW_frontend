@@ -1,5 +1,6 @@
 buildscript {
-    ext.kotlin_version = '1.7.10'// 여기에 원하는 Kotlin 버전을 지정하세요
+    ext.kotlin_version = '1.9.21'// 여기에 원하는 Kotlin 버전을 지정하세요
+    ext.material_version = '1.11.0-rc01'
     repositories {
         google()
         mavenCentral()
