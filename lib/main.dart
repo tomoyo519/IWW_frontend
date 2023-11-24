@@ -14,6 +14,7 @@ import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_template.dart';
 import 'package:iww_frontend/model/routine/routine.model.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
+import 'package:iww_frontend/view/shop/shop_page.dart';
 
 void main() async {
   // >>> generate todo test
@@ -83,6 +84,7 @@ void main() async {
               '/group': (context) => MyGroup(),
               '/mypage': (context) => MyPage(),
               '/friends': (context) => MyFriend(),
+              '/shop':(context) => ShopPage()
             },
             home: MyApp()),
       ),
