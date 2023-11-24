@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
-        android:label="iww_frontend"
+        android:label="DoWith"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">
 
