@@ -6,6 +6,7 @@ import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/providers.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/view/_common/loading.dart';
 import 'package:iww_frontend/view/home/home.dart';
 import 'package:iww_frontend/view/signup/add_friends.dart';
 import 'package:iww_frontend/view/friends/friendMain.dart';
@@ -102,28 +103,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AuthService authService = Provider.of(context, listen: false);
-    authService.autoLogin();
     UserInfo? user = authService.currentUser;
-
     if (user == null) {
       LOG.log("디바이스에 유저 정보 없음. 랜딩 페이지 이동");
+      return LandingPage();
+    } else {
+      LOG.log("디바이스에 유저 정보 있음. 홈으로 이동");
+      return MyHomePage();
     }
-
-    return (user == null) ? LandingPage() : MyHomePage();
   }
 }
-
-// class _MyAppState extends State<MyApp> {
-//   // 초기 상태 설정
-//   @override
-//   void initState() {
-//     super.initState();
-//     Provider.of<AuthService>(
-//       context,
-//       listen: false,
-//     ).autoLogin();
-//     LOG.log("자동 로그인 시도");
-//   }
-
-  
-// }

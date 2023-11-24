@@ -54,27 +54,28 @@ class Landing extends StatelessWidget {
             const Text("두윗"),
             const Text("펫과 함께하는 소셜 투두리스트"),
             ElevatedButton(
-                onPressed: () => _kakaoLogin(context),
-                style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                    backgroundColor: const Color(0xfffee500),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12))),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.asset(
-                      "assets/kakao.png",
-                      width: 30,
-                    ),
-                    const SizedBox(width: 10),
-                    const Text(
-                      "카카오 로그인",
-                      style: TextStyle(fontSize: 30, color: Colors.black),
-                    )
-                  ],
-                ))
+              onPressed: () => _kakaoLogin(context),
+              style: ElevatedButton.styleFrom(
+                  elevation: 0,
+                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                  backgroundColor: const Color(0xfffee500),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12))),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    "assets/kakao.png",
+                    width: 30,
+                  ),
+                  const SizedBox(width: 10),
+                  const Text(
+                    "카카오 로그인",
+                    style: TextStyle(fontSize: 30, color: Colors.black),
+                  )
+                ],
+              ),
+            )
           ],
         ),
       ),

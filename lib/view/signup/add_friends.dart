@@ -5,7 +5,7 @@ import 'package:iww_frontend/view/_common/appbar.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/view/_common/profile_image.dart';
 import 'package:iww_frontend/view/_common/spinner.dart';
-import 'package:iww_frontend/viewmodel/addFriends.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/add_friends.viewmodel.dart';
 import 'package:provider/provider.dart';
 
 class AddFriendsPage extends StatelessWidget {

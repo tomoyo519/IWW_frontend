@@ -13,28 +13,32 @@ class AuthService extends ChangeNotifier {
   final UserRepository userRepository;
 
   // 의존성 주입
-  AuthService(this.kakaoLogin, this.userRepository);
+  AuthService(this.kakaoLogin, this.userRepository) {
+    // 생성할 때 한번 자동로그인해서
+    // _authUserStatus 초기화
+    autoLogin();
+  }
 
   // 현재 로그인된 유저 상태
-  final AuthUserStatus _loginResult = AuthUserStatus(
+  final AuthUserStatus _authUserStatus = AuthUserStatus(
     status: AuthStatus.permission,
     user: null,
   );
 
   // 유저 정보 getter
-  UserInfo? get currentUser => _loginResult.user;
-  AuthStatus get authStatus => _loginResult.status;
+  UserInfo? get currentUser => _authUserStatus.user;
+  AuthStatus get authStatus => _authUserStatus.status;
 
   // 유저 상태 setter
   void _setUserLoggedIn(UserInfo userInfo) {
-    _loginResult.status = AuthStatus.success;
-    _loginResult.user = userInfo;
+    _authUserStatus.status = AuthStatus.success;
+    _authUserStatus.user = userInfo;
     notifyListeners();
   }
 
   void _setUserLoggedOut(AuthStatus status) {
-    _loginResult.status = status;
-    _loginResult.user = null;
+    _authUserStatus.status = status;
+    _authUserStatus.user = null;
     notifyListeners();
   }
 
@@ -173,7 +177,7 @@ class AuthService extends ChangeNotifier {
           "${isDisconnect ? "Succeed" : "Failed"} to delete remote user info");
 
       // 상태 변경
-      _loginResult.user = null;
+      _authUserStatus.user = null;
       return true;
     }
 
@@ -184,7 +188,7 @@ class AuthService extends ChangeNotifier {
           "${isDisconnect ? "Succeed" : "Failed"} to delete remote user info");
 
       // 상태 변경
-      _loginResult.user = null;
+      _authUserStatus.user = null;
       return true;
     }
 
@@ -216,7 +220,7 @@ class AuthService extends ChangeNotifier {
     }
 
     // 상태 변경
-    _loginResult.user = null;
+    _authUserStatus.user = null;
     return true;
   }
 }
