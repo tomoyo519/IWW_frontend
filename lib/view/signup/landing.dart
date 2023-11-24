@@ -25,7 +25,7 @@ class Landing extends StatelessWidget {
     // 로그인 수행
     await authService.login();
 
-    switch (authService.authStatus) {
+    switch (authService.status) {
       //  로그인 완료된 경우
       case AuthStatus.success:
         if (context.mounted) {
@@ -36,8 +36,8 @@ class Landing extends StatelessWidget {
         if (context.mounted) {
           Navigator.pushReplacementNamed(context, "/signup");
         }
+      default:
       // 로그인 취소된 경우
-      case AuthStatus.cancelled:
     }
   }
 

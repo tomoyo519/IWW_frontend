@@ -4,7 +4,7 @@ class LOG {
   static const _prefix = "IWW_DOWITH";
   LOG._internal();
 
-  static void log(String message, {bool? highlight}) {
+  static void log(String message, {int? level}) {
     final stackTrace = StackTrace.current;
     final stackFrame = stackTrace.toString().split('\n')[1]; // 현재 위치의 스택 프레임
 
@@ -14,8 +14,10 @@ class LOG {
     final fileName = match?.group(1);
     final lineNumber = match?.group(2);
 
-    final emoji = (highlight == true) ? "🚨 " : "";
-    final logMessage = ("[$emoji$_prefix] [$fileName:$lineNumber] $message");
+    var emoji = [" ", "🤍 ", "💚 ", "💜 "];
+    var show =
+        (level == null || level > emoji.length - 1) ? emoji[0] : emoji[level];
+    final logMessage = ("[$show$_prefix] [$fileName:$lineNumber] $message");
 
     dev.log(logMessage);
   }
