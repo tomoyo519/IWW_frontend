@@ -5,7 +5,6 @@ import 'package:iww_frontend/style/colors.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
 import 'package:iww_frontend/view/_common/bottombar.dart';
 import 'package:iww_frontend/view/home/home_profile.dart';
-
 import 'package:iww_frontend/view/todo/todo-list.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +16,7 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final todoRepository = Provider.of<TodoRepository>(context, listen: false);
     final authService = Provider.of<AuthService>(context, listen: false);
+
     return Scaffold(
       backgroundColor: MyColors.light,
       appBar: MyAppBar(
@@ -35,12 +35,13 @@ class MyHomePage extends StatelessWidget {
           image: AssetImage("assets/wallpaper.jpg"),
           fit: BoxFit.cover,
         )),
-        child: Column(children: [
-          Expanded(
-            flex: 1,
-            child: HomeProfile(),
-          ),
-          Expanded(
+        child: Column(
+          children: [
+            Expanded(
+              flex: 1,
+              child: HomeProfile(),
+            ),
+            Expanded(
               flex: 4,
               child: ChangeNotifierProvider<TodoViewModel>(
                 create: (context) => TodoViewModel(
@@ -48,11 +49,12 @@ class MyHomePage extends StatelessWidget {
                   authService,
                 ),
                 child: ToDoList(),
-              ))
-        ]),
+              ),
+            )
+          ],
+        ),
       ),
       bottomNavigationBar: MyBottomNav(),
-      // floatingActionButton: TodoAdd(),
     );
   }
 }

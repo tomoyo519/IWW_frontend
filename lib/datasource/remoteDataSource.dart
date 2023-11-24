@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:iww_frontend/secrets/secrets.dart';
+import 'package:iww_frontend/utils/logger.dart';
 
 /// 서버 통신쪽 코드
 class RemoteDataSource {
@@ -60,7 +61,6 @@ class RemoteDataSource {
   }) async {
     // 기본 헤더 추가
     headers = (headers != null) ? {...headers, ...baseHeaders} : baseHeaders;
-
     return await http.get(Uri.parse(server + url), headers: headers);
   }
 

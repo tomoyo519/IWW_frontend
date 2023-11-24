@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
+import 'package:iww_frontend/utils/logger.dart';
 
 // 투두 에디팅 화면의 상태를 관리
 class TodoEditorViewModel extends ChangeNotifier {
@@ -108,15 +109,18 @@ class TodoViewModel extends ChangeNotifier {
   Future fetchTodos() async {
     // final user = await _authService.getCurrentUser();
     // if (user == null) {
-    //   log("No user authorized!");
+    //   LOG.log("No user authorized!");
     // }
 
     try {
       todos = await _todoRepository.getTodos(null) ?? [];
       notifyListeners();
     } catch (error) {
+      LOG.log("fetch error $error");
+
       print('wow');
       log("fetch error $error");
+
     }
   }
 

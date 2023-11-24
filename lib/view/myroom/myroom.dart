@@ -3,6 +3,7 @@ import 'package:iww_frontend/repository/comment.repository.dart';
 import 'package:iww_frontend/repository/room.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';
+import 'package:iww_frontend/view/pet/pet.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:iww_frontend/view/_common/bottombar.dart';
 import 'package:provider/provider.dart';
@@ -198,18 +199,25 @@ class RenderMyRoom extends StatelessWidget {
       print(e);
     }
 
-    Stack layers = Stack(alignment: Alignment.center, children: []);
+    Stack layers = Stack(
+      alignment: Alignment.center,
+      children: [
+        Pet.of(authService.currentUser!.pet_id!),
+      ],
+    );
+
+    // 유저의 펫 정보 불러오기
 
     /* am i in my room? */
-    if (myRoomState.isMyRoom) {
-      layers.children.add(sources['bg1']!);
-      // layers.children.add(sources['mid_fox']!);
-      layers.children.add(sources['small_fox']!);
-    } else {
-      layers.children.add(sources['bg2']!);
-      layers.children.add(sources['mid_fox']!);
-      layers.children.add(sources['small_fox']!);
-    }
+    // if (myRoomState.isMyRoom) {
+    //   layers.children.add(sources['bg1']!);
+    //   // layers.children.add(sources['mid_fox']!);
+    //   layers.children.add(sources['small_fox']!);
+    // } else {
+    //   layers.children.add(sources['bg2']!);
+    //   layers.children.add(sources['mid_fox']!);
+    //   layers.children.add(sources['small_fox']!);
+    // }
 
     return layers;
   }
@@ -367,7 +375,7 @@ class BottomButtons extends StatelessWidget {
               onPressed: () async {
                 String? roomOwenerId = commentsProvider.roomOwnerId;
 
-                final currentUser = await authService.getCurrentUser();
+                final currentUser = authService.currentUser;
                 // 로그인 유저 없으면 6
                 var userId = (currentUser != null)
                     ? currentUser.user_id.toString()
