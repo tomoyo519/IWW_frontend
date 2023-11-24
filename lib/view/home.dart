@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/style/colors.dart';
-import 'package:iww_frontend/view/widget/appbar.dart';
-import 'package:iww_frontend/view/widget/bottombar.dart';
-import 'package:iww_frontend/view/widget/profile.dart';
-import 'package:iww_frontend/view/widget/todo/todo-editor.dart';
-import 'package:iww_frontend/view/widget/todo/todo-list.dart';
+import 'package:iww_frontend/view/appbar.dart';
+import 'package:iww_frontend/view/bottombar.dart';
+import 'package:iww_frontend/view/profile.dart';
+import 'package:iww_frontend/view/todo/todo-list.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:provider/provider.dart';
 

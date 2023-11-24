@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/friend.repository.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
-import 'package:iww_frontend/view/widget/appbar.dart';
+import 'package:iww_frontend/view/appbar.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/viewmodel/addFriends.viewmodel.dart';
 import 'package:iww_frontend/secrets/secrets.dart';

@@ -1,12 +1,7 @@
 import 'dart:convert';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/datasource/remoteDataSource.dart';
-import 'package:iww_frontend/view/widget/groupDetail.dart';
-import 'newGroup.dart';
+import 'package:iww_frontend/view/group/groupDetail.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class GroupList extends StatefulWidget {
   const GroupList({super.key});

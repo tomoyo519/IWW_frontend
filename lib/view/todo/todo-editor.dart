@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/style/colors.dart';
-import 'package:iww_frontend/view/widget/custom-bottom-sheet-header.dart';
+import 'package:iww_frontend/view/custom-bottom-sheet-header.dart';
 import 'package:iww_frontend/view/widget/todo/fields/date.dart';
 import 'package:iww_frontend/view/widget/todo/fields/desc.dart';
 import 'package:iww_frontend/view/widget/todo/fields/label.dart';
