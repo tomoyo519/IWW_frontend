@@ -202,7 +202,7 @@ class RenderMyRoom extends StatelessWidget {
     Stack layers = Stack(
       alignment: Alignment.center,
       children: [
-        Pet.of(authService.currentUser!.pet_id!),
+        Pet.of(authService.user!.pet_id!),
       ],
     );
 
@@ -375,7 +375,7 @@ class BottomButtons extends StatelessWidget {
               onPressed: () async {
                 String? roomOwenerId = commentsProvider.roomOwnerId;
 
-                final currentUser = authService.currentUser;
+                final currentUser = authService.user;
                 // 로그인 유저 없으면 6
                 var userId = (currentUser != null)
                     ? currentUser.user_id.toString()

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/style/colors.dart';
@@ -15,12 +16,8 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final todoRepository = Provider.of<TodoRepository>(context, listen: false);
-    final authService = Provider.of<AuthService>(context, listen: false);
-
-    // 현재 유저가 없는 경우
-    if (authService.currentUser == null) {
-      Navigator.pushNamedAndRemoveUntil(context, "/app", (route) => false);
-    }
+    final authService = context.watch<AuthService>();
+    UserInfo user = authService.user!;
 
     return Scaffold(
       backgroundColor: MyColors.light,
@@ -44,7 +41,9 @@ class MyHomePage extends StatelessWidget {
           children: [
             Expanded(
               flex: 1,
-              child: HomeProfile(),
+              child: HomeProfile(
+                user: user,
+              ),
             ),
             Expanded(
               flex: 4,

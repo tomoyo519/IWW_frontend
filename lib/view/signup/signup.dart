@@ -84,7 +84,8 @@ class SignUp extends StatelessWidget {
         if (userInfo != null) {
           _pageController.dispose(); // 해제
           LOG.log("Succeeded in signing up");
-          Navigator.pushNamed(context, "/contact");
+          Navigator.pushNamedAndRemoveUntil(
+              context, "/contact", ((route) => false));
         }
         LOG.log("Succeeded to signup");
       });

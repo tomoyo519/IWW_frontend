@@ -81,6 +81,7 @@ class UserRepository {
   Future<UserInfo?> getUserByKakaoId(String userKakaoId) async {
     return await RemoteDataSource.get("/user?user_kakao_id=$userKakaoId")
         .then((response) {
+      LOG.log("${response.body}");
       if (response.statusCode == 200 && response.body.isNotEmpty) {
         var jsonData = json.decode(response.body);
         return UserInfo.fromJson(jsonData);

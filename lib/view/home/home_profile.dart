@@ -5,13 +5,12 @@ import 'package:iww_frontend/view/_common/profile_image.dart';
 import 'package:provider/provider.dart';
 
 class HomeProfile extends StatelessWidget {
-  const HomeProfile({super.key});
+  final UserInfo user;
+  const HomeProfile({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
-    AuthService authService = Provider.of<AuthService>(context, listen: false);
-    UserInfo user = authService.currentUser!;
-
+    final authService = context.read<AuthService>();
     return Container(
       width: double.infinity,
       margin: EdgeInsets.fromLTRB(10, 10, 10, 5),
@@ -52,16 +51,28 @@ class HomeProfile extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  TextButton(
-                    onPressed: () {
-                      authService.logout().then((value) {
-                        Navigator.pushNamedAndRemoveUntil(
-                            context, "/app", (route) => false);
-                      });
-                    },
-                    style: TextButton.styleFrom(),
-                    child: Text("로그아웃"),
-                  )
+                  Row(
+                    children: [
+                      DecoratedBox(
+                        decoration: BoxDecoration(),
+                        child: Text("Today  4/5"),
+                      ),
+                      DecoratedBox(
+                        decoration: BoxDecoration(),
+                        child: Text("Total  4/5"),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          authService.logout().then((value) {
+                            Navigator.pushNamedAndRemoveUntil(
+                                context, "/app", (route) => false);
+                          });
+                        },
+                        style: TextButton.styleFrom(),
+                        child: Text("로그아웃"),
+                      )
+                    ],
+                  ),
                 ],
               ),
             )

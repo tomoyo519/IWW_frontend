@@ -14,7 +14,7 @@ class AuthService extends ChangeNotifier {
 
   // 의존성 주입
   AuthService(this.kakaoLogin, this.userRepository) {
-    login();
+    login(background: true);
     LOG.log("Initialize user info");
   }
 
@@ -25,72 +25,70 @@ class AuthService extends ChangeNotifier {
   );
 
   // 유저 정보 getter
-  UserInfo? get currentUser => _authUserStatus.user;
+  UserInfo? get user => _authUserStatus.user;
   AuthStatus get status => _authUserStatus.status;
 
   // 유저 상태 setter
   void _setUserLoggedIn(UserInfo userInfo) {
-    _authUserStatus.status = AuthStatus.success;
     _authUserStatus.user = userInfo;
+    _authUserStatus.status = AuthStatus.success;
     notifyListeners();
   }
 
   void _setUserLoggedOut(AuthStatus status) {
-    _authUserStatus.status = status;
     _authUserStatus.user = null;
-    notifyListeners();
-  }
-
-  // 카카오 로그인을 누르지 않고
-  // 로컬로 로그인을 시도
-  Future<void> autoLogin() async {
-    // 로컬 로그인이 가능한 경우
-    LOG.log("진입");
-    if (await _localLogin()) {
-      LOG.log("여기?");
-      UserInfo? userInfo = await userRepository.getUserFromLocal();
-
-      LOG.log("로컬에서 유저 로그인 성공!!");
-      _setUserLoggedIn(userInfo!);
-      return;
+    if (status == AuthStatus.success) {
+      _authUserStatus.status = AuthStatus.failed;
+    } else {
+      _authUserStatus.status = status;
     }
-    LOG.log("호호?");
 
-    // 불가능한 경우
-    _setUserLoggedOut(AuthStatus.failed);
-    return;
+    notifyListeners();
   }
 
   // 네트워크 연결된 경우 로그인 로직
   // 로컬 로그인이 가능하거나 DB에 유저 정보가 있으면 true
   // 그렇지 않은 경우 false 반환
-  Future<void> login() async {
+  Future<void> login({required bool background}) async {
     // 로컬 로그인이 가능한 경우
-    UserInfo? userInfo = await userRepository.getUserFromLocal();
-    if (await _localLogin() && userInfo != null) {
-      LOG.log("로컬에서 유저 로그인 성공!!");
-      _setUserLoggedIn(userInfo);
-      return;
-    }
-
-    // 카카오 인증 후 유저 정보에서 카카오 아이디 확인
-    AuthStatus status = await kakaoLogin.login();
-    LOG.log("Login status: $status");
-    if (status == AuthStatus.success) {
-      // DB에서 유저 정보를 확인하고
-      // 가입된 사용자일 경우 로컬 저장소에 캐시
-      User? user = await kakaoLogin.getUserInfo();
-      if (user == null) {
-        _setUserLoggedOut(status);
-        return;
-      }
-
-      String kakaoId = user.id.toString();
-      UserInfo? userInfo = await userRepository.getUserByKakaoId(kakaoId);
-      if (userInfo != null && await userRepository.saveUserInLocal(userInfo)) {
+    if (await _localLogin()) {
+      UserInfo? userInfo = await userRepository.getUserFromLocal();
+      if (userInfo != null) {
+        LOG.log("로컬에서 유저 로그인 성공!!");
         _setUserLoggedIn(userInfo);
         return;
       }
+    }
+
+    // 카카오 인증 후 유저 정보에서 카카오 아이디 확인
+    AuthStatus status = background
+        ? await kakaoLogin.backgroundLogin()
+        : await kakaoLogin.login();
+    if (status == AuthStatus.success) {
+      // 카카오로그인으로 유저 정보 가져오기
+      User? user = await kakaoLogin.getUserInfo();
+      if (user == null) {
+        _setUserLoggedOut(AuthStatus.failed);
+        return;
+      }
+
+      // DB에서 유저 정보를 확인하고
+      // 가입된 사용자일 경우 로컬 저장소에 캐시
+      String kakaoId = user.id.toString();
+      UserInfo? userInfo = await userRepository.getUserByKakaoId(kakaoId);
+      if (userInfo == null) {
+        // 가입하지 않은 유저
+        _setUserLoggedOut(AuthStatus.permission);
+        return;
+      }
+
+      if (await userRepository.saveUserInLocal(userInfo)) {
+        _setUserLoggedIn(userInfo);
+        return;
+      }
+
+      LOG.log("??? $status $userInfo");
+      _setUserLoggedOut(AuthStatus.failed);
     }
 
     _setUserLoggedOut(status);
@@ -108,31 +106,38 @@ class AuthService extends ChangeNotifier {
     // 카카오에서 유저 정보 가져오기
     User? user = await kakaoLogin.getUserInfo();
     if (user == null) {
-      _setUserLoggedOut(status);
+      _setUserLoggedOut(AuthStatus.failed);
       return;
     }
 
     // 로컬, 원격 모두에서 유저 생성
     var userKakaoId = user.id.toString();
-    UserInfo? userInfo =
-        await userRepository.createUser(userName, userTel, userKakaoId);
+    UserInfo? userInfo = await userRepository.createUser(
+      userName,
+      userTel,
+      userKakaoId,
+    );
 
     if (userInfo == null) {
       LOG.log("Failed to create user");
-      _setUserLoggedOut(status);
+      _setUserLoggedOut(AuthStatus.permission);
       return;
     }
 
     // 유저 생성 완료된 경우 프로필 사진 저장
     // TODO: UserRepository쪽으로 빼기
     String? profileUrl = user.kakaoAccount?.profile?.profileImageUrl;
+    int? userId = userInfo.user_id;
     if (profileUrl != null) {
       // 프로필 사진이 있는 경우 로컬스토리지에 저장
-      var title = userInfo.user_id;
-      var filepath = await LocalStorage.saveFromUrl(profileUrl, '$title.jpg');
+      String? filepath =
+          await LocalStorage.saveFromUrl(profileUrl, '$userId.jpg');
+
+      LOG.log("Save profile pic: $filepath");
       if (filepath != null) {
         // 서버로 올리기
-        var isCreated = await userRepository.createUserProfile(title);
+        var isCreated = await userRepository.createUserProfile(userId);
+        LOG.log("Create profile pic: $isCreated");
         if (!isCreated) {
           // 서버로 안올라갔으면 로컬에서도 삭제
           await LocalStorage.delete(filepath);
