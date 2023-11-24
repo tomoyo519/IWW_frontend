@@ -117,6 +117,10 @@ class TodoViewModel extends ChangeNotifier {
       notifyListeners();
     } catch (error) {
       LOG.log("fetch error $error");
+
+      print('wow');
+      log("fetch error $error");
+
     }
   }
 

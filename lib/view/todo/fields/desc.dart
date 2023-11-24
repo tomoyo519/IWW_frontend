@@ -21,8 +21,6 @@ class TodoDescField extends StatelessWidget {
             children: [
               BottomSheetModalHeader(
                 title: "설명 추가",
-                onCancel: () {},
-                onSave: () {},
               ),
               TextButton(
                   onPressed: () {
@@ -39,6 +37,7 @@ class TodoDescField extends StatelessWidget {
                     color: Colors.black,
                     width: 1,
                   )),
+
                 ),
               ),
             ],
