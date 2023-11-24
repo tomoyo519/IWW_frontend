@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/auth/login_result.dart';
 import 'package:iww_frontend/providers.dart';
 import 'package:iww_frontend/service/auth.service.dart';
+import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_common/loading.dart';
 import 'package:iww_frontend/view/home/home.dart';
 import 'package:iww_frontend/view/signup/add_friends.dart';
@@ -15,40 +16,40 @@ import 'package:provider/provider.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_template.dart';
 
+// >>> generate todo test
+// var routines = [
+//   Routine.fromJson({
+//     "rout_id": 1,
+//     "rout_name": "routin1",
+//     "rout_desc": "test",
+//     "rout_repeat": "1111100",
+//     "grp_id": 1
+//   }),
+//   Routine.fromJson({
+//     "rout_id": 2,
+//     "rout_name": "routin2",
+//     "rout_desc": "test",
+//     "rout_repeat": "0001000",
+//     "grp_id": 1
+//   }),
+//   Routine.fromJson({
+//     "rout_id": 3,
+//     "rout_name": "routin3",
+//     "rout_desc": "test",
+//     "rout_repeat": "1111111",
+//     "grp_id": 1
+//   }),
+// ];
+// const int userId = 1;
+
+// for (var element in routines) {
+//   Todo todo = element.generateTodo(userId);
+//   Todo.requestCreate(todo.toJson());
+//   print(todo..toJson());
+// }
+// <<< generate todo test
+
 void main() async {
-  // >>> generate todo test
-  // var routines = [
-  //   Routine.fromJson({
-  //     "rout_id": 1,
-  //     "rout_name": "routin1",
-  //     "rout_desc": "test",
-  //     "rout_repeat": "1111100",
-  //     "grp_id": 1
-  //   }),
-  //   Routine.fromJson({
-  //     "rout_id": 2,
-  //     "rout_name": "routin2",
-  //     "rout_desc": "test",
-  //     "rout_repeat": "0001000",
-  //     "grp_id": 1
-  //   }),
-  //   Routine.fromJson({
-  //     "rout_id": 3,
-  //     "rout_name": "routin3",
-  //     "rout_desc": "test",
-  //     "rout_repeat": "1111111",
-  //     "grp_id": 1
-  //   }),
-  // ];
-  // const int userId = 1;
-
-  // for (var element in routines) {
-  //   Todo todo = element.generateTodo(userId);
-  //   Todo.requestCreate(todo.toJson());
-  //   print(todo..toJson());
-  // }
-  // <<< generate todo test
-
   // 웹 환경에서 카카오 로그인을 정상적으로 완료하려면 runApp() 호출 전 아래 메서드 호출 필요
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -95,18 +96,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AuthService authService = Provider.of(context, listen: false);
+    AuthService authService = context.watch<AuthService>();
     AuthStatus status = authService.status;
-
-    // 자동로그인
-    authService.autoLogin();
 
     switch (status) {
       case AuthStatus.success:
         return MyHomePage();
       case AuthStatus.waiting:
         return Loading();
-      default:
+      case AuthStatus.failed:
+        return Landing(authService);
+      case AuthStatus.permission:
         return Landing(authService);
     }
   }
