@@ -1,11 +1,7 @@
-import 'dart:developer';
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/model/user/user-info.model.dart';
+import 'package:iww_frontend/model/auth/login_result.dart';
 import 'package:iww_frontend/providers.dart';
 import 'package:iww_frontend/service/auth.service.dart';
-import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_common/loading.dart';
 import 'package:iww_frontend/view/home/home.dart';
 import 'package:iww_frontend/view/signup/add_friends.dart';
@@ -15,12 +11,9 @@ import 'package:iww_frontend/view/signup/landing.dart';
 import 'package:iww_frontend/view/mypage/myPage.dart';
 import 'package:iww_frontend/view/myroom/myroom.dart';
 import 'package:iww_frontend/view/signup/signup.dart';
-import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_template.dart';
-import 'package:iww_frontend/model/routine/routine.model.dart';
-import 'package:iww_frontend/model/todo/todo.model.dart';
 
 void main() async {
   // >>> generate todo test
@@ -103,13 +96,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AuthService authService = Provider.of(context, listen: false);
-    UserInfo? user = authService.currentUser;
-    if (user == null) {
-      LOG.log("디바이스에 유저 정보 없음. 랜딩 페이지 이동");
-      return LandingPage();
-    } else {
-      LOG.log("디바이스에 유저 정보 있음. 홈으로 이동");
-      return MyHomePage();
+    AuthStatus status = authService.status;
+
+    // 자동로그인
+    authService.autoLogin();
+
+    switch (status) {
+      case AuthStatus.success:
+        return MyHomePage();
+      case AuthStatus.waiting:
+        return Loading();
+      default:
+        return Landing(authService);
     }
   }
 }

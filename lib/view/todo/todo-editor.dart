@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
+import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/style/colors.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_common/bottom_sheet_header.dart';
@@ -46,10 +47,12 @@ class TodoEditorModal extends StatelessWidget {
       Navigator.pop(context);
 
       final viewModel = context.read<TodoEditorViewModel>();
+      final authService = Provider.of<AuthService>(context, listen: false);
+      int userId = authService.currentUser!.user_id;
 
       // 할일 신규 생성
       if (viewModel.todoData['todo_id'] == null) {
-        await viewModel.createTodo().then((result) {
+        await viewModel.createTodo(userId).then((result) {
           if (result == true && context.mounted) {
             Navigator.pop(context);
 

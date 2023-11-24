@@ -17,6 +17,11 @@ class MyHomePage extends StatelessWidget {
     final todoRepository = Provider.of<TodoRepository>(context, listen: false);
     final authService = Provider.of<AuthService>(context, listen: false);
 
+    // 현재 유저가 없는 경우
+    if (authService.currentUser == null) {
+      Navigator.pushNamedAndRemoveUntil(context, "/app", (route) => false);
+    }
+
     return Scaffold(
       backgroundColor: MyColors.light,
       appBar: MyAppBar(

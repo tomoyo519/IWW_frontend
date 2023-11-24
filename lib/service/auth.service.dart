@@ -13,21 +13,17 @@ class AuthService extends ChangeNotifier {
   final UserRepository userRepository;
 
   // 의존성 주입
-  AuthService(this.kakaoLogin, this.userRepository) {
-    // 생성할 때 한번 자동로그인해서
-    // _authUserStatus 초기화
-    autoLogin();
-  }
+  AuthService(this.kakaoLogin, this.userRepository);
 
   // 현재 로그인된 유저 상태
   final AuthUserStatus _authUserStatus = AuthUserStatus(
-    status: AuthStatus.permission,
+    status: AuthStatus.waiting,
     user: null,
   );
 
   // 유저 정보 getter
   UserInfo? get currentUser => _authUserStatus.user;
-  AuthStatus get authStatus => _authUserStatus.status;
+  AuthStatus get status => _authUserStatus.status;
 
   // 유저 상태 setter
   void _setUserLoggedIn(UserInfo userInfo) {
@@ -52,6 +48,8 @@ class AuthService extends ChangeNotifier {
       _setUserLoggedIn(userInfo);
       return;
     }
+    // 불가능한 경우
+    _setUserLoggedOut(AuthStatus.failed);
   }
 
   // 네트워크 연결된 경우 로그인 로직
@@ -149,7 +147,7 @@ class AuthService extends ChangeNotifier {
     LOG.log("${isKakaoLoggedOut ? "Succeed" : "Failed"} to logout from kakao");
 
     // 상태 변경
-    _setUserLoggedOut(AuthStatus.cancelled);
+    _setUserLoggedOut(AuthStatus.failed);
   }
 
   // 회원 탈퇴

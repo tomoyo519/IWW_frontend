@@ -5,7 +5,8 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk_talk.dart';
 enum AuthStatus {
   permission,
   success,
-  cancelled,
+  failed,
+  waiting,
 }
 
 // 카카오로그인에서 반환하는 로그인 정보
