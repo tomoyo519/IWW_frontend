@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 
-class deceasedPet extends StatelessWidget {
-  const deceasedPet({
+class DeceasedPet extends StatelessWidget {
+  const DeceasedPet({
     super.key,
   });
 

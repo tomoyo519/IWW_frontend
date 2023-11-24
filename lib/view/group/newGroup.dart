@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/view/appbar.dart';
-import 'package:iww_frontend/view/label-list-modal.dart';
+import 'package:iww_frontend/view/_common/appbar.dart';
+import 'package:iww_frontend/view/todo/fields/label_list_modal.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:provider/provider.dart';
 

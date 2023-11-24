@@ -2,13 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/style/colors.dart';
 
-class MyBottomSheetModalHeader extends StatelessWidget {
+class BottomSheetModalHeader extends StatelessWidget {
   final onSave;
   final onCancel;
   final String title;
   final Color? color;
 
-  const MyBottomSheetModalHeader({
+  const BottomSheetModalHeader({
     super.key,
     required this.title,
     this.onCancel,

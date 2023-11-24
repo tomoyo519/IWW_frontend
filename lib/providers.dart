@@ -6,9 +6,7 @@ import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/utils/kakaoLogin.dart';
-import 'package:iww_frontend/view/widget/add_todo.dart';
-import 'package:iww_frontend/view/widget/home.dart';
-import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
+import 'package:iww_frontend/view/todo/add_todo.dart';
 import 'package:provider/provider.dart';
 
 List<Provider> getRepositories() {

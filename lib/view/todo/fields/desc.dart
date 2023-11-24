@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/view/custom-bottom-sheet-header.dart';
-import 'package:iww_frontend/view/widget/todo/layout/form-field.dart';
+import 'package:iww_frontend/view/_common/bottom_sheet_header.dart';
+import 'package:iww_frontend/view/todo/layout/form-field.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -20,7 +19,7 @@ class TodoDescField extends StatelessWidget {
             height: MediaQuery.of(context).size.height / 2,
             child: Column(
               children: [
-                MyBottomSheetModalHeader(
+                BottomSheetModalHeader(
                   title: "설명 추가",
                   onCancel: () {},
                   onSave: () {},

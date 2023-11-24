@@ -24,8 +24,8 @@ class MiniPet extends StatelessWidget {
   }
 }
 
-class Profile extends StatelessWidget {
-  const Profile({super.key});
+class HomeProfile extends StatelessWidget {
+  const HomeProfile({super.key});
 
   @override
   Widget build(BuildContext context) {

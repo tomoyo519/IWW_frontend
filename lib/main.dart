@@ -1,18 +1,14 @@
-// msg: 가능하면 건드리지 말자 by 다희 소정
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/providers.dart';
-import 'package:iww_frontend/repository/user.repository.dart';
-import 'package:iww_frontend/repository/friend.repository.dart';
-import 'package:iww_frontend/view/screens/myroom.dart';
-import 'package:iww_frontend/view/screens/addFriends.dart';
-import 'package:iww_frontend/view/screens/landing.dart';
-import 'package:iww_frontend/view/screens/signup.dart';
-import 'package:iww_frontend/view/screens/myPage.dart';
+import 'package:iww_frontend/view/home/home.dart';
+import 'package:iww_frontend/view/signup/add_friends.dart';
 import 'package:iww_frontend/view/friends/friendMain.dart';
-import 'package:iww_frontend/view/widget/groupMain.dart';
-import 'package:path/path.dart';
+import 'package:iww_frontend/view/group/groupMain.dart';
+import 'package:iww_frontend/view/signup/landing.dart';
+import 'package:iww_frontend/view/mypage/myPage.dart';
+import 'package:iww_frontend/view/myroom/myroom.dart';
+import 'package:iww_frontend/view/signup/signup.dart';
 import 'package:provider/provider.dart';
-import 'package:iww_frontend/view/widget/home.dart';
 import 'package:iww_frontend/utils/appEntries.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_template.dart';

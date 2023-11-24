@@ -1,47 +1,7 @@
-import 'dart:developer';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/view/widget/label-list-modal.dart';
-import 'package:iww_frontend/view/widget/todo/layout/form-field.dart';
+import 'package:iww_frontend/view/todo/layout/form-field.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:provider/provider.dart';
-
-//                     Row(
-//                       children: [
-//                         Container(
-//                             padding: EdgeInsets.all(10),
-//                             child: GestureDetector(
-//                                 onTap: () async {
-//                                   final TimeOfDay? selectedTime =
-//                                       await showTimePicker(
-//                                     initialTime: TimeOfDay.now(),
-//                                     context: context,
-//                                   );
-
-//                                   if (selectedTime != null &&
-//                                       context.mounted) {
-//                                     Provider.of<TodoViewModel>(
-//                                       context,
-//                                       listen: false,
-//                                     ).setSelectedAlarmTime(
-//                                         selectedTime);
-//                                   }
-//                                 },
-//                                 child: TodoFormFieldLayout(
-//                                   icon: Icons.access_alarm_rounded,
-//                                   child: Consumer<TodoViewModel>(
-//                                     builder:
-//                                         (context, selectedDate, child) {
-//                                       String timeString =
-//                                           '${selectedDate.selectedAlarmTime.hour}시 ${selectedDate.selectedAlarmTime.minute}분';
-//                                       return Text(
-//                                           timeString.toString());
-//                                     },
-//                                   ),
-//                                 ))),
-//                       ],
-//                     ),
 
 class TodoTimeField extends StatelessWidget {
   const TodoTimeField({super.key});
