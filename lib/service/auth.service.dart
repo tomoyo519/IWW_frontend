@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:iww_frontend/datasource/localStorage.dart';
+import 'package:iww_frontend/model/auth/login_result.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/utils/kakaoLogin.dart';
@@ -9,11 +10,11 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk_talk.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  final KaKaoLogin kaKaoLogin;
+  final KaKaoLogin kakaoLogin;
   final UserRepository userRepository;
 
   // 의존성 주입
-  AuthService(this.kaKaoLogin, this.userRepository);
+  AuthService(this.kakaoLogin, this.userRepository);
 
   // 현재 로그인된 유저 상태
   UserInfo? _currentUser;
@@ -33,32 +34,56 @@ class AuthService {
   // 네트워크 연결된 경우 로그인 로직
   // 로컬 로그인이 가능하거나 DB에 유저 정보가 있으면 true
   // 그렇지 않은 경우 false 반환
-  Future<UserInfo?> login() async {
+  Future<LoginResult> login() async {
     // 로컬 로그인이 가능한 경우
+    UserInfo? userInfo = await userRepository.getUserFromLocal();
     if (await _localLogin()) {
-      return await userRepository.getUserFromLocal();
+      return LoginResult(
+        status: LoginStatus.success,
+        user: userInfo,
+      );
     }
 
     // 카카오 인증 후 유저 정보에서 카카오 아이디 확인
-    User? user = await kaKaoLogin.login();
-    if (user == null) {
-      return null;
+    LoginStatus status = await kakaoLogin.login();
+    log("Login status: $status");
+    if (status == LoginStatus.success) {
+      // DB에서 유저 정보를 확인하고
+      // 가입된 사용자일 경우 로컬 저장소에 캐시
+      User? user = await kakaoLogin.getUserInfo();
+      if (user == null) {
+        return LoginResult(
+          status: status,
+          user: null,
+        );
+      }
+
+      String kakaoId = user.id.toString();
+      UserInfo? userInfo = await userRepository.getUserByKakaoId(kakaoId);
+      if (userInfo != null && await userRepository.saveUserInLocal(userInfo)) {
+        return LoginResult(
+          status: LoginStatus.success,
+          user: userInfo,
+        );
+      }
     }
 
-    // DB에서 유저 정보를 확인하고
-    // 가입된 사용자일 경우 로컬 저장소에 캐시
-    String kakaoId = user.id.toString();
-    UserInfo? userInfo = await userRepository.getUserByKakaoId(kakaoId);
-    if (userInfo != null && await userRepository.saveUserInLocal(userInfo)) {
-      return userInfo;
-    }
-    return null;
+    return LoginResult(
+      status: status,
+      user: null,
+    );
   }
 
   // 회원가입 로직
   Future<UserInfo?> signup(String userName, String userTel) async {
     // 카카오 인증 후 유저 정보에서 카카오 아이디 확인
-    User? user = await kaKaoLogin.login();
+    LoginStatus? status = await kakaoLogin.login();
+    if (status == LoginStatus.permission) {
+      return null;
+    }
+
+    // 카카오에서 유저 정보 가져오기
+    User? user = await kakaoLogin.getUserInfo();
     if (user == null) {
       return null;
     }
@@ -100,7 +125,7 @@ class AuthService {
     // 디바이스 SharedPreference에 저장된 모든 관련 정보 삭제하고
     bool isLocalLoggedOut = await userRepository.deleteUserInLocal();
     // 카카오 SDK에 저장된 정보도 삭제
-    bool isKakaoLoggedOut = await kaKaoLogin.logout();
+    bool isKakaoLoggedOut = await kakaoLogin.logout();
 
     log("${isLocalLoggedOut ? "Succeed" : "Failed"} to delete local user info");
     log("${isKakaoLoggedOut ? "Succeed" : "Failed"} to logout from kakao");
@@ -114,13 +139,13 @@ class AuthService {
   Future<bool> disconnect() async {
     // 저장된 유저 정보
     UserInfo? localUserInfo = await userRepository.getUserFromLocal();
-    User? kakaoUserInfo = await kaKaoLogin.getUserInfo();
+    User? kakaoUserInfo = await kakaoLogin.getUserInfo();
 
     // 디바이스 SharedPreference에 저장된 모든 관련 정보 삭제하고
     bool isLocalDisconnect = await userRepository.deleteUserInLocal();
 
     // 카카오 OAuth와도 연결 끊기
-    bool isKakaoDisconnect = await kaKaoLogin.disconnect();
+    bool isKakaoDisconnect = await kakaoLogin.disconnect();
 
     log("${isLocalDisconnect ? "Succeed" : "Failed"} to delete local user info");
     log("${isKakaoDisconnect ? "Succeed" : "Failed"} to disconnect from kakao");
