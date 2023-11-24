@@ -13,16 +13,27 @@ class MyBottomNav extends StatelessWidget implements PreferredSizeWidget {
   void goHome(context, uri) {
     switch (uri) {
       case 0:
-        Navigator.push(context, MaterialPageRoute(builder: (c) => MyHome()));
+        Navigator.pushNamedAndRemoveUntil(
+            context, "/home", (Route<dynamic> route) => false);
         break;
       case 1:
-        Navigator.push(context, MaterialPageRoute(builder: (c) => MyGroup()));
+        Navigator.pushNamedAndRemoveUntil(
+            context, "/group", (Route<dynamic> route) => false);
         break;
       case 2:
-        Navigator.pushNamed(context, "/myroom");
+        Navigator.pushNamedAndRemoveUntil(
+            context,
+            "/myroom",
+            arguments: true,
+            (Route<dynamic> route) => false);
         break;
+      case 4:
+        Navigator.pushNamedAndRemoveUntil(
+            context, '/mypage', (Route<dynamic> route) => false);
       default:
-        throw UnimplementedError('no widget for uri $uri');
+        Navigator.pushNamedAndRemoveUntil(
+            context, '/landing', (Route<dynamic> route) => false);
+      // throw UnimplementedError('no widget for uri $uri');
     }
   }
 
@@ -30,7 +41,7 @@ class MyBottomNav extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-        selectedItemColor: Colors.purple[800],
+        selectedItemColor: Colors.blue.shade500,
         type: BottomNavigationBarType.fixed,
         showSelectedLabels: false, //  이 옵션 주면 라벨 text 뜨지않음
         showUnselectedLabels: false,

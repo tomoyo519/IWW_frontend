@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/view/widget/appbar.dart';
+import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'home.dart';
-import 'listWidget.dart';
+import 'label-list-modal.dart';
 
 class NewGroup extends StatefulWidget {
   const NewGroup({super.key});
@@ -38,10 +39,10 @@ class _NewGroupState extends State<NewGroup> {
                       showModalBottomSheet(
                           context: context,
                           builder: (c) {
-                            return LabelList(
+                            return LabelListModal(
                               content: "label",
                               setLabel: (newLabel) {
-                                Provider.of<SelectedDate>(context,
+                                Provider.of<TodoViewModel>(context,
                                         listen: false)
                                     .setSelectedDate(newLabel as String);
                               },
@@ -131,10 +132,10 @@ class _NewGroupState extends State<NewGroup> {
                                                   showModalBottomSheet(
                                                       context: context,
                                                       builder: (c) {
-                                                        return LabelList(
+                                                        return LabelListModal(
                                                             setLabel:
                                                                 (newLabel) {
-                                                              Provider.of<SelectedDate>(
+                                                              Provider.of<TodoViewModel>(
                                                                       context,
                                                                       listen:
                                                                           false)
@@ -174,9 +175,9 @@ class _NewGroupState extends State<NewGroup> {
                                                 showModalBottomSheet(
                                                     context: context,
                                                     builder: (c) {
-                                                      return LabelList(
+                                                      return LabelListModal(
                                                           setLabel: (newLabel) {
-                                                            Provider.of<SelectedDate>(
+                                                            Provider.of<TodoViewModel>(
                                                                     context,
                                                                     listen:
                                                                         false)

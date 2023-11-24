@@ -2,10 +2,15 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/providers.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
+import 'package:iww_frontend/repository/friend.repository.dart';
 import 'package:iww_frontend/view/screens/myroom.dart';
 import 'package:iww_frontend/view/screens/addFriends.dart';
 import 'package:iww_frontend/view/screens/landing.dart';
 import 'package:iww_frontend/view/screens/signup.dart';
+import 'package:iww_frontend/view/screens/myPage.dart';
+import 'package:iww_frontend/view/widget/friendMain.dart';
+import 'package:iww_frontend/view/widget/groupMain.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/view/widget/home.dart';
 import 'package:iww_frontend/utils/appEntries.dart';
@@ -32,15 +37,21 @@ void main() async {
         // ViewModel Providers
         providers: getChangeNotifiers(),
         child: MaterialApp(
-            theme: ThemeData(useMaterial3: true),
+            theme: ThemeData(
+                useMaterial3: true,
+                colorScheme: ColorScheme.fromSeed(
+                  seedColor: Colors.lightBlue,
+                )),
             // 라우트 정의
             routes: {
-              '/home': (context) => const MyHome(),
+              '/home': (context) => const MyHomePage(),
               '/landing': (context) => LandingPage(),
               '/signup': (context) => SignUpPage(),
               '/contact': (context) => AddFriendsPage(),
-              '/myroom': (context) =>
-                  MyRoom(Provider.of<UserRepository>(context, listen: false)),
+              '/myroom': (context) => MyRoom(),
+              '/group': (context) => MyGroup(),
+              '/mypage': (context) => MyPage(),
+              '/friends': (context) => MyFriend(),
             },
             home: MyApp()),
       ),
