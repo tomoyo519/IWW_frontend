@@ -115,6 +115,7 @@ class TodoViewModel extends ChangeNotifier {
       todos = await _todoRepository.getTodos(null) ?? [];
       notifyListeners();
     } catch (error) {
+      print('wow');
       log("fetch error $error");
     }
   }
