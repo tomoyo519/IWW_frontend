@@ -16,8 +16,8 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final todoRepository = Provider.of<TodoRepository>(context, listen: false);
-    final authService = context.watch<AuthService>();
-    UserInfo user = authService.user!;
+    final authService = context.read<AuthService>();
+    UserInfo? user = authService.user;
 
     return Scaffold(
       backgroundColor: MyColors.light,
@@ -39,12 +39,14 @@ class MyHomePage extends StatelessWidget {
         )),
         child: Column(
           children: [
-            Expanded(
-              flex: 1,
-              child: HomeProfile(
-                user: user,
-              ),
-            ),
+            user != null
+                ? Expanded(
+                    flex: 1,
+                    child: HomeProfile(
+                      user: user,
+                    ),
+                  )
+                : SizedBox(),
             Expanded(
               flex: 4,
               child: ChangeNotifierProvider<TodoViewModel>(

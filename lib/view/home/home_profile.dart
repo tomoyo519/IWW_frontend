@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/main.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/view/_common/profile_image.dart';
@@ -64,8 +65,9 @@ class HomeProfile extends StatelessWidget {
                       TextButton(
                         onPressed: () {
                           authService.logout().then((value) {
-                            Navigator.pushNamedAndRemoveUntil(
-                                context, "/app", (route) => false);
+                            GlobalNavigator.navigatorKey.currentState
+                                ?.pushNamedAndRemoveUntil(
+                                    "/landing", (route) => false);
                           });
                         },
                         style: TextButton.styleFrom(),
