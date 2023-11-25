@@ -150,11 +150,11 @@ class TodoViewModel extends ChangeNotifier {
 
   //할일 완료
 
-  Future<bool> checkTodo(
-      int userId, int todoId, bool checked, String path) async {
-    return await _todoRepository.checkTodo(
-        userId.toString(), todoId.toString(), checked, path);
-  }
+  // Future<bool> checkTodo(
+  //     int userId, int todoId, bool checked, String path) async {
+  //   return await _todoRepository.checkTodo(
+  //       userId.toString(), todoId.toString(), checked, path);
+  // }
 
   String _selectedDate = '';
   var _selectedLabel = 0;
