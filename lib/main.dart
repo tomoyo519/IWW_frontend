@@ -86,7 +86,7 @@ void main() async {
             '/group': (context) => MyGroup(),
             '/mypage': (context) => MyPage(),
             '/friends': (context) => MyFriend(),
-              '/shop':(context) => ShopPage()
+            '/shop': (context) => ShopPage()
           },
           home: MyApp(),
         ),
