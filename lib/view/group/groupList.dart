@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/view/group/groupDetail.dart';
 import 'package:http/http.dart' as http;
+import 'package:lottie/lottie.dart';
 
 class GroupList extends StatefulWidget {
   const GroupList({super.key});
@@ -71,9 +72,10 @@ class _GroupListState extends State<GroupList> {
                           ],
                         ),
                       ))
-                  : Container(
-                      child: Text('조회된 그룹이 없습니다.'),
-                    );
+                  : Lottie.asset('assets/spinner.json',
+                      repeat: true,
+                      animate: true,
+                      height: MediaQuery.of(context).size.height * 0.3);
             }),
       ),
     ]);

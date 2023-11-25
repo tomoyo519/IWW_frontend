@@ -28,6 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  timezone:
   contacts_service: ^0.6.3
   cupertino_icons: ^1.0.2
   drift: ^2.13.0
@@ -50,6 +51,7 @@ dependencies:
   table_calendar: ^3.0.8
   transparent_image: ^2.0.1
   image_picker: ^0.8.4+4
+  multipart_request: any
 
 dev_dependencies:
   build_runner: ^2.4.6
