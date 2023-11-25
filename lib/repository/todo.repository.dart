@@ -78,24 +78,24 @@ class TodoRepository {
     });
   }
 
-  // Future<bool> checkTodo(String id, bool checked) async {
-  //   return await RemoteDataSource.patch(
-  //     "/todo/$id",
-  //     body: {"todo_done": checked},
-  //   ).then((response) {
-  //     LOG.log("Check Todo: ${response.statusCode}, ${response.body}");
-  //     if (response.statusCode == 200) {
-  //       return true;
-  //     }
-  //     return false;
-  //   });
-  // }
-
   /// ================== ///
   ///       Patch       ///
   /// ================== ///
+  Future<bool> checkNormalTodo(String id, bool checked) async {
+    return await RemoteDataSource.patch(
+      "/todo/$id",
+      body: {"todo_done": checked},
+    ).then((response) {
+      LOG.log("Check Todo: ${response.statusCode}, ${response.body}");
+      if (response.statusCode == 200) {
+        return true;
+      }
+      return false;
+    });
+  }
 
-  Future<bool> checkTodo(
+  // 그룹 할일 체크
+  Future<bool> checkGroupTodo(
       String userId, String id, bool checked, String path) async {
     print('path:$path');
     return await RemoteDataSource.patch(
