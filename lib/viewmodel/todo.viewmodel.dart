@@ -142,11 +142,6 @@ class TodoViewModel extends ChangeNotifier {
     }
   }
 
-  // 할일 완료
-  Future<bool> checkTodo(int todoId, bool checked) async {
-    return await _todoRepository.checkTodo(todoId.toString(), checked);
-  }
-
   // 할일 삭제
   Future<bool> deleteTodo(int todoId) async {
     return await _todoRepository.deleteTodo(todoId.toString());
