@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
+import 'package:iww_frontend/view/_common/spinner.dart';
 import 'package:iww_frontend/view/todo/layout/list-tile.dart';
 import 'package:iww_frontend/view/todo/todo-editor.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
@@ -24,7 +25,6 @@ class ToDoList extends StatelessWidget {
     final viewModel = context.read<TodoViewModel>();
 
     onPressed(BuildContext _) async {
-      // TODO - 할일 삭제
       Navigator.pop(context);
 
       await viewModel.deleteTodo(todoId).then((response) {
@@ -68,7 +68,6 @@ class ToDoList extends StatelessWidget {
   // 할일 수정
   _editTodo(BuildContext context, Todo todo) {
     final todoRepository = Provider.of<TodoRepository>(context, listen: false);
-    final authService = Provider.of<AuthService>(context, listen: false);
 
     showModalBottomSheet(
       context: context,
@@ -77,7 +76,6 @@ class ToDoList extends StatelessWidget {
         return ChangeNotifierProvider(
           create: (_) => TodoEditorViewModel(
             todoRepository,
-            authService,
             todo,
           ),
           child: TodoEditorModal(
@@ -112,19 +110,13 @@ class ToDoList extends StatelessWidget {
           // for async data 렌더링
           child: Container(
             width: double.infinity,
-            margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
+            margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(15),
             ),
-            child: viewModel.todos.isEmpty
-                ? Lottie.asset(
-                    'assets/spinner.json',
-                    repeat: true,
-                    animate: true,
-                    width: 50,
-                    height: 50,
-                  )
+            child: viewModel.waiting
+                ? Spinner()
                 : ListView.builder(
                     controller: scroll,
                     itemCount: viewModel.todos.length,
@@ -167,7 +159,7 @@ class TodoListHeader extends StatelessWidget {
   // 클릭하면 추가
   _onTap(BuildContext context) {
     final todoRepository = Provider.of<TodoRepository>(context, listen: false);
-    final authService = Provider.of<AuthService>(context, listen: false);
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -175,7 +167,6 @@ class TodoListHeader extends StatelessWidget {
         return ChangeNotifierProvider(
           create: (_) => TodoEditorViewModel(
             todoRepository,
-            authService,
             null,
           ),
           child: TodoEditorModal(

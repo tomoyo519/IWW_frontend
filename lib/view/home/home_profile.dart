@@ -1,34 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:model_viewer_plus/model_viewer_plus.dart';
-
-class MiniPet extends StatelessWidget {
-  const MiniPet({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: Colors.blue.shade200,
-      ),
-      child: const ModelViewer(
-        src: "assets/kitsune.glb",
-        animationName: "idle_a",
-        interactionPrompt: InteractionPrompt.none,
-        disableZoom: true,
-        autoPlay: true,
-        autoRotate: false,
-        cameraControls: false,
-        cameraOrbit: '45deg 75deg 4m',
-      ),
-    );
-  }
-}
+import 'package:iww_frontend/model/user/user-info.model.dart';
+import 'package:iww_frontend/service/auth.service.dart';
+import 'package:iww_frontend/view/_common/profile_image.dart';
+import 'package:provider/provider.dart';
 
 class HomeProfile extends StatelessWidget {
-  const HomeProfile({super.key});
+  final UserInfo user;
+  const HomeProfile({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
+    final authService = context.read<AuthService>();
     return Container(
       width: double.infinity,
       margin: EdgeInsets.fromLTRB(10, 10, 10, 5),
@@ -47,7 +29,11 @@ class HomeProfile extends StatelessWidget {
               height: 70,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(100),
-                child: MiniPet(),
+                child: ProfileImage(
+                  width: 70,
+                  height: 70,
+                  userId: user.user_id,
+                ),
               ),
             ),
             SizedBox(
@@ -57,15 +43,36 @@ class HomeProfile extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
-                    "프로갓생러",
+                    user.user_name,
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  // Text("data")
+                  Row(
+                    children: [
+                      DecoratedBox(
+                        decoration: BoxDecoration(),
+                        child: Text("Today  4/5"),
+                      ),
+                      DecoratedBox(
+                        decoration: BoxDecoration(),
+                        child: Text("Total  4/5"),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          authService.logout().then((value) {
+                            Navigator.pushNamedAndRemoveUntil(
+                                context, "/app", (route) => false);
+                          });
+                        },
+                        style: TextButton.styleFrom(),
+                        child: Text("로그아웃"),
+                      )
+                    ],
+                  ),
                 ],
               ),
             )

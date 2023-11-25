@@ -1,20 +1,25 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'dart:developer';
-
+// 현재 유저의 정보
 class UserInfo {
+  // DB의 유저 테이블 컬럼
   final int user_id;
   final String user_name;
   final String user_tel;
   final String user_kakao_id;
   final int user_hp;
 
-  UserInfo(
-      {required this.user_id,
-      required this.user_name,
-      required this.user_tel,
-      required this.user_kakao_id,
-      required this.user_hp});
+  // DB의 유저 펫
+  int? pet_id;
+
+  UserInfo({
+    required this.user_id,
+    required this.user_name,
+    required this.user_tel,
+    required this.user_kakao_id,
+    required this.user_hp,
+    this.pet_id,
+  });
 
   // TODO: regAt, uptAt, lastLogin?
 

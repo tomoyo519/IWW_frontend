@@ -6,9 +6,9 @@ import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/utils/kakaoLogin.dart';
-import 'package:iww_frontend/view/todo/add_todo.dart';
 import 'package:provider/provider.dart';
 
+// 리포지토리 서빙용
 List<Provider> getRepositories() {
   return [
     Provider<TodoRepository>(create: (_) => TodoRepository()),
@@ -20,18 +20,12 @@ List<Provider> getRepositories() {
   ];
 }
 
-List<Provider> getServices() {
+List<ChangeNotifierProvider> getChangeNotifiers() {
   return [
-    Provider<AuthService>(
+    ChangeNotifierProvider<AuthService>(
         create: (_) => AuthService(
               Provider.of<KaKaoLogin>(_, listen: false),
               Provider.of<UserRepository>(_, listen: false),
             )),
-  ];
-}
-
-List<ChangeNotifierProvider> getChangeNotifiers() {
-  return [
-    ChangeNotifierProvider<NewTodo>(create: (context) => NewTodo()),
   ];
 }
