@@ -8,6 +8,7 @@ import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:iww_frontend/view/_common/bottombar.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
+import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 
 class MyRoom extends StatelessWidget {
   const MyRoom({super.key});
@@ -27,8 +28,8 @@ class MyRoom extends StatelessWidget {
                   roomRepository,
                   commentRepository,
                 ),
-            child: ChangeNotifierProvider<MyRoomState>(
-              create: (context) => MyRoomState(),
+            child: ChangeNotifierProvider<MyRoomViewModel>(
+              create: (context) => MyRoomViewModel(),
               child: SafeArea(
                 child: Column(
                   children: [
@@ -44,160 +45,13 @@ class MyRoom extends StatelessWidget {
   }
 }
 
-class MyRoomState extends ChangeNotifier {
-  bool isMyRoom = true;
-
-  void toggleRoom() {
-    isMyRoom = !isMyRoom;
-    notifyListeners();
-  }
-}
-
+// 나의 펫 렌더링
 class RenderMyRoom extends StatelessWidget {
   RenderMyRoom({Key? key}) : super(key: key);
 
-  var sources = {
-    'bg1': Image.asset(
-      'assets/background.png',
-      fit: BoxFit.cover,
-    ),
-    'bg2': Image.asset(
-      'assets/wallpaper.jpg',
-      height: 500,
-      fit: BoxFit.fitWidth,
-    ),
-    'fish': ModelViewer(
-      // loading: Loading.eager,
-      shadowIntensity: 1,
-      src: 'assets/koi_fish.glb',
-      alt: 'koi fish',
-      autoPlay: true,
-      disableZoom: true,
-      cameraControls: false,
-      animationName: 'morphBake',
-      cameraOrbit: '30deg 60deg 0m',
-      cameraTarget: '4m 6m 2m',
-    ),
-    'astronaut': ModelViewer(
-      // loading: Loading.eager,
-      shadowIntensity: 1,
-      src: 'assets/koi_fish.glb',
-      alt: 'astronaut',
-      // autoRotate: true,
-      autoPlay: true,
-      disableZoom: true,
-      cameraControls: false,
-      // animationName: "walk",
-      cameraOrbit: "40deg 60eg 0m",
-      // theta, phi, radius
-      cameraTarget: "0.5m 1.5m 2m", // x(왼쪽 위), y(높이) ,z (오른쪽 위)
-    ),
-    'robot': ModelViewer(
-      // loading: Loading.eager,
-      shadowIntensity: 1,
-      src: 'assets/robot_walk_idle.usdz',
-      alt: 'robot',
-      // autoRotate: true,
-      autoPlay: true,
-      disableZoom: true,
-      cameraControls: false,
-      animationName: "walk",
-      cameraOrbit: "30deg 60deg 0m",
-      // theta, phi, radius
-      cameraTarget: "1m 4m 4m", // x(왼쪽 위), y(높이) ,z (오른쪽 위)
-    ),
-    'animals': ModelViewer(
-      // loading: Loading.eager,
-      // shadowIntensity: 1,
-      src: 'assets/aa.glb',
-      alt: 'animals',
-      // autoRotate: true,
-      autoPlay: true,
-      disableZoom: true,
-      // cameraControls: false,
-      // animationName: "walk",
-      cameraOrbit: "30deg 30deg 2m",
-      // theta, phi, radius
-      cameraTarget: "2m 2m 2m", // x(왼쪽 위), y(높이) ,z (오른쪽 위)
-    ),
-    'cat': ModelViewer(
-      // loading: Loading.eager,
-      shadowIntensity: 1,
-      src: 'assets/cat.glb',
-      alt: 'cuttest pet ever',
-      // autoRotate: true,
-      autoPlay: true,
-      // iosSrc: 'assets/cat2.usdz',
-      cameraOrbit: "30deg,180deg, 0m",
-      cameraTarget: "0m 300m 300m",
-      disableZoom: true,
-    ),
-    'kitsune': ModelViewer(
-      // loading: Loading.eager,
-      shadowIntensity: 1,
-      src: 'assets/kitsune.glb',
-      alt: 'kitsune',
-      // autoRotate: true,
-      autoPlay: true,
-      animationName: "walk",
-      cameraOrbit: "30deg, 0deg, 0m",
-      cameraTarget: "0m 1m 0.4m",
-      disableZoom: true,
-    ),
-    'kitsune_ani': ModelViewer(
-      // loading: Loading.eager,
-      shadowIntensity: 1,
-      src: 'assets/kitsune_ani.glb',
-      alt: 'kitsune',
-      // autoRotate: true,
-      // autoPlay: true,
-      // iosSrc: 'assets/cat2.usdz',
-      cameraOrbit: "330deg, 0deg, 0m",
-      cameraTarget: "0m 2m 1m",
-      disableZoom: true,
-    ),
-    'small_fox': ModelViewer(
-      // loading: Loading.eager,
-      shadowIntensity: 1,
-      src: 'assets/small_fox.glb',
-      alt: 'kitsune',
-      // autoRotate: true,
-      autoPlay: true,
-      // iosSrc: 'assets/cat2.usdz',
-      animationName: "Jump",
-      cameraTarget: "0.3m 1.2m 1m",
-      interactionPrompt: InteractionPrompt.none,
-      cameraOrbit: "330deg,0deg, 0m",
-      disableZoom: true,
-    ),
-    'mid_fox': ModelViewer(
-      // loading: Loading.eager,
-      shadowIntensity: 1,
-      src: 'assets/mid_fox.glb',
-      alt: 'kitsune',
-      // autoRotate: true,
-      autoPlay: true,
-      // iosSrc: 'assets/cat2.usdz',
-      cameraTarget: "0m 1m 0.6m",
-      animationName: "Idle_A",
-      cameraOrbit: "30deg, 150deg, 0m",
-      interactionPrompt: InteractionPrompt.none,
-      disableZoom: true,
-    ),
-  };
-
   @override
   Widget build(BuildContext context) {
-    var myRoomState = context.watch<MyRoomState>();
     final authService = Provider.of<AuthService>(context);
-    final commentsProvider = context.read<CommentsProvider>();
-
-    // get argument from navigator, context
-    try {
-      myRoomState.isMyRoom = ModalRoute.of(context)!.settings.arguments as bool;
-    } catch (e) {
-      print(e);
-    }
 
     Stack layers = Stack(
       alignment: Alignment.center,
@@ -260,19 +114,21 @@ class RenderMyRoom extends StatelessWidget {
 class UnderLayer extends StatelessWidget {
   UnderLayer({Key? key}) : super(key: key);
 
+  // myroom: status bar, other's room: chatting
+  // TODO 채팅 구현 후 채팅창 삽입
   @override
   Widget build(BuildContext context) {
-    var myRoomState = context.watch<MyRoomState>();
-
     return SizedBox(
       height: 200,
-      child:
-          myRoomState.isMyRoom ? StatusBar() : SizedBox(height: 150, width: 20),
+      child: context.watch<MyRoomViewModel>().isMyRoom
+          ? StatusBar()
+          : SizedBox(height: 150, width: 20),
       // BottomButtons()
     );
   }
 }
 
+// 펫의 체력, 경험치 표시
 class StatusBar extends StatefulWidget {
   const StatusBar({super.key});
 
@@ -285,6 +141,7 @@ class _StatusBarState extends State<StatusBar> with TickerProviderStateMixin {
   var _hp = 0.3;
   var _exp = 0.1;
 
+  // TODO 할 일을 완료했을때 체력, 경험치가 오르도록 수정 필요
   @override
   void initState() {
     super.initState();
@@ -354,13 +211,12 @@ class _StatusBarState extends State<StatusBar> with TickerProviderStateMixin {
   }
 }
 
+// 하단 버튼 세개: 방명록, 인벤토리, 친구목록
 class BottomButtons extends StatelessWidget {
   const BottomButtons({super.key});
 
   @override
   Widget build(BuildContext context) {
-    var myRoomState = context.watch<MyRoomState>();
-
     // NOTE 여기서 비동기 연산 수행
     final authService = Provider.of<AuthService>(context);
     final commentsProvider = context.read<CommentsProvider>();
