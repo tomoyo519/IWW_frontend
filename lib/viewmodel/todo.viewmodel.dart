@@ -148,6 +148,12 @@ class TodoViewModel extends ChangeNotifier {
     return await _todoRepository.deleteTodo(todoId.toString());
   }
 
+  //할일 완료
+
+  Future<bool> checkTodo(int todoId, bool checked, String path) async {
+    return await _todoRepository.checkTodo(todoId.toString(), checked, path);
+  }
+
   String _selectedDate = '';
   var _selectedLabel = 0;
   TimeOfDay _selectedAlarmTime = TimeOfDay.now();

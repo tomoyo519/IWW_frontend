@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-  	<key>io.flutter.embedded_views_preview</key>
-  	<true/>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -45,6 +43,25 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>localhost</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>두윗에게 카메라 권한을 주시겠습니까?</string>
+	<key>NSContactsUsageDescription</key>
+	<string>연락처 권한이 필요합니다.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>두윗에게 마이크 권한을 주시겠습니까?</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>두윗에게 사진첩 권한을 주시겠습니까?</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
@@ -64,27 +81,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-
-    <key>NSAppTransportSecurity</key>
-        <dict>
-            <key>NSExceptionDomains</key>
-            <dict>
-                <key>localhost</key>
-                <dict>
-                    <!-- HTTP 통신 허용 -->
-                    <key>NSExceptionAllowsInsecureHTTPLoads</key>
-                <true/>
-                    <!-- 필요한 경우 추가 설정 -->
-                    <!-- <key>NSIncludesSubdomains</key>
-                    <true/>
-                    <key>NSExceptionRequiresForwardSecrecy</key>
-                    <false/> -->
-            </dict>
-        </dict>
-    </dict>
-
-    <key>NSContactsUsageDescription</key>  
-    <string>연락처 권한이 필요합니다.</string>  
-
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
 </dict>
 </plist>

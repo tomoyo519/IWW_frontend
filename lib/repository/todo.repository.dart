@@ -9,7 +9,10 @@ class TodoRepository {
   ///         Get        ///
   /// ================== ///
   Future<List<Todo>?> getTodos(int? userId) async {
-    return await RemoteDataSource.get("/todo/user/${userId ?? 6}")
+
+    return await RemoteDataSource.get("/todo/user/${userId ?? 1}")
+
+
         .then((response) {
       if (response.statusCode == 200) {
         List<dynamic> jsonData = jsonDecode(response.body);
@@ -28,6 +31,10 @@ class TodoRepository {
                   element.todoDate,
                 ).isAfter(weekAgo))
             .toList();
+
+        // 정렬해서 넘김
+        data.sort((a, b) => a.todoDate.compareTo(b.todoDate));
+
 
         // 정렬해서 넘김
         data.sort((a, b) => a.todoDate.compareTo(b.todoDate));
@@ -78,6 +85,28 @@ class TodoRepository {
     ).then((response) {
       LOG.log("Check Todo: ${response.statusCode}, ${response.body}");
       if (response.statusCode == 200) {
+        return true;
+      }
+      return false;
+    });
+  }
+
+  /// ================== ///
+  ///       Patch       ///
+  /// ================== ///
+
+  Future<bool> checkTodo(String id, bool checked, String path) async {
+    return await RemoteDataSource.patch(
+      "/todo/$id",
+      body: {"todo_done": checked},
+    ).then((response) {
+      print(response.body);
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        // if (path.isNotEmpty) {
+        //   // TODO - 사진 전송 연결
+        //   //  RemoteDataSource.patch("/group/$id/user/$user_id/image")
+        // }
         return true;
       }
       return false;

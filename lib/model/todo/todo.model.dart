@@ -8,7 +8,9 @@ class Todo {
   int userId;
   String todoName;
   String? todoDesc;
+
   int? todoLabel;
+
   String todoDate;
   bool todoDone;
   String todoStart;
@@ -16,6 +18,7 @@ class Todo {
   String? todoImg;
   int? grpId;
   bool todoDeleted;
+
 
   Todo({
     required this.todoId,
@@ -31,6 +34,7 @@ class Todo {
     this.grpId,
     bool? todoDeleted,
   })  : todoDate = todoDate ?? defaultDate(),
+
         todoDone = todoDone ?? false,
         todoLabel = todoLabel ?? 0,
         todoStart = todoStart ?? "00:00",
