@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/main.dart';
 import 'package:iww_frontend/repository/friend.repository.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
@@ -56,35 +57,20 @@ class AddFriends extends StatelessWidget {
                 style: TextStyle(fontSize: 15),
                 "두윗에서 친구들을 찾아보세요!",
               ),
-              FutureBuilder(
-                future: viewModel.contacts,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Spinner();
-                  } else if (snapshot.hasError) {
-                    return Text("Error: ${snapshot.error}");
-                  } else if (snapshot.hasData) {
-                    // 데이터 로드 완료
-                    List<UserInfo> contacts = snapshot.data!;
-
-                    return Expanded(
-                        child: ListView.builder(
-                      itemCount: contacts.length,
-                      itemBuilder: (context, idx) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 3),
-                        child: _ContactListTile(
-                          friendId: contacts[idx].user_id,
-                          name: contacts[idx].user_name,
+              !viewModel.isFetched
+                  ? Spinner()
+                  : Expanded(
+                      child: ListView.builder(
+                        itemCount: viewModel.friends.length,
+                        itemBuilder: (context, idx) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 3),
+                          child: _ContactListTile(
+                            friendId: viewModel.friends[idx].user_id,
+                            name: viewModel.friends[idx].user_name,
+                          ),
                         ),
                       ),
-                    ));
-                  } else {
-                    Navigator.pushNamedAndRemoveUntil(
-                        context, "/home", (Route<dynamic> route) => false);
-                    return Text("연락처 데이터 없음");
-                  }
-                },
-              )
+                    )
             ],
           ),
         ),
@@ -117,7 +103,7 @@ class _ContactListTileState extends State<_ContactListTile> {
       if (await viewModel.createFriend(widget.friendId)) {
         setState(() {
           isAdded = true;
-          viewModel.friendCnt++;
+          // viewModel.friendCnt++;
         });
       }
     } else {
@@ -125,7 +111,7 @@ class _ContactListTileState extends State<_ContactListTile> {
       if (await viewModel.deleteFriend(widget.friendId)) {
         setState(() {
           isAdded = false;
-          viewModel.friendCnt--;
+          // viewModel.friendCnt--;
         });
       }
     }

@@ -22,23 +22,20 @@ class TodoListTileLayout extends StatefulWidget {
 }
 
 class _TodoListTileLayoutState extends State<TodoListTileLayout> {
-
   bool isChecked = false;
   late File _imageFile;
   final _picker = ImagePicker();
 
   void _onCheck(BuildContext context, bool? value) {
     final viewModel = context.read<TodoViewModel>();
-    viewModel.checkTodo(widget.todo.todoId, value ?? false);
+    // viewModel.checkTodo(widget.todo.todoId, value ?? false);
     viewModel.fetchTodos();
   }
-
 
   @override
   Widget build(BuildContext context) {
     bool isChecked = widget.todo.todoDone;
 
-    final viewModel = context.read<TodoViewModel>();
     DateTime yesterday = DateTime.now().subtract(Duration(days: 1));
     bool isDelayed = DateTime.parse(widget.todo.todoDate).isBefore(yesterday);
     String getFormattedDate() {
@@ -61,6 +58,8 @@ class _TodoListTileLayoutState extends State<TodoListTileLayout> {
               value: isChecked,
 
               onChanged: (bool? value) async {
+                _onCheck(context, value);
+
                 // 그룹 todo 인 경우 사진 인증으로 이동
                 if (widget.todo.grpId != null) {
                   print('카메라 실행');
@@ -69,7 +68,7 @@ class _TodoListTileLayoutState extends State<TodoListTileLayout> {
                       await _picker.pickImage(source: ImageSource.camera);
                   print(pickedFile);
                   if (pickedFile != null) {
-                    setState(() => this._imageFile = File(pickedFile.path));
+                    setState(() => _imageFile = File(pickedFile.path));
                     final formattedDate = getFormattedDate();
                     // ignore: use_build_context_synchronously
                     showGeneralDialog(
@@ -133,7 +132,7 @@ class _TodoListTileLayoutState extends State<TodoListTileLayout> {
                 });
               },
 
-              onChanged: (bool? value) => _onCheck(context, value),
+              // onChanged: (bool? value) => _onCheck(context, value),
 
               side: BorderSide(color: Colors.black54),
               shape: CircleBorder(),

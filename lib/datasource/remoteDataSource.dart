@@ -111,19 +111,19 @@ class RemoteDataSource {
 
   //PATCH json
 
-  static Future<http.Response> patch(
-    String url, {
-    Map<String, String>? headers,
-    Object? body,
-    Encoding? encoding,
-  }) async {
-    // 기본 헤더 추가
-    headers = (headers != null) ? {...headers, ...baseHeaders} : baseHeaders;
-    // Json string으로 변환하여 요청
-    String bodyString = body is Map ? json.encode(body) : body.toString();
-    return await http.put(Uri.parse(server + url),
-        headers: headers, body: bodyString, encoding: encoding);
-  }
+  // static Future<http.Response> patch(
+  //   String url, {
+  //   Map<String, String>? headers,
+  //   Object? body,
+  //   Encoding? encoding,
+  // }) async {
+  //   // 기본 헤더 추가
+  //   headers = (headers != null) ? {...headers, ...baseHeaders} : baseHeaders;
+  //   // Json string으로 변환하여 요청
+  //   String bodyString = body is Map ? json.encode(body) : body.toString();
+  //   return await http.put(Uri.parse(server + url),
+  //       headers: headers, body: bodyString, encoding: encoding);
+  // }
 
   // DELETE json
   static Future<http.Response> delete(

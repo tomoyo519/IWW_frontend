@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/main.dart';
 import 'package:iww_frontend/model/user/get-user-by-contact.dto.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/repository/friend.repository.dart';
@@ -14,24 +14,16 @@ class FindContactViewModel extends ChangeNotifier {
   FindContactViewModel(this.userRepository, this.friendRepository);
 
   // UI State
-  int _friendCnt = 0;
-  int get friendCnt => _friendCnt;
-  set friendCnt(int val) {
-    _friendCnt = val;
-    notifyListeners();
-  }
-
-  // 네트워크가 연결되었는지 여부
-  Future<bool> get isNetworkConnected async {
-    // TODO: Not implemented
-    return true;
-  }
+  bool isFetched = false;
+  List<UserInfo> friends = [];
+  int get friendCnt => friends.length;
 
   // 연락처를 기준으로 서버에서 유저를 찾아 반환 (유저 아이디만)
-  Future<List<UserInfo>?> get contacts async {
+  Future<void> fetchContacts() async {
     if (await Permission.contacts.request().isGranted) {
-      List<Contact> contacts =
-          await ContactsService.getContacts(withThumbnails: false);
+      List<Contact> contacts = await ContactsService.getContacts(
+        withThumbnails: false,
+      );
 
       // 모든 연락처의 전화번호를 단일 리스트로 평탄화
       var phoneNumbers = contacts
@@ -39,13 +31,19 @@ class FindContactViewModel extends ChangeNotifier {
           .toList();
 
       if (phoneNumbers.isEmpty) {
-        return [];
+        friends = [];
+      } else {
+        friends = await userRepository
+                .getUsersByContacts(GetUsersByContactsDto(phoneNumbers)) ??
+            [];
       }
-
-      return await userRepository
-          .getUsersByContacts(GetUsersByContactsDto(phoneNumbers));
+      isFetched = true;
+      notifyListeners();
+      return;
     }
-    return [];
+    // 연락처 권한 거부. 홈으로 이동
+    GlobalNavigator.navigatorKey.currentState
+        ?.pushNamedAndRemoveUntil("/home", (route) => false);
   }
 
   // 친구추가

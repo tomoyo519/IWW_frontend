@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/main.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
@@ -77,8 +78,8 @@ class SignUp extends StatelessWidget {
 
   // 회원가입 버튼 클릭
   void _signup(BuildContext context) async {
+    final viewModel = context.read<SignUpViewModel>();
     if (_telFormKey.currentState!.validate()) {
-      final viewModel = context.read<SignUpViewModel>();
       // 회원가입 요청
       await viewModel.signUp().then((userInfo) {
         if (userInfo != null) {
@@ -86,12 +87,18 @@ class SignUp extends StatelessWidget {
           LOG.log("Succeeded in signing up");
           Navigator.pushNamedAndRemoveUntil(
               context, "/contact", ((route) => false));
+          return;
         }
+        viewModel.disconnect();
         LOG.log("Faild to signup");
+        GlobalNavigator.navigatorKey.currentState
+            ?.pushNamedAndRemoveUntil("/landing", (route) => false);
       });
     } else {
-      // TODO: 예외처리?
+      viewModel.disconnect();
       LOG.log("Exception while signing up");
+      GlobalNavigator.navigatorKey.currentState
+          ?.pushNamedAndRemoveUntil("/landing", (route) => false);
     }
   }
 
