@@ -87,10 +87,11 @@ class SignUp extends StatelessWidget {
           Navigator.pushNamedAndRemoveUntil(
               context, "/contact", ((route) => false));
         }
-        LOG.log("Succeeded to signup");
+        LOG.log("Faild to signup");
       });
     } else {
       // TODO: 예외처리?
+      LOG.log("Exception while signing up");
     }
   }
 
