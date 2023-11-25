@@ -10,6 +10,8 @@ import 'package:iww_frontend/view/todo/todo-editor.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 class ToDoList extends StatelessWidget {
   final scroll = ScrollController();
@@ -26,8 +28,10 @@ class ToDoList extends StatelessWidget {
       Navigator.pop(context);
 
       await viewModel.deleteTodo(todoId).then((response) {
+        print('response : ${response}');
         if (response == true) {
           viewModel.fetchTodos();
+          print('할일삭제');
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -94,7 +98,8 @@ class ToDoList extends StatelessWidget {
   Widget build(BuildContext context) {
     // 데이터 가져오기
     final viewModel = context.watch<TodoViewModel>();
-    viewModel.fetchTodos();
+    // print('데이터 가져오기');
+    // viewModel.fetchTodos();
 
     return Column(
       children: [
@@ -189,7 +194,7 @@ class TodoListHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var today = DateTime.now();
+    DateTime today = DateTime.now().add(Duration(hours: 9));
 
     return Container(
       padding: EdgeInsets.symmetric(

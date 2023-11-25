@@ -1,23 +1,25 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:http/http.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
+import 'package:dio/dio.dart';
+import 'dart:io';
 
 class TodoRepository {
   /// ================== ///
   ///         Get        ///
   /// ================== ///
   Future<List<Todo>?> getTodos(int? userId) async {
-    // TODO - 서버 맛 간경우
-    // return dummy;
-    print('getTodos 실해');
+    print(userId);
     return await RemoteDataSource.get("/todo/user/${userId ?? 1}")
         .then((response) {
+      print(response.statusCode);
       if (response.statusCode == 200) {
+        print(response.body);
         List<dynamic> jsonData = jsonDecode(response.body);
         List<Todo>? data = jsonData.map((data) => Todo.fromJson(data)).toList();
-
         // 일주일 전인 경우 필터링
         DateTime weekAgo = DateTime.now().subtract(Duration(days: 7));
         data = data
@@ -73,21 +75,35 @@ class TodoRepository {
   ///       Patch       ///
   /// ================== ///
 
-  Future<bool> checkTodo(String id, bool checked, String path) async {
+  Future<bool> checkTodo(
+      String userId, String id, bool checked, String path) async {
+    print('path:$path');
     return await RemoteDataSource.patch(
       "/todo/$id",
       body: {"todo_done": checked},
-    ).then((response) {
-      print(response.body);
-      print(response.statusCode);
+    ).then((response) async {
       if (response.statusCode == 200) {
-        // if (path.isNotEmpty) {
-        //   // TODO - 사진 전송 연결
-        //   //  RemoteDataSource.patch("/group/$id/user/$user_id/image")
-        // }
-        return true;
+        print('response.body : ${response.body}');
+        if (path.isNotEmpty) {
+          // TODO - 사진 전송 연결
+          var image = File(path);
+          var result = await RemoteDataSource.patchFormData(
+                  "/group/$id/user/$userId/image", 'file',
+                  file: image, filename: path)
+              .then((res) {
+            print('res.statusCode: ${res.statusCode}');
+            if (res.statusCode == 200) {
+              return true;
+            }
+            return false;
+          }).catchError((err) {
+            return false;
+          }).catchError((err) {
+            return false;
+          });
+        }
       }
-      return false;
+      return true;
     });
   }
 
@@ -95,6 +111,7 @@ class TodoRepository {
   ///       Delete       ///
   /// ================== ///
   Future<bool> deleteTodo(String id) async {
+    print('삭제 실행');
     return await RemoteDataSource.delete(
       "/todo/$id",
     ).then((response) {

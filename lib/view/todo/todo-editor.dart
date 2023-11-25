@@ -48,12 +48,13 @@ class TodoEditorModal extends StatelessWidget {
 
       // 할일 신규 생성
       if (viewModel.todoData['todo_id'] == null) {
+        print('${viewModel.todoData} viewModel.todoData');
         await viewModel.createTodo().then((result) {
+          todoViewModel.fetchTodos();
           if (result == true && context.mounted) {
             Navigator.pop(context);
-
+            print('onsave일떄');
             // refresh data
-            todoViewModel.fetchTodos();
 
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -67,20 +68,28 @@ class TodoEditorModal extends StatelessWidget {
       }
 
       // 기존 할일 수정
-      await viewModel.updateTodo().then((result) {
-        if (result == true && context.mounted) {
-          Navigator.pop(context);
+      bool result = await viewModel.updateTodo();
 
-          // refresh data
-          todoViewModel.fetchTodos();
-
+      if (result == true) {
+        // refresh data
+        print('기존할일 수정');
+        todoViewModel.fetchTodos();
+        if (context.mounted) {
+          // TODO - snackbar 생성안됨 ..
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: const Text('변경이 완료 되었어요!'),
             ),
           );
+
+          // 일정 시간 후에 화면을 닫습니다.
+          Future.delayed(Duration(seconds: 3), () {
+            if (context.mounted) {
+              Navigator.pop(context);
+            }
+          });
         }
-      });
+      }
     }
 
     return FractionallySizedBox(
@@ -94,43 +103,44 @@ class TodoEditorModal extends StatelessWidget {
             onCancel: onCancel,
           ),
           Expanded(
-            // TODO: Custom 위젯 만들기
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: MyColors.background,
-              ),
-              child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 10,
-                  ),
-                  child: Form(
-                    key: formKey,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      // 할일 제목 입력 필드
-                      children: const [
-                        TodoNameField(),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            // horizontal: 10,
-                            vertical: 15,
-                          ),
-                          child: Column(
-                            children: [
-                              // 할일 상세내용 입력 필드
-                              TodoDateField(),
-                              TodoLabelField(),
-                              TodoTimeField(),
-                              TodoRoutineField(),
-                              TodoDescField(),
-                            ],
-                          ),
-                        ),
-                      ],
+            child: SingleChildScrollView(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: MyColors.background,
+                ),
+                child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 10,
                     ),
-                  )),
+                    child: Form(
+                      key: formKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        // 할일 제목 입력 필드
+                        children: const [
+                          TodoNameField(),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              // horizontal: 10,
+                              vertical: 15,
+                            ),
+                            child: Column(
+                              children: [
+                                // 할일 상세내용 입력 필드
+                                TodoDateField(),
+                                TodoLabelField(),
+                                TodoTimeField(),
+                                TodoRoutineField(),
+                                TodoDescField(),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    )),
+              ),
             ),
           )
         ]),
