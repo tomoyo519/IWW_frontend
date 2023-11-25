@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
@@ -124,11 +126,9 @@ class ToDoList extends StatelessWidget {
                     itemBuilder: (context, idx) {
                       return GestureDetector(
                         onLongPress: () {
-                          print('길게 눌렀을떄, $idx');
                           _deleteTodo(context, viewModel.todos[idx].todoId);
                         },
                         onTap: () async {
-                          print('그냥 짧게 눌렀을때,');
                           _editTodo(context, viewModel.todos[idx]);
                         },
                         child: Padding(

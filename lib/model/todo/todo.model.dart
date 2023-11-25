@@ -9,7 +9,7 @@ class Todo {
   int userId;
   String todoName;
   String? todoDesc;
-  String todoLabel;
+  int todoLabel;
   String todoDate;
   bool todoDone;
   String todoStart;
@@ -23,7 +23,7 @@ class Todo {
       required this.userId,
       required this.todoName,
       this.todoDesc,
-      String? todoLabel,
+      int? todoLabel,
       String? todoDate,
       bool? todoDone,
       String? todoStart,
@@ -33,7 +33,7 @@ class Todo {
       bool? todoDeleted})
       : todoDate = todoDate ?? defaultDate(),
         todoDone = todoDone ?? false,
-        todoLabel = todoLabel ?? "",
+        todoLabel = todoLabel ?? 0,
         todoStart = todoStart ?? "00:00",
         todoEnd = todoEnd ?? "00:00",
         todoDeleted = todoDeleted ?? false;

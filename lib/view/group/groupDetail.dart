@@ -204,7 +204,7 @@ class _GroupDetailState extends State<GroupDetail> {
                                       Icon(Icons.account_circle_rounded),
                                       groupMems[index]["user_name"] != null
                                           ? Text(groupMems[index]["user_name"])
-                                          : Text("정다희"),
+                                          : Text("텅"),
                                     ],
                                   ))
                               : Text("텅")

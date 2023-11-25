@@ -37,7 +37,7 @@ class TodoLabelField extends StatelessWidget {
           child: Consumer<TodoEditorViewModel>(
             builder: (context, viewModel, child) {
               return Text((viewModel.todoData['todo_label'] != null)
-                  ? LabelListModal.labels[viewModel.todoData['todo_label']]
+                  ? LabelListModal.labels[(viewModel.todoData['todo_label'])]
                   : LabelListModal.labels[0]);
             },
           )),
