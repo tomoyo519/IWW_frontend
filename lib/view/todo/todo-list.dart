@@ -11,8 +11,6 @@ import 'package:iww_frontend/view/todo/todo-editor.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
-import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
 
 class ToDoList extends StatelessWidget {
   final scroll = ScrollController();

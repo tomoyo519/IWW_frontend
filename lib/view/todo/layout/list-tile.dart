@@ -184,7 +184,6 @@ class _TodoListTileLayoutState extends State<TodoListTileLayout> {
 
               // onChanged: (bool? value) => _onCheck(context, value),
 
-              onChanged: (bool? value) => _onCheck(context, value),
               side: BorderSide(color: Colors.black54),
               shape: CircleBorder(),
             ),
