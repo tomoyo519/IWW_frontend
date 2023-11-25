@@ -14,8 +14,16 @@ class AuthService extends ChangeNotifier {
 
   // 의존성 주입
   AuthService(this.kakaoLogin, this.userRepository) {
-    login(background: true);
-    LOG.log("Initialize user info");
+    // login(background: true);
+    // LOG.log("Initialize user info");
+  }
+
+  // 현재 로그인된 유저 상태
+  UserInfo? _currentUser;
+
+  set currentUser(UserInfo? user) {
+    _currentUser = user;
+    LOG.log("Current user: ${_currentUser?.user_id ?? "none"}");
   }
 
   // 현재 로그인된 유저 상태

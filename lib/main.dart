@@ -99,6 +99,10 @@ class MyApp extends StatelessWidget {
     AuthService authService = context.watch<AuthService>();
     AuthStatus status = authService.status;
 
+    authService.login(background: true);
+    LOG.log("Initialize user info");
+    LOG.log("status $status");
+
     switch (status) {
       case AuthStatus.success:
         return MyHomePage();
