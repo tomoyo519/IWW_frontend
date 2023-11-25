@@ -1,18 +1,19 @@
 // 유저의 로그인 상태
-import 'package:kakao_flutter_sdk/kakao_flutter_sdk_talk.dart';
+import 'package:iww_frontend/model/user/user-info.model.dart';
 
-enum LoginStatus {
-  neewSignup,
-  complete,
-  cancelled,
+enum AuthStatus {
+  permission,
+  success,
+  failed,
+  waiting,
 }
 
 // 카카오로그인에서 반환하는 로그인 정보
-class LoginResult {
-  LoginStatus status;
-  User? user;
+class AuthUserStatus {
+  AuthStatus status;
+  UserInfo? user;
 
-  LoginResult({
+  AuthUserStatus({
     required this.status,
     required this.user,
   });

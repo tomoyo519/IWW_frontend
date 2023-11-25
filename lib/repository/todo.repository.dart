@@ -1,21 +1,27 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
+import 'package:iww_frontend/utils/logger.dart';
 
 class TodoRepository {
   /// ================== ///
   ///         Get        ///
   /// ================== ///
   Future<List<Todo>?> getTodos(int? userId) async {
-    // TODO - 서버 맛 간경우
-    // return dummy;
-    print('getTodos 실해');
+
     return await RemoteDataSource.get("/todo/user/${userId ?? 1}")
+
+
         .then((response) {
       if (response.statusCode == 200) {
         List<dynamic> jsonData = jsonDecode(response.body);
+
+        // 만약 할일이 없으면
+        if (jsonData.isEmpty) {
+          return null;
+        }
+
         List<Todo>? data = jsonData.map((data) => Todo.fromJson(data)).toList();
 
         // 일주일 전인 경우 필터링
@@ -29,6 +35,9 @@ class TodoRepository {
         // 정렬해서 넘김
         data.sort((a, b) => a.todoDate.compareTo(b.todoDate));
 
+
+        // 정렬해서 넘김
+        data.sort((a, b) => a.todoDate.compareTo(b.todoDate));
         return data;
       }
       return null;
@@ -44,7 +53,7 @@ class TodoRepository {
       "/todo",
       body: json,
     ).then((response) {
-      log("Create Todo: ${response.statusCode}, ${response.body}");
+      LOG.log("Create Todo: ${response.statusCode}, ${response.body}");
       if (response.statusCode == 200) {
         return true;
       }
@@ -61,7 +70,20 @@ class TodoRepository {
       "/todo/$id",
       body: json,
     ).then((response) {
-      log("Update Todo: ${response.statusCode}, ${response.body}");
+      LOG.log("Update Todo: ${response.statusCode}, ${response.body}");
+      if (response.statusCode == 200) {
+        return true;
+      }
+      return false;
+    });
+  }
+
+  Future<bool> checkTodo(String id, bool checked) async {
+    return await RemoteDataSource.patch(
+      "/todo/$id",
+      body: {"todo_done": checked},
+    ).then((response) {
+      LOG.log("Check Todo: ${response.statusCode}, ${response.body}");
       if (response.statusCode == 200) {
         return true;
       }
@@ -98,7 +120,7 @@ class TodoRepository {
     return await RemoteDataSource.delete(
       "/todo/$id",
     ).then((response) {
-      log("Delete Todo: ${response.statusCode}, ${response.body}");
+      LOG.log("Delete Todo: ${response.statusCode}, ${response.body}");
       if (response.statusCode == 200) {
         return true;
       }

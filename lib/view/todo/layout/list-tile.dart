@@ -22,11 +22,23 @@ class TodoListTileLayout extends StatefulWidget {
 }
 
 class _TodoListTileLayoutState extends State<TodoListTileLayout> {
+
   bool isChecked = false;
   late File _imageFile;
   final _picker = ImagePicker();
+
+  void _onCheck(BuildContext context, bool? value) {
+    final viewModel = context.read<TodoViewModel>();
+    viewModel.checkTodo(widget.todo.todoId, value ?? false);
+    viewModel.fetchTodos();
+  }
+
+
   @override
   Widget build(BuildContext context) {
+    bool isChecked = widget.todo.todoDone;
+
+    final viewModel = context.read<TodoViewModel>();
     DateTime yesterday = DateTime.now().subtract(Duration(days: 1));
     bool isDelayed = DateTime.parse(widget.todo.todoDate).isBefore(yesterday);
     String getFormattedDate() {
@@ -47,6 +59,7 @@ class _TodoListTileLayoutState extends State<TodoListTileLayout> {
           children: [
             Checkbox(
               value: isChecked,
+
               onChanged: (bool? value) async {
                 // 그룹 todo 인 경우 사진 인증으로 이동
                 if (widget.todo.grpId != null) {
@@ -119,6 +132,9 @@ class _TodoListTileLayoutState extends State<TodoListTileLayout> {
                   isChecked = value!;
                 });
               },
+
+              onChanged: (bool? value) => _onCheck(context, value),
+
               side: BorderSide(color: Colors.black54),
               shape: CircleBorder(),
             ),

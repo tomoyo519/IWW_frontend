@@ -2,6 +2,7 @@ import "dart:developer";
 
 import "package:flutter/material.dart";
 import 'package:iww_frontend/service/auth.service.dart';
+import "package:iww_frontend/utils/logger.dart";
 import "package:provider/provider.dart";
 
 /// 메인에서 여러 가지 인증 로직을 테스트합니다.
@@ -10,19 +11,19 @@ class _SignUpTest {
     final authService = context.read<AuthService>();
     // 로컬에 저장된 유저정보 가져옴
     await authService.disconnect();
-    log("[TEST] User first installed the app.");
+    LOG.log("[TEST] User first installed the app.");
   }
 
   Future<void> expiredToken(BuildContext context) async {
     final authService = context.read<AuthService>();
     await authService.logout();
-    log("[TEST] User logged out.");
+    LOG.log("[TEST] User logged out.");
   }
 
-  Future<bool> autoLogin(BuildContext context) async {
-    final authService = context.read<AuthService>();
-    return await authService.login() != null;
-  }
+  // Future<bool> autoLogin(BuildContext context) async {
+  //   final authService = context.read<AuthService>();
+  //   return await authService.login() != null;
+  // }
 }
 
 // 유저 로그인 여부에 따른 앱 진입 시나리오
