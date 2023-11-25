@@ -5,16 +5,15 @@ import 'package:intl/intl.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
+import 'package:iww_frontend/utils/logger.dart';
 
 // 투두 에디팅 화면의 상태를 관리
 class TodoEditorViewModel extends ChangeNotifier {
   final TodoRepository _todoRepository;
-  final AuthService _authService;
   final Todo? _todo; // 초기화된 투두 데이터
 
   TodoEditorViewModel(
     this._todoRepository,
-    this._authService,
     this._todo,
   ) : _todoData = _todo?.toMap() ?? <String, dynamic>{};
 
@@ -42,6 +41,11 @@ class TodoEditorViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  set todoDone(bool val) {
+    _todoData['todo_done'] = val;
+    notifyListeners();
+  }
+
   set todoStart(TimeOfDay val) {
     _timeOfDay = val;
     _todoData['todo_start'] = val;
@@ -59,19 +63,22 @@ class TodoEditorViewModel extends ChangeNotifier {
   }
 
   // 할일 저장
-  Future<bool> createTodo() async {
+  Future<bool> createTodo(int userId) async {
     String timeString =
         '${hour.toString().padLeft(2, '0')}:${min.toString().padLeft(2, '0')}:00';
 
-    Map<String, dynamic> data = {
-      "user_id": 6,
-      "todo_name": todoData['todo_name'],
-      "todo_done": false,
-      "todo_desc": todoData['todo_desc'],
-      "todo_label": todoData['todo_label'],
-      "todo_start": timeString,
-    };
-    return await _todoRepository.createTodo(data);
+    // Map<String, dynamic> data = {
+    //   "user_id": 6,
+    //   "todo_name": todoData['todo_name'],
+    //   "todo_done": false,
+    //   "todo_desc": todoData['todo_desc'],
+    //   "todo_label": todoData['todo_label'],
+    //   "todo_start": timeString,
+    // };
+    todoData['user_id'] = userId;
+    todoData['todo_start'] = timeString;
+    LOG.log("$todoData");
+    return await _todoRepository.createTodo(todoData);
   }
 
   // 할일 수정
@@ -81,16 +88,17 @@ class TodoEditorViewModel extends ChangeNotifier {
     String timeString =
         '${hour.toString().padLeft(2, '0')}:${min.toString().padLeft(2, '0')}:00';
 
-    Map<String, dynamic> data = {
-      "user_id": 6,
-      "todo_name": todoData['todo_name'],
-      "todo_done": false,
-      "todo_desc": todoData['todo_desc'],
-      "todo_label": todoData['todo_label'],
-      "todo_start": timeString,
-    };
+    // Map<String, dynamic> data = {
+    //   "user_id": 6,
+    //   "todo_name": todoData['todo_name'],
+    //   "todo_done": false,
+    //   "todo_desc": todoData['todo_desc'],
+    //   "todo_label": todoData['todo_label'],
+    //   "todo_start": timeString,
+    // };
 
-    return await _todoRepository.updateTodo(id.toString(), data);
+    todoData['todo_start'] = timeString;
+    return await _todoRepository.updateTodo(id.toString(), todoData);
   }
 }
 
@@ -103,25 +111,40 @@ class TodoViewModel extends ChangeNotifier {
   TodoViewModel(this._todoRepository, this._authService);
 
   List<Todo> todos = [];
+  bool waiting = true;
+  bool _isDisposed = false;
 
-  // 할일 가져오기
-  Future fetchTodos() async {
-    // final user = await _authService.getCurrentUser();
-    // if (user == null) {
-    //   log("No user authorized!");
-    // }
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
+  }
 
+  // 할일 목록 가져오기
+  Future<void> fetchTodos() async {
     try {
-      todos = await _todoRepository.getTodos(null) ?? [];
-      notifyListeners();
+      int? userId = _authService.user?.user_id;
+      todos = (await _todoRepository.getTodos(userId)) ?? [];
+      waiting = false;
     } catch (error) {
-      log("fetch error $error");
+      LOG.log("fetch error $error");
+      waiting = false;
+      todos = [];
+    } finally {
+      if (!_isDisposed) {
+        waiting = false;
+        notifyListeners();
+      }
     }
+  }
+
+  // 할일 완료
+  Future<bool> checkTodo(int todoId, bool checked) async {
+    return await _todoRepository.checkTodo(todoId.toString(), checked);
   }
 
   // 할일 삭제
   Future<bool> deleteTodo(int todoId) async {
-    // var id = todoData['todo_id'];
     return await _todoRepository.deleteTodo(todoId.toString());
   }
 

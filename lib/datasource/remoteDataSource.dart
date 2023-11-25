@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:iww_frontend/secrets/secrets.dart';
+import 'package:iww_frontend/utils/logger.dart';
 
 /// 서버 통신쪽 코드
 class RemoteDataSource {
@@ -30,8 +31,11 @@ class RemoteDataSource {
     if (file != null) {
       // 파일
       request.files.add(http.MultipartFile(
-          field, file.readAsBytes().asStream(), file.lengthSync(),
-          filename: filename));
+        field,
+        file.readAsBytes().asStream(),
+        file.lengthSync(),
+        filename: filename,
+      ));
     }
     return await request.send();
   }
@@ -49,8 +53,12 @@ class RemoteDataSource {
     // Json string으로 변환하여 요청
     String bodyString = body is Map ? json.encode(body) : body.toString();
 
-    return await http.post(Uri.parse(server + url),
-        headers: headers, body: bodyString, encoding: encoding);
+    return await http.post(
+      Uri.parse(server + url),
+      headers: headers,
+      body: bodyString,
+      encoding: encoding,
+    );
   }
 
   // GET json
@@ -60,7 +68,6 @@ class RemoteDataSource {
   }) async {
     // 기본 헤더 추가
     headers = (headers != null) ? {...headers, ...baseHeaders} : baseHeaders;
-
     return await http.get(Uri.parse(server + url), headers: headers);
   }
 
@@ -75,8 +82,31 @@ class RemoteDataSource {
     headers = (headers != null) ? {...headers, ...baseHeaders} : baseHeaders;
     // Json string으로 변환하여 요청
     String bodyString = body is Map ? json.encode(body) : body.toString();
-    return await http.put(Uri.parse(server + url),
-        headers: headers, body: bodyString, encoding: encoding);
+    return await http.put(
+      Uri.parse(server + url),
+      headers: headers,
+      body: bodyString,
+      encoding: encoding,
+    );
+  }
+
+  // PATCH
+  static Future<http.Response> patch(
+    String url, {
+    Map<String, String>? headers,
+    Object? body,
+    Encoding? encoding,
+  }) async {
+    // 기본 헤더 추가
+    headers = (headers != null) ? {...headers, ...baseHeaders} : baseHeaders;
+    // Json string으로 변환하여 요청
+    String bodyString = body is Map ? json.encode(body) : body.toString();
+    return await http.patch(
+      Uri.parse(server + url),
+      headers: headers,
+      body: bodyString,
+      encoding: encoding,
+    );
   }
 
   // DELETE json
@@ -90,12 +120,19 @@ class RemoteDataSource {
     headers = (headers != null) ? {...headers, ...baseHeaders} : baseHeaders;
     // Json string으로 변환하여 요청
     String bodyString = body is Map ? json.encode(body) : body.toString();
-    return await http.delete(Uri.parse(server + url),
-        headers: headers, body: bodyString, encoding: encoding);
+    return await http.delete(
+      Uri.parse(server + url),
+      headers: headers,
+      body: bodyString,
+      encoding: encoding,
+    );
   }
 
   // 테스트용
   Future<http.Response> test() {
-    return http.get(Uri.parse(server), headers: baseHeaders);
+    return http.get(
+      Uri.parse(server),
+      headers: baseHeaders,
+    );
   }
 }

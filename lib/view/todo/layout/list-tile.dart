@@ -17,10 +17,18 @@ class TodoListTileLayout extends StatefulWidget {
 }
 
 class _TodoListTileLayoutState extends State<TodoListTileLayout> {
-  bool isChecked = false;
+  // 할일 완료 체크
+  void _onCheck(BuildContext context, bool? value) {
+    final viewModel = context.read<TodoViewModel>();
+    viewModel.checkTodo(widget.todo.todoId, value ?? false);
+    viewModel.fetchTodos();
+  }
 
   @override
   Widget build(BuildContext context) {
+    bool isChecked = widget.todo.todoDone;
+
+    final viewModel = context.read<TodoViewModel>();
     DateTime yesterday = DateTime.now().subtract(Duration(days: 1));
     bool isDelayed = DateTime.parse(widget.todo.todoDate).isBefore(yesterday);
 
@@ -36,11 +44,7 @@ class _TodoListTileLayoutState extends State<TodoListTileLayout> {
           children: [
             Checkbox(
               value: isChecked,
-              onChanged: (bool? value) {
-                setState(() {
-                  isChecked = value!;
-                });
-              },
+              onChanged: (bool? value) => _onCheck(context, value),
               side: BorderSide(color: Colors.black54),
               shape: CircleBorder(),
             ),

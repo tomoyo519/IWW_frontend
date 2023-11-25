@@ -1,5 +1,4 @@
 import "dart:convert";
-import "dart:developer";
 import "package:http/http.dart" as http;
 import "package:intl/intl.dart";
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
@@ -9,7 +8,7 @@ class Todo {
   int userId;
   String todoName;
   String? todoDesc;
-  int todoLabel;
+  int? todoLabel;
   String todoDate;
   bool todoDone;
   String todoStart;
@@ -18,20 +17,20 @@ class Todo {
   int? grpId;
   bool todoDeleted;
 
-  Todo(
-      { required this.todoId,
-      required this.userId,
-      required this.todoName,
-      this.todoDesc,
-      int? todoLabel,
-      String? todoDate,
-      bool? todoDone,
-      String? todoStart,
-      String? todoEnd,
-      this.todoImg,
-      this.grpId,
-      bool? todoDeleted})
-      : todoDate = todoDate ?? defaultDate(),
+  Todo({
+    required this.todoId,
+    required this.userId,
+    required this.todoName,
+    this.todoDesc,
+    int? todoLabel,
+    String? todoDate,
+    bool? todoDone,
+    String? todoStart,
+    String? todoEnd,
+    this.todoImg,
+    this.grpId,
+    bool? todoDeleted,
+  })  : todoDate = todoDate ?? defaultDate(),
         todoDone = todoDone ?? false,
         todoLabel = todoLabel ?? 0,
         todoStart = todoStart ?? "00:00",

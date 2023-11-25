@@ -1,7 +1,6 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/service/auth.service.dart';
+import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
 import 'package:iww_frontend/viewmodel/signup.viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -44,7 +43,9 @@ class SignUp extends StatelessWidget {
 
       // UI 업데이트
       _pageController.nextPage(
-          duration: Duration(milliseconds: 300), curve: Curves.ease);
+        duration: Duration(milliseconds: 300),
+        curve: Curves.ease,
+      );
     }
   }
 
@@ -82,10 +83,11 @@ class SignUp extends StatelessWidget {
       await viewModel.signUp().then((userInfo) {
         if (userInfo != null) {
           _pageController.dispose(); // 해제
-          log("Succeeded in signing up");
-          Navigator.pushNamed(context, "/contact");
+          LOG.log("Succeeded in signing up");
+          Navigator.pushNamedAndRemoveUntil(
+              context, "/contact", ((route) => false));
         }
-        log("Succeeded to signup");
+        LOG.log("Succeeded to signup");
       });
     } else {
       // TODO: 예외처리?
