@@ -136,6 +136,16 @@ class MyRoomViewModel with ChangeNotifier {
     ),
   };
 
+  get getRoomObjects => roomObjects;
+
+  set setRoom(int? value) {
+    int friendId = value ?? 0;
+    isMyRoom = (friendId == 0);
+
+    isMyRoom ? goMyRoom() : goFriendRoom(friendId);
+    notifyListeners();
+  }
+
   // 집으로 가자
   Future<void> goMyRoom() async {
     isMyRoom = true;
@@ -145,7 +155,7 @@ class MyRoomViewModel with ChangeNotifier {
   }
 
   // 사용자 방 방문
-  Future<void> visitUser(int userId) async {
+  Future<void> goFriendRoom(int userId) async {
     isMyRoom = false;
 
     // TODO change room objects from DB

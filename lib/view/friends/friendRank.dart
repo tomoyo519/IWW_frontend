@@ -67,7 +67,7 @@ class FriendRank extends StatelessWidget {
                       Navigator.pushNamedAndRemoveUntil(
                         context,
                         "/myroom",
-                        arguments: false, // 여기에 적절한 조건을 설정하세요
+                        arguments: 0, // TODO friendId를 넘겨줘야 함. 0일때는 나의 방
                         (route) => false,
                       );
                     }

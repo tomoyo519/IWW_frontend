@@ -53,11 +53,16 @@ class RenderMyRoom extends StatelessWidget {
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
 
+    try {
+      context.watch<MyRoomViewModel>().isMyRoom =
+          ModalRoute.of(context)!.settings.arguments as bool;
+    } catch (e) {
+      print("[log/myroom]: $e");
+    }
+
     Stack layers = Stack(
       alignment: Alignment.center,
-      children: [
-        Pet.of(authService.user!.pet_id!),
-      ],
+      children: [MyRoomViewModel().getRoomObjects(context)],
     );
 
     // 유저의 펫 정보 불러오기
