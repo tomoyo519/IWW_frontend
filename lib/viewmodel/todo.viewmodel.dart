@@ -84,12 +84,14 @@ class TodoEditorViewModel extends ChangeNotifier {
   // 할일 수정
   Future<bool> updateTodo() async {
     var id = todoData["todo_id"];
+
+    print(' 🤔🤔🤔🤔 $todoData');
     // String timeString = "$hour시 $min분";
     String timeString =
         '${hour.toString().padLeft(2, '0')}:${min.toString().padLeft(2, '0')}:00';
 
     // Map<String, dynamic> data = {
-    //   "user_id": 6,
+    //   "user_id": todoData["user_id"],
     //   "todo_name": todoData['todo_name'],
     //   "todo_done": false,
     //   "todo_desc": todoData['todo_desc'],
@@ -108,7 +110,9 @@ class TodoViewModel extends ChangeNotifier {
   final AuthService _authService;
 
   // 생성자
-  TodoViewModel(this._todoRepository, this._authService);
+  TodoViewModel(this._todoRepository, this._authService) {
+    fetchTodos();
+  }
 
   List<Todo> todos = [];
   bool waiting = true;
@@ -138,14 +142,17 @@ class TodoViewModel extends ChangeNotifier {
     }
   }
 
-  // 할일 완료
-  Future<bool> checkTodo(int todoId, bool checked) async {
-    return await _todoRepository.checkTodo(todoId.toString(), checked);
-  }
-
   // 할일 삭제
   Future<bool> deleteTodo(int todoId) async {
     return await _todoRepository.deleteTodo(todoId.toString());
+  }
+
+  //할일 완료
+
+  Future<bool> checkTodo(
+      int userId, int todoId, bool checked, String path) async {
+    return await _todoRepository.checkTodo(
+        userId.toString(), todoId.toString(), checked, path);
   }
 
   String _selectedDate = '';

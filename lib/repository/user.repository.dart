@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:http/http.dart';
@@ -81,7 +80,7 @@ class UserRepository {
   Future<UserInfo?> getUserByKakaoId(String userKakaoId) async {
     return await RemoteDataSource.get("/user?user_kakao_id=$userKakaoId")
         .then((response) {
-      LOG.log("${response.body}");
+      LOG.log("Get user by kakao id ${response.body}");
       if (response.statusCode == 200 && response.body.isNotEmpty) {
         var jsonData = json.decode(response.body);
         return UserInfo.fromJson(jsonData);

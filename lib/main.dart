@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/auth/login_result.dart';
 import 'package:iww_frontend/providers.dart';
+import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
+import 'package:iww_frontend/utils/kakaoLogin.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_common/loading.dart';
 import 'package:iww_frontend/view/home/home.dart';
@@ -15,6 +17,9 @@ import 'package:iww_frontend/view/signup/signup.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_template.dart';
+import 'package:iww_frontend/model/routine/routine.model.dart';
+import 'package:iww_frontend/model/todo/todo.model.dart';
+import 'package:iww_frontend/view/shop/shop_page.dart';
 
 // >>> generate todo test
 // var routines = [
@@ -64,9 +69,9 @@ void main() async {
       // Repository Providers
       providers: getRepositories(),
       child: MultiProvider(
-        // Providers
         providers: getChangeNotifiers(),
         child: MaterialApp(
+          navigatorKey: GlobalNavigator.navigatorKey,
           theme: ThemeData(
               useMaterial3: true,
               colorScheme: ColorScheme.fromSeed(
@@ -83,6 +88,7 @@ void main() async {
             '/group': (context) => MyGroup(),
             '/mypage': (context) => MyPage(),
             '/friends': (context) => MyFriend(),
+            '/shop': (context) => ShopPage()
           },
           home: MyApp(),
         ),
@@ -91,23 +97,36 @@ void main() async {
   );
 }
 
+// 싱글톤
+class GlobalNavigator {
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    AuthService authService = context.watch<AuthService>();
-    AuthStatus status = authService.status;
+    Provider.of<AuthService>(context, listen: false).initialize();
 
-    switch (status) {
-      case AuthStatus.success:
-        return MyHomePage();
-      case AuthStatus.waiting:
-        return LoadingPage();
-      case AuthStatus.failed:
-        return LandingPage();
-      case AuthStatus.permission:
-        return LandingPage();
-    }
+    // 내비게이션 전 보일 로딩페이지
+    return LoadingPage();
   }
 }
+
+    // AuthService authService = context.watch<AuthService>();
+    // AuthStatus status = authService.status;
+
+    // authService.login(background: false);
+    // LOG.log("Initialize user info: status $status");
+    // switch (status) {
+    //   case AuthStatus.success:
+    //     return MyHomePage();
+    //   case AuthStatus.waiting:
+    //     return LoadingPage();
+    //   case AuthStatus.failed:
+    //     return LandingPage();
+    //   case AuthStatus.permission:
+    //     return LandingPage();
+    // }

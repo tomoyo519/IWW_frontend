@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'groupDetail.dart';
+import 'package:lottie/lottie.dart';
 
 final List<String> labels = [
   '운동',
@@ -121,9 +122,10 @@ class _GroupSearchState extends State<GroupSearch> {
                             ],
                           ),
                         ))
-                    : Container(
-                        child: Text('조회된 그룹이 없습니다.'),
-                      );
+                    : Lottie.asset('assets/spinner.json',
+                        repeat: true,
+                        animate: true,
+                        height: MediaQuery.of(context).size.height * 0.3);
               }),
         ),
       ]),

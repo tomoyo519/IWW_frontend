@@ -40,6 +40,26 @@ class RemoteDataSource {
     return await request.send();
   }
 
+//PATCH form data
+  static Future<http.StreamedResponse> patchFormData(String url, String field,
+      {Map<String, dynamic>? body, File? file, String? filename}) async {
+    var request = http.MultipartRequest('PATCH', Uri.parse(server + url));
+    print('🏃🏻🏃🏻🏃🏻🏃🏻🏃🏻🏃🏻🏃🏻🏃🏻🏃🏻너니?');
+    if (body != null) {
+      // 요청 본문
+      for (String key in body.keys) {
+        request.fields[key] = body[key];
+      }
+    }
+    if (file != null) {
+      // 파일
+      request.files.add(http.MultipartFile(
+          field, file.readAsBytes().asStream(), file.lengthSync(),
+          filename: filename));
+    }
+    return await request.send();
+  }
+
   // POST json
   static Future<http.Response> post(
     String url, {
@@ -119,13 +139,9 @@ class RemoteDataSource {
     // 기본 헤더 추가
     headers = (headers != null) ? {...headers, ...baseHeaders} : baseHeaders;
     // Json string으로 변환하여 요청
-    String bodyString = body is Map ? json.encode(body) : body.toString();
-    return await http.delete(
-      Uri.parse(server + url),
-      headers: headers,
-      body: bodyString,
-      encoding: encoding,
-    );
+    // String bodyString = body is Map ? json.encode(body) : body.toString();
+    return await http.delete(Uri.parse(server + url),
+        headers: headers, encoding: encoding);
   }
 
   // 테스트용

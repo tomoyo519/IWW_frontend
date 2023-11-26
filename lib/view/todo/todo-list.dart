@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
@@ -24,8 +26,10 @@ class ToDoList extends StatelessWidget {
       Navigator.pop(context);
 
       await viewModel.deleteTodo(todoId).then((response) {
+        print('response : ${response}');
         if (response == true) {
           viewModel.fetchTodos();
+          print('할일삭제');
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -90,7 +94,8 @@ class ToDoList extends StatelessWidget {
   Widget build(BuildContext context) {
     // 데이터 가져오기
     final viewModel = context.watch<TodoViewModel>();
-    viewModel.fetchTodos();
+    // print('데이터 가져오기');
+    // viewModel.fetchTodos();
 
     return Column(
       children: [
@@ -116,11 +121,9 @@ class ToDoList extends StatelessWidget {
                     itemBuilder: (context, idx) {
                       return GestureDetector(
                         onLongPress: () {
-                          print('길게 눌렀을떄, $idx');
                           _deleteTodo(context, viewModel.todos[idx].todoId);
                         },
                         onTap: () async {
-                          print('그냥 짧게 눌렀을때,');
                           _editTodo(context, viewModel.todos[idx]);
                         },
                         child: Padding(
@@ -180,7 +183,7 @@ class TodoListHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var today = DateTime.now();
+    DateTime today = DateTime.now().add(Duration(hours: 9));
 
     return Container(
       padding: EdgeInsets.symmetric(

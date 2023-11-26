@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/datasource/localStorage.dart';
+import 'package:iww_frontend/main.dart';
 import 'package:iww_frontend/model/auth/login_result.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
@@ -9,17 +10,23 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk_talk.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService extends ChangeNotifier {
+  final BuildContext context;
   final KaKaoLogin kakaoLogin;
   final UserRepository userRepository;
 
-  // 의존성 주입
-  AuthService(this.kakaoLogin, this.userRepository) {
-    login(background: true);
-    LOG.log("Initialize user info");
+  AuthService(this.context, this.kakaoLogin, this.userRepository);
+
+  // 현재 로그인된 유저 상태
+  UserInfo? _currentUser;
+
+  set currentUser(UserInfo? user) {
+    _currentUser = user;
+    LOG.log("Current user: ${_currentUser?.user_id ?? "none"}");
   }
 
   // 현재 로그인된 유저 상태
   final AuthUserStatus _authUserStatus = AuthUserStatus(
+    // 초기화
     status: AuthStatus.waiting,
     user: null,
   );
@@ -32,18 +39,24 @@ class AuthService extends ChangeNotifier {
   void _setUserLoggedIn(UserInfo userInfo) {
     _authUserStatus.user = userInfo;
     _authUserStatus.status = AuthStatus.success;
+
     notifyListeners();
   }
 
   void _setUserLoggedOut(AuthStatus status) {
     _authUserStatus.user = null;
-    if (status == AuthStatus.success) {
-      _authUserStatus.status = AuthStatus.failed;
-    } else {
-      _authUserStatus.status = status;
-    }
+    _authUserStatus.status = status;
 
     notifyListeners();
+  }
+
+  bool _isInitialized = false;
+  // 최초 초기화
+  Future<void> initialize() async {
+    if (!_isInitialized) {
+      _isInitialized = true;
+      await login(background: true);
+    }
   }
 
   // 네트워크 연결된 경우 로그인 로직
@@ -54,7 +67,8 @@ class AuthService extends ChangeNotifier {
     if (await _localLogin()) {
       UserInfo? userInfo = await userRepository.getUserFromLocal();
       if (userInfo != null) {
-        LOG.log("로컬에서 유저 로그인 성공!!");
+        LOG.log("Succeeded in signing in local");
+        GlobalNavigator.navigatorKey.currentState?.pushNamed("/home");
         _setUserLoggedIn(userInfo);
         return;
       }
@@ -64,48 +78,64 @@ class AuthService extends ChangeNotifier {
     AuthStatus status = background
         ? await kakaoLogin.backgroundLogin()
         : await kakaoLogin.login();
-    if (status == AuthStatus.success) {
-      // 카카오로그인으로 유저 정보 가져오기
-      User? user = await kakaoLogin.getUserInfo();
-      if (user == null) {
-        _setUserLoggedOut(AuthStatus.failed);
-        return;
-      }
 
-      // DB에서 유저 정보를 확인하고
-      // 가입된 사용자일 경우 로컬 저장소에 캐시
-      String kakaoId = user.id.toString();
-      UserInfo? userInfo = await userRepository.getUserByKakaoId(kakaoId);
-      if (userInfo == null) {
-        // 가입하지 않은 유저
-        _setUserLoggedOut(AuthStatus.permission);
-        return;
-      }
-
-      if (await userRepository.saveUserInLocal(userInfo)) {
-        _setUserLoggedIn(userInfo);
-        return;
-      }
-
-      LOG.log("??? $status $userInfo");
-      _setUserLoggedOut(AuthStatus.failed);
+    // 카카오 인증 실패
+    if (status != AuthStatus.success) {
+      LOG.log("Failed to login with kakao SDK. $status");
+      GlobalNavigator.navigatorKey.currentState?.pushNamed("/landing");
+      _setUserLoggedOut(status);
+      return;
     }
 
-    _setUserLoggedOut(status);
+    // 카카오로그인으로 유저 정보 가져오기
+    User? user = await kakaoLogin.getUserInfo();
+    if (user == null) {
+      LOG.log("Can't find user from kakao.");
+      GlobalNavigator.navigatorKey.currentState?.pushNamed("/landing");
+      _setUserLoggedOut(AuthStatus.failed);
+      return;
+    }
+
+    // DB에서 유저 정보를 확인하고
+    // 가입된 사용자일 경우 로컬 저장소에 캐시
+    String kakaoId = user.id.toString();
+    UserInfo? userInfo = await userRepository.getUserByKakaoId(kakaoId);
+    if (userInfo == null) {
+      // 가입하지 않은 유저
+      LOG.log("Can't find user from DB");
+      GlobalNavigator.navigatorKey.currentState?.pushNamed("/signup");
+      _setUserLoggedOut(AuthStatus.permission);
+      return;
+    }
+
+    // 로컬에 유저 정보 저장 실패
+    if (!await userRepository.saveUserInLocal(userInfo)) {
+      LOG.log("Failed to save user info in local.");
+      // await disconnect();
+      GlobalNavigator.navigatorKey.currentState?.pushNamed("/landing");
+      _setUserLoggedOut(AuthStatus.failed);
+      return;
+    }
+
+    GlobalNavigator.navigatorKey.currentState?.pushNamed("/home");
+    _setUserLoggedIn(userInfo);
   }
 
   // 회원가입 로직
   Future<void> signup(String userName, String userTel) async {
     // 카카오 인증 후 유저 정보에서 카카오 아이디 확인
     AuthStatus? status = await kakaoLogin.login();
-    if (status == AuthStatus.permission) {
-      _setUserLoggedOut(status);
+    LOG.log("Kakao Login status: $status");
+    if (status == AuthStatus.failed) {
+      LOG.log("No need to signup.");
+      _setUserLoggedOut(AuthStatus.failed);
       return;
     }
 
     // 카카오에서 유저 정보 가져오기
     User? user = await kakaoLogin.getUserInfo();
     if (user == null) {
+      LOG.log("Failed to get user data from kakao SDK");
       _setUserLoggedOut(AuthStatus.failed);
       return;
     }
@@ -146,6 +176,7 @@ class AuthService extends ChangeNotifier {
     }
 
     // 상태 변경
+    LOG.log("Succeeded in signing up!");
     _setUserLoggedIn(userInfo);
   }
 
@@ -205,7 +236,7 @@ class AuthService extends ChangeNotifier {
     }
 
     // TODO: 유저가 정상적으로 탈퇴되지 않음
-    LOG.log("! 유저가 정상적으로 탈퇴되지 않음");
+    LOG.log("유저가 정상적으로 탈퇴되지 않음");
     return false;
   }
 
