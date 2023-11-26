@@ -44,7 +44,7 @@ class RemoteDataSource {
   static Future<http.StreamedResponse> patchFormData(String url, String field,
       {Map<String, dynamic>? body, File? file, String? filename}) async {
     var request = http.MultipartRequest('PATCH', Uri.parse(server + url));
-    print('🏃🏻🏃🏻🏃🏻🏃🏻🏃🏻🏃🏻🏃🏻🏃🏻🏃🏻너니?');
+
     if (body != null) {
       // 요청 본문
       for (String key in body.keys) {

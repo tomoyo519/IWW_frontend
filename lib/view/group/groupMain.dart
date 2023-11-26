@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/repository/group.repository.dart';
+import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/view/_common/bottombar.dart';
+import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
+import 'package:provider/provider.dart';
 
 import 'groupList.dart';
 import 'groupSearch.dart';
@@ -10,6 +14,10 @@ class MyGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _groupRepository =
+        Provider.of<GroupRepository>(context, listen: false);
+    final _authService = Provider.of<AuthService>(context, listen: false);
+
     return DefaultTabController(
         initialIndex: 0,
         length: 2,
@@ -20,7 +28,21 @@ class MyGroup extends StatelessWidget {
               Tab(icon: Icon(Icons.manage_search_outlined))
             ]),
           ),
-          body: const TabBarView(children: [GroupList(), GroupSearch()]),
+          body: TabBarView(children: [
+            MultiProvider(
+              providers: [
+                ChangeNotifierProvider(
+                  create: (context) =>
+                      MyGroupViewModel(_groupRepository, _authService),
+                ),
+                ChangeNotifierProvider(
+                  create: (context) => GroupDetailModel(_groupRepository),
+                ),
+              ],
+              child: GroupList(),
+            ),
+            GroupSearch(),
+          ]),
           bottomNavigationBar: MyBottomNav(),
           floatingActionButton: FloatingActionButton(
               onPressed: () {

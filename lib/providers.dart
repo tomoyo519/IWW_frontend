@@ -1,6 +1,7 @@
 // providers.dart
 import 'package:iww_frontend/repository/comment.repository.dart';
 import 'package:iww_frontend/repository/friend.repository.dart';
+import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/repository/room.repository.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
@@ -16,7 +17,8 @@ List<Provider> getRepositories() {
     Provider<FriendRepository>(create: (_) => FriendRepository()),
     Provider<RoomRepository>(create: (_) => RoomRepository()),
     Provider<CommentRepository>(create: (_) => CommentRepository()),
-    Provider<KaKaoLogin>(create: (_) => KaKaoLogin())
+    Provider<KaKaoLogin>(create: (_) => KaKaoLogin()),
+    Provider<GroupRepository>(create: (_) => GroupRepository())
   ];
 }
 

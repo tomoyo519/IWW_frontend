@@ -135,8 +135,7 @@ class _TodoListTileLayoutState extends State<TodoListTileLayout> {
                                     widget.todo.todoId,
                                     true,
                                     pickedFile.path);
-                                print('result : $result');
-                                print('context.mounted:${context.mounted}');
+
                                 if (result == true && context.mounted) {
                                   viewModel.fetchTodos();
                                   Navigator.pop(context);
