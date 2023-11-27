@@ -26,7 +26,7 @@ class ToDoList extends StatelessWidget {
       Navigator.pop(context);
 
       await viewModel.deleteTodo(todoId).then((response) {
-        print('response : ${response}');
+        print('response : $response');
         if (response == true) {
           viewModel.fetchTodos();
           print('할일삭제');
@@ -80,10 +80,7 @@ class ToDoList extends StatelessWidget {
             todo: todo,
             title: "할일 수정",
             formKey: _formKey,
-            todoViewModel: Provider.of<TodoViewModel>(
-              context,
-              listen: false,
-            ),
+            buildContext: context,
           ),
         );
       },
@@ -171,10 +168,7 @@ class TodoListHeader extends StatelessWidget {
             todo: null,
             title: "할일 추가",
             formKey: _formKey,
-            todoViewModel: Provider.of<TodoViewModel>(
-              context,
-              listen: false,
-            ),
+            buildContext: context,
           ),
         );
       },
