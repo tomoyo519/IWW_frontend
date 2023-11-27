@@ -20,51 +20,46 @@ class MyRoom extends StatelessWidget {
     final commentRepository =
         Provider.of<CommentRepository>(context, listen: false);
 
-    return Scaffold(
-        body: ChangeNotifierProvider<CommentsProvider>(
-            create: (context) => CommentsProvider(
-                  authService,
-                  roomRepository,
-                  commentRepository,
-                ),
-            child: ChangeNotifierProvider<MyRoomViewModel>(
-              create: (context) => MyRoomViewModel(),
-              child: SafeArea(
-                child: Stack(
-                  children: [
-                    RenderMyRoom(),
-                    // Positioned(height: 800, bottom: 100, child: UnderLayer()),
-                    Positioned(
-                        left: 0,
-                        right: 0,
-                        bottom: 30,
-                        height: 150,
-                        child: UnderLayer()),
-                    Positioned(
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider<CommentsProvider>(
+              create: (_) => CommentsProvider(
+                    authService,
+                    roomRepository,
+                    commentRepository,
+                  )),
+          ChangeNotifierProvider<MyRoomViewModel>(
+              create: (_) => MyRoomViewModel())
+        ],
+        child: Scaffold(
+            body: SafeArea(
+              child: Stack(
+                children: [
+                  RenderMyRoom(),
+                  // Positioned(height: 800, bottom: 100, child: UnderLayer()),
+                  Positioned(
                       left: 0,
                       right: 0,
-                      bottom: 10,
-                      height: 50,
-                      child: BottomButtons(),
-                    ),
-                  ],
-                ),
+                      bottom: 30,
+                      height: 150,
+                      child: UnderLayer()),
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 10,
+                    height: 50,
+                    child: BottomButtons(),
+                  ),
+                ],
               ),
-            )),
-        bottomNavigationBar: MyBottomNav());
+            ),
+            bottomNavigationBar: MyBottomNav()));
   }
 }
 
 // 나의 펫 렌더링
-class RenderMyRoom extends StatefulWidget {
+class RenderMyRoom extends StatelessWidget {
   const RenderMyRoom({super.key});
-
-  @override
-  State<RenderMyRoom> createState() => _RenderMyRoomState();
-}
-
-class _RenderMyRoomState extends State<RenderMyRoom> {
-  int roomOwner = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -73,13 +68,12 @@ class _RenderMyRoomState extends State<RenderMyRoom> {
 
     // Naviator를 통해서 argument를 전달할 경우 받는 방법
     try {
-      roomOwner = ModalRoute.of(context)!.settings.arguments as int;
+      roomState.roomOwner = ModalRoute.of(context)!.settings.arguments as int;
     } catch (e) {
       print("[log/myroom]: $e");
     }
 
-    return Stack(
-        alignment: Alignment.center, children: roomState.getObjects(roomOwner));
+    return Stack(alignment: Alignment.center, children: roomState.getObjects());
 
     // 유저의 펫 정보 불러오기
 
@@ -95,6 +89,7 @@ class _RenderMyRoomState extends State<RenderMyRoom> {
     // }
   }
 }
+
 // class MyRoom extends StatefulWidget {
 //   MyRoom({Key? key}) : super(key: key);
 
@@ -139,7 +134,7 @@ class UnderLayer extends StatelessWidget {
     return Container(
       height: MediaQuery.of(context).padding.top + 30,
       color: Colors.transparent,
-      child: context.watch<MyRoomViewModel>().isMyRoom
+      child: context.watch<MyRoomViewModel>().isMyRoom()
           ? StatusBar()
           : SizedBox(height: 110, width: 20), // TODO chatting으로 변경
       // BottomButtons()
@@ -184,62 +179,75 @@ class _StatusBarState extends State<StatusBar> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Row(
-            children: [
-              Flexible(
-                flex: 1,
-                child: Text(
-                  'HP',
-                  style: TextStyle(fontSize: 20),
-                  textAlign: TextAlign.left,
+      padding: const EdgeInsets.all(30.0),
+      child: Container(
+        padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+        decoration: BoxDecoration(
+          color: Color.fromRGBO(0, 0, 0, 0.3),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Row(
+              children: [
+                Flexible(
+                  flex: 1,
+                  child: Text(
+                    'HP',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
                 ),
-              ),
-              SizedBox(width: 30),
-              Flexible(
-                flex: 8,
-                child: LinearProgressIndicator(
-                  value: _hp,
-                  minHeight: 14,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                      const Color.fromARGB(255, 239, 118, 110)),
-                  backgroundColor: Colors.grey[200],
-                  semanticsLabel: 'Linear progress indicator',
+                SizedBox(width: 30),
+                Flexible(
+                  flex: 8,
+                  child: LinearProgressIndicator(
+                    value: _hp,
+                    minHeight: 14,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                        const Color.fromARGB(255, 239, 118, 110)),
+                    backgroundColor: Colors.grey[200],
+                    semanticsLabel: 'Linear progress indicator',
+                  ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(height: 10),
-          Row(
-            children: [
-              Flexible(
-                flex: 1,
-                child: Text(
-                  'EXP',
-                  style: TextStyle(fontSize: 20),
-                  textAlign: TextAlign.left,
+              ],
+            ),
+            SizedBox(height: 10),
+            Row(
+              children: [
+                Flexible(
+                  flex: 1,
+                  child: Text(
+                    'EXP',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
                 ),
-              ),
-              SizedBox(width: 20),
-              Flexible(
-                flex: 6,
-                child: LinearProgressIndicator(
-                  value: _exp,
-                  minHeight: 14,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                      Color.fromARGB(255, 155, 239, 110)),
-                  backgroundColor: Colors.grey[200],
-                  semanticsLabel: 'Linear progress indicator',
+                SizedBox(width: 20),
+                Flexible(
+                  flex: 6,
+                  child: LinearProgressIndicator(
+                    value: _exp,
+                    minHeight: 14,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                        Color.fromARGB(255, 155, 239, 110)),
+                    backgroundColor: Colors.grey[200],
+                    semanticsLabel: 'Linear progress indicator',
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -254,6 +262,23 @@ class BottomButtons extends StatelessWidget {
     // NOTE 여기서 비동기 연산 수행
     final authService = Provider.of<AuthService>(context);
     final commentsProvider = context.read<CommentsProvider>();
+    var roomState = context.watch<MyRoomViewModel>();
+
+    ElevatedButton buildFriendButton() {
+      if (roomState.isMyRoom()) {
+        return ElevatedButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/friends');
+            },
+            child: Text('친구목록'));
+      } else {
+        return ElevatedButton(
+            onPressed: () {
+              // TODO 친구추가 기능
+            },
+            child: Text('친구추가'));
+      }
+    }
 
     return SizedBox(
       height: 50,
@@ -288,14 +313,7 @@ class BottomButtons extends StatelessWidget {
               },
               child: Text('인벤토리')),
           SizedBox(width: 20),
-          ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamedAndRemoveUntil(
-                    context, '/friends', (Route<dynamic> route) => false);
-                //TODO 이 코드로 교체할 수 있게 시도해보자
-                //context.read<MyRoomViewModel>().goFriendRoom(1);
-              },
-              child: Text('친구목록')),
+          buildFriendButton(),
         ],
       ),
     );
