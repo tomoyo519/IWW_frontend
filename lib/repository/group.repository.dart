@@ -27,18 +27,56 @@ class GroupRepository {
     });
   }
 
-  Future<List<GroupDetail>?> getGroupDetail(int? groupId) async {
+  Future<GroupDetail?> getGroupDetail(int? groupId) async {
     return await RemoteDataSource.get("/group/${groupId ?? 1}").then((res) {
       if (res.statusCode == 200) {
-        List<dynamic> jsonData = jsonDecode(res.body);
+        var jsonData = jsonDecode(res.body);
+        if (jsonData.isEmpty) {
+          return null;
+        }
+
+        return jsonData;
+      }
+      return null;
+    });
+  }
+
+  Future<List<RouteDetail>?> getRouteDetail(int? groupId) async {
+    return await RemoteDataSource.get("/group/${groupId ?? 1}").then((res) {
+      if (res.statusCode == 200) {
+        var jsonData = jsonDecode(res.body);
 
         if (jsonData.isEmpty) {
           return null;
         }
 
-        List<GroupDetail>? data = // 수정된 부분
-            jsonData.map((data) => GroupDetail.fromJson(data)).toList();
-        LOG.log('data: $data');
+        List<RouteDetail>? data = // 수정된 부분
+            jsonData["rout_detail"]
+                .map((data) => GroupDetail.fromJson(data))
+                .toList();
+        LOG.log('😌😌😌😌😌😌data: $data');
+        print("###################${data}");
+        return data;
+      }
+      return null;
+    });
+  }
+
+  Future<List<GroupMember>?> getMember(int? groupId) async {
+    return await RemoteDataSource.get("/group/${groupId ?? 1}").then((res) {
+      if (res.statusCode == 200) {
+        var jsonData = jsonDecode(res.body);
+
+        if (jsonData.isEmpty) {
+          return null;
+        }
+
+        List<GroupMember>? data = // 수정된 부분
+            jsonData["grp_mems"]
+                .map((data) => GroupDetail.fromJson(data))
+                .toList();
+        LOG.log('😌😌😌😌😌😌data: $data');
+        print("###################${data}");
         return data;
       }
       return null;

@@ -1,10 +1,10 @@
 class GroupResult {
-  final GroupDetail grpDetail;
+  // final GroupDetail grpDetail;
   final List<RouteDetail> routDetail;
   final List<GroupMember> grpMems;
 
   GroupResult({
-    required this.grpDetail,
+    // required this.grpDetail,
     required this.routDetail,
     required this.grpMems,
   });
@@ -19,14 +19,14 @@ class GroupResult {
         grpMemsFromJson.map((i) => GroupMember.fromJson(i)).toList();
 
     return GroupResult(
-      grpDetail: GroupDetail.fromJson(json['grp_detail']),
+      // grpDetail: GroupDetail.fromJson(json['grp_detail']),
       routDetail: routDetailList,
       grpMems: grpMemsList,
     );
   }
   Map<String, dynamic> toMap() {
     return {
-      'grp_detail': grpDetail.toMap(),
+      // 'grp_detail': grpDetail.toMap(),
       'rout_detail': routDetail.map((e) => e.toMap()).toList(),
       'grp_mems': grpMems.map((e) => e.toMap()).toList(),
     };

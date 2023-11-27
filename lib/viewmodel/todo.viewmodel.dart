@@ -77,7 +77,7 @@ class TodoEditorViewModel extends ChangeNotifier {
     // };
     todoData['user_id'] = userId;
     todoData['todo_start'] = timeString;
-    LOG.log("$todoData");
+
     return await _todoRepository.createTodo(todoData);
   }
 
@@ -85,7 +85,6 @@ class TodoEditorViewModel extends ChangeNotifier {
   Future<bool> updateTodo() async {
     var id = todoData["todo_id"];
 
-    print(' 🤔🤔🤔🤔 $todoData');
     // String timeString = "$hour시 $min분";
     String timeString =
         '${hour.toString().padLeft(2, '0')}:${min.toString().padLeft(2, '0')}:00';
@@ -128,7 +127,7 @@ class TodoViewModel extends ChangeNotifier {
   Future<void> fetchTodos() async {
     try {
       int? userId = _authService.user?.user_id;
-      LOG.log('$userId');
+      ;
       todos = (await _todoRepository.getTodos(userId)) ?? [];
       waiting = false;
     } catch (error) {
