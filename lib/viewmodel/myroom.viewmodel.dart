@@ -3,7 +3,7 @@ import 'package:model_viewer_plus/model_viewer_plus.dart';
 
 class MyRoomViewModel with ChangeNotifier {
   bool isMyRoom = true;
-  var roomObjects = <Widget>[];
+  List<Widget> roomObjects = <Widget>[];
 
   // TODO get assets from DB
   Map<String, dynamic> assets = {
@@ -136,18 +136,22 @@ class MyRoomViewModel with ChangeNotifier {
     ),
   };
 
+  // 첫 위젯 상태: 나의 방
+  MyRoomViewModel() {
+    goMyRoom();
+  }
+
   get getRoomObjects => roomObjects;
 
-  set setRoom(int? value) {
+  void setRoom(int? value) {
     int friendId = value ?? 0;
     isMyRoom = (friendId == 0);
-
+    
     isMyRoom ? goMyRoom() : goFriendRoom(friendId);
-    notifyListeners();
   }
 
   // 집으로 가자
-  Future<void> goMyRoom() async {
+  void goMyRoom() {
     isMyRoom = true;
 
     roomObjects = [assets['bg1']!, assets['small_fox']!];
@@ -155,11 +159,11 @@ class MyRoomViewModel with ChangeNotifier {
   }
 
   // 사용자 방 방문
-  Future<void> goFriendRoom(int userId) async {
+  void goFriendRoom(int userId) {
     isMyRoom = false;
 
     // TODO change room objects from DB
-    roomObjects = [assets['bg2']!, assets['mid_fox']!, assets['small_fox']!];
+    roomObjects = [assets['bg2']!, assets['mid_fox']!];
     notifyListeners();
   }
 }

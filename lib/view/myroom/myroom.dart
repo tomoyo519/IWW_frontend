@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/comment.repository.dart';
 import 'package:iww_frontend/repository/room.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
+import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';
-import 'package:iww_frontend/view/pet/pet.dart';
-import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:iww_frontend/view/_common/bottombar.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
@@ -31,12 +30,22 @@ class MyRoom extends StatelessWidget {
             child: ChangeNotifierProvider<MyRoomViewModel>(
               create: (context) => MyRoomViewModel(),
               child: SafeArea(
-                child: Column(
+                child: Stack(
                   children: [
-                    Expanded(flex: 1, child: RenderMyRoom()),
-                    UnderLayer(),
-                    BottomButtons(),
-                    SizedBox(height: 20),
+                    RenderMyRoom(),
+                    Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: 20,
+                        height: 800,
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              UnderLayer(),
+                              BottomButtons(),
+                              SizedBox(height: 20)
+                            ])),
                   ],
                 ),
               ),
@@ -46,24 +55,32 @@ class MyRoom extends StatelessWidget {
 }
 
 // 나의 펫 렌더링
-class RenderMyRoom extends StatelessWidget {
-  RenderMyRoom({Key? key}) : super(key: key);
+class RenderMyRoom extends StatefulWidget {
+  const RenderMyRoom({super.key});
+
+  @override
+  State<RenderMyRoom> createState() => _RenderMyRoomState();
+}
+
+class _RenderMyRoomState extends State<RenderMyRoom> {
+  var roomObjects = <Widget>[];
 
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
+    var roomState = context.watch<MyRoomViewModel>();
 
+    LOG.log(roomState.getRoomObjects.length.toString());
+
+    // Naviator를 통해서 argument를 전달할 경우 받는 방법
     try {
-      context.watch<MyRoomViewModel>().isMyRoom =
-          ModalRoute.of(context)!.settings.arguments as bool;
+      roomState.isMyRoom = ModalRoute.of(context)!.settings.arguments as bool;
     } catch (e) {
       print("[log/myroom]: $e");
     }
 
-    Stack layers = Stack(
-      alignment: Alignment.center,
-      children: [MyRoomViewModel().getRoomObjects(context)],
-    );
+    return Stack(
+        alignment: Alignment.center, children: roomState.getRoomObjects);
 
     // 유저의 펫 정보 불러오기
 
@@ -77,11 +94,8 @@ class RenderMyRoom extends StatelessWidget {
     //   layers.children.add(sources['mid_fox']!);
     //   layers.children.add(sources['small_fox']!);
     // }
-
-    return layers;
   }
 }
-
 // class MyRoom extends StatefulWidget {
 //   MyRoom({Key? key}) : super(key: key);
 
@@ -155,6 +169,8 @@ class _StatusBarState extends State<StatusBar> with TickerProviderStateMixin {
       setState(() {
         _hp >= 1 ? _hp : _hp += 0.1;
         _exp >= 1 ? _exp : _exp += 0.2;
+
+        LOG.log("HP: $_hp, EXP: $_exp");
       });
     });
   }
@@ -261,8 +277,9 @@ class BottomButtons extends StatelessWidget {
           SizedBox(width: 20),
           ElevatedButton(
               onPressed: () {
-                Navigator.pushNamedAndRemoveUntil(
-                    context, '/friends', (Route<dynamic> route) => false);
+                // Navigator.pushNamedAndRemoveUntil(
+                //     context, '/friends', (Route<dynamic> route) => false);
+                context.read<MyRoomViewModel>().goFriendRoom(1);
               },
               child: Text('친구목록')),
         ],
