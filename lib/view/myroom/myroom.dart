@@ -33,19 +33,20 @@ class MyRoom extends StatelessWidget {
                 child: Stack(
                   children: [
                     RenderMyRoom(),
+                    // Positioned(height: 800, bottom: 100, child: UnderLayer()),
                     Positioned(
                         left: 0,
                         right: 0,
-                        bottom: 20,
-                        height: 800,
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              UnderLayer(),
-                              BottomButtons(),
-                              SizedBox(height: 20)
-                            ])),
+                        bottom: 30,
+                        height: 150,
+                        child: UnderLayer()),
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 10,
+                      height: 50,
+                      child: BottomButtons(),
+                    ),
                   ],
                 ),
               ),
@@ -137,11 +138,12 @@ class UnderLayer extends StatelessWidget {
   // TODO 채팅 구현 후 채팅창 삽입
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 200,
+    return Container(
+      height: MediaQuery.of(context).padding.top + 30,
+      color: Colors.transparent,
       child: context.watch<MyRoomViewModel>().isMyRoom
           ? StatusBar()
-          : SizedBox(height: 150, width: 20),
+          : SizedBox(height: 110, width: 20), // TODO chatting으로 변경
       // BottomButtons()
     );
   }
@@ -183,50 +185,63 @@ class _StatusBarState extends State<StatusBar> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Row(
-              children: const [
-                SizedBox(width: 10),
-                Text(
+    return Container(
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Row(
+            children: [
+              Flexible(
+                flex: 1,
+                child: Text(
                   'HP',
                   style: TextStyle(fontSize: 20),
                   textAlign: TextAlign.left,
-                )
-              ],
-            ),
-            LinearProgressIndicator(
-              value: _hp,
-              minHeight: 14,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                  const Color.fromARGB(255, 239, 118, 110)),
-              backgroundColor: Colors.grey[200],
-              semanticsLabel: 'Linear progress indicator',
-            ),
-            Row(
-              children: const [
-                SizedBox(width: 10),
-                Text(
+                ),
+              ),
+              SizedBox(width: 30),
+              Flexible(
+                flex: 8,
+                child: LinearProgressIndicator(
+                  value: _hp,
+                  minHeight: 14,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      const Color.fromARGB(255, 239, 118, 110)),
+                  backgroundColor: Colors.grey[200],
+                  semanticsLabel: 'Linear progress indicator',
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 10),
+          Row(
+            children: [
+              Flexible(
+                flex: 1,
+                child: Text(
                   'EXP',
                   style: TextStyle(fontSize: 20),
                   textAlign: TextAlign.left,
-                )
-              ],
-            ),
-            LinearProgressIndicator(
-              value: _exp,
-              minHeight: 14,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                  Color.fromARGB(255, 155, 239, 110)),
-              backgroundColor: Colors.grey[200],
-              semanticsLabel: 'Linear progress indicator',
-            ),
-          ],
-        ),
+                ),
+              ),
+              SizedBox(width: 20),
+              Flexible(
+                flex: 6,
+                child: LinearProgressIndicator(
+                  value: _exp,
+                  minHeight: 14,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      Color.fromARGB(255, 155, 239, 110)),
+                  backgroundColor: Colors.grey[200],
+                  semanticsLabel: 'Linear progress indicator',
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -277,9 +292,9 @@ class BottomButtons extends StatelessWidget {
           SizedBox(width: 20),
           ElevatedButton(
               onPressed: () {
-                // Navigator.pushNamedAndRemoveUntil(
-                //     context, '/friends', (Route<dynamic> route) => false);
-                context.read<MyRoomViewModel>().goFriendRoom(1);
+                Navigator.pushNamedAndRemoveUntil(
+                    context, '/friends', (Route<dynamic> route) => false);
+                // context.read<MyRoomViewModel>().goFriendRoom(1);
               },
               child: Text('친구목록')),
         ],

@@ -9,12 +9,15 @@ class MyRoomViewModel with ChangeNotifier {
   Map<String, dynamic> assets = {
     'bg1': Image.asset(
       'assets/background.png',
-      fit: BoxFit.cover,
+      fit: BoxFit.fitHeight,
     ),
     'bg2': Image.asset(
       'assets/wallpaper.jpg',
-      height: 500,
       fit: BoxFit.fitWidth,
+    ),
+    'bg3': Image.asset(
+      'assets/background3.png',
+      fit: BoxFit.fitHeight,
     ),
     'fish': ModelViewer(
       // loading: Loading.eager,
@@ -146,7 +149,7 @@ class MyRoomViewModel with ChangeNotifier {
   void setRoom(int? value) {
     int friendId = value ?? 0;
     isMyRoom = (friendId == 0);
-    
+
     isMyRoom ? goMyRoom() : goFriendRoom(friendId);
   }
 
