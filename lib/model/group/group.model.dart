@@ -28,4 +28,13 @@ class Group {
       'mem_cnt': memCnt
     };
   }
+
+  factory Group.fromJson(Map<String, dynamic> json) {
+    return Group(
+      groupId: json['group_id'],
+      grpName: json['grp_name'],
+      ownerName: json['owner'],
+      memCnt: json['mem_cnt'],
+    );
+  }
 }
