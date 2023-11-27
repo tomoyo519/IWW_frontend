@@ -16,7 +16,6 @@ class UserPet {
   });
 }
 
-
 class FriendRank extends StatelessWidget {
   FriendRank({super.key});
 
@@ -56,34 +55,34 @@ class FriendRank extends StatelessWidget {
     return Column(
       children: [
         Expanded(
-          child: ListView.builder(
-            itemCount: dummy.length,
-            itemBuilder: (context, index) {
-              final userPet = dummy[index];
-              return Card(
-                child: InkWell(
-                  onTap: () {
-                    if (index == 0) { // 1위에 해당하는 아이템을 클릭했을 때
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        "/myroom",
-                        arguments: 0, // TODO friendId를 넘겨줘야 함. 0일때는 나의 방
-                        (route) => false,
-                      );
-                    }
-                  },
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundImage: userPet.petImage.image,
-                    ),
-                    title: Text(userPet.userName),
-                    subtitle: Text('${userPet.petName}, Level: ${userPet.petLv}'),
+            child: ListView.builder(
+          itemCount: dummy.length,
+          itemBuilder: (context, index) {
+            final userPet = dummy[index];
+            return Card(
+              child: InkWell(
+                onTap: () {
+                  if (index == 0) {
+                    // 1위에 해당하는 아이템을 클릭했을 때
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      "/myroom",
+                      arguments: 1, // TODO friendId를 넘겨줘야 함. 0일때는 나의 방
+                      (route) => false,
+                    );
+                  }
+                },
+                child: ListTile(
+                  leading: CircleAvatar(
+                    backgroundImage: userPet.petImage.image,
                   ),
+                  title: Text(userPet.userName),
+                  subtitle: Text('${userPet.petName}, Level: ${userPet.petLv}'),
                 ),
-              );
-            },
-          )
-        )
+              ),
+            );
+          },
+        ))
       ],
     );
   }
