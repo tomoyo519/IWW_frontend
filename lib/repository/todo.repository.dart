@@ -33,9 +33,6 @@ class TodoRepository {
 
         // 정렬해서 넘김
         data.sort((a, b) => a.todoDate.compareTo(b.todoDate));
-
-        // 정렬해서 넘김
-        data.sort((a, b) => a.todoDate.compareTo(b.todoDate));
         return data;
       }
       return null;

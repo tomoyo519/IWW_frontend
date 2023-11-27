@@ -31,21 +31,17 @@ class _GroupDetailState extends State<GroupDetail> {
   bool myGroup = false;
   bool isLoading = true;
   late TextEditingController _controller;
+
   getData() async {
-    LOG.log('😌😌😌😌😌widget.group: ${widget.group}');
-
-    var result = await http.get(Uri.parse(
-        'http://yousayrun.store:8088/group/${widget.group["grp_id"]}'));
-    LOG.log('😱😱😱😱😱😱😱😱😱 result: $result.body');
+    var result = await RemoteDataSource.get('/group/${widget.group}');
     var resultJson = jsonDecode(result.body);
-
     if (result.body.isNotEmpty) {
       setState(() {
         groupRoutine = resultJson["rout_detail"];
       });
       setState(() => groupMems = resultJson["grp_mems"]);
+
       for (var i = 0; i < groupMems.length; i++) {
-        LOG.log('groupMems[i]["user_id"]: ${groupMems[i]["user_id"]}');
         if (groupMems[i]["user_id"] == 1) {
           setState(() {
             myGroup = true;

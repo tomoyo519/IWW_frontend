@@ -23,7 +23,7 @@ class LandingPage extends StatelessWidget {
       // 회원가입이 필요한 경우
       case AuthStatus.permission:
         if (context.mounted) {
-          Navigator.pushReplacementNamed(context, "/home");
+          Navigator.pushReplacementNamed(context, "/signup");
         }
       default:
       // 로그인 취소된 경우
@@ -45,7 +45,8 @@ class LandingPage extends StatelessWidget {
             const Text("두윗"),
             const Text("펫과 함께하는 소셜 투두리스트"),
             ElevatedButton(
-              onPressed: () => Navigator.pushReplacementNamed(context, "/home"),
+              // onPressed: () => Navigator.pushReplacementNamed(context, "/home"),
+              onPressed: () => _kakaoLogin(context, authService),
               style: ElevatedButton.styleFrom(
                   elevation: 0,
                   padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),

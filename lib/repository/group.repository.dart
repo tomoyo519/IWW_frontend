@@ -54,8 +54,7 @@ class GroupRepository {
             jsonData["rout_detail"]
                 .map((data) => GroupDetail.fromJson(data))
                 .toList();
-        LOG.log('😌😌😌😌😌😌data: $data');
-        print("###################${data}");
+
         return data;
       }
       return null;
@@ -75,8 +74,7 @@ class GroupRepository {
             jsonData["grp_mems"]
                 .map((data) => GroupDetail.fromJson(data))
                 .toList();
-        LOG.log('😌😌😌😌😌😌data: $data');
-        print("###################${data}");
+
         return data;
       }
       return null;

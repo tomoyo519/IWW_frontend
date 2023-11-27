@@ -27,8 +27,15 @@ class AuthService extends ChangeNotifier {
   // 현재 로그인된 유저 상태
   final AuthUserStatus _authUserStatus = AuthUserStatus(
     // 초기화
-    status: AuthStatus.waiting,
-    user: null,
+    // status: AuthStatus.waiting,
+    // user: null,
+    status: AuthStatus.success,
+    user: UserInfo(
+        user_id: 48,
+        user_name: "sojeong",
+        user_kakao_id: "3164637603",
+        user_hp: 0,
+        user_tel: "010-0000-000"),
   );
 
   // 유저 정보 getter
