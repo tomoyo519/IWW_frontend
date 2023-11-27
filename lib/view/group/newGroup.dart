@@ -256,9 +256,7 @@ class _NewGroupState extends State<NewGroup> {
                                           shape: RoundedRectangleBorder(
                                               borderRadius: BorderRadius.all(
                                                   Radius.circular(10)))),
-                                      onPressed: () {
-                                        print('추가하기 버튼');
-                                      },
+                                      onPressed: () {},
                                       child: Text("추가하기",
                                           style:
                                               TextStyle(color: Colors.white)),
