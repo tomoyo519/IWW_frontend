@@ -20,51 +20,46 @@ class MyRoom extends StatelessWidget {
     final commentRepository =
         Provider.of<CommentRepository>(context, listen: false);
 
-    return Scaffold(
-        body: ChangeNotifierProvider<CommentsProvider>(
-            create: (context) => CommentsProvider(
-                  authService,
-                  roomRepository,
-                  commentRepository,
-                ),
-            child: ChangeNotifierProvider<MyRoomViewModel>(
-              create: (context) => MyRoomViewModel(),
-              child: SafeArea(
-                child: Stack(
-                  children: [
-                    RenderMyRoom(),
-                    // Positioned(height: 800, bottom: 100, child: UnderLayer()),
-                    Positioned(
-                        left: 0,
-                        right: 0,
-                        bottom: 30,
-                        height: 150,
-                        child: UnderLayer()),
-                    Positioned(
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider<CommentsProvider>(
+              create: (_) => CommentsProvider(
+                    authService,
+                    roomRepository,
+                    commentRepository,
+                  )),
+          ChangeNotifierProvider<MyRoomViewModel>(
+              create: (_) => MyRoomViewModel())
+        ],
+        child: Scaffold(
+            body: SafeArea(
+              child: Stack(
+                children: [
+                  RenderMyRoom(),
+                  // Positioned(height: 800, bottom: 100, child: UnderLayer()),
+                  Positioned(
                       left: 0,
                       right: 0,
-                      bottom: 10,
-                      height: 50,
-                      child: BottomButtons(),
-                    ),
-                  ],
-                ),
+                      bottom: 30,
+                      height: 150,
+                      child: UnderLayer()),
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 10,
+                    height: 50,
+                    child: BottomButtons(),
+                  ),
+                ],
               ),
-            )),
-        bottomNavigationBar: MyBottomNav());
+            ),
+            bottomNavigationBar: MyBottomNav()));
   }
 }
 
 // 나의 펫 렌더링
-class RenderMyRoom extends StatefulWidget {
+class RenderMyRoom extends StatelessWidget {
   const RenderMyRoom({super.key});
-
-  @override
-  State<RenderMyRoom> createState() => _RenderMyRoomState();
-}
-
-class _RenderMyRoomState extends State<RenderMyRoom> {
-  int roomOwner = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -94,6 +89,7 @@ class _RenderMyRoomState extends State<RenderMyRoom> {
     // }
   }
 }
+
 // class MyRoom extends StatefulWidget {
 //   MyRoom({Key? key}) : super(key: key);
 
