@@ -1,9 +1,8 @@
-import 'package:babylonjs_viewer/babylonjs_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 
 class MyRoomViewModel with ChangeNotifier {
-  bool isMyRoom = true;
+  int _roomOwner = 0;
 
   // TODO get assets from DB
   Map<String, dynamic> assets = {
@@ -139,35 +138,25 @@ class MyRoomViewModel with ChangeNotifier {
     ),
   };
 
-  //
-  List<Widget> getObjects(int? roomOwenerId) {
-    int friendId = roomOwenerId ?? 0;
-    isMyRoom = (friendId == 0);
-
-    return isMyRoom ? goMyRoom() : goFriendRoom(friendId);
+  set roomOwner(int roomOwnerId) {
+    _roomOwner = roomOwnerId;
   }
 
-  // 집으로 가자
-  List<Widget> goMyRoom() {
-    isMyRoom = true;
+  bool isMyRoom() => _roomOwner == 0;
 
-    List<Widget> roomObjects = [
-      assets['bg3']!,
-      assets['small_fox']!,
-    ];
-    return roomObjects;
-  }
-
-  // 사용자 방 방문
-  List<Widget> goFriendRoom(int userId) {
-    isMyRoom = false;
-
-    // TODO change room objects from DB
-    List<Widget> roomObjects = [
-      assets['bg2']!,
-      assets['small_fox']!,
-      assets['mid_fox']!,
-    ];
-    return roomObjects;
+  // 방에 놓을 오브젝트들
+  List<Widget> getObjects() {
+    if (isMyRoom()) {
+      return [
+        assets['bg3']!,
+        assets['small_fox']!,
+      ];
+    } else {
+      return [
+        assets['bg2']!,
+        assets['small_fox']!,
+        assets['mid_fox']!,
+      ];
+    }
   }
 }

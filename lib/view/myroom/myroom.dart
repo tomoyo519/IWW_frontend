@@ -73,13 +73,12 @@ class _RenderMyRoomState extends State<RenderMyRoom> {
 
     // Naviator를 통해서 argument를 전달할 경우 받는 방법
     try {
-      roomOwner = ModalRoute.of(context)!.settings.arguments as int;
+      roomState.roomOwner = ModalRoute.of(context)!.settings.arguments as int;
     } catch (e) {
       print("[log/myroom]: $e");
     }
 
-    return Stack(
-        alignment: Alignment.center, children: roomState.getObjects(roomOwner));
+    return Stack(alignment: Alignment.center, children: roomState.getObjects());
 
     // 유저의 펫 정보 불러오기
 
@@ -139,7 +138,7 @@ class UnderLayer extends StatelessWidget {
     return Container(
       height: MediaQuery.of(context).padding.top + 30,
       color: Colors.transparent,
-      child: context.watch<MyRoomViewModel>().isMyRoom
+      child: context.watch<MyRoomViewModel>().isMyRoom()
           ? StatusBar()
           : SizedBox(height: 110, width: 20), // TODO chatting으로 변경
       // BottomButtons()
@@ -254,6 +253,23 @@ class BottomButtons extends StatelessWidget {
     // NOTE 여기서 비동기 연산 수행
     final authService = Provider.of<AuthService>(context);
     final commentsProvider = context.read<CommentsProvider>();
+    var roomState = context.watch<MyRoomViewModel>();
+
+    ElevatedButton buildFriendButton() {
+      if (roomState.isMyRoom()) {
+        return ElevatedButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/friends');
+            },
+            child: Text('친구목록'));
+      } else {
+        return ElevatedButton(
+            onPressed: () {
+              // TODO 친구추가 기능
+            },
+            child: Text('친구추가'));
+      }
+    }
 
     return SizedBox(
       height: 50,
@@ -288,14 +304,7 @@ class BottomButtons extends StatelessWidget {
               },
               child: Text('인벤토리')),
           SizedBox(width: 20),
-          ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamedAndRemoveUntil(
-                    context, '/friends', (Route<dynamic> route) => false);
-                //TODO 이 코드로 교체할 수 있게 시도해보자
-                //context.read<MyRoomViewModel>().goFriendRoom(1);
-              },
-              child: Text('친구목록')),
+          buildFriendButton(),
         ],
       ),
     );
