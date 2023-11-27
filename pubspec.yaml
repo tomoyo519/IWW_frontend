@@ -50,7 +50,7 @@ dependencies:
   sqlite3_flutter_libs: ^0.5.0
   table_calendar: ^3.0.8
   transparent_image: ^2.0.1
-  image_picker: ^0.8.4+4
+  image_picker: ^0.8.3+1
   multipart_request_null_safety: ^0.3.4
 
 dev_dependencies:

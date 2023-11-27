@@ -44,7 +44,7 @@ class RemoteDataSource {
   static Future<http.StreamedResponse> patchFormData(String url, String field,
       {Map<String, dynamic>? body, File? file, String? filename}) async {
     var request = http.MultipartRequest('PATCH', Uri.parse(server + url));
-    print('🏃🏻🏃🏻🏃🏻🏃🏻🏃🏻🏃🏻🏃🏻🏃🏻🏃🏻너니?');
+
     if (body != null) {
       // 요청 본문
       for (String key in body.keys) {
@@ -53,11 +53,17 @@ class RemoteDataSource {
     }
     if (file != null) {
       // 파일
-      request.files.add(http.MultipartFile(
-          field, file.readAsBytes().asStream(), file.lengthSync(),
-          filename: filename));
+      // request.files.add(http.MultipartFile(
+      //     field, file.readAsBytes().asStream(), file.lengthSync(),
+      //     filename: filename));
+      LOG.log('파일경로: ${filename}');
+      request.files.add(await http.MultipartFile.fromPath('file', filename!));
+      var res = await request.send();
+      LOG.log('사진 전송 결과: @@@${res.statusCode}');
+      return res;
+    } else {
+      throw Exception('file must not be null');
     }
-    return await request.send();
   }
 
   // POST json

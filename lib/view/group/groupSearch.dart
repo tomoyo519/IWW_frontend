@@ -33,10 +33,9 @@ class _GroupSearchState extends State<GroupSearch> {
         .get(Uri.parse(
             'http://yousayrun.store:8088/group/search/6/${labelNum}/${keyword}'))
         .catchError((err) {
-      print(err);
       return null;
     });
-    print(result.body);
+
     if (result.statusCode == 200) {
       setState(() {
         groupList = jsonDecode(result.body);

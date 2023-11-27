@@ -1,7 +1,14 @@
 import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/view/group/groupDetail.dart';
+import 'package:iww_frontend/datasource/remoteDataSource.dart';
+import 'groupDetail.dart';
+import 'newGroup.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/view/_common/spinner.dart';
 import 'package:lottie/lottie.dart';
 
 class GroupList extends StatefulWidget {
@@ -15,17 +22,17 @@ class _GroupListState extends State<GroupList> {
   List<dynamic> groups = [];
 
   getList() async {
+    print('찍히긴 하고요?');
     // TODO - user_id 변경해야해
-    var result = await http
-        .get(Uri.parse('http://yousayrun.store:8088/group/6/groups'))
-        .catchError((err) {
-      print(err);
-      return null;
-    });
-    print(result.body);
-    setState(() {
-      groups = jsonDecode(result.body);
-    });
+    var result = await RemoteDataSource.get('/group/1/groups');
+    if (result.statusCode == 200) {
+      Map<String, dynamic> jsonData = jsonDecode(result.body);
+      setState(() {
+        List<dynamic> result = jsonData['result'];
+        LOG.log('thisisgroups:P{:::::::::::$result');
+        groups = result;
+      });
+    }
   }
 
   @override
@@ -72,10 +79,12 @@ class _GroupListState extends State<GroupList> {
                           ],
                         ),
                       ))
-                  : Lottie.asset('assets/spinner.json',
-                      repeat: true,
-                      animate: true,
-                      height: MediaQuery.of(context).size.height * 0.3);
+                  : Container(
+                      child: Lottie.asset('assets/spinner.json',
+                          repeat: true,
+                          animate: true,
+                          height: MediaQuery.of(context).size.height * 0.3),
+                    );
             }),
       ),
     ]);
