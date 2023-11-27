@@ -179,62 +179,75 @@ class _StatusBarState extends State<StatusBar> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Row(
-            children: [
-              Flexible(
-                flex: 1,
-                child: Text(
-                  'HP',
-                  style: TextStyle(fontSize: 20),
-                  textAlign: TextAlign.left,
+      padding: const EdgeInsets.all(30.0),
+      child: Container(
+        padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+        decoration: BoxDecoration(
+          color: Color.fromRGBO(0, 0, 0, 0.3),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Row(
+              children: [
+                Flexible(
+                  flex: 1,
+                  child: Text(
+                    'HP',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
                 ),
-              ),
-              SizedBox(width: 30),
-              Flexible(
-                flex: 8,
-                child: LinearProgressIndicator(
-                  value: _hp,
-                  minHeight: 14,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                      const Color.fromARGB(255, 239, 118, 110)),
-                  backgroundColor: Colors.grey[200],
-                  semanticsLabel: 'Linear progress indicator',
+                SizedBox(width: 30),
+                Flexible(
+                  flex: 8,
+                  child: LinearProgressIndicator(
+                    value: _hp,
+                    minHeight: 14,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                        const Color.fromARGB(255, 239, 118, 110)),
+                    backgroundColor: Colors.grey[200],
+                    semanticsLabel: 'Linear progress indicator',
+                  ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(height: 10),
-          Row(
-            children: [
-              Flexible(
-                flex: 1,
-                child: Text(
-                  'EXP',
-                  style: TextStyle(fontSize: 20),
-                  textAlign: TextAlign.left,
+              ],
+            ),
+            SizedBox(height: 10),
+            Row(
+              children: [
+                Flexible(
+                  flex: 1,
+                  child: Text(
+                    'EXP',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
                 ),
-              ),
-              SizedBox(width: 20),
-              Flexible(
-                flex: 6,
-                child: LinearProgressIndicator(
-                  value: _exp,
-                  minHeight: 14,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                      Color.fromARGB(255, 155, 239, 110)),
-                  backgroundColor: Colors.grey[200],
-                  semanticsLabel: 'Linear progress indicator',
+                SizedBox(width: 20),
+                Flexible(
+                  flex: 6,
+                  child: LinearProgressIndicator(
+                    value: _exp,
+                    minHeight: 14,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                        Color.fromARGB(255, 155, 239, 110)),
+                    backgroundColor: Colors.grey[200],
+                    semanticsLabel: 'Linear progress indicator',
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
