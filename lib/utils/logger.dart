@@ -14,7 +14,7 @@ class LOG {
     final fileName = match?.group(1);
     final lineNumber = match?.group(2);
 
-    var emoji = [" ", "🤍 ", "💚 ", "💜 "];
+    var emoji = ["", "🤍 ", "💚 ", "💜 "];
     var show =
         (level == null || level > emoji.length - 1) ? emoji[0] : emoji[level];
     final logMessage = ("[$show$_prefix] [$fileName:$lineNumber] $message");

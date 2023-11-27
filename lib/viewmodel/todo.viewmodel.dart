@@ -127,8 +127,8 @@ class TodoViewModel extends ChangeNotifier {
   Future<void> fetchTodos() async {
     try {
       int? userId = _authService.user?.user_id;
-      LOG.log("#### $userId");
       todos = (await _todoRepository.getTodos(userId)) ?? [];
+      // LOG.log("data?? ");
       waiting = false;
     } catch (error) {
       LOG.log("fetch error $error");
