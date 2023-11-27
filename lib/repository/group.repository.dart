@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
-import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/Group/group.model.dart';
 
 class GroupRepository {
