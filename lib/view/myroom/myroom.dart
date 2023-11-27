@@ -64,24 +64,22 @@ class RenderMyRoom extends StatefulWidget {
 }
 
 class _RenderMyRoomState extends State<RenderMyRoom> {
-  var roomObjects = <Widget>[];
+  int roomOwner = 0;
 
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
     var roomState = context.watch<MyRoomViewModel>();
 
-    LOG.log(roomState.getRoomObjects.length.toString());
-
     // Naviator를 통해서 argument를 전달할 경우 받는 방법
     try {
-      roomState.isMyRoom = ModalRoute.of(context)!.settings.arguments as bool;
+      roomOwner = ModalRoute.of(context)!.settings.arguments as int;
     } catch (e) {
       print("[log/myroom]: $e");
     }
 
     return Stack(
-        alignment: Alignment.center, children: roomState.getRoomObjects);
+        alignment: Alignment.center, children: roomState.getObjects(roomOwner));
 
     // 유저의 펫 정보 불러오기
 
@@ -294,7 +292,8 @@ class BottomButtons extends StatelessWidget {
               onPressed: () {
                 Navigator.pushNamedAndRemoveUntil(
                     context, '/friends', (Route<dynamic> route) => false);
-                // context.read<MyRoomViewModel>().goFriendRoom(1);
+                //TODO 이 코드로 교체할 수 있게 시도해보자
+                //context.read<MyRoomViewModel>().goFriendRoom(1);
               },
               child: Text('친구목록')),
         ],

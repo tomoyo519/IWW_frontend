@@ -1,9 +1,9 @@
+import 'package:babylonjs_viewer/babylonjs_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 
 class MyRoomViewModel with ChangeNotifier {
   bool isMyRoom = true;
-  List<Widget> roomObjects = <Widget>[];
 
   // TODO get assets from DB
   Map<String, dynamic> assets = {
@@ -16,8 +16,8 @@ class MyRoomViewModel with ChangeNotifier {
       fit: BoxFit.fitWidth,
     ),
     'bg3': Image.asset(
-      'assets/background3.png',
-      fit: BoxFit.fitHeight,
+      'assets/background4.png',
+      fit: BoxFit.fill,
     ),
     'fish': ModelViewer(
       // loading: Loading.eager,
@@ -139,34 +139,35 @@ class MyRoomViewModel with ChangeNotifier {
     ),
   };
 
-  // 첫 위젯 상태: 나의 방
-  MyRoomViewModel() {
-    goMyRoom();
-  }
-
-  get getRoomObjects => roomObjects;
-
-  void setRoom(int? value) {
-    int friendId = value ?? 0;
+  //
+  List<Widget> getObjects(int? roomOwenerId) {
+    int friendId = roomOwenerId ?? 0;
     isMyRoom = (friendId == 0);
 
-    isMyRoom ? goMyRoom() : goFriendRoom(friendId);
+    return isMyRoom ? goMyRoom() : goFriendRoom(friendId);
   }
 
   // 집으로 가자
-  void goMyRoom() {
+  List<Widget> goMyRoom() {
     isMyRoom = true;
 
-    roomObjects = [assets['bg1']!, assets['small_fox']!];
-    notifyListeners();
+    List<Widget> roomObjects = [
+      assets['bg3']!,
+      assets['small_fox']!,
+    ];
+    return roomObjects;
   }
 
   // 사용자 방 방문
-  void goFriendRoom(int userId) {
+  List<Widget> goFriendRoom(int userId) {
     isMyRoom = false;
 
     // TODO change room objects from DB
-    roomObjects = [assets['bg2']!, assets['mid_fox']!];
-    notifyListeners();
+    List<Widget> roomObjects = [
+      assets['bg2']!,
+      assets['small_fox']!,
+      assets['mid_fox']!,
+    ];
+    return roomObjects;
   }
 }
