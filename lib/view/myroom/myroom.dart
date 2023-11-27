@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/comment.repository.dart';
 import 'package:iww_frontend/repository/room.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
+import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';
-import 'package:iww_frontend/view/pet/pet.dart';
-import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:iww_frontend/view/_common/bottombar.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
+import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 
 class MyRoom extends StatelessWidget {
   const MyRoom({super.key});
@@ -27,15 +27,26 @@ class MyRoom extends StatelessWidget {
                   roomRepository,
                   commentRepository,
                 ),
-            child: ChangeNotifierProvider<MyRoomState>(
-              create: (context) => MyRoomState(),
+            child: ChangeNotifierProvider<MyRoomViewModel>(
+              create: (context) => MyRoomViewModel(),
               child: SafeArea(
-                child: Column(
+                child: Stack(
                   children: [
-                    Expanded(flex: 1, child: RenderMyRoom()),
-                    UnderLayer(),
-                    BottomButtons(),
-                    SizedBox(height: 20),
+                    RenderMyRoom(),
+                    // Positioned(height: 800, bottom: 100, child: UnderLayer()),
+                    Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: 30,
+                        height: 150,
+                        child: UnderLayer()),
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 10,
+                      height: 50,
+                      child: BottomButtons(),
+                    ),
                   ],
                 ),
               ),
@@ -44,167 +55,31 @@ class MyRoom extends StatelessWidget {
   }
 }
 
-class MyRoomState extends ChangeNotifier {
-  bool isMyRoom = true;
+// 나의 펫 렌더링
+class RenderMyRoom extends StatefulWidget {
+  const RenderMyRoom({super.key});
 
-  void toggleRoom() {
-    isMyRoom = !isMyRoom;
-    notifyListeners();
-  }
+  @override
+  State<RenderMyRoom> createState() => _RenderMyRoomState();
 }
 
-class RenderMyRoom extends StatelessWidget {
-  RenderMyRoom({Key? key}) : super(key: key);
-
-  var sources = {
-    'bg1': Image.asset(
-      'assets/background.png',
-      fit: BoxFit.cover,
-    ),
-    'bg2': Image.asset(
-      'assets/wallpaper.jpg',
-      height: 500,
-      fit: BoxFit.fitWidth,
-    ),
-    'fish': ModelViewer(
-      // loading: Loading.eager,
-      shadowIntensity: 1,
-      src: 'assets/koi_fish.glb',
-      alt: 'koi fish',
-      autoPlay: true,
-      disableZoom: true,
-      cameraControls: false,
-      animationName: 'morphBake',
-      cameraOrbit: '30deg 60deg 0m',
-      cameraTarget: '4m 6m 2m',
-    ),
-    'astronaut': ModelViewer(
-      // loading: Loading.eager,
-      shadowIntensity: 1,
-      src: 'assets/koi_fish.glb',
-      alt: 'astronaut',
-      // autoRotate: true,
-      autoPlay: true,
-      disableZoom: true,
-      cameraControls: false,
-      // animationName: "walk",
-      cameraOrbit: "40deg 60eg 0m",
-      // theta, phi, radius
-      cameraTarget: "0.5m 1.5m 2m", // x(왼쪽 위), y(높이) ,z (오른쪽 위)
-    ),
-    'robot': ModelViewer(
-      // loading: Loading.eager,
-      shadowIntensity: 1,
-      src: 'assets/robot_walk_idle.usdz',
-      alt: 'robot',
-      // autoRotate: true,
-      autoPlay: true,
-      disableZoom: true,
-      cameraControls: false,
-      animationName: "walk",
-      cameraOrbit: "30deg 60deg 0m",
-      // theta, phi, radius
-      cameraTarget: "1m 4m 4m", // x(왼쪽 위), y(높이) ,z (오른쪽 위)
-    ),
-    'animals': ModelViewer(
-      // loading: Loading.eager,
-      // shadowIntensity: 1,
-      src: 'assets/aa.glb',
-      alt: 'animals',
-      // autoRotate: true,
-      autoPlay: true,
-      disableZoom: true,
-      // cameraControls: false,
-      // animationName: "walk",
-      cameraOrbit: "30deg 30deg 2m",
-      // theta, phi, radius
-      cameraTarget: "2m 2m 2m", // x(왼쪽 위), y(높이) ,z (오른쪽 위)
-    ),
-    'cat': ModelViewer(
-      // loading: Loading.eager,
-      shadowIntensity: 1,
-      src: 'assets/cat.glb',
-      alt: 'cuttest pet ever',
-      // autoRotate: true,
-      autoPlay: true,
-      // iosSrc: 'assets/cat2.usdz',
-      cameraOrbit: "30deg,180deg, 0m",
-      cameraTarget: "0m 300m 300m",
-      disableZoom: true,
-    ),
-    'kitsune': ModelViewer(
-      // loading: Loading.eager,
-      shadowIntensity: 1,
-      src: 'assets/kitsune.glb',
-      alt: 'kitsune',
-      // autoRotate: true,
-      autoPlay: true,
-      animationName: "walk",
-      cameraOrbit: "30deg, 0deg, 0m",
-      cameraTarget: "0m 1m 0.4m",
-      disableZoom: true,
-    ),
-    'kitsune_ani': ModelViewer(
-      // loading: Loading.eager,
-      shadowIntensity: 1,
-      src: 'assets/kitsune_ani.glb',
-      alt: 'kitsune',
-      // autoRotate: true,
-      // autoPlay: true,
-      // iosSrc: 'assets/cat2.usdz',
-      cameraOrbit: "330deg, 0deg, 0m",
-      cameraTarget: "0m 2m 1m",
-      disableZoom: true,
-    ),
-    'small_fox': ModelViewer(
-      // loading: Loading.eager,
-      shadowIntensity: 1,
-      src: 'assets/small_fox.glb',
-      alt: 'kitsune',
-      // autoRotate: true,
-      autoPlay: true,
-      // iosSrc: 'assets/cat2.usdz',
-      animationName: "Jump",
-      cameraTarget: "0.3m 1.2m 1m",
-      interactionPrompt: InteractionPrompt.none,
-      cameraOrbit: "330deg,0deg, 0m",
-      disableZoom: true,
-    ),
-    'mid_fox': ModelViewer(
-      // loading: Loading.eager,
-      shadowIntensity: 1,
-      src: 'assets/mid_fox.glb',
-      alt: 'kitsune',
-      // autoRotate: true,
-      autoPlay: true,
-      // iosSrc: 'assets/cat2.usdz',
-      cameraTarget: "0m 1m 0.6m",
-      animationName: "Idle_A",
-      cameraOrbit: "30deg, 150deg, 0m",
-      interactionPrompt: InteractionPrompt.none,
-      disableZoom: true,
-    ),
-  };
+class _RenderMyRoomState extends State<RenderMyRoom> {
+  int roomOwner = 0;
 
   @override
   Widget build(BuildContext context) {
-    var myRoomState = context.watch<MyRoomState>();
     final authService = Provider.of<AuthService>(context);
-    final commentsProvider = context.read<CommentsProvider>();
+    var roomState = context.watch<MyRoomViewModel>();
 
-    // get argument from navigator, context
+    // Naviator를 통해서 argument를 전달할 경우 받는 방법
     try {
-      myRoomState.isMyRoom = ModalRoute.of(context)!.settings.arguments as bool;
+      roomOwner = ModalRoute.of(context)!.settings.arguments as int;
     } catch (e) {
-      print(e);
+      print("[log/myroom]: $e");
     }
 
-    Stack layers = Stack(
-      alignment: Alignment.center,
-      children: [
-        Pet.of(authService.user!.pet_id!),
-      ],
-    );
+    return Stack(
+        alignment: Alignment.center, children: roomState.getObjects(roomOwner));
 
     // 유저의 펫 정보 불러오기
 
@@ -218,11 +93,8 @@ class RenderMyRoom extends StatelessWidget {
     //   layers.children.add(sources['mid_fox']!);
     //   layers.children.add(sources['small_fox']!);
     // }
-
-    return layers;
   }
 }
-
 // class MyRoom extends StatefulWidget {
 //   MyRoom({Key? key}) : super(key: key);
 
@@ -260,19 +132,22 @@ class RenderMyRoom extends StatelessWidget {
 class UnderLayer extends StatelessWidget {
   UnderLayer({Key? key}) : super(key: key);
 
+  // myroom: status bar, other's room: chatting
+  // TODO 채팅 구현 후 채팅창 삽입
   @override
   Widget build(BuildContext context) {
-    var myRoomState = context.watch<MyRoomState>();
-
-    return SizedBox(
-      height: 200,
-      child:
-          myRoomState.isMyRoom ? StatusBar() : SizedBox(height: 150, width: 20),
+    return Container(
+      height: MediaQuery.of(context).padding.top + 30,
+      color: Colors.transparent,
+      child: context.watch<MyRoomViewModel>().isMyRoom
+          ? StatusBar()
+          : SizedBox(height: 110, width: 20), // TODO chatting으로 변경
       // BottomButtons()
     );
   }
 }
 
+// 펫의 체력, 경험치 표시
 class StatusBar extends StatefulWidget {
   const StatusBar({super.key});
 
@@ -285,6 +160,7 @@ class _StatusBarState extends State<StatusBar> with TickerProviderStateMixin {
   var _hp = 0.3;
   var _exp = 0.1;
 
+  // TODO 할 일을 완료했을때 체력, 경험치가 오르도록 수정 필요
   @override
   void initState() {
     super.initState();
@@ -293,6 +169,8 @@ class _StatusBarState extends State<StatusBar> with TickerProviderStateMixin {
       setState(() {
         _hp >= 1 ? _hp : _hp += 0.1;
         _exp >= 1 ? _exp : _exp += 0.2;
+
+        LOG.log("HP: $_hp, EXP: $_exp");
       });
     });
   }
@@ -305,62 +183,74 @@ class _StatusBarState extends State<StatusBar> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Row(
-              children: const [
-                SizedBox(width: 10),
-                Text(
+    return Container(
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Row(
+            children: [
+              Flexible(
+                flex: 1,
+                child: Text(
                   'HP',
                   style: TextStyle(fontSize: 20),
                   textAlign: TextAlign.left,
-                )
-              ],
-            ),
-            LinearProgressIndicator(
-              value: _hp,
-              minHeight: 14,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                  const Color.fromARGB(255, 239, 118, 110)),
-              backgroundColor: Colors.grey[200],
-              semanticsLabel: 'Linear progress indicator',
-            ),
-            Row(
-              children: const [
-                SizedBox(width: 10),
-                Text(
+                ),
+              ),
+              SizedBox(width: 30),
+              Flexible(
+                flex: 8,
+                child: LinearProgressIndicator(
+                  value: _hp,
+                  minHeight: 14,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      const Color.fromARGB(255, 239, 118, 110)),
+                  backgroundColor: Colors.grey[200],
+                  semanticsLabel: 'Linear progress indicator',
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 10),
+          Row(
+            children: [
+              Flexible(
+                flex: 1,
+                child: Text(
                   'EXP',
                   style: TextStyle(fontSize: 20),
                   textAlign: TextAlign.left,
-                )
-              ],
-            ),
-            LinearProgressIndicator(
-              value: _exp,
-              minHeight: 14,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                  Color.fromARGB(255, 155, 239, 110)),
-              backgroundColor: Colors.grey[200],
-              semanticsLabel: 'Linear progress indicator',
-            ),
-          ],
-        ),
+                ),
+              ),
+              SizedBox(width: 20),
+              Flexible(
+                flex: 6,
+                child: LinearProgressIndicator(
+                  value: _exp,
+                  minHeight: 14,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      Color.fromARGB(255, 155, 239, 110)),
+                  backgroundColor: Colors.grey[200],
+                  semanticsLabel: 'Linear progress indicator',
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 }
 
+// 하단 버튼 세개: 방명록, 인벤토리, 친구목록
 class BottomButtons extends StatelessWidget {
   const BottomButtons({super.key});
 
   @override
   Widget build(BuildContext context) {
-    var myRoomState = context.watch<MyRoomState>();
-
     // NOTE 여기서 비동기 연산 수행
     final authService = Provider.of<AuthService>(context);
     final commentsProvider = context.read<CommentsProvider>();
@@ -402,6 +292,8 @@ class BottomButtons extends StatelessWidget {
               onPressed: () {
                 Navigator.pushNamedAndRemoveUntil(
                     context, '/friends', (Route<dynamic> route) => false);
+                //TODO 이 코드로 교체할 수 있게 시도해보자
+                //context.read<MyRoomViewModel>().goFriendRoom(1);
               },
               child: Text('친구목록')),
         ],
