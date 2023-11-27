@@ -114,19 +114,3 @@ class MyApp extends StatelessWidget {
     return MyHomePage();
   }
 }
-
-    // AuthService authService = context.watch<AuthService>();
-    // AuthStatus status = authService.status;
-
-    // authService.login(background: false);
-    // LOG.log("Initialize user info: status $status");
-    // switch (status) {
-    //   case AuthStatus.success:
-    //     return MyHomePage();
-    //   case AuthStatus.waiting:
-    //     return LoadingPage();
-    //   case AuthStatus.failed:
-    //     return LandingPage();
-    //   case AuthStatus.permission:
-    //     return LandingPage();
-    // }
