@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
 import 'package:iww_frontend/view/group/groupMain.dart';
 import 'package:iww_frontend/view/todo/fields/label_list_modal.dart';
@@ -87,6 +88,7 @@ class _NewGroupState extends State<NewGroup> {
 
   @override
   Widget build(BuildContext context) {
+    final _userInfo = Provider.of<UserInfo>(context, listen: false);
     final _groupRepository =
         Provider.of<GroupRepository>(context, listen: false);
     final _authService = Provider.of<AuthService>(context, listen: false);
@@ -205,7 +207,7 @@ class _NewGroupState extends State<NewGroup> {
                                                             create: (context) =>
                                                                 MyGroupViewModel(
                                                                     _groupRepository,
-                                                                    _authService)),
+                                                                    _userInfo)),
                                                       ],
                                                       child: GroupNameField(),
                                                     ),
@@ -224,7 +226,7 @@ class _NewGroupState extends State<NewGroup> {
                                                                   create: (context) =>
                                                                       MyGroupViewModel(
                                                                           _groupRepository,
-                                                                          _authService)),
+                                                                          _userInfo)),
                                                             ],
                                                             child:
                                                                 GroupNameField(),
@@ -236,7 +238,7 @@ class _NewGroupState extends State<NewGroup> {
                                                                   create: (context) =>
                                                                       MyGroupViewModel(
                                                                           _groupRepository,
-                                                                          _authService)),
+                                                                          _userInfo)),
                                                             ],
                                                             child:
                                                                 GroupRoutineField(),
@@ -248,7 +250,7 @@ class _NewGroupState extends State<NewGroup> {
                                                                   create: (context) =>
                                                                       MyGroupViewModel(
                                                                           _groupRepository,
-                                                                          _authService)),
+                                                                          _userInfo)),
                                                             ],
                                                             child:
                                                                 GroupDescField(),
