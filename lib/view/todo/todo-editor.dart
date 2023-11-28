@@ -48,11 +48,11 @@ class TodoEditorModal extends StatelessWidget {
 
       final viewModel = context.read<TodoEditorViewModel>();
       final authService = Provider.of<AuthService>(context, listen: false);
-      int userId = authService.user!.user_id;
+      // int userId = authService.user!.user_id ?? 1;
+      int userId = 1;
 
       // 할일 신규 생성
       if (viewModel.todoData['todo_id'] == null) {
-        print('${viewModel.todoData} viewModel.todoData');
         await viewModel.createTodo(userId).then((result) {
           todoViewModel.fetchTodos();
           if (result == true && context.mounted) {

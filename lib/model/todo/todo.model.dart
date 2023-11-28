@@ -19,7 +19,6 @@ class Todo {
   int? grpId;
   bool todoDeleted;
 
-
   Todo({
     required this.todoId,
     required this.userId,
@@ -34,7 +33,6 @@ class Todo {
     this.grpId,
     bool? todoDeleted,
   })  : todoDate = todoDate ?? defaultDate(),
-
         todoDone = todoDone ?? false,
         todoLabel = todoLabel ?? 0,
         todoStart = todoStart ?? "00:00",

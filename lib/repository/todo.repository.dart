@@ -14,9 +14,7 @@ class TodoRepository {
   Future<List<Todo>?> getTodos(int? userId) async {
     return await RemoteDataSource.get("/todo/user/${userId ?? 1}")
         .then((response) {
-      print(response.statusCode);
       if (response.statusCode == 200) {
-        print(response.body);
         List<dynamic> jsonData = jsonDecode(response.body);
 
         // 만약 할일이 없으면
@@ -32,9 +30,6 @@ class TodoRepository {
                   element.todoDate,
                 ).isAfter(weekAgo))
             .toList();
-
-        // 정렬해서 넘김
-        data.sort((a, b) => a.todoDate.compareTo(b.todoDate));
 
         // 정렬해서 넘김
         data.sort((a, b) => a.todoDate.compareTo(b.todoDate));
@@ -78,32 +73,30 @@ class TodoRepository {
     });
   }
 
-  // Future<bool> checkTodo(String id, bool checked) async {
-  //   return await RemoteDataSource.patch(
-  //     "/todo/$id",
-  //     body: {"todo_done": checked},
-  //   ).then((response) {
-  //     LOG.log("Check Todo: ${response.statusCode}, ${response.body}");
-  //     if (response.statusCode == 200) {
-  //       return true;
-  //     }
-  //     return false;
-  //   });
-  // }
-
   /// ================== ///
   ///       Patch       ///
   /// ================== ///
+  Future<bool> checkNormalTodo(String id, bool checked) async {
+    return await RemoteDataSource.patch(
+      "/todo/$id",
+      body: {"todo_done": checked},
+    ).then((response) {
+      LOG.log("Check Todo: ${response.statusCode}, ${response.body}");
+      if (response.statusCode == 200) {
+        return true;
+      }
+      return false;
+    });
+  }
 
-  Future<bool> checkTodo(
+  // 그룹 할일 체크
+  Future<bool> checkGroupTodo(
       String userId, String id, bool checked, String path) async {
-    print('path:$path');
     return await RemoteDataSource.patch(
       "/todo/$id",
       body: {"todo_done": checked},
     ).then((response) async {
       if (response.statusCode == 200) {
-        print('response.body : ${response.body}');
         if (path.isNotEmpty) {
           // TODO - 사진 전송 연결
           var image = File(path);
@@ -111,7 +104,6 @@ class TodoRepository {
                   "/group/$id/user/$userId/image", 'file',
                   file: image, filename: path)
               .then((res) {
-            print('res.statusCode: ${res.statusCode}');
             if (res.statusCode == 200) {
               return true;
             }
@@ -131,7 +123,6 @@ class TodoRepository {
   ///       Delete       ///
   /// ================== ///
   Future<bool> deleteTodo(String id) async {
-    print('삭제 실행');
     return await RemoteDataSource.delete(
       "/todo/$id",
     ).then((response) {

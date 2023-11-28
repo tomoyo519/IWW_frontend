@@ -77,7 +77,7 @@ class TodoEditorViewModel extends ChangeNotifier {
     // };
     todoData['user_id'] = userId;
     todoData['todo_start'] = timeString;
-    LOG.log("$todoData");
+
     return await _todoRepository.createTodo(todoData);
   }
 
@@ -85,7 +85,6 @@ class TodoEditorViewModel extends ChangeNotifier {
   Future<bool> updateTodo() async {
     var id = todoData["todo_id"];
 
-    print(' 🤔🤔🤔🤔 $todoData');
     // String timeString = "$hour시 $min분";
     String timeString =
         '${hour.toString().padLeft(2, '0')}:${min.toString().padLeft(2, '0')}:00';
@@ -128,6 +127,7 @@ class TodoViewModel extends ChangeNotifier {
   Future<void> fetchTodos() async {
     try {
       int? userId = _authService.user?.user_id;
+      LOG.log("#### $userId");
       todos = (await _todoRepository.getTodos(userId)) ?? [];
       waiting = false;
     } catch (error) {
@@ -147,12 +147,29 @@ class TodoViewModel extends ChangeNotifier {
     return await _todoRepository.deleteTodo(todoId.toString());
   }
 
-  //할일 완료
-
+  // 할일 완료
+  // todoId, checked 필수인자, userId, path 선택인자
   Future<bool> checkTodo(
-      int userId, int todoId, bool checked, String path) async {
-    return await _todoRepository.checkTodo(
-        userId.toString(), todoId.toString(), checked, path);
+    int todoId,
+    bool checked, {
+    int? userId,
+    String? path,
+  }) async {
+    if (path == null) {
+      // 만약 이미지 경로가 없으면 일반 할일 체크로 처리합니다.
+      return await _todoRepository.checkNormalTodo(
+        todoId.toString(),
+        checked,
+      );
+    } else {
+      // 이미지 경로가 있으면 그룹 할일 체크로 처리합니다.
+      return await _todoRepository.checkGroupTodo(
+        userId.toString(),
+        todoId.toString(),
+        checked,
+        path,
+      );
+    }
   }
 
   String _selectedDate = '';

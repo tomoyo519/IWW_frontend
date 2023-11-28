@@ -110,10 +110,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<AuthService>(context, listen: false).initialize();
+    // Provider.of<AuthService>(context, listen: false).initialize();
 
     // 내비게이션 전 보일 로딩페이지
-    return LoadingPage();
+    return MyHomePage();
   }
 }
 

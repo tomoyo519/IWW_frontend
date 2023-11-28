@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
+import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:camera/camera.dart';
 import 'dart:io';
-import 'package:iww_frontend/repository/todo.repository.dart';
 
 // TodoList의 개별 타일
 class TodoListTileLayout extends StatefulWidget {
@@ -21,23 +20,34 @@ class TodoListTileLayout extends StatefulWidget {
   State<TodoListTileLayout> createState() => _TodoListTileLayoutState();
 }
 
+// 타일 상태
 class _TodoListTileLayoutState extends State<TodoListTileLayout> {
-  bool isChecked = false;
   late File _imageFile;
   final _picker = ImagePicker();
 
-  void _onCheck(BuildContext context, bool? value) {
+  // 스낵바를 보여줍니다
+  void _showCheckSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  // 개인 투두를 체크한 경우
+  void _onNormalTodoCheck(BuildContext context, bool complete) {
     final viewModel = context.read<TodoViewModel>();
-    // viewModel.checkTodo(widget.todo.todoId, value ?? false);
+    viewModel.checkTodo(widget.todo.todoId, complete);
     viewModel.fetchTodos();
+    if (complete) {
+      _showCheckSnackBar(context, "할일이 완료되었어요!");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    bool isChecked = widget.todo.todoDone;
+    bool isGroup = widget.todo.grpId != null;
 
     DateTime yesterday = DateTime.now().subtract(Duration(days: 1));
     bool isDelayed = DateTime.parse(widget.todo.todoDate).isBefore(yesterday);
+
     String getFormattedDate() {
       final now = DateTime.now();
       final formatter = DateFormat('yyyy-MM-dd');
@@ -46,10 +56,12 @@ class _TodoListTileLayoutState extends State<TodoListTileLayout> {
 
     return Container(
       decoration: BoxDecoration(
-          border: Border(
-              bottom: BorderSide(
-        color: Colors.black12,
-      ))),
+        border: Border(
+          bottom: BorderSide(
+            color: Colors.black12,
+          ),
+        ),
+      ),
       child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -57,12 +69,18 @@ class _TodoListTileLayoutState extends State<TodoListTileLayout> {
             Checkbox(
               value: widget.todo.todoDone,
               onChanged: (bool? value) async {
-                _onCheck(context, value);
+                // null이면 아무 일도 발생하지 않음
+                if (value == null) return;
+
+                // 개인 todo 인 경우 UI 업데이트
+                if (!isGroup) {
+                  LOG.log("Check normal todo! $value");
+                  return _onNormalTodoCheck(context, value);
+                }
 
                 // 그룹 todo 인 경우 사진 인증으로 이동
-
-                //이미 체크 완료 되어있는 todo 의 체크를 해제하는 경우.
-                if (!value!) {
+                // 이미 체크 완료 되어있는 todo 의 체크를 해제하는 경우.
+                if (!value) {
                   showGeneralDialog(
                     context: context,
                     pageBuilder: (BuildContext buildContext,
@@ -78,15 +96,18 @@ class _TodoListTileLayoutState extends State<TodoListTileLayout> {
                                   final viewModel =
                                       context.read<TodoViewModel>();
                                   final result = await viewModel.checkTodo(
-                                      widget.todo.userId,
-                                      widget.todo.todoId,
-                                      false,
-                                      "");
+                                    widget.todo.todoId,
+                                    false,
+                                    userId: widget.todo.userId,
+                                    path: "",
+                                  );
                                   if (result == true && context.mounted) {
                                     Navigator.pop(context);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                            content: Text("할일 체크 해제 되었어요!")));
+                                    _showCheckSnackBar(
+                                        context, "할일 체크 해제 되었어요!");
+                                    // ScaffoldMessenger.of(context).showSnackBar(
+                                    //     SnackBar(
+                                    //         content: Text("할일 체크 해제 되었어요!")));
                                     viewModel.fetchTodos();
                                   }
                                 },
@@ -111,7 +132,7 @@ class _TodoListTileLayoutState extends State<TodoListTileLayout> {
                 }
 
                 // 체크가 되어있지 않은 todo를 사진전송 하고 완료 처리 하는 경우,
-                if (widget.todo.grpId != null && value!) {
+                if (widget.todo.grpId != null && value) {
                   final pickedFile =
                       await _picker.pickImage(source: ImageSource.camera);
                   print(pickedFile);
@@ -131,10 +152,11 @@ class _TodoListTileLayoutState extends State<TodoListTileLayout> {
                               onPressed: () async {
                                 final viewModel = context.read<TodoViewModel>();
                                 final result = await viewModel.checkTodo(
-                                    widget.todo.userId,
-                                    widget.todo.todoId,
-                                    true,
-                                    pickedFile.path);
+                                  widget.todo.todoId,
+                                  true,
+                                  userId: widget.todo.userId,
+                                  path: pickedFile.path,
+                                );
                                 print('result : $result');
                                 print('context.mounted:${context.mounted}');
                                 if (result == true && context.mounted) {
@@ -176,14 +198,7 @@ class _TodoListTileLayoutState extends State<TodoListTileLayout> {
                     );
                   }
                 }
-
-                setState(() {
-                  isChecked = value!;
-                });
               },
-
-              // onChanged: (bool? value) => _onCheck(context, value),
-
               side: BorderSide(color: Colors.black54),
               shape: CircleBorder(),
             ),

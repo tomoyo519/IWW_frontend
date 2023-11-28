@@ -1,46 +1,118 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/model/group/group.model.dart';
-import 'dart:developer';
-
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:iww_frontend/model/todo/todo.model.dart';
-import 'package:iww_frontend/repository/todo.repository.dart';
+import 'package:iww_frontend/model/group/groupDetail.model.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 
 // 그룹 리스트 화면의 상태를 관리
-class GroupViewModel extends ChangeNotifier {
+class MyGroupViewModel extends ChangeNotifier {
   final GroupRepository _groupRepository;
-  final Group _groupList;
   final AuthService _authService;
-  GroupViewModel(
-    this._groupRepository,
-    this._groupList,
-    this._authService,
-  ) : _groupData = _groupList.toMap() ?? <String, dynamic>{};
 
-  Map<String, dynamic> _groupData;
+  MyGroupViewModel(
+    this._groupRepository,
+    this._authService,
+  ) {
+    fetchMyGroupList();
+  }
+
+  // 폼 상태 관리
+  late Map<String, dynamic> _groupData;
   Map<String, dynamic> get groupData => _groupData;
 
-  List<dynamic> groups = [];
+  set groupDesc(String val) {
+    _groupData['grp_decs'] = val;
+    notifyListeners();
+  }
+
+  set groupCat(int val) {
+    _groupData['cat_id'] = val;
+    notifyListeners();
+  }
+
+  set groupName(String val) {
+    _groupData['grp_name'] = val;
+    notifyListeners();
+  }
+
+  set groupLoutine(Map<String, dynamic> val) {
+    _groupData['routInfo'] = val;
+    notifyListeners();
+  }
+
+  List<Group> groups = [];
   bool waiting = true;
   bool _isDisposed = false;
 
-  Future<void> fetchGroupList() async {
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
+  }
+
+  Future<void> fetchMyGroupList() async {
     try {
       int? userId = _authService.user?.user_id;
-      groups = (await _groupRepository.getMyGroupList(userId)) ?? [];
+      // TODO - userId 안들어옴;
+      // LOG.log('$userId');
+      groups = (await _groupRepository.getMyGroupList(1) ?? []);
+      LOG.log('groups: $groups');
       waiting = false;
     } catch (err) {
       waiting = false;
       groups = [];
     } finally {
-      if (!_isDisposed) {
-        waiting = false;
-        notifyListeners();
-      }
+      notifyListeners();
+      waiting = false;
+      if (!_isDisposed) {}
+    }
+  }
+
+  Future<bool?> createGroup(int userId) async {
+    groupData['user_id'] = userId;
+    return await _groupRepository.createGroup(groupData);
+  }
+}
+
+//그룹의 상세 화면의 상태를 관리
+
+class GroupDetailModel extends ChangeNotifier {
+  final GroupRepository _groupRepository;
+
+  GroupDetailModel(this._groupRepository) {
+    fetchMyGroupList();
+  }
+
+  GroupDetail? groupDetail;
+  List<RouteDetail> routeDetail = [];
+  List<GroupMember> grpMems = [];
+  bool waiting = true;
+  bool _isDisposed = false;
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
+  }
+
+  Future<void> fetchMyGroupList() async {
+    try {
+      groupDetail =
+          (await _groupRepository.getGroupDetail(1) ?? []) as GroupDetail?;
+      routeDetail = (await _groupRepository.getRouteDetail(1) ?? []);
+      grpMems = (await _groupRepository.getMember(1) ?? []);
+      LOG.log('groupDetail : $groupDetail');
+      LOG.log('routeDetail: $routeDetail');
+      LOG.log('grpMems: $grpMems');
+      waiting = false;
+    } catch (err) {
+      waiting = false;
+      groupDetail = null;
+    } finally {
+      notifyListeners();
+      waiting = false;
+      if (!_isDisposed) {}
     }
   }
 }

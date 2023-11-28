@@ -7,8 +7,17 @@ class ShopPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(actions: [
-        IconButton(
-            onPressed: () {}, icon: Icon(Icons.catching_pokemon_outlined))
+        Row(
+          children: [
+            IconButton(
+                onPressed: () {}, icon: Icon(Icons.catching_pokemon_outlined)),
+            IconButton(
+              icon: Icon(Icons.notifications_outlined),
+              onPressed: () {},
+              color: (Colors.black),
+            )
+          ],
+        )
       ]),
       body: ChangeNotifierProvider(
         create: (context) => ShopPageState(),
