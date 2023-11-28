@@ -94,7 +94,6 @@ class _GroupSearchState extends State<GroupSearch> {
                 child: ListView.builder(
                     itemCount: groupList.length,
                     itemBuilder: (c, i) {
-                      LOG.log('groupList[i] : ${groupList[i]}');
                       return TextButton(
                           onPressed: () {
                             Navigator.push(

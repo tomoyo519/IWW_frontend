@@ -70,11 +70,23 @@ class MyGroup extends StatelessWidget {
           ),
           bottomNavigationBar: MyBottomNav(),
           floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (c) => NewGroup()));
-              },
-              child: Icon(Icons.add)),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (c) => MultiProvider(
+                    providers: [
+                      ChangeNotifierProvider(
+                          create: (context) =>
+                              MyGroupViewModel(_groupRepository, _authService)),
+                    ],
+                    child: NewGroup(),
+                  ),
+                ),
+              );
+            },
+            child: Icon(Icons.add),
+          ),
         ));
   }
 }
