@@ -5,9 +5,13 @@ class MyRoomViewModel with ChangeNotifier {
   int _roomOwner = 0;
 
   final Map<String, AssetImage> _backgrounds = {
-    'bg1': AssetImage('assets/bg/background.png'),
-    'bg2': AssetImage('assets/bg/wallpaper.jpg'),
-    'bg3': AssetImage('assets/bg/background4.png'),
+    'bg1': AssetImage('assets/bg/bg1.png'),
+    'bg2': AssetImage('assets/bg/bg2.png'),
+    'bg3': AssetImage('assets/bg/bg3.png'),
+    'bg4': AssetImage('assets/bg/bg4.png'),
+    'bg5': AssetImage('assets/bg/bg5.png'),
+    'bg6': AssetImage('assets/bg/bg6.png'),
+    'bg7': AssetImage('assets/bg/bg7.jpeg'),
   };
 
   // TODO get assets from DB
@@ -89,7 +93,7 @@ class MyRoomViewModel with ChangeNotifier {
     if (isMyRoom()) {
       return [_assets['small_fox']!];
     } else {
-      return [_assets['small_fox'], _assets['mid_fox']!];
+      return [_assets['small_fox']!, _assets['mid_fox']!];
     }
   }
 
@@ -97,7 +101,7 @@ class MyRoomViewModel with ChangeNotifier {
     if (isMyRoom()) {
       return _backgrounds['bg1']!;
     } else {
-      return _backgrounds['bg2']!;
+      return _backgrounds['bg5']!;
     }
   }
 }

@@ -20,6 +20,7 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk_template.dart';
 import 'package:iww_frontend/model/routine/routine.model.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/view/shop/shop_page.dart';
+import 'package:iww_frontend/view/inventory/inventory.dart';
 
 // >>> generate todo test
 // var routines = [
@@ -88,7 +89,8 @@ void main() async {
             '/group': (context) => MyGroup(),
             '/mypage': (context) => MyPage(),
             '/friends': (context) => MyFriend(),
-            '/shop': (context) => ShopPage()
+            '/shop': (context) => ShopPage(),
+            '/inventory': (context) => Inventory(),
           },
           home: MyApp(),
         ),
