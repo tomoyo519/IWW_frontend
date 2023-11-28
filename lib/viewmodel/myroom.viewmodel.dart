@@ -5,67 +5,13 @@ class MyRoomViewModel with ChangeNotifier {
   int _roomOwner = 0;
 
   final Map<String, AssetImage> _backgrounds = {
-    'bg1': AssetImage('assets/background.png'),
-    'bg2': AssetImage('assets/wallpaper.jpg'),
-    'bg3': AssetImage('assets/background4.png'),
+    'bg1': AssetImage('assets/bg/background.png'),
+    'bg2': AssetImage('assets/bg/wallpaper.jpg'),
+    'bg3': AssetImage('assets/bg/background4.png'),
   };
 
   // TODO get assets from DB
   final Map<String, dynamic> _assets = {
-    'fish': ModelViewer(
-      // loading: Loading.eager,
-      shadowIntensity: 1,
-      src: 'assets/koi_fish.glb',
-      alt: 'koi fish',
-      autoPlay: true,
-      disableZoom: true,
-      cameraControls: false,
-      animationName: 'morphBake',
-      cameraOrbit: '30deg 60deg 0m',
-      cameraTarget: '4m 6m 2m',
-    ),
-    'astronaut': ModelViewer(
-      // loading: Loading.eager,
-      shadowIntensity: 1,
-      src: 'assets/koi_fish.glb',
-      alt: 'astronaut',
-      // autoRotate: true,
-      autoPlay: true,
-      disableZoom: true,
-      cameraControls: false,
-      // animationName: "walk",
-      cameraOrbit: "40deg 60eg 0m",
-      // theta, phi, radius
-      cameraTarget: "0.5m 1.5m 2m", // x(왼쪽 위), y(높이) ,z (오른쪽 위)
-    ),
-    'robot': ModelViewer(
-      // loading: Loading.eager,
-      shadowIntensity: 1,
-      src: 'assets/robot_walk_idle.usdz',
-      alt: 'robot',
-      // autoRotate: true,
-      autoPlay: true,
-      disableZoom: true,
-      cameraControls: false,
-      animationName: "walk",
-      cameraOrbit: "30deg 60deg 0m",
-      // theta, phi, radius
-      cameraTarget: "1m 4m 4m", // x(왼쪽 위), y(높이) ,z (오른쪽 위)
-    ),
-    'animals': ModelViewer(
-      // loading: Loading.eager,
-      // shadowIntensity: 1,
-      src: 'assets/aa.glb',
-      alt: 'animals',
-      // autoRotate: true,
-      autoPlay: true,
-      disableZoom: true,
-      // cameraControls: false,
-      // animationName: "walk",
-      cameraOrbit: "30deg 30deg 2m",
-      // theta, phi, radius
-      cameraTarget: "2m 2m 2m", // x(왼쪽 위), y(높이) ,z (오른쪽 위)
-    ),
     'cat': ModelViewer(
       // loading: Loading.eager,
       shadowIntensity: 1,
@@ -81,7 +27,7 @@ class MyRoomViewModel with ChangeNotifier {
     'kitsune': ModelViewer(
       // loading: Loading.eager,
       shadowIntensity: 1,
-      src: 'assets/kitsune.glb',
+      src: 'assets/pets/kitsune.glb',
       alt: 'kitsune',
       // autoRotate: true,
       autoPlay: true,
@@ -93,7 +39,7 @@ class MyRoomViewModel with ChangeNotifier {
     'kitsune_ani': ModelViewer(
       // loading: Loading.eager,
       shadowIntensity: 1,
-      src: 'assets/kitsune_ani.glb',
+      src: 'assets/pets/kitsune_ani.glb',
       alt: 'kitsune',
       // autoRotate: true,
       // autoPlay: true,
@@ -105,7 +51,7 @@ class MyRoomViewModel with ChangeNotifier {
     'small_fox': ModelViewer(
       loading: Loading.eager,
       shadowIntensity: 1,
-      src: 'assets/small_fox.glb',
+      src: 'assets/pets/small_fox.glb',
       alt: 'kitsune',
       // autoRotate: true,
       autoPlay: true,
@@ -119,7 +65,7 @@ class MyRoomViewModel with ChangeNotifier {
     'mid_fox': ModelViewer(
       // loading: Loading.eager,
       shadowIntensity: 1,
-      src: 'assets/mid_fox.glb',
+      src: 'assets/pets/mid_fox.glb',
       alt: 'kitsune',
       // autoRotate: true,
       autoPlay: true,
