@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
@@ -55,6 +53,7 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // === CRUD === //
   Future<void> updateUserHp(int hp) async {
     _userHp = hp;
     waiting = false;

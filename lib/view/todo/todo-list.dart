@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
@@ -19,74 +17,8 @@ class ToDoList extends StatelessWidget {
 
   ToDoList({super.key});
 
-  // 할일 삭제
-  _deleteTodo(BuildContext context, int todoId) {
-    final viewModel = context.read<TodoViewModel>();
-
-    onPressed(BuildContext _) async {
-      Navigator.pop(context);
-
-      await viewModel.deleteTodo(todoId).then((response) {
-        LOG.log("Delete todo");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('삭제가 완료 되었어요!'),
-          ),
-        );
-      });
-    }
-
-    showCupertinoModalPopup(
-      context: context,
-      builder: (BuildContext context) => CupertinoActionSheet(
-        title: Text('할일을 삭제하시겠어요?'),
-        actions: <Widget>[
-          CupertinoActionSheetAction(
-            isDestructiveAction: true,
-            onPressed: () => onPressed(context),
-            child: Text('할일을 삭제할래요!'),
-          ),
-        ],
-        cancelButton: CupertinoActionSheetAction(
-          isDefaultAction: true,
-          onPressed: () {
-            print('취소 선택');
-            Navigator.pop(context);
-          },
-          child: Text('취소'),
-        ),
-      ),
-    );
-  }
-
-  // 할일 수정
-  _editTodo(BuildContext context, Todo todo) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (bottomSheetContext) {
-        return ChangeNotifierProvider(
-          create: (_) => TodoEditorViewModel(
-            Provider.of<TodoRepository>(
-              context,
-              listen: false,
-            ),
-            todo,
-          ),
-          child: TodoEditorModal(
-            todo: todo,
-            title: "할일 수정",
-            formKey: _formKey,
-            buildContext: context,
-          ),
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    UserInfo user = Provider.of<UserInfo>(context, listen: false);
     // 데이터 가져오기
     final viewModel = context.watch<TodoViewModel>();
     final todos = viewModel.todos;
@@ -107,12 +39,8 @@ class ToDoList extends StatelessWidget {
                 }
                 // 할일이 있으면 리스트 렌더링
                 return GestureDetector(
-                  onLongPress: () {
-                    _deleteTodo(context, todos[idx].todoId);
-                  },
-                  onTap: () async {
-                    _editTodo(context, todos[idx]);
-                  },
+                  onTap: () => _showTodoEditor(context, todos[idx]),
+                  onLongPress: () => _showTodoDeleteModal(context, todos[idx]),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
@@ -126,6 +54,100 @@ class ToDoList extends StatelessWidget {
               },
             ),
     );
+  }
+
+  // 할일 삭제
+  _showTodoDeleteModal(BuildContext context, Todo todo) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext buildContext) => CupertinoActionSheet(
+        title: Text('할일을 삭제하시겠어요?'),
+        actions: <Widget>[
+          CupertinoActionSheetAction(
+            isDestructiveAction: true,
+            onPressed: () => _onClickDelete(context, todo),
+            child: Text('할일을 삭제할래요!'),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          isDefaultAction: true,
+          onPressed: () {
+            LOG.log('취소 선택');
+            Navigator.pop(context);
+          },
+          child: Text('취소'),
+        ),
+      ),
+    );
+  }
+
+  // 할일 수정
+  _showTodoEditor(BuildContext context, Todo todo) {
+    final todoRepository = Provider.of<TodoRepository>(context, listen: false);
+    final userInfo = Provider.of<UserInfo>(context, listen: false);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (bottomSheetContext) {
+        return ChangeNotifierProvider(
+          create: (_) => TodoEditorViewModel(
+            todo: todo,
+            user: userInfo,
+            todoRepository: todoRepository,
+          ),
+          child: TodoEditorModal(
+            todo: todo,
+            title: "할일 수정",
+            formKey: _formKey,
+            onSave: (context) => _updateTodo(context),
+            onCancel: (context) => Navigator.pop(context),
+          ),
+        );
+      },
+    );
+  }
+
+  // todo delete modal onclick callback
+  Future<void> _onClickDelete(BuildContext context, Todo todo) async {
+    Navigator.pop(context);
+
+    final viewModel = context.read<TodoViewModel>();
+
+    await viewModel.deleteTodo(todo.todoId).then((response) {
+      LOG.log("Delete todo");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('삭제가 완료 되었어요!'),
+        ),
+      );
+    });
+  }
+
+  // todo editor onsave callback
+  // 기존 할일 수정
+  Future<void> _updateTodo(BuildContext context) async {
+    Navigator.pop(context);
+
+    final viewModel = context.read<TodoEditorViewModel>();
+    await viewModel.updateTodo().then((result) {
+      if (result == true) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('변경이 완료 되었어요!'),
+            ),
+          );
+
+          // 일정 시간 후에 화면을 닫습니다.
+          // Future.delayed(Duration(seconds: 3), () {
+          //   if (context.mounted) {
+          //     Navigator.pop(context);
+          //   }
+          // });
+        }
+      }
+    });
   }
 }
 

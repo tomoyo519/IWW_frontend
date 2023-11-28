@@ -7,9 +7,7 @@ import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:camera/camera.dart';
 import 'dart:io';
-import 'package:iww_frontend/repository/todo.repository.dart';
 
 // TodoList의 개별 타일
 class TodoListTileLayout extends StatefulWidget {

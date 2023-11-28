@@ -31,7 +31,7 @@ class _GroupListState extends State<GroupList> {
     if (result.statusCode == 200) {
       Map<String, dynamic> jsonData = jsonDecode(result.body);
       setState(() {
-        List<dynamic> result = jsonData['result'];
+        List<dynamic> result = jsonData['results'];
         groups = result;
       });
     }
@@ -39,7 +39,6 @@ class _GroupListState extends State<GroupList> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getList();
   }

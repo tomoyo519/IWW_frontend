@@ -22,82 +22,23 @@ class TodoEditorModal extends StatelessWidget {
   final Todo? todo;
   final String title;
   final GlobalKey<FormState> formKey;
-  final BuildContext buildContext;
+  final Function(BuildContext) onSave;
+  final Function(BuildContext) onCancel;
 
   const TodoEditorModal({
     Key? key,
     required this.todo,
     required this.title,
     required this.formKey,
-    required this.buildContext,
+    required this.onSave,
+    required this.onCancel,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     // 키보드에 따른 높이 조정
     // 키보드가 열려 있는지 확인
-    final bool isKeyboardOpen =
-        MediaQuery.of(buildContext).viewInsets.bottom != 0;
-    UserInfo user = Provider.of<UserInfo>(buildContext, listen: false);
-    TodoViewModel todoViewModel = Provider.of<TodoViewModel>(buildContext);
-
-    // 취소 버튼 클릭
-    void onCancel(BuildContext context) {
-      Navigator.pop(context);
-      LOG.log("취소");
-    }
-
-    // 저장 버튼 클릭
-    void onSave(BuildContext context) async {
-      Navigator.pop(context);
-
-      final viewModel = context.read<TodoEditorViewModel>();
-
-      // 할일 신규 생성
-      if (viewModel.todoData['todo_id'] == null) {
-        print('${viewModel.todoData} viewModel.todoData');
-        await viewModel.createTodo(user.user_id).then((result) {
-          todoViewModel.fetchTodos();
-          if (result == true && context.mounted) {
-            Navigator.pop(context);
-            print('onsave일떄');
-            // refresh data
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: const Text('할일이 추가되었어요!'),
-              ),
-            );
-          }
-        });
-
-        return;
-      }
-
-      // 기존 할일 수정
-      bool result = await viewModel.updateTodo();
-
-      if (result == true) {
-        // refresh data
-        print('기존할일 수정');
-        todoViewModel.fetchTodos();
-        if (context.mounted) {
-          // TODO - snackbar 생성안됨 ..
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('변경이 완료 되었어요!'),
-            ),
-          );
-
-          // 일정 시간 후에 화면을 닫습니다.
-          Future.delayed(Duration(seconds: 3), () {
-            if (context.mounted) {
-              Navigator.pop(context);
-            }
-          });
-        }
-      }
-    }
+    final bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom != 0;
 
     return FractionallySizedBox(
       heightFactor: isKeyboardOpen ? 0.9 : 0.58,

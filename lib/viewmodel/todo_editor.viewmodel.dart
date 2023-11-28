@@ -1,16 +1,19 @@
 // 투두 에디팅 화면의 상태를 관리
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
+import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
 
 class TodoEditorViewModel extends ChangeNotifier {
-  final TodoRepository _todoRepository;
-  final Todo? _todo; // 초기화된 투두 데이터
+  final Todo? todo; // 초기화된 투두 데이터
+  final UserInfo user;
+  final TodoRepository todoRepository;
 
-  TodoEditorViewModel(
-    this._todoRepository,
-    this._todo,
-  ) : _todoData = _todo?.toMap() ?? <String, dynamic>{};
+  TodoEditorViewModel({
+    this.todo,
+    required this.user,
+    required this.todoRepository,
+  }) : _todoData = todo?.toMap() ?? <String, dynamic>{};
 
   // 폼 상태 관리
   Map<String, dynamic> _todoData;
@@ -58,7 +61,7 @@ class TodoEditorViewModel extends ChangeNotifier {
   }
 
   // 할일 저장
-  Future<bool> createTodo(int userId) async {
+  Future<bool> createTodo() async {
     String timeString =
         '${hour.toString().padLeft(2, '0')}:${min.toString().padLeft(2, '0')}:00';
 
@@ -70,10 +73,10 @@ class TodoEditorViewModel extends ChangeNotifier {
     //   "todo_label": todoData['todo_label'],
     //   "todo_start": timeString,
     // };
-    todoData['user_id'] = userId;
+    todoData['user_id'] = user.user_id;
     todoData['todo_start'] = timeString;
 
-    return await _todoRepository.createTodo(todoData);
+    return await todoRepository.createTodo(todoData);
   }
 
   // 할일 수정
@@ -94,6 +97,6 @@ class TodoEditorViewModel extends ChangeNotifier {
     // };
 
     todoData['todo_start'] = timeString;
-    return await _todoRepository.updateTodo(id.toString(), todoData);
+    return await todoRepository.updateTodo(id.toString(), todoData);
   }
 }
