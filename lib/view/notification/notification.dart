@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/notification.repository.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
-import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
 import 'package:iww_frontend/model/notification/notification.model.dart'
     as model;
@@ -127,10 +126,14 @@ class _MyNotificationState extends State<MyNotification> {
 
   void navigateToSender(model.Notification noti) {
     switch (noti.notiType) {
-      case 0 || 1:
+      case 0:
+        break;
+      case 1:
         // TODO - sender의 myroom으로 redirect
         break;
-      case 2 || 3:
+      case 2:
+        break;
+      case 3:
         // TODO - 해당 todo의 인증샷에 대한 modal 창으로 redirect
         break;
       case 4:

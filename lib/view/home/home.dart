@@ -26,7 +26,7 @@ class MyHomePage extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.notifications_outlined),
             onPressed: () {
-              Navigator.pushNamed(context, '/MyNotification');
+              Navigator.pushNamed(context, '/notification');
             },
             color: (Colors.black),
           )

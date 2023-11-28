@@ -26,7 +26,9 @@ class MyGroup extends StatelessWidget {
             actions: [
               IconButton(
                 icon: Icon(Icons.notifications_outlined),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, '/notification');
+                },
                 color: (Colors.black),
               )
             ],
