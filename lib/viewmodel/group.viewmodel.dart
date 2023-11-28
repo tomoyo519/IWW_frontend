@@ -17,6 +17,30 @@ class MyGroupViewModel extends ChangeNotifier {
     fetchMyGroupList();
   }
 
+  // 폼 상태 관리
+  late Map<String, dynamic> _groupData;
+  Map<String, dynamic> get groupData => _groupData;
+
+  set groupDesc(String val) {
+    _groupData['grp_decs'] = val;
+    notifyListeners();
+  }
+
+  set groupCat(int val) {
+    _groupData['cat_id'] = val;
+    notifyListeners();
+  }
+
+  set groupName(String val) {
+    _groupData['grp_name'] = val;
+    notifyListeners();
+  }
+
+  set groupLoutine(Map<String, dynamic> val) {
+    _groupData['routInfo'] = val;
+    notifyListeners();
+  }
+
   List<Group> groups = [];
   bool waiting = true;
   bool _isDisposed = false;
@@ -43,6 +67,11 @@ class MyGroupViewModel extends ChangeNotifier {
       waiting = false;
       if (!_isDisposed) {}
     }
+  }
+
+  Future<bool?> createGroup(int userId) async {
+    groupData['user_id'] = userId;
+    return await _groupRepository.createGroup(groupData);
   }
 }
 

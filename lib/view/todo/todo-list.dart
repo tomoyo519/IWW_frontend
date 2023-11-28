@@ -26,7 +26,7 @@ class ToDoList extends StatelessWidget {
       Navigator.pop(context);
 
       await viewModel.deleteTodo(todoId).then((response) {
-        print('response : ${response}');
+        print('@@@@@@@@response : ${response}');
         if (response == true) {
           viewModel.fetchTodos();
           print('할일삭제');
@@ -94,6 +94,7 @@ class ToDoList extends StatelessWidget {
   Widget build(BuildContext context) {
     // 데이터 가져오기
     final viewModel = context.watch<TodoViewModel>();
+
     // print('데이터 가져오기');
     // viewModel.fetchTodos();
 

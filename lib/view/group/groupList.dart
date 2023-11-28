@@ -23,12 +23,16 @@ class _GroupListState extends State<GroupList> {
 
   getList() async {
     // TODO - user_id 변경해야해
+    LOG.log('실행?');
     var result = await RemoteDataSource.get('/group/1/groups');
     if (result.statusCode == 200) {
-      Map<String, dynamic> jsonData = jsonDecode(result.body);
+      var jsonData = jsonDecode(result.body);
+      LOG.log('jsonDatajsonDatajsonData: ${jsonData}');
+      var response = jsonData['results'];
+      LOG.log('response: $response');
       setState(() {
-        List<dynamic> result = jsonData['result'];
-        groups = result;
+        groups = response;
+        LOG.log('groups: ${groups}');
       });
     }
   }
