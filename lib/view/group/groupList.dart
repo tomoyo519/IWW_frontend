@@ -3,6 +3,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
+import 'package:iww_frontend/model/user/user-info.model.dart';
+import 'package:provider/provider.dart';
 import 'groupDetail.dart';
 import 'newGroup.dart';
 import 'package:http/http.dart' as http;
@@ -22,17 +24,17 @@ class _GroupListState extends State<GroupList> {
   List<dynamic> groups = [];
 
   getList() async {
-    // TODO - user_id 변경해야해
-    LOG.log('실행?');
-    var result = await RemoteDataSource.get('/group/1/groups');
+    UserInfo userInfo = Provider.of<UserInfo>(context, listen: false);
+    int userId = userInfo.user_id;
+
+    var result = await RemoteDataSource.get('/group/$userId/groups');
     if (result.statusCode == 200) {
       var jsonData = jsonDecode(result.body);
-      LOG.log('jsonDatajsonDatajsonData: ${jsonData}');
+
       var response = jsonData['results'];
       LOG.log('response: $response');
       setState(() {
         groups = response;
-        LOG.log('groups: ${groups}');
       });
     }
   }
@@ -52,7 +54,6 @@ class _GroupListState extends State<GroupList> {
               child: ListView.builder(
                   itemCount: groups.length,
                   itemBuilder: (c, i) {
-                    LOG.log('groupsgroupsgroupsgroups[i] : ${groups[i]}');
                     return TextButton(
                         onPressed: () {
                           Navigator.push(

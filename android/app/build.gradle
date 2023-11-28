@@ -22,9 +22,6 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
-def kakaoUrlScheme = localProperties.getProperty('kakao.url.scheme')
-
-
 android {
     namespace "com.example.iww_frontend"
     compileSdkVersion flutter.compileSdkVersion
@@ -55,7 +52,7 @@ android {
         versionName flutterVersionName
 
         manifestPlaceholders = [
-            kakaoUrlScheme:kakaoUrlScheme
+            appScheme:localProperties.getProperty('app.scheme')
         ]
     }
 

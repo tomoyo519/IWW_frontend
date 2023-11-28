@@ -38,14 +38,14 @@ class SignUpViewModel extends ChangeNotifier {
   }
 
   // 회원가입
-  Future<UserInfo?> signUp() async {
-    await authService.signup(_name, _tel);
-    // notifyListeners();
-    return authService.user;
-  }
+  // Future<UserInfo?> signUp() async {
+  //   await authService.signup(_name, _tel);
+  //   // notifyListeners();
+  //   return authService.user;
+  // }
 
-  // 연결 끊기
-  Future<void> disconnect() async {
-    await authService.disconnect();
-  }
+  // // 연결 끊기
+  // Future<void> disconnect() async {
+  //   await authService.disconnect();
+  // }
 }

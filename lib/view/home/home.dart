@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
-import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/style/colors.dart';
+import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
 import 'package:iww_frontend/view/_common/bottombar.dart';
 import 'package:iww_frontend/view/home/home_profile.dart';
@@ -16,8 +16,8 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final todoRepository = Provider.of<TodoRepository>(context, listen: false);
-    final authService = context.read<AuthService>();
-    UserInfo? user = authService.user;
+    final UserInfo user = Provider.of<UserInfo>(context, listen: false);
+    LOG.log("Home loaded ${user.user_name}");
 
     return Scaffold(
       backgroundColor: MyColors.light,
@@ -41,20 +41,18 @@ class MyHomePage extends StatelessWidget {
         )),
         child: Column(
           children: [
-            user != null
-                ? Expanded(
-                    flex: 1,
-                    child: HomeProfile(
-                      user: user,
-                    ),
-                  )
-                : SizedBox(),
+            Expanded(
+              flex: 1,
+              child: HomeProfile(
+                user: user,
+              ),
+            ),
             Expanded(
               flex: 4,
               child: ChangeNotifierProvider<TodoViewModel>(
                 create: (context) => TodoViewModel(
                   todoRepository,
-                  authService,
+                  user,
                 ),
                 child: ToDoList(),
               ),
