@@ -13,24 +13,26 @@ class Inventory extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => InventoryState()),
       ],
-      child: _InventoryView(),
+      child: InventoryView(),
     );
   }
 }
 
 class InventoryState with ChangeNotifier {
   var items = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-  double _inventoryHeight = 100.0;
+  double _inventoryHeight = 0.0;
 
   get intventoryHeight => _inventoryHeight;
 
   void toggleInventory() {
-    _inventoryHeight = _inventoryHeight == 100.0 ? 300.0 : 100.0;
+    _inventoryHeight = _inventoryHeight == 0.0 ? 300.0 : 0.0;
     notifyListeners();
   }
 }
 
-class _InventoryView extends StatelessWidget {
+class InventoryView extends StatelessWidget {
+  const InventoryView({super.key});
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
