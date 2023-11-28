@@ -18,8 +18,11 @@ class MyGroupViewModel extends ChangeNotifier {
   }
 
   // 폼 상태 관리
-  late Map<String, dynamic> _groupData;
+  Map<String, dynamic> _groupData = {};
   Map<String, dynamic> get groupData => _groupData;
+
+  String? _groupRoutine;
+  String? get groupRoutine => _groupRoutine;
 
   set groupDesc(String val) {
     _groupData['grp_decs'] = val;
@@ -36,8 +39,8 @@ class MyGroupViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  set groupLoutine(Map<String, dynamic> val) {
-    _groupData['routInfo'] = val;
+  set groupRoutine(String? val) {
+    _groupRoutine = val;
     notifyListeners();
   }
 
@@ -57,7 +60,7 @@ class MyGroupViewModel extends ChangeNotifier {
       // TODO - userId 안들어옴;
       // LOG.log('$userId');
       groups = (await _groupRepository.getMyGroupList(1) ?? []);
-      LOG.log('groups: $groups');
+
       waiting = false;
     } catch (err) {
       waiting = false;
@@ -102,9 +105,7 @@ class GroupDetailModel extends ChangeNotifier {
           (await _groupRepository.getGroupDetail(1) ?? []) as GroupDetail?;
       routeDetail = (await _groupRepository.getRouteDetail(1) ?? []);
       grpMems = (await _groupRepository.getMember(1) ?? []);
-      LOG.log('groupDetail : $groupDetail');
-      LOG.log('routeDetail: $routeDetail');
-      LOG.log('grpMems: $grpMems');
+
       waiting = false;
     } catch (err) {
       waiting = false;

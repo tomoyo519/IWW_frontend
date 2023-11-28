@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
+import 'package:iww_frontend/view/group/groupMain.dart';
 import 'package:iww_frontend/view/todo/fields/label_list_modal.dart';
-import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
+import 'package:iww_frontend/repository/group.repository.dart';
+import 'package:iww_frontend/service/auth.service.dart';
 import 'package:provider/provider.dart';
+import 'package:iww_frontend/view/_common/bottom_sheet_header.dart';
+import 'package:iww_frontend/style/colors.dart';
+import 'package:iww_frontend/view/group/fields/name.dart';
+import 'package:iww_frontend/view/group/fields/desc.dart';
+import 'package:iww_frontend/view/group/fields/label.dart';
+import 'package:iww_frontend/view/group/fields/routine.dart';
+import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
+import 'package:iww_frontend/utils/logger.dart';
 
 class NewGroup extends StatefulWidget {
   const NewGroup({super.key});
@@ -15,9 +25,58 @@ class _NewGroupState extends State<NewGroup> {
   String groupName = '';
   String categoryName = '';
   String groupDesc = '';
+  List<Map<String, dynamic>> routine = [
+    {
+      "rout_name": "",
+      "rout_desc": "",
+      "rout_repeat": 1111111,
+      "rout_srt": "",
+      "rout_end": ""
+    }
+  ];
+
+  setGroupName(String name) {
+    setState(() {
+      groupName = name;
+    });
+  }
+
+  setCategoryName(String catName) {
+    setState(() => categoryName = catName);
+  }
+
+  setGroupDesc(String desc) {
+    setState(() {
+      groupDesc = desc;
+    });
+  }
+
+  setRoutine(Map<String, dynamic> routine) {}
+
+  _createGroup(BuildContext context) {
+    //새로운 그룹 만들기;
+    final myGroupViewModel =
+        Provider.of<MyGroupViewModel>(context, listen: false);
+    ;
+    LOG.log('myGroupViewModel.groupData: ${myGroupViewModel.groupData}');
+  }
+
+  void onCancel(BuildContext context) {
+    Navigator.pop(context);
+  }
+
+  void onSave(BuildContext context) {
+    //저장누르면 루틴 추가하는 로직
+  }
+
+  // GlobalKey<FormState>를 초기화합니다.
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
+    final _groupRepository =
+        Provider.of<GroupRepository>(context, listen: false);
+    final _authService = Provider.of<AuthService>(context, listen: false);
     return Scaffold(
         appBar: MyAppBar(),
         body: Container(
@@ -41,9 +100,9 @@ class _NewGroupState extends State<NewGroup> {
                             return LabelListModal(
                               content: "label",
                               setLabel: (newLabel) {
-                                Provider.of<TodoViewModel>(context,
+                                Provider.of<MyGroupViewModel>(context,
                                         listen: false)
-                                    .setSelectedDate(newLabel as String);
+                                    .groupCat = (newLabel);
                               },
                             );
                           });
@@ -67,233 +126,123 @@ class _NewGroupState extends State<NewGroup> {
               Divider(color: Colors.grey, thickness: 1, indent: 10),
               Container(
                   child: TextButton(
-                child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.black26, width: 1)),
-                  alignment: Alignment.center,
-                  margin: EdgeInsets.all(10),
-                  padding: EdgeInsets.all(10),
-                  child: Row(children: const [
-                    Icon(Icons.add_outlined),
-                    Text('그룹 루틴 추가 하기')
-                  ]),
-                ),
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return SizedBox(
-                        height: MediaQuery.of(context).size.height / 2,
-                        child: Center(
-                          child: Column(
-                            children: [
-                              Form(
-                                child: Column(children: [
-                                  Container(
-                                    alignment: Alignment.center,
-                                    margin: EdgeInsets.all(10),
-                                    padding: EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            border:
+                                Border.all(color: Colors.black26, width: 1)),
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.all(10),
+                        padding: EdgeInsets.all(10),
+                        child: Row(children: const [
+                          Icon(Icons.add_outlined),
+                          Text('그룹 루틴 추가 하기')
+                        ]),
+                      ),
+                      onPressed: () {
+                        showModalBottomSheet(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return FractionallySizedBox(
+                                heightFactor: 0.9,
+                                child: GestureDetector(
+                                  onTap: () => FocusScope.of(context).unfocus(),
+                                  child: Column(children: [
+                                    BottomSheetModalHeader(
+                                      title: groupName,
+                                      onSave: onSave,
+                                      onCancel: onCancel,
                                     ),
-                                    child: Column(
-                                      children: [
-                                        TextFormField(
-                                          onChanged: (value) {
-                                            setState(() {
-                                              groupName = value;
-                                            });
-                                          },
-                                          decoration: InputDecoration(
-                                            fillColor: Colors.grey[200],
-                                            hintText: "새로운 작업을 추가합니다.",
-                                            filled: false,
-                                            // enabledBorder: InputBorder.none,
-                                            focusColor: Color(0xFF3A00E5),
-                                            border: OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: Colors.black,
-                                                    width: 1)),
+                                    Expanded(
+                                      child: SingleChildScrollView(
+                                        child: DecoratedBox(
+                                          decoration: BoxDecoration(
+                                            color: MyColors.background,
                                           ),
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return '새로운 작업을 추가해주세요!';
-                                            }
-                                            return null;
-                                          },
+                                          child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                horizontal: 10,
+                                                vertical: 10,
+                                              ),
+                                              child: Form(
+                                                key: formKey,
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  // 할일 제목 입력 필드
+                                                  children: [
+                                                    MultiProvider(
+                                                      providers: [
+                                                        ChangeNotifierProvider(
+                                                            create: (context) =>
+                                                                MyGroupViewModel(
+                                                                    _groupRepository,
+                                                                    _authService)),
+                                                      ],
+                                                      child: GroupNameField(),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                        // horizontal: 10,
+                                                        vertical: 15,
+                                                      ),
+                                                      child: Column(
+                                                        children: [
+                                                          // 할일 상세내용 입력 필드
+                                                          MultiProvider(
+                                                            providers: [
+                                                              ChangeNotifierProvider(
+                                                                  create: (context) =>
+                                                                      MyGroupViewModel(
+                                                                          _groupRepository,
+                                                                          _authService)),
+                                                            ],
+                                                            child:
+                                                                GroupNameField(),
+                                                          ),
+
+                                                          MultiProvider(
+                                                            providers: [
+                                                              ChangeNotifierProvider(
+                                                                  create: (context) =>
+                                                                      MyGroupViewModel(
+                                                                          _groupRepository,
+                                                                          _authService)),
+                                                            ],
+                                                            child:
+                                                                GroupRoutineField(),
+                                                          ),
+
+                                                          MultiProvider(
+                                                            providers: [
+                                                              ChangeNotifierProvider(
+                                                                  create: (context) =>
+                                                                      MyGroupViewModel(
+                                                                          _groupRepository,
+                                                                          _authService)),
+                                                            ],
+                                                            child:
+                                                                GroupDescField(),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              )),
                                         ),
-                                        Row(
-                                          children: [
-                                            IconButton(
-                                                onPressed: () {
-                                                  showModalBottomSheet(
-                                                      context: context,
-                                                      builder: (c) {
-                                                        return LabelListModal(
-                                                            setLabel:
-                                                                (newLabel) {
-                                                              Provider.of<TodoViewModel>(
-                                                                      context,
-                                                                      listen:
-                                                                          false)
-                                                                  .setSelectedDate(
-                                                                      newLabel
-                                                                          as String);
-                                                            },
-                                                            content: "label");
-                                                      });
-                                                },
-                                                icon:
-                                                    Icon(Icons.label_outline)),
-                                            Text("라벨")
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            IconButton(
-                                              icon: Icon(Icons.alarm_outlined),
-                                              onPressed: () {
-                                                Future<TimeOfDay?>
-                                                    selectedTime =
-                                                    showTimePicker(
-                                                  initialTime: TimeOfDay.now(),
-                                                  context: context,
-                                                );
-                                              },
-                                            ),
-                                            Text("시간 설정")
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            IconButton(
-                                              icon: Icon(Icons.star_outline),
-                                              onPressed: () {
-                                                showModalBottomSheet(
-                                                    context: context,
-                                                    builder: (c) {
-                                                      return LabelListModal(
-                                                          setLabel: (newLabel) {
-                                                            Provider.of<TodoViewModel>(
-                                                                    context,
-                                                                    listen:
-                                                                        false)
-                                                                .setSelectedDate(
-                                                                    newLabel
-                                                                        as String);
-                                                          },
-                                                          content: "routine");
-                                                    });
-                                              },
-                                            ),
-                                            Text("매일 반복")
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            IconButton(
-                                              icon: Icon(
-                                                  Icons.sticky_note_2_outlined),
-                                              onPressed: () {
-                                                showModalBottomSheet(
-                                                    context: context,
-                                                    builder: (c) {
-                                                      return SizedBox(
-                                                        height: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .height /
-                                                            2,
-                                                        child: Column(
-                                                          children: [
-                                                            TextButton(
-                                                                onPressed: () {
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                },
-                                                                child:
-                                                                    Text("완료")),
-                                                            TextField(
-                                                              onChanged:
-                                                                  (value) {
-                                                                setState(() {
-                                                                  groupDesc =
-                                                                      value;
-                                                                });
-                                                              },
-                                                              maxLines: null,
-                                                              decoration:
-                                                                  InputDecoration(
-                                                                border: OutlineInputBorder(
-                                                                    borderSide: BorderSide(
-                                                                        color: Colors
-                                                                            .black,
-                                                                        width:
-                                                                            1)),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      );
-                                                    });
-                                              },
-                                            ),
-                                            Text("작업 설명 추가"),
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.7,
-                                    height: 40,
-                                    child: TextButton(
-                                      style: TextButton.styleFrom(
-                                          backgroundColor: Color(0xFF3A00E5),
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(10)))),
-                                      onPressed: () {},
-                                      child: Text("추가하기",
-                                          style:
-                                              TextStyle(color: Colors.white)),
-                                    ),
-                                  )
-                                ]),
-                              )
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
-              )),
-              Text("참가자"),
-              Divider(color: Colors.grey, thickness: 1, indent: 10),
-              Expanded(
-                child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2),
-                  itemCount: 1,
-                  itemBuilder: (context, index) {
-                    return Column(
-                      children: [
-                        Container(
-                            padding: EdgeInsets.all(10),
-                            margin: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                border:
-                                    Border.all(color: Colors.black, width: 1)),
-                            child: Text("정다희"))
-                      ],
-                    );
-                  },
-                ),
-              ),
+                                      ),
+                                    )
+                                  ]),
+                                ),
+                              );
+                            });
+                      })),
+              Spacer(),
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.7,
                 height: 40,
@@ -303,7 +252,7 @@ class _NewGroupState extends State<NewGroup> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10)))),
                   onPressed: () {
-                    // joinGroup();
+                    _createGroup(context);
                     print('새로운 그룹 만들기');
                     // var result = http.post(Uri.parse(""))
                   },

@@ -27,12 +27,11 @@ class _GroupListState extends State<GroupList> {
     var result = await RemoteDataSource.get('/group/1/groups');
     if (result.statusCode == 200) {
       var jsonData = jsonDecode(result.body);
-      LOG.log('jsonDatajsonDatajsonData: ${jsonData}');
+
       var response = jsonData['results'];
       LOG.log('response: $response');
       setState(() {
         groups = response;
-        LOG.log('groups: ${groups}');
       });
     }
   }
@@ -52,7 +51,6 @@ class _GroupListState extends State<GroupList> {
               child: ListView.builder(
                   itemCount: groups.length,
                   itemBuilder: (c, i) {
-                    LOG.log('groupsgroupsgroupsgroups[i] : ${groups[i]}');
                     return TextButton(
                         onPressed: () {
                           Navigator.push(

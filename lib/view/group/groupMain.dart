@@ -72,7 +72,18 @@ class MyGroup extends StatelessWidget {
           floatingActionButton: FloatingActionButton(
               onPressed: () {
                 Navigator.push(
-                    context, MaterialPageRoute(builder: (c) => NewGroup()));
+                  context,
+                  MaterialPageRoute(
+                    builder: (c) => MultiProvider(
+                      providers: [
+                        ChangeNotifierProvider(
+                            create: (context) => MyGroupViewModel(
+                                _groupRepository, _authService)),
+                      ],
+                      child: NewGroup(),
+                    ),
+                  ),
+                );
               },
               child: Icon(Icons.add)),
         ));
