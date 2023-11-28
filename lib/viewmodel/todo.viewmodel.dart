@@ -129,7 +129,6 @@ class TodoViewModel extends ChangeNotifier {
     try {
       int? userId = _user.user_id;
       todos = (await _todoRepository.getTodos(userId)) ?? [];
-      // LOG.log("data?? ");
       waiting = false;
     } catch (error) {
       LOG.log("fetch error $error");

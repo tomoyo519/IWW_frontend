@@ -56,7 +56,6 @@ import 'package:iww_frontend/view/shop/shop_page.dart';
 // <<< generate todo test
 
 class GlobalNavigator {
-  static final GlobalKey<NavigatorState> guest = GlobalKey<NavigatorState>();
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
 
@@ -81,16 +80,17 @@ void main() async {
   AuthService authService = AuthService(userRepository);
 
   // 앱 진입 시 로그인
-  authService.localLogin();
+  // authService.localLogin();
 
   // 만약 테스트유저 접속시
-  // authService.userInfo = UserInfo(
-  //   user_id: 48,
-  //   user_name: "sojeong",
-  //   user_tel: "010-0000-0000",
-  //   user_kakao_id: "user_kakao_id",
-  //   user_hp: 0,
-  // );
+  authService.user = UserInfo(
+    user_id: 1,
+    user_name: "sojeong",
+    user_tel: "010-0000-0000",
+    user_kakao_id: "user_kakao_id",
+    user_hp: 0,
+  );
+  authService.waiting = false;
 
   runApp(
     MultiProvider(

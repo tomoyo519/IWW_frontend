@@ -3,8 +3,10 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
+import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
+import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_common/spinner.dart';
 import 'package:iww_frontend/view/todo/layout/list-tile.dart';
 import 'package:iww_frontend/view/todo/todo-editor.dart';
@@ -89,6 +91,7 @@ class ToDoList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    UserInfo user = Provider.of<UserInfo>(context, listen: false);
     // 데이터 가져오기
     final viewModel = context.watch<TodoViewModel>();
     // print('데이터 가져오기');

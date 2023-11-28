@@ -55,7 +55,9 @@ class AuthService extends ChangeNotifier {
     );
 
     // 서비스 서버가 보내는 JWT 토큰 수신
-    await _onRedirected();
+    _sub = await _onRedirected();
+
+    _sub?.cancel();
     // AuthStatus status = await _onRedirected();
 
     // 회원가입이 필요한 경우
@@ -121,8 +123,9 @@ class AuthService extends ChangeNotifier {
   // =============== //
 
   // 서비스 서버로부터 JWT 토큰 수신
-  Future<void> _onRedirected() async {
-    _sub = linkStream.listen((String? link) async {
+  Future<StreamSubscription> _onRedirected() async {
+    return linkStream.listen((String? link) async {
+      LOG.log("listen stream...");
       if (link != null) {
         await _handleResponse(link);
       } else {
