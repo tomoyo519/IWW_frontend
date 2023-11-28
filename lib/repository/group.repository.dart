@@ -80,4 +80,14 @@ class GroupRepository {
       return null;
     });
   }
+
+  Future<bool?> createGroup(Map<String, dynamic> data) async {
+    var json = jsonEncode(data);
+    return await RemoteDataSource.post("/group", body: json).then((res) {
+      if (res.statusCode == 201) {
+        return true;
+      }
+      return false;
+    });
+  }
 }

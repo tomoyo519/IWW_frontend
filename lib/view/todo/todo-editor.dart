@@ -53,7 +53,6 @@ class TodoEditorModal extends StatelessWidget {
 
       // 할일 신규 생성
       if (viewModel.todoData['todo_id'] == null) {
-        print('${viewModel.todoData} viewModel.todoData');
         await viewModel.createTodo(userId).then((result) {
           todoViewModel.fetchTodos();
           if (result == true && context.mounted) {

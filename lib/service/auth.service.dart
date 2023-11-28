@@ -30,12 +30,7 @@ class AuthService extends ChangeNotifier {
     // status: AuthStatus.waiting,
     // user: null,
     status: AuthStatus.success,
-    user: UserInfo(
-        user_id: 48,
-        user_name: "sojeong",
-        user_kakao_id: "3164637603",
-        user_hp: 0,
-        user_tel: "010-0000-000"),
+    user: null,
   );
 
   // 유저 정보 getter

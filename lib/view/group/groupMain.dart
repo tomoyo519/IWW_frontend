@@ -4,7 +4,7 @@ import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/view/_common/bottombar.dart';
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'package:provider/provider.dart';
-
+import 'package:iww_frontend/view/_common/appbar.dart';
 import 'groupList.dart';
 import 'groupSearch.dart';
 import 'newGroup.dart';
@@ -22,27 +22,52 @@ class MyGroup extends StatelessWidget {
         initialIndex: 0,
         length: 2,
         child: Scaffold(
-          appBar: AppBar(
-            bottom: TabBar(tabs: const [
-              Tab(icon: Icon(Icons.groups_outlined)),
-              Tab(icon: Icon(Icons.manage_search_outlined))
-            ]),
+          appBar: MyAppBar(
+            actions: [
+              IconButton(
+                icon: Icon(Icons.notifications_outlined),
+                onPressed: () {},
+                color: (Colors.black),
+              )
+            ],
           ),
-          body: TabBarView(children: [
-            MultiProvider(
-              providers: [
-                ChangeNotifierProvider(
-                  create: (context) =>
-                      MyGroupViewModel(_groupRepository, _authService),
+          // AppBar(
+          //   bottom: TabBar(tabs: const [
+          //     Tab(icon: Icon(Icons.groups_outlined)),
+          //     Tab(icon: Icon(Icons.manage_search_outlined))
+          //   ]),
+          // ),
+          body: DefaultTabController(
+            length: 2,
+            child: Column(
+              children: [
+                TabBar(
+                  tabs: <Widget>[
+                    Tab(icon: Icon(Icons.groups_outlined)),
+                    Tab(icon: Icon(Icons.manage_search_outlined)),
+                  ],
                 ),
-                ChangeNotifierProvider(
-                  create: (context) => GroupDetailModel(_groupRepository),
+                Expanded(
+                  child: TabBarView(children: [
+                    MultiProvider(
+                      providers: [
+                        ChangeNotifierProvider(
+                          create: (context) =>
+                              MyGroupViewModel(_groupRepository, _authService),
+                        ),
+                        ChangeNotifierProvider(
+                          create: (context) =>
+                              GroupDetailModel(_groupRepository),
+                        ),
+                      ],
+                      child: GroupList(),
+                    ),
+                    GroupSearch(),
+                  ]),
                 ),
               ],
-              child: GroupList(),
             ),
-            GroupSearch(),
-          ]),
+          ),
           bottomNavigationBar: MyBottomNav(),
           floatingActionButton: FloatingActionButton(
               onPressed: () {
