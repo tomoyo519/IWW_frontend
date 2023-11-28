@@ -55,7 +55,7 @@ class MyGroup extends StatelessWidget {
                       providers: [
                         ChangeNotifierProvider(
                           create: (context) =>
-                              MyGroupViewModel(_groupRepository, _authService),
+                              MyGroupViewModel(_groupRepository, _userInfo),
                         ),
                         ChangeNotifierProvider(
                           create: (context) =>
@@ -80,7 +80,7 @@ class MyGroup extends StatelessWidget {
                     providers: [
                       ChangeNotifierProvider(
                           create: (context) =>
-                              MyGroupViewModel(_groupRepository, _authService)),
+                              MyGroupViewModel(_groupRepository, _userInfo)),
                     ],
                     child: NewGroup(),
                   ),
