@@ -9,31 +9,8 @@ import '../home/home.dart';
 class LandingPage extends StatelessWidget {
   const LandingPage({super.key});
 
-  // 카카오 로그인 버튼 클릭
-  void _kakaoLogin(BuildContext context, AuthService authService) async {
-    // 로그인 수행
-    authService.login(background: false);
-
-    switch (authService.status) {
-      //  로그인 완료된 경우
-      case AuthStatus.success:
-        if (context.mounted) {
-          Navigator.pushReplacementNamed(context, "/home");
-        }
-      // 회원가입이 필요한 경우
-      case AuthStatus.permission:
-        if (context.mounted) {
-          Navigator.pushReplacementNamed(context, "/signup");
-        }
-      default:
-      // 로그인 취소된 경우
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final authService = context.watch<AuthService>();
-
     return Scaffold(
       body: SizedBox(
         width: double.infinity,
@@ -45,8 +22,11 @@ class LandingPage extends StatelessWidget {
             const Text("두윗"),
             const Text("펫과 함께하는 소셜 투두리스트"),
             ElevatedButton(
-              // onPressed: () => Navigator.pushReplacementNamed(context, "/home"),
-              onPressed: () => _kakaoLogin(context, authService),
+              // 로그인 수행
+              onPressed: () => Provider.of<AuthService>(
+                context,
+                listen: false,
+              ).login(),
               style: ElevatedButton.styleFrom(
                   elevation: 0,
                   padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),

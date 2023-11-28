@@ -21,14 +21,3 @@ List<Provider> getRepositories() {
     Provider<GroupRepository>(create: (_) => GroupRepository())
   ];
 }
-
-List<ChangeNotifierProvider> getChangeNotifiers() {
-  return [
-    ChangeNotifierProvider<AuthService>(
-        create: (context) => AuthService(
-              context,
-              Provider.of<KaKaoLogin>(context, listen: false),
-              Provider.of<UserRepository>(context, listen: false),
-            )),
-  ];
-}

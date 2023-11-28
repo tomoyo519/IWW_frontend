@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/main.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
-import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/view/_common/profile_image.dart';
-import 'package:provider/provider.dart';
 
 class HomeProfile extends StatelessWidget {
   final UserInfo user;
@@ -11,7 +8,6 @@ class HomeProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authService = context.read<AuthService>();
     return Container(
       width: double.infinity,
       margin: EdgeInsets.fromLTRB(10, 10, 10, 5),
@@ -64,11 +60,11 @@ class HomeProfile extends StatelessWidget {
                       ),
                       TextButton(
                         onPressed: () {
-                          authService.logout().then((value) {
-                            GlobalNavigator.navigatorKey.currentState
-                                ?.pushNamedAndRemoveUntil(
-                                    "/landing", (route) => false);
-                          });
+                          // authService.logout().then((value) {
+                          //   GlobalNavigator.navigatorKey.currentState
+                          //       ?.pushNamedAndRemoveUntil(
+                          //           "/landing", (route) => false);
+                          // });
                         },
                         style: TextButton.styleFrom(),
                         child: Text("로그아웃"),

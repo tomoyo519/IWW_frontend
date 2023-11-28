@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
+import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/style/colors.dart';
 import 'package:iww_frontend/utils/logger.dart';
@@ -20,21 +21,24 @@ class TodoEditorModal extends StatelessWidget {
   final Todo? todo;
   final String title;
   final GlobalKey<FormState> formKey;
-  final TodoViewModel todoViewModel;
+  final BuildContext buildContext;
 
   const TodoEditorModal({
     Key? key,
     required this.todo,
     required this.title,
     required this.formKey,
-    required this.todoViewModel,
+    required this.buildContext,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     // 키보드에 따른 높이 조정
     // 키보드가 열려 있는지 확인
-    final bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom != 0;
+    final bool isKeyboardOpen =
+        MediaQuery.of(buildContext).viewInsets.bottom != 0;
+    UserInfo user = Provider.of<UserInfo>(buildContext, listen: false);
+    TodoViewModel todoViewModel = Provider.of<TodoViewModel>(buildContext);
 
     // 취소 버튼 클릭
     void onCancel(BuildContext context) {
@@ -47,13 +51,11 @@ class TodoEditorModal extends StatelessWidget {
       Navigator.pop(context);
 
       final viewModel = context.read<TodoEditorViewModel>();
-      final authService = Provider.of<AuthService>(context, listen: false);
-      // int userId = authService.user!.user_id ?? 1;
-      int userId = 1;
 
       // 할일 신규 생성
       if (viewModel.todoData['todo_id'] == null) {
-        await viewModel.createTodo(userId).then((result) {
+        print('${viewModel.todoData} viewModel.todoData');
+        await viewModel.createTodo(user.user_id).then((result) {
           todoViewModel.fetchTodos();
           if (result == true && context.mounted) {
             Navigator.pop(context);

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
+import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
@@ -106,10 +107,10 @@ class TodoEditorViewModel extends ChangeNotifier {
 // 전체 투두리스트 상태를 관리
 class TodoViewModel extends ChangeNotifier {
   final TodoRepository _todoRepository;
-  final AuthService _authService;
+  final UserInfo _user;
 
   // 생성자
-  TodoViewModel(this._todoRepository, this._authService) {
+  TodoViewModel(this._todoRepository, this._user) {
     fetchTodos();
   }
 
@@ -126,8 +127,7 @@ class TodoViewModel extends ChangeNotifier {
   // 할일 목록 가져오기
   Future<void> fetchTodos() async {
     try {
-      int? userId = _authService.user?.user_id;
-      LOG.log("#### $userId");
+      int? userId = _user.user_id;
       todos = (await _todoRepository.getTodos(userId)) ?? [];
       waiting = false;
     } catch (error) {

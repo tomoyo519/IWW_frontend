@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/auth/login_result.dart';
+import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/providers.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
@@ -54,6 +55,16 @@ import 'package:iww_frontend/view/shop/shop_page.dart';
 // }
 // <<< generate todo test
 
+class GlobalNavigator {
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
+
+  static Future<void> navigate(String path) async {
+    GlobalNavigator.navigatorKey.currentState
+        ?.pushNamedAndRemoveUntil(path, (route) => false);
+  }
+}
+
 void main() async {
   // 웹 환경에서 카카오 로그인을 정상적으로 완료하려면 runApp() 호출 전 아래 메서드 호출 필요
   WidgetsFlutterBinding.ensureInitialized();
@@ -64,12 +75,35 @@ void main() async {
     javaScriptAppKey: Secrets.KAKAO_JS_APP_KEY,
   );
 
+  // 인증에 필요한 리포지토리 및 서비스 초기화
+  UserRepository userRepository = UserRepository();
+  AuthService authService = AuthService(userRepository);
+
+  // 앱 진입 시 로그인
+  // authService.localLogin();
+
+  // 만약 테스트유저 접속시
+  authService.user = UserInfo(
+    user_id: 1,
+    user_name: "sojeong",
+    user_tel: "010-0000-0000",
+    user_kakao_id: "user_kakao_id",
+    user_hp: 0,
+  );
+  authService.waiting = false;
+
   runApp(
     MultiProvider(
-      // Repository Providers
       providers: getRepositories(),
       child: MultiProvider(
-        providers: getChangeNotifiers(),
+        providers: [
+          Provider<UserRepository>(
+            create: (context) => userRepository,
+          ),
+          ChangeNotifierProvider<AuthService>(
+            create: (context) => authService,
+          ),
+        ],
         child: MaterialApp(
           navigatorKey: GlobalNavigator.navigatorKey,
           theme: ThemeData(
@@ -77,56 +111,40 @@ void main() async {
               colorScheme: ColorScheme.fromSeed(
                 seedColor: Colors.lightBlue,
               )),
-          // 라우트 정의
+          home: LoginWrapper(child: MyHomePage()),
           routes: {
-            '/app': (context) => const MyApp(),
-            '/home': (context) => const MyHomePage(),
-            '/landing': (context) => LandingPage(),
+            // 회원가입 또는 랜딩 페이지
             '/signup': (context) => SignUpPage(),
-            '/contact': (context) => AddFriendsPage(),
-            '/myroom': (context) => MyRoom(),
-            '/group': (context) => MyGroup(),
-            '/mypage': (context) => MyPage(),
-            '/friends': (context) => MyFriend(),
-            '/shop': (context) => ShopPage()
+            '/landing': (context) => LandingPage(),
+
+            // 유저만 접근 가능한 페이지
+            '/home': (context) => LoginWrapper(child: MyHomePage()),
+            '/contact': (context) => LoginWrapper(child: AddFriendsPage()),
+            '/myroom': (context) => LoginWrapper(child: MyRoom()),
+            '/group': (context) => LoginWrapper(child: MyGroup()),
+            '/mypage': (context) => LoginWrapper(child: MyPage()),
+            '/friends': (context) => LoginWrapper(child: MyFriend()),
+            '/shop': (context) => LoginWrapper(child: ShopPage())
           },
-          home: MyApp(),
         ),
       ),
     ),
   );
 }
 
-// 싱글톤
-class GlobalNavigator {
-  static final GlobalKey<NavigatorState> navigatorKey =
-      GlobalKey<NavigatorState>();
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class LoginWrapper extends StatelessWidget {
+  final Widget child;
+  LoginWrapper({Key? key, required this.child}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Provider.of<AuthService>(context, listen: false).initialize();
+    final bool waiting = context.watch<AuthService>().waiting;
+    final UserInfo? user = context.watch<AuthService>().user;
 
-    // 내비게이션 전 보일 로딩페이지
-    return MyHomePage();
+    return waiting
+        ? Placeholder()
+        : (user == null)
+            ? LandingPage()
+            : Provider<UserInfo>.value(value: user, child: child);
   }
 }
-
-    // AuthService authService = context.watch<AuthService>();
-    // AuthStatus status = authService.status;
-
-    // authService.login(background: false);
-    // LOG.log("Initialize user info: status $status");
-    // switch (status) {
-    //   case AuthStatus.success:
-    //     return MyHomePage();
-    //   case AuthStatus.waiting:
-    //     return LoadingPage();
-    //   case AuthStatus.failed:
-    //     return LandingPage();
-    //   case AuthStatus.permission:
-    //     return LandingPage();
-    // }
