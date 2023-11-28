@@ -34,7 +34,7 @@ class HomeProfile extends StatelessWidget {
               ),
             ),
             SizedBox(
-              width: 30,
+              width: 20,
             ),
             Expanded(
               child: Column(
@@ -49,26 +49,40 @@ class HomeProfile extends StatelessWidget {
                     ),
                   ),
                   Row(
-                    children: [
+                    children: const [
                       DecoratedBox(
                         decoration: BoxDecoration(),
-                        child: Text("Today  4/5"),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.monetization_on_outlined,
+                                color: Colors.orange,
+                                size: 20,
+                              ),
+                              Text(
+                                "45,000",
+                                style: TextStyle(
+                                    color: Colors.orange,
+                                    fontWeight: FontWeight.bold),
+                              )
+                            ]),
                       ),
                       DecoratedBox(
                         decoration: BoxDecoration(),
                         child: Text("Total  4/5"),
                       ),
-                      TextButton(
-                        onPressed: () {
-                          // authService.logout().then((value) {
-                          //   GlobalNavigator.navigatorKey.currentState
-                          //       ?.pushNamedAndRemoveUntil(
-                          //           "/landing", (route) => false);
-                          // });
-                        },
-                        style: TextButton.styleFrom(),
-                        child: Text("로그아웃"),
-                      )
+                      // TextButton(
+                      //   onPressed: () {
+                      //     // authService.logout().then((value) {
+                      //     //   GlobalNavigator.navigatorKey.currentState
+                      //     //       ?.pushNamedAndRemoveUntil(
+                      //     //           "/landing", (route) => false);
+                      //     // });
+                      //   },
+                      //   style: TextButton.styleFrom(),
+                      //   child: Text("로그아웃"),
+                      // )
                     ],
                   ),
                 ],

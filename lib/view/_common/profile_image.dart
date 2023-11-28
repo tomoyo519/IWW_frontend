@@ -23,13 +23,18 @@ class ProfileImage extends StatelessWidget {
       height: height,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(100),
-        child: Image.network(
-          "${Secrets.REMOTE_SERVER_URL}/image/${userId!}.jpg",
+
+        child: Image.asset(
+          "assets/thumbnail/kitsune.png",
           fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return Image.asset("assets/profile.jpg");
-          },
         ),
+        // child: Image.network(
+        //   "${Secrets.REMOTE_SERVER_URL}/image/${userId!}.jpg",
+        //   fit: BoxFit.cover,
+        //   errorBuilder: (context, error, stackTrace) {
+        //     return Image.asset("assets/profile.jpg");
+        //   },
+        // ),
       ),
     );
   }

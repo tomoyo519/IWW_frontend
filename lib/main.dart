@@ -107,10 +107,8 @@ void main() async {
         child: MaterialApp(
           navigatorKey: GlobalNavigator.navigatorKey,
           theme: ThemeData(
-              useMaterial3: true,
-              colorScheme: ColorScheme.fromSeed(
-                seedColor: Colors.lightBlue,
-              )),
+            useMaterial3: true,
+          ),
           home: LoginWrapper(child: MyHomePage()),
           routes: {
             // 회원가입 또는 랜딩 페이지

@@ -32,15 +32,17 @@ class MyHomePage extends StatelessWidget {
       ),
       body: Container(
         decoration: BoxDecoration(
-            image: DecorationImage(
-          // 배경 이미지
-          image: AssetImage("assets/wallpaper.jpg"),
-          fit: BoxFit.cover,
-        )),
+          image: DecorationImage(
+            // 배경 이미지
+            image: AssetImage("assets/wallpaper.jpg"),
+            fit: BoxFit.cover,
+          ),
+        ),
         child: Column(
           children: [
             Expanded(
               flex: 1,
+              // 프로필 카드
               child: HomeProfile(
                 user: user,
               ),
