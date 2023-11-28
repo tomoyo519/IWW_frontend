@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/model/group/group.model.dart';
@@ -72,9 +74,31 @@ class MyGroupViewModel extends ChangeNotifier {
     }
   }
 
-  Future<bool?> createGroup(int userId) async {
-    groupData['user_id'] = userId;
-    return await _groupRepository.createGroup(groupData);
+  Future<bool?> createGroup() async {
+    try {
+      var json = {
+        "grpInfo": (groupData),
+        "routInfo": groupRoutine ??
+            [
+              {
+                "rout_name": "아침에 일어나기",
+                "rout_desc": "이부자리 정리하기",
+                "rout_repeat": 1111100,
+                "rout_srt": "200000",
+                "rout_end": "200000"
+              }
+            ]
+      };
+      LOG.log('json: $json');
+      groupData["user_id"] = "1";
+
+      var rest = (await _groupRepository.createGroup(json) ?? []);
+      LOG.log('rest:$rest');
+      return true;
+    } catch (err) {
+      LOG.log('err:$err');
+      return false;
+    }
   }
 }
 

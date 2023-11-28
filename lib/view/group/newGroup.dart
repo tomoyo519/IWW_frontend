@@ -53,12 +53,25 @@ class _NewGroupState extends State<NewGroup> {
 
   setRoutine(Map<String, dynamic> routine) {}
 
-  _createGroup(BuildContext context) {
+  _createGroup(BuildContext context) async {
     //새로운 그룹 만들기;
     final myGroupViewModel =
         Provider.of<MyGroupViewModel>(context, listen: false);
-    ;
+
+    final viewModel = context.read<MyGroupViewModel>();
     LOG.log('myGroupViewModel.groupData: ${myGroupViewModel.groupData}');
+    LOG.log('groupName:$groupName');
+    // TODO - userId 넣기
+    await viewModel.createGroup().then((res) {
+      if (res == true) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('그룹 생성이 완료 되었어요!'),
+          ),
+        );
+        Navigator.pop(context);
+      }
+    });
   }
 
   void onCancel(BuildContext context) {
@@ -77,6 +90,9 @@ class _NewGroupState extends State<NewGroup> {
     final _groupRepository =
         Provider.of<GroupRepository>(context, listen: false);
     final _authService = Provider.of<AuthService>(context, listen: false);
+    final myGroupViewModel =
+        Provider.of<MyGroupViewModel>(context, listen: false);
+    final MyGroupViewModel viewModel = context.watch<MyGroupViewModel>();
     return Scaffold(
         appBar: MyAppBar(),
         body: Container(
@@ -84,6 +100,9 @@ class _NewGroupState extends State<NewGroup> {
             padding: EdgeInsets.all(10),
             child: Column(children: [
               TextField(
+                onChanged: (value) {
+                  viewModel.groupName = value;
+                },
                 decoration: InputDecoration(
                   hintText: "그룹명을 작성해주세요.",
                 ),
@@ -110,12 +129,18 @@ class _NewGroupState extends State<NewGroup> {
                     child: Container(
                       width: MediaQuery.of(context).size.width * 0.15,
                       alignment: Alignment.center,
-                      child: Text("카테고리"),
+                      child: Text((viewModel.groupData['cat_id'] != null)
+                          ? LabelListModal
+                              .labels[(viewModel.groupData['cat_id'])]
+                          : LabelListModal.labels[0]),
                     ),
                   ),
                 ],
               ),
               TextField(
+                onChanged: (value) {
+                  viewModel.groupDesc = value;
+                },
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.symmetric(vertical: 60),
                   border: OutlineInputBorder(
