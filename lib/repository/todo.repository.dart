@@ -11,7 +11,7 @@ class TodoRepository {
   /// ================== ///
   ///         Get        ///
   /// ================== ///
-  Future<List<Todo>?> getTodos(int? userId) async {
+  Future<List<Todo>> getTodos(int? userId) async {
     return await RemoteDataSource.get("/todo/user/${userId ?? 1}")
         .then((response) {
       if (response.statusCode == 200) {
@@ -19,7 +19,7 @@ class TodoRepository {
 
         // 만약 할일이 없으면
         if (jsonData.isEmpty) {
-          return null;
+          return [];
         }
 
         List<Todo>? data = jsonData.map((data) => Todo.fromJson(data)).toList();
@@ -35,7 +35,7 @@ class TodoRepository {
         data.sort((a, b) => a.todoDate.compareTo(b.todoDate));
         return data;
       }
-      return null;
+      return [];
     });
   }
 

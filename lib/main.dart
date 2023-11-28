@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/model/auth/login_result.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/providers.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
-import 'package:iww_frontend/utils/kakaoLogin.dart';
-import 'package:iww_frontend/utils/logger.dart';
-import 'package:iww_frontend/view/_common/loading.dart';
 import 'package:iww_frontend/view/home/home.dart';
 import 'package:iww_frontend/view/signup/add_friends.dart';
 import 'package:iww_frontend/view/friends/friendMain.dart';
@@ -15,11 +11,10 @@ import 'package:iww_frontend/view/signup/landing.dart';
 import 'package:iww_frontend/view/mypage/myPage.dart';
 import 'package:iww_frontend/view/myroom/myroom.dart';
 import 'package:iww_frontend/view/signup/signup.dart';
+import 'package:iww_frontend/viewmodel/user.provider.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_template.dart';
-import 'package:iww_frontend/model/routine/routine.model.dart';
-import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/view/shop/shop_page.dart';
 
 // >>> generate todo test
@@ -108,7 +103,9 @@ void main() async {
           navigatorKey: GlobalNavigator.navigatorKey,
           theme: ThemeData(
             useMaterial3: true,
+            fontFamily: 'Pretendard',
           ),
+          debugShowCheckedModeBanner: false,
           home: LoginWrapper(child: MyHomePage()),
           routes: {
             // 회원가입 또는 랜딩 페이지
@@ -143,6 +140,13 @@ class LoginWrapper extends StatelessWidget {
         ? Placeholder()
         : (user == null)
             ? LandingPage()
-            : Provider<UserInfo>.value(value: user, child: child);
+            : Provider<UserInfo>.value(
+                value: user,
+                child: ChangeNotifierProvider<UserProvider>(
+                  create: (context) => UserProvider(
+                      Provider.of<UserRepository>(context, listen: false),
+                      user),
+                  child: child,
+                ));
   }
 }

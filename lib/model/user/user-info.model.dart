@@ -9,6 +9,9 @@ class UserInfo {
   final String user_kakao_id;
   final int user_hp;
 
+  // TODO: 유저 돈
+  int user_money = 45000;
+
   // DB의 유저 펫
   int? pet_id;
 

@@ -1,108 +1,10 @@
-import 'dart:developer';
-
+import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
-import 'package:iww_frontend/service/auth.service.dart';
-import 'package:iww_frontend/utils/logger.dart';
-
-// 투두 에디팅 화면의 상태를 관리
-class TodoEditorViewModel extends ChangeNotifier {
-  final TodoRepository _todoRepository;
-  final Todo? _todo; // 초기화된 투두 데이터
-
-  TodoEditorViewModel(
-    this._todoRepository,
-    this._todo,
-  ) : _todoData = _todo?.toMap() ?? <String, dynamic>{};
-
-  // 폼 상태 관리
-  Map<String, dynamic> _todoData;
-  Map<String, dynamic> get todoData => _todoData;
-
-  // Start Time
-  TimeOfDay _timeOfDay = TimeOfDay.now();
-  int get hour => _timeOfDay.hour;
-  int get min => _timeOfDay.minute;
-
-  // Is Routine?
-  String? _todoRoutine;
-  String? get todoRoutine => _todoRoutine;
-
-  // Setters
-  set todoDate(String val) {
-    _todoData['todo_date'] = val;
-    notifyListeners();
-  }
-
-  set todoLabel(int val) {
-    _todoData['todo_label'] = val;
-    notifyListeners();
-  }
-
-  set todoDone(bool val) {
-    _todoData['todo_done'] = val;
-    notifyListeners();
-  }
-
-  set todoStart(TimeOfDay val) {
-    _timeOfDay = val;
-    _todoData['todo_start'] = val;
-    notifyListeners();
-  }
-
-  set todoDesc(String val) {
-    _todoData['todo_desc'] = val;
-    notifyListeners();
-  }
-
-  set todoRoutine(String? val) {
-    _todoRoutine = val;
-    notifyListeners();
-  }
-
-  // 할일 저장
-  Future<bool> createTodo(int userId) async {
-    String timeString =
-        '${hour.toString().padLeft(2, '0')}:${min.toString().padLeft(2, '0')}:00';
-
-    // Map<String, dynamic> data = {
-    //   "user_id": 6,
-    //   "todo_name": todoData['todo_name'],
-    //   "todo_done": false,
-    //   "todo_desc": todoData['todo_desc'],
-    //   "todo_label": todoData['todo_label'],
-    //   "todo_start": timeString,
-    // };
-    todoData['user_id'] = userId;
-    todoData['todo_start'] = timeString;
-
-    return await _todoRepository.createTodo(todoData);
-  }
-
-  // 할일 수정
-  Future<bool> updateTodo() async {
-    var id = todoData["todo_id"];
-
-    // String timeString = "$hour시 $min분";
-    String timeString =
-        '${hour.toString().padLeft(2, '0')}:${min.toString().padLeft(2, '0')}:00';
-
-    // Map<String, dynamic> data = {
-    //   "user_id": todoData["user_id"],
-    //   "todo_name": todoData['todo_name'],
-    //   "todo_done": false,
-    //   "todo_desc": todoData['todo_desc'],
-    //   "todo_label": todoData['todo_label'],
-    //   "todo_start": timeString,
-    // };
-
-    todoData['todo_start'] = timeString;
-    return await _todoRepository.updateTodo(id.toString(), todoData);
-  }
-}
 
 // 전체 투두리스트 상태를 관리
 class TodoViewModel extends ChangeNotifier {
@@ -114,62 +16,110 @@ class TodoViewModel extends ChangeNotifier {
     fetchTodos();
   }
 
-  List<Todo> todos = [];
-  bool waiting = true;
-  bool _isDisposed = false;
-
+  // 자원해제
   @override
   void dispose() {
     _isDisposed = true;
     super.dispose();
   }
 
+  // ===== Status ===== //
+  List<Todo> _todos = [];
+  bool _waiting = true;
+  bool _isDisposed = false;
+  int _exp = 0;
+  bool _isTodaysFirstTodo = false;
+
+  // ===== Status Getters ===== //
+  List<Todo> get todos => _todos;
+  bool get waiting => _waiting;
+  int get total => _todos.length;
+  int get check => _todos.where((e) => e.todoDone == true).length;
+  int get exp => _exp;
+  bool get isTodaysFirstTodo => _isTodaysFirstTodo;
+
+  // ===== Status Setters ===== //
+  set isTodaysFirstTodo(bool val) => _isTodaysFirstTodo = val;
+  set waiting(bool val) {
+    _waiting = val;
+    if (!_isDisposed) {
+      notifyListeners();
+    }
+  }
+
   // 할일 목록 가져오기
   Future<void> fetchTodos() async {
-    try {
-      int? userId = _user.user_id;
-      todos = (await _todoRepository.getTodos(userId)) ?? [];
-      waiting = false;
-    } catch (error) {
-      LOG.log("fetch error $error");
-      waiting = false;
-      todos = [];
-    } finally {
-      if (!_isDisposed) {
-        waiting = false;
-        notifyListeners();
-      }
-    }
+    int userId = _user.user_id;
+    // 상태 업데이트
+    _todos = await _todoRepository.getTodos(userId);
+    waiting = false;
   }
 
-  // 할일 삭제
+  // 할일 삭제하고 목록 업데이트
   Future<bool> deleteTodo(int todoId) async {
-    return await _todoRepository.deleteTodo(todoId.toString());
+    waiting = true;
+    return await _todoRepository.deleteTodo(todoId.toString()).then((value) {
+      if (value == true) {
+        _todos = _todos.where((todo) => todo.todoId != todoId).toList();
+        waiting = false;
+        return true;
+      }
+      waiting = false;
+      return false;
+    });
   }
 
-  // 할일 완료
-  // todoId, checked 필수인자, userId, path 선택인자
-  Future<bool> checkTodo(
-    int todoId,
-    bool checked, {
-    int? userId,
-    String? path,
-  }) async {
+  // 할일 완료하고 목록 업데이트
+  Future<bool> checkTodo(Todo todo, bool checked,
+      {int? userId, String? path}) async {
+    // waiting = true;
+
     if (path == null) {
       // 만약 이미지 경로가 없으면 일반 할일 체크로 처리합니다.
-      return await _todoRepository.checkNormalTodo(
-        todoId.toString(),
-        checked,
-      );
-    } else {
-      // 이미지 경로가 있으면 그룹 할일 체크로 처리합니다.
-      return await _todoRepository.checkGroupTodo(
-        userId.toString(),
-        todoId.toString(),
-        checked,
-        path,
-      );
+      return _checkNormalTodo(todo, checked);
     }
+    // 이미지 경로가 있으면 그룹 할일 체크로 처리합니다.
+    return await _todoRepository.checkGroupTodo(
+      userId.toString(),
+      todo.todoId.toString(),
+      checked,
+      path,
+    );
+  }
+
+  Future<bool> _checkNormalTodo(Todo todo, bool checked) async {
+    return await _todoRepository
+        .checkNormalTodo(todo.todoId.toString(), checked)
+        .then((value) {
+      if (value = true) {
+        // 업데이트에 성공한 경우 할일 리스트 상태에서도 동일하게 처리
+        int idx = _todos.indexWhere((e) => e.todoId == todo.todoId);
+        if (idx != -1) {
+          var today = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+          // 오늘 완료한 투두 개수
+          var todaysCheckedTodo = _todos
+              .where((e) => e.todoDate == today && e.todoDone == true)
+              .length;
+
+          // 아직 첫 투두 완료 모달창이 안 떴고
+          // 오늘의 첫 투두를 완료한 경우,
+          if (!isTodaysFirstTodo && todaysCheckedTodo == 0) {
+            // 모달창을 띄웁니다
+            _isTodaysFirstTodo = true;
+          }
+
+          _todos[idx].todoDone = checked;
+
+          // TODO: User 쪽으로 옮기기
+          _exp = min(_exp + 5, 50);
+        }
+        waiting = false;
+        return idx != -1;
+      }
+      waiting = false;
+      return false;
+    });
   }
 
   String _selectedDate = '';

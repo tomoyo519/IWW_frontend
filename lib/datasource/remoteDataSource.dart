@@ -56,7 +56,7 @@ class RemoteDataSource {
       // request.files.add(http.MultipartFile(
       //     field, file.readAsBytes().asStream(), file.lengthSync(),
       //     filename: filename));
-      LOG.log('파일경로: ${filename}');
+      LOG.log('파일경로: $filename');
       request.files.add(await http.MultipartFile.fromPath('file', filename!));
       var res = await request.send();
       LOG.log('사진 전송 결과: @@@${res.statusCode}');
