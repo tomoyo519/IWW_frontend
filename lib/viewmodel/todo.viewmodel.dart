@@ -16,7 +16,6 @@ class TodoViewModel extends ChangeNotifier {
     fetchTodos();
   }
 
-  // 자원해제
   @override
   void dispose() {
     _isDisposed = true;
