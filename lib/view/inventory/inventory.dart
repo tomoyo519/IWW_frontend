@@ -35,60 +35,12 @@ class InventoryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    var inventoryState = context.watch<InventoryState>();
-
-    return MaterialApp(
-      home: Scaffold(
-        body: Stack(
-          fit: StackFit.expand,
-          children: [
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: AnimatedContainer(
-                  width: double.infinity,
-                  height: screenHeight - inventoryState.intventoryHeight,
-                  color: Colors.blue,
-                  duration: Duration(milliseconds: 500),
-                  curve: Curves.easeInOut,
-                  child: Center(child: Text('Widget A'))),
-            ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: GestureDetector(
-                onTap: () {
-                  inventoryState.toggleInventory();
-                },
-                child: AnimatedContainer(
-                  height: inventoryState.intventoryHeight,
-                  duration: Duration(milliseconds: 500),
-                  curve: Curves.easeInOut,
-                  child: TempPage(),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class TempPage extends StatelessWidget {
-  const TempPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
     var inventoryState = context.watch<InventoryState>();
 
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage("assets/bg/bg7.png"),
+          image: AssetImage("assets/bg/bg7.jpg"),
           fit: BoxFit.cover,
         ),
       ),
