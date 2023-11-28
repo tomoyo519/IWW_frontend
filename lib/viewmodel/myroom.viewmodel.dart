@@ -4,20 +4,14 @@ import 'package:model_viewer_plus/model_viewer_plus.dart';
 class MyRoomViewModel with ChangeNotifier {
   int _roomOwner = 0;
 
+  final Map<String, AssetImage> _backgrounds = {
+    'bg1': AssetImage('assets/background.png'),
+    'bg2': AssetImage('assets/wallpaper.jpg'),
+    'bg3': AssetImage('assets/background4.png'),
+  };
+
   // TODO get assets from DB
-  Map<String, dynamic> assets = {
-    'bg1': Image.asset(
-      'assets/background.png',
-      fit: BoxFit.fitHeight,
-    ),
-    'bg2': Image.asset(
-      'assets/wallpaper.jpg',
-      fit: BoxFit.fitWidth,
-    ),
-    'bg3': Image.asset(
-      'assets/background4.png',
-      fit: BoxFit.fill,
-    ),
+  final Map<String, dynamic> _assets = {
     'fish': ModelViewer(
       // loading: Loading.eager,
       shadowIntensity: 1,
@@ -147,16 +141,17 @@ class MyRoomViewModel with ChangeNotifier {
   // 방에 놓을 오브젝트들
   List<Widget> getObjects() {
     if (isMyRoom()) {
-      return [
-        assets['bg3']!,
-        assets['small_fox']!,
-      ];
+      return [_assets['small_fox']!];
     } else {
-      return [
-        assets['bg2']!,
-        assets['small_fox']!,
-        assets['mid_fox']!,
-      ];
+      return [_assets['small_fox'], _assets['mid_fox']!];
+    }
+  }
+
+  AssetImage getBackground() {
+    if (isMyRoom()) {
+      return _backgrounds['bg1']!;
+    } else {
+      return _backgrounds['bg2']!;
     }
   }
 }

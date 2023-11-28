@@ -34,6 +34,7 @@ class MyRoom extends StatelessWidget {
         child: Scaffold(
             body: SafeArea(
               child: Stack(
+                fit: StackFit.expand,
                 children: [
                   RenderMyRoom(),
                   // Positioned(height: 800, bottom: 100, child: UnderLayer()),
@@ -73,7 +74,15 @@ class RenderMyRoom extends StatelessWidget {
       print("[log/myroom]: $e");
     }
 
-    return Stack(alignment: Alignment.center, children: roomState.getObjects());
+    return Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: roomState.getBackground(),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Stack(
+            alignment: Alignment.center, children: roomState.getObjects()));
 
     // 유저의 펫 정보 불러오기
 
