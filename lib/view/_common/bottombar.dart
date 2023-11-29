@@ -20,10 +20,7 @@ class MyBottomNav extends StatelessWidget implements PreferredSizeWidget {
         break;
       case 2:
         Navigator.pushNamedAndRemoveUntil(
-            context,
-            "/myroom",
-            arguments: true,
-            (Route<dynamic> route) => false);
+            context, "/myroom", arguments: 0,(Route<dynamic> route) => false);
         break;
       case 3:
         Navigator.pushNamedAndRemoveUntil(
