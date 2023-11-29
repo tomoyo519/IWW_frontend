@@ -8,10 +8,9 @@ class MyRoomViewModel with ChangeNotifier {
     'bg1': AssetImage('assets/bg/bg1.png'),
     'bg2': AssetImage('assets/bg/bg2.png'),
     'bg3': AssetImage('assets/bg/bg3.png'),
-    'bg4': AssetImage('assets/bg/bg4.png'),
     'bg5': AssetImage('assets/bg/bg5.png'),
     'bg6': AssetImage('assets/bg/bg6.png'),
-    'bg7': AssetImage('assets/bg/bg7.jpeg'),
+    'bg7': AssetImage('assets/bg/bg7.jpg'),
   };
 
   // TODO get assets from DB

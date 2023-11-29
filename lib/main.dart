@@ -8,6 +8,7 @@ import 'package:iww_frontend/utils/kakaoLogin.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_common/loading.dart';
 import 'package:iww_frontend/view/home/home.dart';
+import 'package:iww_frontend/view/notification/notification.dart';
 import 'package:iww_frontend/view/signup/add_friends.dart';
 import 'package:iww_frontend/view/friends/friendMain.dart';
 import 'package:iww_frontend/view/group/groupMain.dart';
@@ -125,7 +126,8 @@ void main() async {
             '/group': (context) => LoginWrapper(child: MyGroup()),
             '/mypage': (context) => LoginWrapper(child: MyPage()),
             '/friends': (context) => LoginWrapper(child: MyFriend()),
-            '/shop': (context) => LoginWrapper(child: ShopPage())
+            '/shop': (context) => LoginWrapper(child: ShopPage()),
+            '/notification': (context) => LoginWrapper(child: MyNotification()),
           },
         ),
       ),
