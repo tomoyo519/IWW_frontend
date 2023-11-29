@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/notification.repository.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
+import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/model/notification/notification.model.dart'
     as model;
 
@@ -24,10 +25,16 @@ class _MyNotificationState extends State<MyNotification> {
   }
 
   Future<void> fetchNoti() async {
-    List<model.Notification> fectedNoti =
-        //TODO - userId 받아오는 코드 추가
-        await notificationRepository.getNoti(1);
-    notifications = fectedNoti;
+    try {
+      List<model.Notification>? fetchedNoti =
+          await notificationRepository.getNoti(1);
+      setState(() {
+        notifications = fetchedNoti;
+      });
+    } catch (e) {
+      // 에러 처리
+      print('Error fetching notifications: $e');
+    }
   }
 
   @override
@@ -86,6 +93,7 @@ class _MyNotificationState extends State<MyNotification> {
       default:
         message = '';
     }
+    LOG.log(message);
     return message;
   }
 
@@ -99,6 +107,7 @@ class _MyNotificationState extends State<MyNotification> {
                 noti.reqType = 1;
                 await notificationRepository.updateNoti(
                     noti.notiId, noti.toJson());
+                fetchNoti();
               },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
               child: Text('수락')),
@@ -108,6 +117,7 @@ class _MyNotificationState extends State<MyNotification> {
               noti.reqType = 2;
               await notificationRepository.updateNoti(
                   noti.notiId, noti.toJson());
+              fetchNoti();
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             child: Text('거절'),
