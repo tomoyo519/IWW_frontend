@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
@@ -55,11 +56,46 @@ class ShopRepository {
   };
 
   Future<List<ShopInfo>> getPets() async {
-    return Future.value(dummy["results"]?["pet"] ?? []);
+    int? userId = await _getUser();
+    // TODO - userId 어케써ㅜ
+    LOG.log('userId: ${userId}');
+    return await RemoteDataSource.get('/item-shop/${userId ?? 1}').then((res) {
+      if (res.statusCode == 200) {
+        var jsonData = jsonDecode(res.body);
+        LOG.log('res.body:${jsonData["results"]["펫"]}');
+        return List<ShopInfo>.from(
+            jsonData["results"]["펫"].map((item) => ShopInfo.fromJson(item)));
+      } else {
+        if (dummy["results"] != null && dummy["results"]!["pet"] != null) {
+          return Future.value(List<ShopInfo>.from(dummy["results"]!["pet"]!));
+        } else {
+          return Future.value([]);
+        }
+      }
+    });
+    // return Future.value(dummy["results"]?["pet"] ?? []);
   }
 
   Future<List<ShopInfo>> getFuns() async {
-    return Future.value(dummy["results"]?["furniture"] ?? []);
+    int? userId = await _getUser();
+    // TODO - userId 어케써ㅜ
+    LOG.log('userId: ${userId}');
+    return await RemoteDataSource.get('/item-shop/${userId ?? 1}').then((res) {
+      if (res.statusCode == 200) {
+        var jsonData = jsonDecode(res.body);
+
+        LOG.log('res.body:${jsonData["results"]}');
+        return List<ShopInfo>.from(
+            jsonData["results"]["펫"].map((item) => ShopInfo.fromJson(item)));
+      } else {
+        if (dummy["results"] != null && dummy["results"]!["pet"] != null) {
+          return Future.value(List<ShopInfo>.from(dummy["results"]!["pet"]!));
+        } else {
+          return Future.value([]);
+        }
+      }
+    });
+    // return Future.value(dummy["results"]?["pet"] ?? []);
   }
 
   Future<List<ShopInfo>> getEmoj() async {
@@ -68,12 +104,14 @@ class ShopRepository {
 
   Future<bool> purchaseItem(itemId) async {
     int? userId = await _getUser();
-    var json = {"user_id": userId, "item_id": itemId};
-    return await RemoteDataSource.post('/item-shop/${userId}/${itemId}')
+    var json = jsonEncode({"user_id": userId, "item_id": itemId});
+    return await RemoteDataSource.post('/item-shop/${userId ?? 1}/${itemId}',
+            body: json)
         .then((res) {
       if (res.statusCode == 201) {
         return true;
       }
+      LOG.log('${res.body}');
       return false;
     });
   }
