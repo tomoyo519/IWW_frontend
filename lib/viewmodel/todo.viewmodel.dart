@@ -35,8 +35,10 @@ class TodoViewModel extends ChangeNotifier {
   List<Todo> get todos => _todos;
   List<Todo> get groupTodos => _groupTodos;
   bool get waiting => _waiting;
-  int get total => _todos.length;
-  int get check => _todos.where((e) => e.todoDone == true).length;
+  int get total => _todos.length + _groupTodos.length;
+  int get check =>
+      _todos.where((e) => e.todoDone == true).length +
+      _groupTodos.where((e) => e.todoDone == true).length;
   bool get isTodaysFirstTodo => _isTodaysFirstTodo;
   bool get notifyUser => _notifyUser;
 
@@ -102,7 +104,7 @@ class TodoViewModel extends ChangeNotifier {
 
   // 기본 할일 체크
   Future<bool> _checkNormalTodo(Todo todo, bool checked) async {
-    return _updateTodoStatus(true, todo, checked);
+    // return _updateTodoStatus(true, todo, checked);
     return await _todoRepository
         .checkNormalTodo(todo.todoId.toString(), checked)
         .then((value) => _updateTodoStatus(value, todo, checked));

@@ -11,36 +11,36 @@ class TodoRepository {
   ///         Get        ///
   /// ================== ///
   Future<List<Todo>> getTodos(int? userId) async {
-    var rtn = await DummyData.todoDummy();
-    LOG.log("$rtn");
-    return rtn;
-    // return await RemoteDataSource.get("/todo/user/${userId ?? 1}")
-    //     .then((response) {
-    //   if (response.statusCode == 200) {
-    //     List<dynamic> jsonData = jsonDecode(response.body);
+    // var rtn = await DummyData.todoDummy();
+    // LOG.log("$rtn");
+    // return rtn;
+    return await RemoteDataSource.get("/todo/user/${userId ?? 1}")
+        .then((response) {
+      if (response.statusCode == 200) {
+        List<dynamic> jsonData = jsonDecode(response.body);
 
-    //     // 만약 할일이 없으면
-    //     if (jsonData.isEmpty) {
-    //       return [];
-    //     }
+        // 만약 할일이 없으면
+        if (jsonData.isEmpty) {
+          return [];
+        }
 
-    //     List<Todo>? data = jsonData.map((data) => Todo.fromJson(data)).toList();
-    //     // 오늘
-    //     DateTime yesterday = DateTime.now().subtract(Duration(days: 1));
-    //     data = data
-    //         .where((element) =>
-    //             DateTime.parse(
-    //               element.todoDate,
-    //             ).isAfter(yesterday) ||
-    //             element.todoDone == false)
-    //         .toList();
+        List<Todo>? data = jsonData.map((data) => Todo.fromJson(data)).toList();
+        // 오늘
+        DateTime yesterday = DateTime.now().subtract(Duration(days: 1));
+        data = data
+            .where((element) =>
+                DateTime.parse(
+                  element.todoDate,
+                ).isAfter(yesterday) ||
+                element.todoDone == false)
+            .toList();
 
-    //     // 정렬해서 넘김
-    //     data.sort((a, b) => a.todoDate.compareTo(b.todoDate));
-    //     return data;
-    //   }
-    //   return [];
-    // });
+        // 정렬해서 넘김
+        data.sort((a, b) => a.todoDate.compareTo(b.todoDate));
+        return data;
+      }
+      return [];
+    });
   }
 
   /// ================== ///

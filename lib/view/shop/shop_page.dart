@@ -38,7 +38,7 @@ class ShopItems extends StatefulWidget {
 }
 
 class _ShopItems extends State<ShopItems> {
-  List<dynamic>? allpets;
+  List<ShopInfo>? allpets;
   List<dynamic>? allfuns;
   List<dynamic>? allemot;
   final ShopRepository shopRepository = ShopRepository();
@@ -75,6 +75,7 @@ class _ShopItems extends State<ShopItems> {
 
   @override
   Widget build(BuildContext context) {
+    // return Text("HELLO");
     return DefaultTabController(
       length: 3, // 탭의 수
       child: Column(
@@ -90,75 +91,76 @@ class _ShopItems extends State<ShopItems> {
           Expanded(
             child: TabBarView(
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Expanded(
-                      child: GridView.builder(
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            childAspectRatio: 0.8,
-                          ),
-                          itemCount: allpets?.length,
-                          itemBuilder: (context, idx) {
-                            return GestureDetector(
-                              onTap: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Text(
-                                          '${allpets?[idx].item_name}을 구매하시겠어요?'),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          child: Text('예'),
-                                          onPressed: () {
-                                            purchase(idx);
-                                          },
-                                        ),
-                                        TextButton(
-                                          child: Text('아니요'),
-                                          onPressed: () {
-                                            LOG.log('구매 취소');
-                                            Navigator.of(context).pop();
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              },
-                              child: Padding(
-                                  padding: const EdgeInsets.all(2.0),
-                                  child: Card(
-                                    child: Column(
-                                      children: <Widget>[
-                                        Expanded(
-                                          child: Image(
-                                            image: AssetImage(allpets?[idx]
-                                                    .item_path ??
-                                                'default_image_path'), // 'default_image_path'는 기본 이미지 경로로 변경하세요.
-                                          ),
-                                        ),
-                                        ListTile(
-                                          title: Text(allpets?[idx].item_name),
-                                          subtitle: Row(
-                                            children: [
-                                              Icon(Icons
-                                                  .monetization_on_outlined),
-                                              Text(allpets?[idx]
-                                                      .item_cost
-                                                      .toString() ??
-                                                  ""),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )),
-                            );
-                          })),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.all(10.0),
+                //   child: Expanded(
+                //       child: GridView.builder(
+                //           gridDelegate:
+                //               SliverGridDelegateWithFixedCrossAxisCount(
+                //             crossAxisCount: 3,
+                //             childAspectRatio: 0.8,
+                //           ),
+                //           itemCount: allpets?.length,
+                //           itemBuilder: (context, idx) {
+                //             return GestureDetector(
+                //               onTap: () {
+                //                 showDialog(
+                //                   context: context,
+                //                   builder: (BuildContext context) {
+                //                     return AlertDialog(
+                //                       title: Text(
+                //                           '${allpets?[idx].item_name}을 구매하시겠어요?'),
+                //                       actions: <Widget>[
+                //                         TextButton(
+                //                           child: Text('예'),
+                //                           onPressed: () {
+                //                             purchase(idx);
+                //                           },
+                //                         ),
+                //                         TextButton(
+                //                           child: Text('아니요'),
+                //                           onPressed: () {
+                //                             LOG.log('구매 취소');
+                //                             Navigator.of(context).pop();
+                //                           },
+                //                         ),
+                //                       ],
+                //                     );
+                //                   },
+                //                 );
+                //               },
+                //               child: Padding(
+                //                   padding: const EdgeInsets.all(2.0),
+                //                   child: Card(
+                //                     child: Column(
+                //                       children: <Widget>[
+                //                         Expanded(
+                //                           child: Image(
+                //                             image: AssetImage(allpets?[idx]
+                //                                     .item_path ??
+                //                                 'default_image_path'), // 'default_image_path'는 기본 이미지 경로로 변경하세요.
+                //                           ),
+                //                         ),
+                //                         ListTile(
+                //                           title: Text(
+                //                               allpets?[idx].item_name ?? "마법"),
+                //                           subtitle: Row(
+                //                             children: [
+                //                               Icon(Icons
+                //                                   .monetization_on_outlined),
+                //                               Text(allpets?[idx]
+                //                                       .item_cost
+                //                                       .toString() ??
+                //                                   ""),
+                //                             ],
+                //                           ),
+                //                         ),
+                //                       ],
+                //                     ),
+                //                   )),
+                //             );
+                //           })),
+                // ),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Expanded(
@@ -183,7 +185,8 @@ class _ShopItems extends State<ShopItems> {
                                         ),
                                       ),
                                       ListTile(
-                                        title: Text(allfuns?[idx].item_name),
+                                        title:
+                                            Text(allfuns?[idx].item_name ?? ""),
                                         subtitle: Row(
                                           children: [
                                             Icon(
