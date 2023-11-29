@@ -35,9 +35,6 @@ class ShopItems extends StatefulWidget {
   const ShopItems({super.key});
   @override
   State<ShopItems> createState() => _ShopItems();
-
-  // @override
-  // State<ShopItems> createState() => _ShopItemsState();
 }
 
 class _ShopItems extends State<ShopItems> {
@@ -50,6 +47,18 @@ class _ShopItems extends State<ShopItems> {
   void initState() {
     super.initState();
     fetchFriend();
+  }
+
+  void purchase(idx) async {
+    var result = await shopRepository.purchaseItem(idx);
+    if (result == true) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: const Text("아이템 구매가 완료 되었어요!")));
+      Navigator.pop(context);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: const Text("아이템 구매를 실패했어요! 다시 시도해주세요.")));
+    }
   }
 
   Future<void> fetchFriend() async {
@@ -77,6 +86,7 @@ class _ShopItems extends State<ShopItems> {
               Tab(icon: Icon(Icons.category_outlined)),
             ],
           ),
+          // TODO - 재사용성 확인하기
           Expanded(
             child: TabBarView(
               children: <Widget>[
@@ -91,34 +101,62 @@ class _ShopItems extends State<ShopItems> {
                           ),
                           itemCount: allpets?.length,
                           itemBuilder: (context, idx) {
-                            return Padding(
-                                padding: const EdgeInsets.all(2.0),
-                                child: Card(
-                                  child: Column(
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: Image(
-                                          image: AssetImage(allpets?[idx]
-                                                  .item_path ??
-                                              'default_image_path'), // 'default_image_path'는 기본 이미지 경로로 변경하세요.
+                            return GestureDetector(
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text(
+                                          '${allpets?[idx].item_name}을 구매하시겠어요?'),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: Text('예'),
+                                          onPressed: () {
+                                            purchase(idx);
+                                          },
                                         ),
-                                      ),
-                                      ListTile(
-                                        title: Text(allpets?[idx].item_name),
-                                        subtitle: Row(
-                                          children: [
-                                            Icon(
-                                                Icons.monetization_on_outlined),
-                                            Text(allpets?[idx]
-                                                    .item_cost
-                                                    .toString() ??
-                                                ""),
-                                          ],
+                                        TextButton(
+                                          child: Text('아니요'),
+                                          onPressed: () {
+                                            LOG.log('구매 취소');
+                                            Navigator.of(context).pop();
+                                          },
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ));
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                              child: Padding(
+                                  padding: const EdgeInsets.all(2.0),
+                                  child: Card(
+                                    child: Column(
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: Image(
+                                            image: AssetImage(allpets?[idx]
+                                                    .item_path ??
+                                                'default_image_path'), // 'default_image_path'는 기본 이미지 경로로 변경하세요.
+                                          ),
+                                        ),
+                                        ListTile(
+                                          title: Text(allpets?[idx].item_name),
+                                          subtitle: Row(
+                                            children: [
+                                              Icon(Icons
+                                                  .monetization_on_outlined),
+                                              Text(allpets?[idx]
+                                                      .item_cost
+                                                      .toString() ??
+                                                  ""),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )),
+                            );
                           })),
                 ),
                 Padding(

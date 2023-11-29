@@ -5,6 +5,7 @@ import 'package:iww_frontend/model/shop/shop.model.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:iww_frontend/model/user/user-info.model.dart';
 
 class ShopRepository {
   Map<String, Map<String, List<ShopInfo>>> dummy = {
@@ -65,5 +66,20 @@ class ShopRepository {
     return Future.value(dummy["results"]?["emoticon"] ?? []);
   }
 
-  // 친구 생성
+  Future<bool> purchaseItem(itemId) async {
+    int? userId = await _getUser();
+    var json = {"user_id": userId, "item_id": itemId};
+    return await RemoteDataSource.post('/item-shop/${userId}/${itemId}')
+        .then((res) {
+      if (res.statusCode == 201) {
+        return true;
+      }
+      return false;
+    });
+  }
+
+  Future<int?> _getUser() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    return pref.getInt("user_id");
+  }
 }
