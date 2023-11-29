@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
@@ -69,7 +71,13 @@ class _GroupDetailState extends State<GroupDetail> {
     if (result.statusCode == 201) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: const Text("그룹 가입이 완료 되었어요!")));
+
+      Navigator.pushNamed(context, "/group");
     }
+  }
+
+  exitGroup(grp_id) async {
+    //탈퇴하기;
   }
 
   @override
@@ -240,6 +248,25 @@ class _GroupDetailState extends State<GroupDetail> {
                         },
                         child:
                             Text("참가하기", style: TextStyle(color: Colors.white)),
+                      ),
+                    )
+                  ],
+                  if (myGroup) ...[
+                    Divider(color: Colors.grey, thickness: 1, indent: 10),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.7,
+                      height: 40,
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                            backgroundColor: Color(0xFF3A00E5),
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)))),
+                        onPressed: () {
+                          exitGroup(widget.group["grp_id"]);
+                        },
+                        child:
+                            Text("탈퇴하기", style: TextStyle(color: Colors.white)),
                       ),
                     )
                   ]

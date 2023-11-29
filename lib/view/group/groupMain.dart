@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/view/_common/bottombar.dart';
@@ -14,6 +15,7 @@ class MyGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    UserInfo _userInfo = Provider.of<UserInfo>(context, listen: false);
     final _groupRepository =
         Provider.of<GroupRepository>(context, listen: false);
     final _authService = Provider.of<AuthService>(context, listen: false);
@@ -53,7 +55,7 @@ class MyGroup extends StatelessWidget {
                       providers: [
                         ChangeNotifierProvider(
                           create: (context) =>
-                              MyGroupViewModel(_groupRepository, _authService),
+                              MyGroupViewModel(_groupRepository, _userInfo),
                         ),
                         ChangeNotifierProvider(
                           create: (context) =>
@@ -70,11 +72,23 @@ class MyGroup extends StatelessWidget {
           ),
           bottomNavigationBar: MyBottomNav(),
           floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (c) => NewGroup()));
-              },
-              child: Icon(Icons.add)),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (c) => MultiProvider(
+                    providers: [
+                      ChangeNotifierProvider(
+                          create: (context) =>
+                              MyGroupViewModel(_groupRepository, _userInfo)),
+                    ],
+                    child: NewGroup(),
+                  ),
+                ),
+              );
+            },
+            child: Icon(Icons.add),
+          ),
         ));
   }
 }
