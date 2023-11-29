@@ -16,6 +16,8 @@ class Comment {
     required this.content,
     required this.isMod,
   }) {
-    userImage = '${Secrets.TEST_SERVER_URL}/image/$authorId.jpg';
+    // TODO 서버파괴자의 주범 잡았다.
+    // userImage = '${Secrets.TEST_SERVER_URL}/image/$authorId.jpg';
+    userImage = '${Secrets.REMOTE_SERVER_URL}/assets/profile.jpg';
   }
 }
