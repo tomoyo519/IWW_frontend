@@ -16,7 +16,7 @@ class TodoNameField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.read<TodoEditorViewModel>();
+    final viewModel = context.read<EditorModalViewModel>();
     // 폼 필드 테두리 옵션
     var borderOption = OutlineInputBorder(
       borderRadius: BorderRadius.circular(15),

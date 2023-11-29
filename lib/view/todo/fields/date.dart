@@ -20,7 +20,7 @@ class TodoDateField extends StatelessWidget {
       context: context,
       builder: (bottomSheetContext) {
         return Calendar(setSelectedDay: (newDate) {
-          Provider.of<TodoEditorViewModel>(
+          Provider.of<EditorModalViewModel>(
             context,
             listen: false,
           ).todoDate = newDate.toString();
@@ -35,7 +35,7 @@ class TodoDateField extends StatelessWidget {
       onTap: () => _onTap(context),
       child: TodoFormFieldLayout(
         icon: Icons.calendar_month_rounded,
-        child: Consumer<TodoEditorViewModel>(
+        child: Consumer<EditorModalViewModel>(
           builder: (context, viewModel, child) {
             final format = DateFormat('yyyy년 M월 d일');
             final dateTimeString = DateTime.now().toString();

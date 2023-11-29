@@ -1,11 +1,6 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
-import 'package:iww_frontend/model/user/user-info.model.dart';
-import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/style/colors.dart';
-import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_common/bottom_sheet_header.dart';
 import 'package:iww_frontend/view/todo/fields/date.dart';
 import 'package:iww_frontend/view/todo/fields/desc.dart';
@@ -13,21 +8,18 @@ import 'package:iww_frontend/view/todo/fields/label.dart';
 import 'package:iww_frontend/view/todo/fields/name.dart';
 import 'package:iww_frontend/view/todo/fields/routine.dart';
 import 'package:iww_frontend/view/todo/fields/time.dart';
-import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
-import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
-import 'package:provider/provider.dart';
 
 // bottom sheet 내용
-class TodoEditorModal extends StatelessWidget {
-  final Todo? todo;
+class EditorModal extends StatelessWidget {
   final String title;
+  final Todo? init;
   final GlobalKey<FormState> formKey;
   final Function(BuildContext) onSave;
   final Function(BuildContext) onCancel;
 
-  const TodoEditorModal({
+  const EditorModal({
     Key? key,
-    required this.todo,
+    required this.init,
     required this.title,
     required this.formKey,
     required this.onSave,
@@ -44,19 +36,20 @@ class TodoEditorModal extends StatelessWidget {
       heightFactor: isKeyboardOpen ? 0.9 : 0.58,
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
-        child: Column(children: [
-          BottomSheetModalHeader(
-            title: title,
-            onSave: onSave,
-            onCancel: onCancel,
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: MyColors.background,
-                ),
-                child: Padding(
+        child: Column(
+          children: [
+            BottomSheetModalHeader(
+              title: title,
+              onSave: onSave,
+              onCancel: onCancel,
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: MyColors.background,
+                  ),
+                  child: Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 10,
                       vertical: 10,
@@ -87,11 +80,13 @@ class TodoEditorModal extends StatelessWidget {
                           ),
                         ],
                       ),
-                    )),
+                    ),
+                  ),
+                ),
               ),
-            ),
-          )
-        ]),
+            )
+          ],
+        ),
       ),
     );
   }

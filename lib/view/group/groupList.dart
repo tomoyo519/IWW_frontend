@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
+import 'package:iww_frontend/model/group/group.model.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:provider/provider.dart';
 import 'groupDetail.dart';
@@ -21,7 +22,7 @@ class GroupList extends StatefulWidget {
 }
 
 class _GroupListState extends State<GroupList> {
-  List<dynamic> groups = [];
+  List<Group> groups = [];
 
   getList() async {
     UserInfo userInfo = Provider.of<UserInfo>(context, listen: false);
@@ -35,7 +36,7 @@ class _GroupListState extends State<GroupList> {
       LOG.log('response: $response');
       setState(() {
         List<dynamic> result = jsonData['results'];
-        groups = result;
+        groups = result.map((e) => Group.fromJson(e)).toList();
       });
     }
   }
@@ -55,13 +56,16 @@ class _GroupListState extends State<GroupList> {
                   itemCount: groups.length,
                   itemBuilder: (c, i) {
                     return TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (c) =>
-                                      GroupDetail(group: groups[i])));
-                        },
+                        onPressed: () => Navigator.pushNamed(
+                            context, "/group/detail",
+                            arguments: groups[i]),
+                        //   {
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (c) =>
+                        //             GroupDetail(group: groups[i])));
+                        // },
                         child: Container(
                           alignment: Alignment.center,
                           margin: EdgeInsets.all(5),
@@ -74,10 +78,10 @@ class _GroupListState extends State<GroupList> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                groups[i]["grp_name"],
+                                groups[i].grpName,
                                 style: TextStyle(color: Colors.black),
                               ),
-                              Text('${groups[i]["mem_cnt"]}/100',
+                              Text('${groups[i].memCnt}/100',
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.w800))
