@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/user.provider.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
@@ -13,18 +14,32 @@ class TodoProgress extends StatelessWidget {
   Widget build(BuildContext context) {
     DateTime today = DateTime.now().add(Duration(hours: 9));
     final viewmodel = context.watch<TodoViewModel>();
-    final usermodel = Provider.of<UserInfo>(context, listen: false);
+    final usermodel = context.watch<UserProvider>();
 
     final cash = NumberFormat('#,##0').format(
-      usermodel.user_money,
+      usermodel.userCash,
     );
 
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: Colors.grey.shade400,
-        ),
+        color: Colors.white,
+        // gradient: LinearGradient(
+        //   begin: Alignment.topLeft,
+        //   end: Alignment.bottomRight,
+        //   colors: [
+        //     Color.fromARGB(255, 255, 159, 63),
+        //     Color.fromARGB(255, 54, 244, 203)
+        //   ], // Gradient colors
+        // ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 0,
+            blurRadius: 5,
+            offset: Offset(0, 3), // changes position of shadow
+          ),
+        ],
       ),
       padding: EdgeInsets.symmetric(
         horizontal: 10,
@@ -40,7 +55,7 @@ class TodoProgress extends StatelessWidget {
             children: [
               Text(
                 "${viewmodel.check}/${viewmodel.total}",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
               ),
               SizedBox(
                 width: 10,
@@ -81,28 +96,6 @@ class TodoProgress extends StatelessWidget {
               ),
             ],
           )
-
-          // Row(
-          //   children: [
-          //     SizedBox(
-          //       width: 40,
-          //       height: 40,
-          //       child: IconButton.filled(
-          //         onPressed: () => _onTap(context),
-          //         style: IconButton.styleFrom(
-          //             shape: RoundedRectangleBorder(
-          //               borderRadius: BorderRadius.circular(10),
-          //             ),
-          //             backgroundColor: Color.fromARGB(255, 255, 255, 255)),
-          //         icon: Icon(
-          //           Icons.add,
-          //           color: Colors.blue.shade700,
-          //           size: 25,
-          //         ),
-          //       ),
-          //     )
-          //   ],
-          // )
         ],
       ),
     );

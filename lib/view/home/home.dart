@@ -8,9 +8,10 @@ import 'package:iww_frontend/view/_common/appbar.dart';
 import 'package:iww_frontend/view/_common/bottombar.dart';
 import 'package:iww_frontend/view/home/home_profile.dart';
 import 'package:iww_frontend/view/modals/custom_fullscreen_modal.dart';
+import 'package:iww_frontend/view/modals/pet_evolve_modal.dart';
 import 'package:iww_frontend/view/modals/todo_first_done.dart';
-import 'package:iww_frontend/view/todo/todo-editor.dart';
-import 'package:iww_frontend/view/todo/todo-list.dart';
+import 'package:iww_frontend/view/todo/todo_editor.dart';
+import 'package:iww_frontend/view/todo/todo_list.dart';
 import 'package:iww_frontend/view/todo/todo_progress.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
@@ -24,6 +25,7 @@ class MyHomePage extends StatelessWidget {
   List<ChangeNotifierProvider> _getProviders(BuildContext context) {
     final todoRepository = Provider.of<TodoRepository>(context, listen: false);
     final UserInfo user = Provider.of<UserInfo>(context, listen: false);
+
     return [
       ChangeNotifierProvider<TodoViewModel>(
           create: (_) => TodoViewModel(todoRepository, user)),
@@ -54,7 +56,7 @@ class MyHomePage extends StatelessWidget {
         );
       },
     ).then((value) {
-      // 화면을 리프레시합니다.
+      // TODO: 화면을 리프레시합니다.
       // context.watch<TodoViewModel>().waiting = false;
     });
   }
@@ -127,20 +129,29 @@ class MyHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewmodel = context.watch<TodoViewModel>();
-    final notifyUser = viewmodel.notifyUser;
+    // Future.microtask(() {
+    //   showCustomFullScreenModal(
+    //     context,
+    //     EvolPetModal(),
+    //   );
+    // });
 
-    if (notifyUser && viewmodel.isTodaysFirstTodo) {
-      _onFirstTodoDone(context);
-      viewmodel.notifyUser = false;
-    }
-
-    if (notifyUser && !viewmodel.isTodaysFirstTodo) {
-      _onFirstTodoDone(context);
-      viewmodel.notifyUser = false;
-    }
+    // return Text("Hello World");
 
     return Container(
+      width: double.infinity,
+      height: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.amber.shade50,
+        // gradient: LinearGradient(
+        //   begin: Alignment.topLeft,
+        //   end: Alignment.bottomRight,
+        //   colors: [
+        //     Color.fromARGB(255, 255, 211, 169),
+        //     Color.fromARGB(255, 233, 255, 250)
+        //   ], // Gradient colors
+        // ),
+      ),
       padding: EdgeInsets.symmetric(
         horizontal: 20,
       ),
@@ -166,16 +177,5 @@ class MyHome extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  // * 첫 투두 완료 모달 *//
-  Future<void> _onFirstTodoDone(BuildContext context) async {
-    // 위젯 빌드 후에 모달 표시
-    Future.microtask(() async {
-      await showCustomFullScreenModal(
-        context,
-        TodoFirstDoneModal(),
-      );
-    });
   }
 }

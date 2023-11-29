@@ -14,13 +14,8 @@ class HomeProfile extends StatelessWidget {
     final todo = Provider.of<TodoViewModel>(context);
     final user = Provider.of<UserInfo>(context);
 
-    return Container(
+    return SizedBox(
       width: double.infinity,
-      // margin: EdgeInsets.fromLTRB(10, 10, 10, 5),
-      // decoration: BoxDecoration(
-      //   color: Colors.white,
-      //   borderRadius: BorderRadius.circular(15),
-      // ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,43 +53,6 @@ class HomeProfile extends StatelessWidget {
                     fontSize: 13,
                     color: Colors.black54,
                   ),
-                ),
-                Row(
-                  children: [
-                    DecoratedBox(
-                      decoration: BoxDecoration(),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.monetization_on_outlined,
-                              color: Colors.orange,
-                              size: 20,
-                            ),
-                            Text(
-                              "${user.user_money}",
-                              style: TextStyle(
-                                  color: Colors.orange,
-                                  fontWeight: FontWeight.bold),
-                            )
-                          ]),
-                    ),
-                    DecoratedBox(
-                      decoration: BoxDecoration(),
-                      child: Text("${todo.check}/${todo.total}"),
-                    ),
-                    // TextButton(
-                    //   onPressed: () {
-                    //     // authService.logout().then((value) {
-                    //     //   GlobalNavigator.navigatorKey.currentState
-                    //     //       ?.pushNamedAndRemoveUntil(
-                    //     //           "/landing", (route) => false);
-                    //     // });
-                    //   },
-                    //   style: TextButton.styleFrom(),
-                    //   child: Text("로그아웃"),
-                    // )
-                  ],
                 ),
               ],
             ),

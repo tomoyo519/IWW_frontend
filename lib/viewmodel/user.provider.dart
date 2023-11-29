@@ -14,10 +14,15 @@ class UserProvider extends ChangeNotifier {
     _userName = userInfo.user_name;
     _userTel = userInfo.user_tel;
     _userHp = userInfo.user_hp;
+
     _userCash = 45000;
+    _userLoginCnt = 100;
+
+    // == Pet == //
     _mainPet = userInfo.pet_id ?? 1;
-    _mainPetExp = 0;
-    _mainPetName = "최고의파이리";
+    _mainPerLv = 9;
+    _mainPetExp = 180;
+    _mainPetName = "왕귀여워";
   }
 
   // === Status === //
@@ -26,13 +31,19 @@ class UserProvider extends ChangeNotifier {
   late String _userTel;
   late int _userHp;
   late int _userCash;
+  late int _userLoginCnt;
+
   late int _mainPet;
+  late int _mainPerLv;
   late int _mainPetExp;
   late String _mainPetName;
 
   // === Getters === //
+
+  int get petId => _mainPet;
+  int get petLv => _mainPerLv;
   int get userCash => _userCash;
-  int get mainPetExp => _mainPetExp;
+  int get petExp => _mainPetExp;
   String get mainPetName => _mainPetName;
 
   UserInfo get user {
@@ -50,6 +61,21 @@ class UserProvider extends ChangeNotifier {
   bool get waiting => _waiting;
   set waiting(bool val) {
     _waiting = val;
+    notifyListeners();
+  }
+
+  set userHp(int hp) {
+    _userHp = hp;
+    notifyListeners();
+  }
+
+  set petExp(int exp) {
+    _mainPetExp = exp;
+    notifyListeners();
+  }
+
+  set userCash(int cash) {
+    _userCash = cash;
     notifyListeners();
   }
 

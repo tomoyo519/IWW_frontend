@@ -25,6 +25,7 @@ class TodoViewModel extends ChangeNotifier {
 
   // ===== Status ===== //
   List<Todo> _todos = [];
+  List<Todo> _groupTodos = [];
   bool _waiting = true;
   bool _isDisposed = false;
   bool _isTodaysFirstTodo = false;
@@ -32,6 +33,7 @@ class TodoViewModel extends ChangeNotifier {
 
   // ===== Status Getters ===== //
   List<Todo> get todos => _todos;
+  List<Todo> get groupTodos => _groupTodos;
   bool get waiting => _waiting;
   int get total => _todos.length;
   int get check => _todos.where((e) => e.todoDone == true).length;
@@ -40,7 +42,6 @@ class TodoViewModel extends ChangeNotifier {
 
   // ===== Status Setters ===== //
   set notifyUser(bool val) => _notifyUser = val;
-
   set waiting(bool val) {
     _waiting = val;
     if (!_isDisposed) {
@@ -48,11 +49,17 @@ class TodoViewModel extends ChangeNotifier {
     }
   }
 
+  Future<void> setTodos() async {}
+
   // 할일 목록 가져오기
   Future<void> fetchTodos() async {
     // 상태 업데이트
     int userId = _user.user_id;
-    _todos = await _todoRepository.getTodos(userId);
+    var data = await _todoRepository.getTodos(userId);
+
+    // 분리해서 가져오기
+    _todos = data.where((todo) => todo.grpId == null).toList();
+    _groupTodos = data.where((todo) => todo.grpId != null).toList();
     waiting = false;
   }
 
@@ -75,6 +82,8 @@ class TodoViewModel extends ChangeNotifier {
       {int? userId, String? path}) async {
     // waiting = true;
 
+    LOG.log("check todo");
+
     if (path == null) {
       // 만약 이미지 경로가 없으면 일반 할일 체크로 처리합니다.
       return _checkNormalTodo(todo, checked);
@@ -93,6 +102,7 @@ class TodoViewModel extends ChangeNotifier {
 
   // 기본 할일 체크
   Future<bool> _checkNormalTodo(Todo todo, bool checked) async {
+    return _updateTodoStatus(true, todo, checked);
     return await _todoRepository
         .checkNormalTodo(todo.todoId.toString(), checked)
         .then((value) => _updateTodoStatus(value, todo, checked));
@@ -117,9 +127,11 @@ class TodoViewModel extends ChangeNotifier {
 
     LOG.log("message");
     int idx = _todos.indexWhere((e) => e.todoId == todo.todoId);
-    if (idx != -1) _checkIfFirstTodo(todo, checked);
+    if (idx != -1) {
+      _checkIfFirstTodo(todo, checked);
+      _todos[idx].todoDone = checked;
+    }
 
-    _todos[idx].todoDone = checked;
     waiting = false;
     return idx != -1;
   }

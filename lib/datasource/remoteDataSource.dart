@@ -94,6 +94,7 @@ class RemoteDataSource {
   }) async {
     // 기본 헤더 추가
     headers = (headers != null) ? {...headers, ...baseHeaders} : baseHeaders;
+    LOG.log("send get $url");
     return await http.get(Uri.parse(server + url), headers: headers);
   }
 

@@ -28,11 +28,13 @@ class LandingPage extends StatelessWidget {
                 listen: false,
               ).login(),
               style: ElevatedButton.styleFrom(
-                  elevation: 0,
-                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                  backgroundColor: const Color(0xfffee500),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12))),
+                elevation: 0,
+                padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                backgroundColor: const Color(0xfffee500),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [

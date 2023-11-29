@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
-Future<Object?> showCustomFullScreenModal(BuildContext context, Widget child) {
+Future<Object?> showCustomFullScreenModal(
+  BuildContext context,
+  Widget child,
+) {
   return showGeneralDialog(
     context: context,
     pageBuilder: (
@@ -9,7 +12,9 @@ Future<Object?> showCustomFullScreenModal(BuildContext context, Widget child) {
       Animation<double> secondaryAnimation,
     ) {
       return Container(
-        color: Colors.white,
+        width: double.infinity,
+        height: double.infinity,
+        color: Colors.amber.shade50,
         child: SafeArea(
           child: child,
         ),

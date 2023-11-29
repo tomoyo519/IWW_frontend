@@ -11,9 +11,10 @@ class UserInfo {
 
   // TODO: 유저 돈
   int user_money = 45000;
+  int? pet_id;
+  int? login_cnt;
 
   // DB의 유저 펫
-  int? pet_id;
 
   UserInfo({
     required this.user_id,
@@ -22,16 +23,18 @@ class UserInfo {
     required this.user_kakao_id,
     required this.user_hp,
     this.pet_id,
+    this.login_cnt,
   });
 
   // TODO: regAt, uptAt, lastLogin?
 
   factory UserInfo.fromJson(Map<String, dynamic> data) {
     return UserInfo(
-        user_id: data["user_id"],
-        user_name: data["user_name"],
-        user_tel: data["user_tel"],
-        user_kakao_id: data["user_kakao_id"],
-        user_hp: data["user_hp"]);
+      user_id: data["user_id"],
+      user_name: data["user_name"],
+      user_tel: data["user_tel"],
+      user_kakao_id: data["user_kakao_id"],
+      user_hp: data["user_hp"],
+    );
   }
 }

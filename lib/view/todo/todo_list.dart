@@ -5,8 +5,10 @@ import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_common/spinner.dart';
-import 'package:iww_frontend/view/todo/layout/list-tile.dart';
-import 'package:iww_frontend/view/todo/todo-editor.dart';
+import 'package:iww_frontend/view/modals/todo_first_done.dart';
+import 'package:iww_frontend/view/todo/todo_my_tile.dart';
+import 'package:iww_frontend/view/todo/todo_editor.dart';
+import 'package:iww_frontend/view/todo/todo_group_tile.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -21,6 +23,7 @@ class ToDoList extends StatelessWidget {
   Widget build(BuildContext context) {
     // 데이터 가져오기
     final viewModel = context.watch<TodoViewModel>();
+    final groupTodos = viewModel.groupTodos;
     final todos = viewModel.todos;
 
     return DecoratedBox(
@@ -29,30 +32,53 @@ class ToDoList extends StatelessWidget {
       ),
       child: viewModel.waiting
           ? Spinner()
-          : ListView.builder(
-              controller: scroll,
-              itemCount: todos.length,
-              itemBuilder: (context, idx) {
-                // 할일이 없는 경우 디폴트 화면
-                if (todos.isEmpty) {
-                  return _TodoListEmpty();
-                }
-                // 할일이 있으면 리스트 렌더링
-                return GestureDetector(
-                  onTap: () => _showTodoEditor(context, todos[idx]),
-                  onLongPress: () => _showTodoDeleteModal(context, todos[idx]),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                    ),
-                    child: TodoListTileLayout(
-                      todo: todos[idx],
-                      viewModel: viewModel,
-                    ),
+          : viewModel.groupTodos.isEmpty && viewModel.todos.isEmpty
+              ? _TodoListEmpty()
+              : SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // ==== 그룹투두 ==== //
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        child: Text(
+                          "Group Todo",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      for (var todo in groupTodos)
+                        GestureDetector(
+                          onTap: () => _showTodoEditor(context, todo),
+                          onLongPress: () =>
+                              _showTodoDeleteModal(context, todo),
+                          child:
+                              GroupTodoTile(todo: todo, viewModel: viewModel),
+                        ),
+                      // ==== 개인투두 ==== //
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        child: Text(
+                          "Personal Todo",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      for (var todo in todos)
+                        GestureDetector(
+                          onTap: () => _showTodoEditor(context, todo),
+                          onLongPress: () =>
+                              _showTodoDeleteModal(context, todo),
+                          child: MyTodoTile(todo: todo, viewModel: viewModel),
+                        ),
+                    ],
                   ),
-                );
-              },
-            ),
+                ),
     );
   }
 

@@ -9,17 +9,16 @@ void showCustomSnackBar(
     SnackBar(
       content: Row(
         children: [
-          icon,
+          SizedBox(width: 25, child: icon),
           Text(
-            text,
-            style: TextStyle(
-              color: Colors.black54,
-            ),
+            text, // 텍스트
+            style: TextStyle(color: Colors.black54),
           )
         ],
       ),
+      elevation: 0,
       backgroundColor: Colors.transparent,
-      duration: Duration(seconds: 5), // 스낵바 표시 시간 설정
+      duration: Duration(seconds: 2), // 스낵바 표시 시간 설정
     ),
   );
 }
