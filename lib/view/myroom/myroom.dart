@@ -8,6 +8,7 @@ import 'package:iww_frontend/view/_common/bottombar.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
+import 'package:iww_frontend/view/inventory/inventory.dart';
 
 class MyRoom extends StatelessWidget {
   const MyRoom({super.key});
@@ -19,41 +20,74 @@ class MyRoom extends StatelessWidget {
     final roomRepository = Provider.of<RoomRepository>(context, listen: false);
     final commentRepository =
         Provider.of<CommentRepository>(context, listen: false);
+    return MultiProvider(providers: [
+      ChangeNotifierProvider<CommentsProvider>(
+          create: (_) => CommentsProvider(
+                authService,
+                roomRepository,
+                commentRepository,
+              )),
+      ChangeNotifierProvider<MyRoomViewModel>(create: (_) => MyRoomViewModel()),
+      ChangeNotifierProvider(create: (_) => InventoryState()),
+    ], child: Scaffold(body: MyRoomPage(), bottomNavigationBar: MyBottomNav()));
+  }
+}
 
-    return MultiProvider(
-        providers: [
-          ChangeNotifierProvider<CommentsProvider>(
-              create: (_) => CommentsProvider(
-                    authService,
-                    roomRepository,
-                    commentRepository,
-                  )),
-          ChangeNotifierProvider<MyRoomViewModel>(
-              create: (_) => MyRoomViewModel())
-        ],
-        child: Scaffold(
-            body: SafeArea(
-              child: Stack(
-                children: [
-                  RenderMyRoom(),
-                  // Positioned(height: 800, bottom: 100, child: UnderLayer()),
-                  Positioned(
-                      left: 0,
-                      right: 0,
-                      bottom: 30,
-                      height: 150,
-                      child: UnderLayer()),
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: 10,
-                    height: 50,
-                    child: BottomButtons(),
-                  ),
-                ],
-              ),
-            ),
-            bottomNavigationBar: MyBottomNav()));
+class MyRoomPage extends StatelessWidget {
+  const MyRoomPage({super.key});
+  @override
+  Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    var inventoryState = context.watch<InventoryState>();
+
+    return Stack(fit: StackFit.expand, children: [
+      Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          child: AnimatedContainer(
+              width: double.infinity,
+              height: screenHeight - inventoryState.intventoryHeight,
+              color: Colors.blue,
+              duration: Duration(milliseconds: 500),
+              curve: Curves.easeInOut,
+              child: MyRoomComponent())),
+      Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: AnimatedContainer(
+              height: inventoryState.intventoryHeight,
+              duration: Duration(milliseconds: 500),
+              curve: Curves.easeInOut,
+              child: InventoryView()))
+    ]);
+  }
+}
+
+class MyRoomComponent extends StatelessWidget {
+  const MyRoomComponent({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        RenderMyRoom(),
+        // Positioned(height: 800, bottom: 100, child: UnderLayer()),
+        Positioned(
+            left: 0, right: 0, bottom: 100, height: 150, child: UnderLayer()),
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 60,
+          height: 50,
+          child: BottomButtons(),
+        ),
+      ],
+    );
   }
 }
 
@@ -73,7 +107,15 @@ class RenderMyRoom extends StatelessWidget {
       print("[log/myroom]: $e");
     }
 
-    return Stack(alignment: Alignment.center, children: roomState.getObjects());
+    return Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: roomState.getBackground(),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Stack(
+            alignment: Alignment.center, children: roomState.getObjects()));
 
     // 유저의 펫 정보 불러오기
 
@@ -262,6 +304,7 @@ class BottomButtons extends StatelessWidget {
     // NOTE 여기서 비동기 연산 수행
     final authService = Provider.of<AuthService>(context);
     final commentsProvider = context.read<CommentsProvider>();
+    final inventoryState = context.read<InventoryState>();
     var roomState = context.watch<MyRoomViewModel>();
 
     ElevatedButton buildFriendButton() {
@@ -309,7 +352,8 @@ class BottomButtons extends StatelessWidget {
           SizedBox(width: 20),
           ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/inventory');
+                // Navigator.pushNamed(context, '/inventory');
+                inventoryState.toggleInventory();
               },
               child: Text('인벤토리')),
           SizedBox(width: 20),
