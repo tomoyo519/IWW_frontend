@@ -70,8 +70,8 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - assets/
-    - assets/pets/
     - assets/bg/
+    - assets/pets/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
   # For details regarding adding assets from package dependencies, see
