@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/main.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
@@ -80,11 +81,15 @@ class MyGroup extends StatelessWidget {
                 MaterialPageRoute(
                   builder: (c) => MultiProvider(
                     providers: [
+                      Provider(
+                        create: (context) =>
+                            Provider.of<UserInfo>(context, listen: false),
+                      ),
                       ChangeNotifierProvider(
                           create: (context) =>
                               MyGroupViewModel(_groupRepository, _userInfo)),
                     ],
-                    child: NewGroup(),
+                    child: LoginWrapper(child: NewGroup()),
                   ),
                 ),
               );
