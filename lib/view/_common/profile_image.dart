@@ -25,7 +25,7 @@ class ProfileImage extends StatelessWidget {
         borderRadius: BorderRadius.circular(100),
 
         child: Image.asset(
-          "assets/thumbnail/kitsune.png",
+          "assets/kitsune.png",
           fit: BoxFit.cover,
         ),
         // child: Image.network(
