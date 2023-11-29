@@ -1,7 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:lottie/lottie.dart';
@@ -33,13 +34,17 @@ class _GroupDetailState extends State<GroupDetail> {
   late TextEditingController _controller;
 
   getData() async {
-    var result = await RemoteDataSource.get('/group/${widget.group}');
+    LOG.log('widget.group:::::::::::::::::::::::::::${widget.group}');
+    var result = await RemoteDataSource.get('/group/${widget.group["grp_id"]}');
     var resultJson = jsonDecode(result.body);
-    if (result.body.isNotEmpty) {
+    LOG.log('resultJson::::::${resultJson}');
+    // LOG.log('result.statusCode:::::::::${result.statusCode}');
+    if (result.statusCode == 200) {
       setState(() {
-        groupRoutine = resultJson["rout_detail"];
+        groupRoutine = resultJson["result"]["rout_detail"] ?? [];
+        groupMems = resultJson["result"]["grp_mems"];
+        isLoading = false;
       });
-      setState(() => groupMems = resultJson["grp_mems"]);
 
       for (var i = 0; i < groupMems.length; i++) {
         if (groupMems[i]["user_id"] == 1) {
@@ -48,10 +53,11 @@ class _GroupDetailState extends State<GroupDetail> {
           });
         }
       }
+    } else {
+      setState(() {
+        isLoading = false;
+      });
     }
-    setState(() {
-      isLoading = false;
-    });
   }
 
   joinGroup(grp_id) async {
@@ -60,33 +66,22 @@ class _GroupDetailState extends State<GroupDetail> {
       "user_id": 1,
       "grp_id": grp_id,
     });
-    // var result =
-    //     await RemoteDataSource.post("/group/grp_id/join/1", body: data).then((res) =>
+    var result =
+        await RemoteDataSource.post("/group/${grp_id}/join/1", body: data);
+    if (result.statusCode == 201) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: const Text("그룹 가입이 완료 되었어요!")));
 
-    //     );
+      Navigator.pushNamed(context, "/group");
+    }
+  }
 
-    // var data = jsonEncode({
-    //   "user_id": "1",
-    //   "grp_id": grp_id.toString(),
-    // });
-
-    // var result = await http
-    //     .post(Uri.parse('http://yousayrun.store:8088/group/${grp_id}/join/1'),
-    //         headers: <String, String>{
-    //           'Content-Type': 'application/json; charset=UTF-8',
-    //         },
-    //         body: data)
-    //     .catchError((err) {
-    //   print(err);
-    //   return null;
-    // });
-
-    // print(result.body);
+  exitGroup(grp_id) async {
+    //탈퇴하기;
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getData();
 
@@ -100,8 +95,6 @@ class _GroupDetailState extends State<GroupDetail> {
             appBar: MyAppBar(),
             body: Container(
                 margin: EdgeInsets.all(10),
-                // padding: EdgeInsets.all(10),
-
                 child: Column(children: [
                   Text(
                     widget.group["grp_name"],
@@ -161,6 +154,7 @@ class _GroupDetailState extends State<GroupDetail> {
                                                   .height *
                                               0.8,
                                           child: Column(
+                                            // TODO - 사진추가
                                             children: [Text('사용자 사진이 보여지는 화면')],
                                           ),
                                         );
@@ -185,12 +179,13 @@ class _GroupDetailState extends State<GroupDetail> {
                                             onChanged: null,
                                             value: false,
                                           ),
-                                          Text(groupRoutine[i]["rout_name"]),
+                                          Text(groupRoutine[i]["rout_name"] ??
+                                              ""),
                                           Icon(Icons.groups_outlined)
                                         ]),
                                   ),
                                 )
-                              : Text("비었음");
+                              : Text("조회된 그룹이 없습니다.");
                         }),
                   ),
                   Padding(
@@ -213,27 +208,24 @@ class _GroupDetailState extends State<GroupDetail> {
                         itemBuilder: (context, index) {
                           return Column(
                             children: [
-                              groupMems.isNotEmpty
-                                  ? Container(
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                          border: Border.all(
-                                              color: Colors.orangeAccent,
-                                              width: 5)),
-                                      alignment: Alignment.center,
-                                      margin: EdgeInsets.all(2),
-                                      padding: EdgeInsets.all(2),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          Icon(Icons.account_circle_rounded),
-                                          Text(groupMems[index]["user_name"])
-                                        ],
-                                      ))
-                                  : Text("텅")
+                              Container(
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                          color: Colors.orangeAccent,
+                                          width: 5)),
+                                  alignment: Alignment.center,
+                                  margin: EdgeInsets.all(2),
+                                  padding: EdgeInsets.all(2),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Icon(Icons.account_circle_rounded),
+                                      Text(groupMems[index]["user_name"] ?? "")
+                                    ],
+                                  ))
                             ],
                           );
                         },
@@ -258,12 +250,30 @@ class _GroupDetailState extends State<GroupDetail> {
                             Text("참가하기", style: TextStyle(color: Colors.white)),
                       ),
                     )
+                  ],
+                  if (myGroup) ...[
+                    Divider(color: Colors.grey, thickness: 1, indent: 10),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.7,
+                      height: 40,
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                            backgroundColor: Color(0xFF3A00E5),
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)))),
+                        onPressed: () {
+                          exitGroup(widget.group["grp_id"]);
+                        },
+                        child:
+                            Text("탈퇴하기", style: TextStyle(color: Colors.white)),
+                      ),
+                    )
                   ]
                 ])))
         : Lottie.asset('assets/spinner.json',
             repeat: true,
             animate: true,
             height: MediaQuery.of(context).size.height * 0.3);
-    ;
   }
 }

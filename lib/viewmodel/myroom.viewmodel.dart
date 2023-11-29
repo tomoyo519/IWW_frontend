@@ -4,74 +4,17 @@ import 'package:model_viewer_plus/model_viewer_plus.dart';
 class MyRoomViewModel with ChangeNotifier {
   int _roomOwner = 0;
 
+  final Map<String, AssetImage> _backgrounds = {
+    'bg1': AssetImage('assets/bg/bg1.png'),
+    'bg2': AssetImage('assets/bg/bg2.png'),
+    'bg3': AssetImage('assets/bg/bg3.png'),
+    'bg5': AssetImage('assets/bg/bg5.png'),
+    'bg6': AssetImage('assets/bg/bg6.png'),
+    'bg7': AssetImage('assets/bg/bg7.jpg'),
+  };
+
   // TODO get assets from DB
-  Map<String, dynamic> assets = {
-    'bg1': Image.asset(
-      'assets/background.png',
-      fit: BoxFit.fitHeight,
-    ),
-    'bg2': Image.asset(
-      'assets/wallpaper.jpg',
-      fit: BoxFit.fitWidth,
-    ),
-    'bg3': Image.asset(
-      'assets/background4.png',
-      fit: BoxFit.fill,
-    ),
-    'fish': ModelViewer(
-      // loading: Loading.eager,
-      shadowIntensity: 1,
-      src: 'assets/koi_fish.glb',
-      alt: 'koi fish',
-      autoPlay: true,
-      disableZoom: true,
-      cameraControls: false,
-      animationName: 'morphBake',
-      cameraOrbit: '30deg 60deg 0m',
-      cameraTarget: '4m 6m 2m',
-    ),
-    'astronaut': ModelViewer(
-      // loading: Loading.eager,
-      shadowIntensity: 1,
-      src: 'assets/koi_fish.glb',
-      alt: 'astronaut',
-      // autoRotate: true,
-      autoPlay: true,
-      disableZoom: true,
-      cameraControls: false,
-      // animationName: "walk",
-      cameraOrbit: "40deg 60eg 0m",
-      // theta, phi, radius
-      cameraTarget: "0.5m 1.5m 2m", // x(왼쪽 위), y(높이) ,z (오른쪽 위)
-    ),
-    'robot': ModelViewer(
-      // loading: Loading.eager,
-      shadowIntensity: 1,
-      src: 'assets/robot_walk_idle.usdz',
-      alt: 'robot',
-      // autoRotate: true,
-      autoPlay: true,
-      disableZoom: true,
-      cameraControls: false,
-      animationName: "walk",
-      cameraOrbit: "30deg 60deg 0m",
-      // theta, phi, radius
-      cameraTarget: "1m 4m 4m", // x(왼쪽 위), y(높이) ,z (오른쪽 위)
-    ),
-    'animals': ModelViewer(
-      // loading: Loading.eager,
-      // shadowIntensity: 1,
-      src: 'assets/aa.glb',
-      alt: 'animals',
-      // autoRotate: true,
-      autoPlay: true,
-      disableZoom: true,
-      // cameraControls: false,
-      // animationName: "walk",
-      cameraOrbit: "30deg 30deg 2m",
-      // theta, phi, radius
-      cameraTarget: "2m 2m 2m", // x(왼쪽 위), y(높이) ,z (오른쪽 위)
-    ),
+  final Map<String, dynamic> _assets = {
     'cat': ModelViewer(
       // loading: Loading.eager,
       shadowIntensity: 1,
@@ -87,7 +30,7 @@ class MyRoomViewModel with ChangeNotifier {
     'kitsune': ModelViewer(
       // loading: Loading.eager,
       shadowIntensity: 1,
-      src: 'assets/kitsune.glb',
+      src: 'assets/pets/kitsune.glb',
       alt: 'kitsune',
       // autoRotate: true,
       autoPlay: true,
@@ -99,7 +42,7 @@ class MyRoomViewModel with ChangeNotifier {
     'kitsune_ani': ModelViewer(
       // loading: Loading.eager,
       shadowIntensity: 1,
-      src: 'assets/kitsune_ani.glb',
+      src: 'assets/pets/kitsune_ani.glb',
       alt: 'kitsune',
       // autoRotate: true,
       // autoPlay: true,
@@ -111,7 +54,7 @@ class MyRoomViewModel with ChangeNotifier {
     'small_fox': ModelViewer(
       loading: Loading.eager,
       shadowIntensity: 1,
-      src: 'assets/small_fox.glb',
+      src: 'assets/pets/small_fox.glb',
       alt: 'kitsune',
       // autoRotate: true,
       autoPlay: true,
@@ -125,7 +68,7 @@ class MyRoomViewModel with ChangeNotifier {
     'mid_fox': ModelViewer(
       // loading: Loading.eager,
       shadowIntensity: 1,
-      src: 'assets/mid_fox.glb',
+      src: 'assets/pets/mid_fox.glb',
       alt: 'kitsune',
       // autoRotate: true,
       autoPlay: true,
@@ -147,16 +90,17 @@ class MyRoomViewModel with ChangeNotifier {
   // 방에 놓을 오브젝트들
   List<Widget> getObjects() {
     if (isMyRoom()) {
-      return [
-        assets['bg3']!,
-        assets['small_fox']!,
-      ];
+      return [_assets['small_fox']!];
     } else {
-      return [
-        assets['bg2']!,
-        assets['small_fox']!,
-        assets['mid_fox']!,
-      ];
+      return [_assets['small_fox']!, _assets['mid_fox']!];
+    }
+  }
+
+  AssetImage getBackground() {
+    if (isMyRoom()) {
+      return _backgrounds['bg1']!;
+    } else {
+      return _backgrounds['bg5']!;
     }
   }
 }

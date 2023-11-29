@@ -40,7 +40,7 @@ class _GroupSearchState extends State<GroupSearch> {
     if (result.statusCode == 200) {
       Map<String, dynamic> jsonData = jsonDecode(result.body);
       setState(() {
-        List<dynamic> result = jsonData['result'];
+        List<dynamic> result = jsonData['results'];
         groupList = result;
       });
     }
@@ -94,7 +94,6 @@ class _GroupSearchState extends State<GroupSearch> {
                 child: ListView.builder(
                     itemCount: groupList.length,
                     itemBuilder: (c, i) {
-                      LOG.log('groupList[i] : ${groupList[i]}');
                       return TextButton(
                           onPressed: () {
                             Navigator.push(

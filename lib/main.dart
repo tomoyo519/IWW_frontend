@@ -4,6 +4,7 @@ import 'package:iww_frontend/providers.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/view/home/home.dart';
+import 'package:iww_frontend/view/notification/notification.dart';
 import 'package:iww_frontend/view/signup/add_friends.dart';
 import 'package:iww_frontend/view/friends/friendMain.dart';
 import 'package:iww_frontend/view/group/groupMain.dart';
@@ -16,6 +17,7 @@ import 'package:provider/provider.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_template.dart';
 import 'package:iww_frontend/view/shop/shop_page.dart';
+import 'package:iww_frontend/view/inventory/inventory.dart';
 
 // >>> generate todo test
 // var routines = [
@@ -119,7 +121,8 @@ void main() async {
             '/group': (context) => LoginWrapper(child: MyGroup()),
             '/mypage': (context) => LoginWrapper(child: MyPage()),
             '/friends': (context) => LoginWrapper(child: MyFriend()),
-            '/shop': (context) => LoginWrapper(child: ShopPage())
+            '/shop': (context) => LoginWrapper(child: ShopPage()),
+            '/notification': (context) => LoginWrapper(child: MyNotification()),
           },
         ),
       ),
