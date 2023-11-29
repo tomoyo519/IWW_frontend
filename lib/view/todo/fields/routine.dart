@@ -17,7 +17,7 @@ class TodoRoutineField extends StatelessWidget {
           return LabelListModal(
             content: "routine",
             setLabel: (int newLabel) {
-              Provider.of<TodoEditorViewModel>(
+              Provider.of<EditorModalViewModel>(
                 context,
                 listen: false,
               ).todoRoutine = LabelListModal.routines[newLabel];
@@ -32,7 +32,7 @@ class TodoRoutineField extends StatelessWidget {
       onTap: () => _onTap(context),
       child: TodoFormFieldLayout(
           icon: Icons.star_border_rounded,
-          child: Consumer<TodoEditorViewModel>(
+          child: Consumer<EditorModalViewModel>(
             builder: (context, viewModel, child) =>
                 Text(viewModel.todoRoutine ?? LabelListModal.routines[0]),
           )),

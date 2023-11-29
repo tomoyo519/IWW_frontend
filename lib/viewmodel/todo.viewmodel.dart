@@ -127,7 +127,7 @@ class TodoViewModel extends ChangeNotifier {
       return false;
     }
 
-    LOG.log("message");
+    LOG.log("Update group todo status $value");
     int idx = _todos.indexWhere((e) => e.todoId == todo.todoId);
     if (idx != -1) {
       _checkIfFirstTodo(todo, checked);

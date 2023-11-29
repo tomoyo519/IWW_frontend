@@ -226,10 +226,10 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                   userId: widget.todo.userId,
                   path: pickedFile.path,
                 );
+                LOG.log("@@@@@@@@@@@@@@@ Result: $result");
                 if (result == true && context.mounted) {
-                  LOG.log("@@@@@@@@@@@@@@@");
-                  Navigator.pop(context);
                   _handleTodoCashReward(context: context, value: true);
+                  Navigator.pop(context);
                 }
               },
             )
@@ -281,9 +281,11 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                     final viewModel = context.read<TodoViewModel>();
                     final result = await viewModel.checkTodo(widget.todo, false,
                         userId: widget.todo.userId, path: "");
-                    if (result == true && context.mounted) {
+                    if (context.mounted) {
                       Navigator.pop(context);
-                      _handleTodoCashReward(context: context, value: false);
+                      if (result == true) {
+                        _handleTodoCashReward(context: context, value: false);
+                      }
                     }
                   },
                 ),

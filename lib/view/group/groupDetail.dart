@@ -2,10 +2,18 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
+import 'package:iww_frontend/model/group/group.model.dart';
+import 'package:iww_frontend/model/routine/routine.model.dart';
+import 'package:iww_frontend/model/todo/todo.model.dart';
+import 'package:iww_frontend/model/user/user-info.model.dart';
+import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
 import 'dart:convert';
 import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/view/todo/todo_editor.dart';
+import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 
 final List<String> labels = [
   '운동',
@@ -19,29 +27,35 @@ final List<String> labels = [
 ];
 
 class GroupDetail extends StatefulWidget {
-  GroupDetail({this.group, super.key});
-  final group;
+  final Group group;
+  GroupDetail({required this.group, super.key});
 
   @override
   State<GroupDetail> createState() => _GroupDetailState();
 }
 
 class _GroupDetailState extends State<GroupDetail> {
-  List<dynamic> groupRoutine = [];
+  List<Routine> groupRoutine = [];
   List<dynamic> groupMems = [];
   bool myGroup = false;
   bool isLoading = true;
   late TextEditingController _controller;
+  late GlobalKey<FormState> _formKey;
 
   getData() async {
     LOG.log('widget.group:::::::::::::::::::::::::::${widget.group}');
-    var result = await RemoteDataSource.get('/group/${widget.group["grp_id"]}');
+    var result = await RemoteDataSource.get('/group/${widget.group.groupId}');
     var resultJson = jsonDecode(result.body);
-    LOG.log('resultJson::::::${resultJson}');
-    // LOG.log('result.statusCode:::::::::${result.statusCode}');
+    LOG.log('resultJson::::::$resultJson');
+
     if (result.statusCode == 200) {
       setState(() {
-        groupRoutine = resultJson["result"]["rout_detail"] ?? [];
+        // Group, Routine Type 맞춰서 수정
+        List<dynamic> jsonRoutList = resultJson["result"]["rout_detail"];
+        groupRoutine = jsonRoutList
+            .map((e) => Routine.fromGroupDetailJson(e, widget.group.groupId))
+            .toList();
+
         groupMems = resultJson["result"]["grp_mems"];
         isLoading = false;
       });
@@ -85,7 +99,45 @@ class _GroupDetailState extends State<GroupDetail> {
     super.initState();
     getData();
 
-    _controller = TextEditingController(text: widget.group["grp_decs"]);
+    _controller = TextEditingController(text: widget.group.grpDesc);
+    _formKey = GlobalKey<FormState>();
+  }
+
+  // TODO: 루틴 수정 시
+  void _updateRoutine(BuildContext context) {
+    final viewmodel = context.read<EditorModalViewModel>();
+
+    LOG.log("Not implemented. ${viewmodel.hour}");
+    Navigator.pop(context);
+  }
+
+  // 할일 수정
+  void _showTodoEditor(BuildContext context, Routine? routine) {
+    final groupRepository =
+        Provider.of<GroupRepository>(context, listen: false);
+    final userInfo = Provider.of<UserInfo>(context, listen: false);
+    Todo? todo = routine?.generateTodo(userInfo.user_id);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (bottomSheetContext) {
+        return ChangeNotifierProvider(
+          create: (_) => EditorModalViewModel(
+            of: todo,
+            user: userInfo,
+            repository: groupRepository,
+          ),
+          child: EditorModal(
+            init: todo,
+            title: "루틴 수정",
+            formKey: _formKey,
+            onSave: (context) => _updateRoutine(context),
+            onCancel: (context) => Navigator.pop(context),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -97,7 +149,7 @@ class _GroupDetailState extends State<GroupDetail> {
                 margin: EdgeInsets.all(10),
                 child: Column(children: [
                   Text(
-                    widget.group["grp_name"],
+                    widget.group.grpName,
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
                   ),
                   Divider(color: Colors.grey, thickness: 1, indent: 10),
@@ -111,7 +163,7 @@ class _GroupDetailState extends State<GroupDetail> {
                             width: MediaQuery.of(context).size.width * 0.15,
                             alignment: Alignment.center,
                             // TODO - 수정되어야 함.
-                            child: Text(widget.group["cat_name"])),
+                            child: Text(widget.group.catName)),
                       ),
                     ],
                   ),
@@ -142,6 +194,9 @@ class _GroupDetailState extends State<GroupDetail> {
                         itemBuilder: (c, i) {
                           return groupRoutine.isNotEmpty
                               ? GestureDetector(
+                                  onLongPress: () {
+                                    _showTodoEditor(context, groupRoutine[i]);
+                                  },
                                   onTap: () {
                                     showModalBottomSheet(
                                       context: context,
@@ -179,8 +234,7 @@ class _GroupDetailState extends State<GroupDetail> {
                                             onChanged: null,
                                             value: false,
                                           ),
-                                          Text(groupRoutine[i]["rout_name"] ??
-                                              ""),
+                                          Text(groupRoutine[i].routName),
                                           Icon(Icons.groups_outlined)
                                         ]),
                                   ),
@@ -244,7 +298,7 @@ class _GroupDetailState extends State<GroupDetail> {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10)))),
                         onPressed: () {
-                          joinGroup(widget.group["grp_id"]);
+                          joinGroup(widget.group.groupId);
                         },
                         child:
                             Text("참가하기", style: TextStyle(color: Colors.white)),
@@ -263,7 +317,7 @@ class _GroupDetailState extends State<GroupDetail> {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10)))),
                         onPressed: () {
-                          exitGroup(widget.group["grp_id"]);
+                          exitGroup(widget.group.groupId);
                         },
                         child:
                             Text("탈퇴하기", style: TextStyle(color: Colors.white)),

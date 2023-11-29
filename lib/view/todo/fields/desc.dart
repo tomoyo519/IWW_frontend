@@ -9,7 +9,7 @@ class TodoDescField extends StatelessWidget {
   const TodoDescField({super.key});
 
   _onTap(BuildContext context) {
-    final viewModel = Provider.of<TodoEditorViewModel>(
+    final viewModel = Provider.of<EditorModalViewModel>(
       context,
       listen: false,
     );

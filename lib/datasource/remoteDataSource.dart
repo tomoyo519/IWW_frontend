@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:iww_frontend/utils/logger.dart';
 
@@ -56,10 +57,12 @@ class RemoteDataSource {
       // request.files.add(http.MultipartFile(
       //     field, file.readAsBytes().asStream(), file.lengthSync(),
       //     filename: filename));
-      LOG.log('파일경로: $filename');
+      LOG.log(
+          '${DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())} 파일경로: $filename');
       request.files.add(await http.MultipartFile.fromPath('file', filename!));
       var res = await request.send();
-      LOG.log('사진 전송 결과: @@@${res.statusCode}');
+      LOG.log(
+          '${DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())} 사진 전송 결과: @@@${res.statusCode}');
       return res;
     } else {
       throw Exception('file must not be null');

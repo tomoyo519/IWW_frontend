@@ -117,13 +117,13 @@ class ToDoList extends StatelessWidget {
       isScrollControlled: true,
       builder: (bottomSheetContext) {
         return ChangeNotifierProvider(
-          create: (_) => TodoEditorViewModel(
-            todo: todo,
+          create: (_) => EditorModalViewModel(
+            of: todo,
             user: userInfo,
-            todoRepository: todoRepository,
+            repository: todoRepository,
           ),
-          child: TodoEditorModal(
-            todo: todo,
+          child: EditorModal(
+            init: todo,
             title: "할일 수정",
             formKey: _formKey,
             onSave: (context) => _updateTodo(context),
@@ -155,7 +155,7 @@ class ToDoList extends StatelessWidget {
   Future<void> _updateTodo(BuildContext context) async {
     Navigator.pop(context);
 
-    final viewModel = context.read<TodoEditorViewModel>();
+    final viewModel = context.read<EditorModalViewModel>();
     await viewModel.updateTodo().then((result) {
       if (result == true) {
         if (context.mounted) {

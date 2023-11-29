@@ -93,7 +93,7 @@ class MyGroupViewModel extends ChangeNotifier {
       LOG.log('json: $json');
       groupData["user_id"] = "1";
 
-      var rest = (await _groupRepository.createGroup(json) ?? []);
+      var rest = (await _groupRepository.createOne(json) ?? []);
       LOG.log('rest:$rest');
       return true;
     } catch (err) {

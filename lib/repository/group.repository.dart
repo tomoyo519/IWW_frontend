@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/group/group.model.dart';
 import 'package:iww_frontend/model/group/groupDetail.model.dart';
-import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/repository/base_todo.repository.dart';
 
-class GroupRepository {
+class GroupRepository implements BaseTodoRepository {
   /// ================== ///
   ///         Get        ///
   /// ================== ///
@@ -81,7 +81,8 @@ class GroupRepository {
     });
   }
 
-  Future<bool?> createGroup(Map<String, dynamic> data) async {
+  @override
+  Future<bool> createOne(Map<String, dynamic> data) async {
     var json = jsonEncode(data);
     return await RemoteDataSource.post("/group", body: json).then((res) {
       if (res.statusCode == 201) {
@@ -89,5 +90,11 @@ class GroupRepository {
       }
       return false;
     });
+  }
+
+  @override
+  Future<bool> updateOne(String id, Map<String, dynamic> data) async {
+    // TODO: unimplemented.
+    return true;
   }
 }

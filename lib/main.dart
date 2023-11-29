@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/model/group/group.model.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/providers.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
+import 'package:iww_frontend/view/group/groupDetail.dart';
 import 'package:iww_frontend/view/home/home.dart';
 import 'package:iww_frontend/view/notification/notification.dart';
 import 'package:iww_frontend/view/signup/add_friends.dart';
@@ -18,39 +20,6 @@ import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_template.dart';
 import 'package:iww_frontend/view/shop/shop_page.dart';
 import 'package:iww_frontend/view/inventory/inventory.dart';
-
-// >>> generate todo test
-// var routines = [
-//   Routine.fromJson({
-//     "rout_id": 1,
-//     "rout_name": "routin1",
-//     "rout_desc": "test",
-//     "rout_repeat": "1111100",
-//     "grp_id": 1
-//   }),
-//   Routine.fromJson({
-//     "rout_id": 2,
-//     "rout_name": "routin2",
-//     "rout_desc": "test",
-//     "rout_repeat": "0001000",
-//     "grp_id": 1
-//   }),
-//   Routine.fromJson({
-//     "rout_id": 3,
-//     "rout_name": "routin3",
-//     "rout_desc": "test",
-//     "rout_repeat": "1111111",
-//     "grp_id": 1
-//   }),
-// ];
-// const int userId = 1;
-
-// for (var element in routines) {
-//   Todo todo = element.generateTodo(userId);
-//   Todo.requestCreate(todo.toJson());
-//   print(todo..toJson());
-// }
-// <<< generate todo test
 
 class GlobalNavigator {
   static final GlobalKey<NavigatorState> navigatorKey =
@@ -119,6 +88,10 @@ void main() async {
             '/contact': (context) => LoginWrapper(child: AddFriendsPage()),
             '/myroom': (context) => LoginWrapper(child: MyRoom()),
             '/group': (context) => LoginWrapper(child: MyGroup()),
+            '/group/detail': (context) => LoginWrapper(
+                child: GroupDetail(
+                    group:
+                        ModalRoute.of(context)?.settings.arguments as Group)),
             '/mypage': (context) => LoginWrapper(child: MyPage()),
             '/friends': (context) => LoginWrapper(child: MyFriend()),
             '/shop': (context) => LoginWrapper(child: ShopPage()),
@@ -129,6 +102,8 @@ void main() async {
     ),
   );
 }
+
+// ==== Navigator ==== //
 
 class LoginWrapper extends StatelessWidget {
   final Widget child;
