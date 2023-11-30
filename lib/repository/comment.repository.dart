@@ -8,6 +8,7 @@ import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:iww_frontend/model/comment/comment.model.dart';
 import 'dart:convert';
 import 'package:iww_frontend/service/auth.service.dart';
+import 'package:iww_frontend/view/guestbook/guestbook.dart';
 
 class CommentRepository {
   List<Comment> dummy = [
@@ -38,34 +39,35 @@ class CommentRepository {
   ];
 
   Future<List<Comment>> fetchComments(String ownerId) async {
-    return dummy;
-    // final url = '${Secrets.TEST_SERVER_URL}/user/$ownerId/guestbook/comments';
-    // try {
-    //   final response = await http.get(Uri.parse(url));
+    // return dummy
+    final url = '${Secrets.REMOTE_SERVER_URL}/guestbook/$ownerId/comment';
+    try {
+      final response = await http.get(Uri.parse(url));
 
-    //   if (response.statusCode == 200) {
-    //     List<dynamic> data = jsonDecode(response.body);
-    //     List<Comment> fetchedComments = data.map((commentData) {
-    //       return Comment(
-    //         comId: commentData['com_id'],
-    //         authorId: commentData['author_id'],
-    //         username: commentData['user_name'],
-    //         content: commentData['content'],
-    //         isMod: commentData['is_mod'],
-  
-    //       );
-    //     }).toList();
+      if (response.statusCode == 200) {
+        List<dynamic> data = jsonDecode(response.body);
+        List<Comment> fetchedComments = data.map((commentData) {
+          return Comment(
+            comId: commentData['com_id'],
+            authorId: commentData['author_id'],
+            username: commentData['user_name'],
+            content: commentData['content'],
+            isMod: commentData['is_mod'],
+          );
+        }).toList();
 
-    //     commentsProvider.setComment(fetchedComments);
-    //   }
-    // } catch (e) {
-    //   // 오류 처리
-    // }
+        return fetchedComments;
+      }
+    } catch (e) {
+      // 오류 처리
+      return [];
+    }
+    return [];
   }
 
   Future<bool> addComment(
       String ownerId, String authorId, String content) async {
-    final url = '${Secrets.TEST_SERVER_URL}/user/$ownerId/guestbook/comments';
+    final url = '${Secrets.REMOTE_SERVER_URL}/guestbook/$ownerId/comment';
     try {
       final response = await http.post(
         Uri.parse(url),
@@ -89,7 +91,7 @@ class CommentRepository {
   Future<bool> updateComment(
       String ownerId, String comId, String content) async {
     final url =
-        '${Secrets.TEST_SERVER_URL}/user/$ownerId/guestbook/comments/$comId'; // 백엔드 URL
+        '${Secrets.REMOTE_SERVER_URL}/guestbook/$ownerId/comment/$comId'; // 백엔드 URL
 
     try {
       final response = await http.put(
@@ -117,7 +119,7 @@ class CommentRepository {
 
   Future<bool> deleteComment(String ownerId, String comId) async {
     final url =
-        '${Secrets.TEST_SERVER_URL}/user/$ownerId/guestbook/comments/$comId'; // 백엔드 URL
+        '${Secrets.REMOTE_SERVER_URL}/guestbook/$ownerId/comment/$comId'; // 백엔드 URL
 
     try {
       final response = await http.patch(

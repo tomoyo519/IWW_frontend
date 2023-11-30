@@ -140,10 +140,10 @@ class _MyNotificationState extends State<MyNotification> {
   void navigateToSender(model.Notification noti) {
     switch (noti.notiType) {
       case 0:
-        Navigator.pushNamed(context, "/myroom", arguments: 1);
+        Navigator.pushNamed(context, "/myroom", arguments: 2);
         break;
       case 1:
-        Navigator.pushNamed(context, "/myroom", arguments: 1);
+        Navigator.pushNamed(context, "/myroom", arguments: 2);
         break;
       case 2:
         break;
