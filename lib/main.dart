@@ -1,25 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/model/group/group.model.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/providers.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
+import 'package:iww_frontend/view/_navigation/routes.dart';
 import 'package:iww_frontend/service/auth.service.dart';
-import 'package:iww_frontend/view/group/groupDetail.dart';
-import 'package:iww_frontend/view/home/home.dart';
+import 'package:iww_frontend/view/_common/loading.dart';
+import 'package:iww_frontend/view/_navigation/main_page.dart';
+import 'package:iww_frontend/view/_navigation/transition.dart';
 import 'package:iww_frontend/view/notification/notification.dart';
-import 'package:iww_frontend/view/signup/add_friends.dart';
-import 'package:iww_frontend/view/friends/friendMain.dart';
-import 'package:iww_frontend/view/group/groupMain.dart';
 import 'package:iww_frontend/view/signup/landing.dart';
-import 'package:iww_frontend/view/mypage/myPage.dart';
-import 'package:iww_frontend/view/myroom/myroom.dart';
-import 'package:iww_frontend/view/signup/signup.dart';
 import 'package:iww_frontend/viewmodel/user.provider.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_template.dart';
-import 'package:iww_frontend/view/shop/shop_page.dart';
-import 'package:iww_frontend/view/inventory/inventory.dart';
 
 class GlobalNavigator {
   static final GlobalKey<NavigatorState> navigatorKey =
@@ -63,6 +56,7 @@ void main() async {
       providers: getRepositories(),
       child: MultiProvider(
         providers: [
+          // Signup
           Provider<UserRepository>(
             create: (context) => userRepository,
           ),
@@ -71,60 +65,48 @@ void main() async {
           ),
         ],
         child: MaterialApp(
+          debugShowCheckedModeBanner: false,
           navigatorKey: GlobalNavigator.navigatorKey,
           theme: ThemeData(
             useMaterial3: true,
             fontFamily: 'Pretendard',
           ),
-          debugShowCheckedModeBanner: false,
-          home: LoginWrapper(child: MyHomePage()),
-          routes: {
-            // 회원가입 또는 랜딩 페이지
-            '/signup': (context) => SignUpPage(),
-            '/landing': (context) => LandingPage(),
 
-            // 유저만 접근 가능한 페이지
-            '/home': (context) => LoginWrapper(child: MyHomePage()),
-            '/contact': (context) => LoginWrapper(child: AddFriendsPage()),
-            '/myroom': (context) => LoginWrapper(child: MyRoom()),
-            '/group': (context) => LoginWrapper(child: MyGroup()),
-            '/group/detail': (context) => LoginWrapper(
-                child: GroupDetail(
-                    group:
-                        ModalRoute.of(context)?.settings.arguments as Group)),
-            '/mypage': (context) => LoginWrapper(child: MyPage()),
-            '/friends': (context) => LoginWrapper(child: MyFriend()),
-            '/shop': (context) => LoginWrapper(child: ShopPage()),
-            '/notification': (context) => LoginWrapper(child: MyNotification()),
+          //** 로그인 여부에 따라 화면을 이동합니다.
+          // 미인증 사용자인 경우 → Landing
+          // 인증된 사용자인 경우 → MainPage
+          // */
+          home: authService.waiting
+              ? LoadingPage()
+              : authService.user == null
+                  ? LandingPage()
+                  : MultiProvider(
+                      // 인증된 사용자의 경우 아래와 같은 정보 주입
+                      providers: [
+                        Provider<UserInfo>.value(value: authService.user!),
+                        ChangeNotifierProvider(
+                          create: (context) => UserProvider(
+                            Provider.of<UserRepository>(context, listen: false),
+                            authService.user!,
+                          ),
+                        )
+                      ],
+                      child: MainPage(),
+                    ), // lib/view/main_page.dart
+
+          routes: ROUTE_TABLE, // lib/route.dart
+
+          //** Navigator에 푸시될 때 트랜지션
+          // /notification:  Right Popup
+          // */
+          onGenerateRoute: (settings) {
+            if (settings.name == '/notification') {
+              return RightPopupTransition.builder(child: MyNotification());
+            }
+            return null;
           },
         ),
       ),
     ),
   );
-}
-
-// ==== Navigator ==== //
-
-class LoginWrapper extends StatelessWidget {
-  final Widget child;
-  LoginWrapper({Key? key, required this.child}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final bool waiting = context.watch<AuthService>().waiting;
-    final UserInfo? user = context.watch<AuthService>().user;
-
-    return waiting
-        ? Placeholder()
-        : (user == null)
-            ? LandingPage()
-            : Provider<UserInfo>.value(
-                value: user,
-                child: ChangeNotifierProvider<UserProvider>(
-                  create: (context) => UserProvider(
-                      Provider.of<UserRepository>(context, listen: false),
-                      user),
-                  child: child,
-                ));
-  }
 }
