@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/style/colors.dart';
 import 'package:iww_frontend/view/_common/bottom_sheet_header.dart';
+import 'package:iww_frontend/view/group/fields/date.dart';
+import 'package:iww_frontend/view/group/fields/desc.dart';
+import 'package:iww_frontend/view/group/fields/label.dart';
+import 'package:iww_frontend/view/group/fields/time.dart';
 import 'package:iww_frontend/view/todo/fields/date.dart';
 import 'package:iww_frontend/view/todo/fields/desc.dart';
 import 'package:iww_frontend/view/todo/fields/label.dart';
@@ -10,14 +14,14 @@ import 'package:iww_frontend/view/todo/fields/routine.dart';
 import 'package:iww_frontend/view/todo/fields/time.dart';
 
 // bottom sheet 내용
-class EditorModal extends StatelessWidget {
+class GroupEditorModal extends StatelessWidget {
   final String title;
   final Todo? init;
   final GlobalKey<FormState> formKey;
   final Function(BuildContext) onSave;
   final Function(BuildContext) onCancel;
 
-  const EditorModal({
+  const GroupEditorModal({
     Key? key,
     required this.init,
     required this.title,
@@ -60,7 +64,7 @@ class EditorModal extends StatelessWidget {
                         mainAxisSize: MainAxisSize.max,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         // 할일 제목 입력 필드
-                        children: [
+                        children: const [
                           TodoNameField(),
                           Padding(
                             padding: EdgeInsets.symmetric(
@@ -70,11 +74,11 @@ class EditorModal extends StatelessWidget {
                             child: Column(
                               children: [
                                 // 할일 상세내용 입력 필드
-                                TodoDateField(),
-                                if (title != "루틴 추가") TodoLabelField(),
-                                TodoTimeField(),
-                                TodoRoutineField(),
-                                TodoDescField(),
+                                GroupDateField(),
+                                GroupLabelField(),
+                                GroupTimeField(),
+
+                                GroupDescField(),
                               ],
                             ),
                           ),
