@@ -77,13 +77,14 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
 
   Future<bool?> createGroup() async {
     try {
+      groupData["user_id"] = "1";
+      groupData["cat_id"] = groupData["cat_id"].toString();
       Map<String, dynamic> json = {
         "grpInfo": (groupData),
-        "routInfo": jsonEncode(groupRoutine.map((e) => jsonEncode(e)).toList()),
+        "routInfo": jsonEncode(groupRoutine.map((e) => e.toJSON()).toList()),
       };
 
       LOG.log('json: $json');
-      groupData["user_id"] = "1";
 
       bool rest = (await _groupRepository.createTodo(json));
       LOG.log('rest:$rest');
@@ -97,7 +98,7 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
   @override
   // EditorModal에서 폼 데이터를 가져와서 상태로 지정
   Future<bool> createTodo(Map<String, dynamic> data) async {
-    LOG.log("???? $data");
+    ;
     Routine routine = Routine.fromTodoJson(data);
 
     if (_groupRoutine.length < 3) {

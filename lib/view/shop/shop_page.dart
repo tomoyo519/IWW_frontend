@@ -46,7 +46,7 @@ class _ShopItems extends State<ShopItems> {
       Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: const Text("아이템 구매를 실패했어요! 다시 시도해주세요.")));
+          SnackBar(content: const Text("보유한 캐시가 부족해요. 할일을 더 수행해볼까요?")));
       Navigator.pop(context);
     }
   }

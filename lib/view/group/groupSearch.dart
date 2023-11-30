@@ -20,12 +20,17 @@ class _GroupSearchState extends State<GroupSearch> {
   var labelNum = 1;
   String keyword = "";
   List<Group>? groupList = [];
-
   getList() async {
     final groupRepository =
         Provider.of<GroupRepository>(context, listen: false);
 
-    groupList = await groupRepository.getAllGroupList(1, labelNum, keyword);
+    var tempList = await groupRepository.getAllGroupList(1, labelNum, keyword);
+
+    setState(() {
+      groupList = tempList;
+    });
+
+    LOG.log('${groupList}');
   }
 
   @override
@@ -47,9 +52,14 @@ class _GroupSearchState extends State<GroupSearch> {
             height: 60,
             padding: EdgeInsets.all(10),
             child: SearchBar(
+                onChanged: (value) {
+                  setState(() {
+                    keyword = value;
+                  });
+                },
                 elevation: MaterialStateProperty.all(0),
                 onSubmitted: (value) {
-                  letsSearch();
+                  getList();
                 },
                 backgroundColor: MaterialStateProperty.all(
                     const Color.fromARGB(255, 226, 225, 225)),
@@ -93,7 +103,6 @@ class _GroupSearchState extends State<GroupSearch> {
                 child: ListView.builder(
                     itemCount: groupList?.length,
                     itemBuilder: (c, i) {
-                      print(groupList?[i]);
                       return TextButton(
                           onPressed: () => Navigator.pushNamed(
                               context, "/group/detail",
