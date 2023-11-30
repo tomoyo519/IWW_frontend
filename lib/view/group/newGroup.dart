@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
+import 'package:iww_frontend/view/modals/todo_info_snanckbar.dart';
 
 import 'package:iww_frontend/view/todo/fields/label_list_modal.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
@@ -59,12 +60,12 @@ class _NewGroupState extends State<NewGroup> {
     _formKey = GlobalKey<FormState>();
   }
 
-  void _updateRoutine(BuildContext context) {
-    final viewmodel = context.read<EditorModalViewModel>();
+  // void _updateRoutine(BuildContext context) {
+  //   final viewmodel = context.read<EditorModalViewModel>();
 
-    LOG.log("Not implemented. ${viewmodel.hour}");
-    Navigator.pop(context);
-  }
+  //   LOG.log("Not implemented. ${viewmodel.hour}");
+  //   Navigator.pop(context);
+  // }
 
   _createGroup(BuildContext context) async {
     //새로운 그룹 만들기;
@@ -91,14 +92,31 @@ class _NewGroupState extends State<NewGroup> {
     Navigator.pop(context);
   }
 
-  void onSave(BuildContext context) {
+  Future<void> _onSave(BuildContext context) async {
+    LOG.log("message");
     //저장누르면 루틴 추가하는 로직
+    final editormodel = context.read<EditorModalViewModel>();
+    bool result = await editormodel.createTodo();
+    LOG.log("message $result");
+    if (context.mounted && result == true) {
+      // groupmodel.createTodo(data);
+      Navigator.pop(context);
+      showCustomSnackBar(
+        context,
+        text: "루틴 추가가 완료되었어요!",
+        icon: Icon(
+          Icons.ac_unit_outlined,
+        ),
+      );
+    }
   }
+
   void _showTodoEditor(BuildContext context, Routine? routine) {
     final groupRepository =
         Provider.of<GroupRepository>(context, listen: false);
     final userInfo = Provider.of<UserInfo>(context, listen: false);
     Todo? todo = routine?.generateTodo(userInfo.user_id);
+    MyGroupViewModel groupmodel = context.read<MyGroupViewModel>();
 
     showModalBottomSheet(
       context: context,
@@ -108,13 +126,13 @@ class _NewGroupState extends State<NewGroup> {
           create: (_) => EditorModalViewModel(
             of: todo,
             user: userInfo,
-            repository: groupRepository,
+            repository: groupmodel,
           ),
           child: EditorModal(
             init: todo,
             title: "루틴 추가",
             formKey: _formKey,
-            onSave: (context) => _updateRoutine(context),
+            onSave: (context) => _onSave(context),
             onCancel: (context) => Navigator.pop(context),
           ),
         );

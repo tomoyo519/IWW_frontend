@@ -2,13 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
-import 'package:iww_frontend/repository/base_todo.repository.dart';
+import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
 
 class EditorModalViewModel extends ChangeNotifier {
   final Todo? of; // 초기화된 투두 데이터
   final UserInfo user;
-  final BaseTodoRepository repository;
+  final BaseTodoViewModel repository;
 
   EditorModalViewModel({
     this.of,
@@ -66,38 +66,21 @@ class EditorModalViewModel extends ChangeNotifier {
     String timeString =
         '${hour.toString().padLeft(2, '0')}:${min.toString().padLeft(2, '0')}:00';
 
-    // Map<String, dynamic> data = {
-    //   "user_id": 6,
-    //   "todo_name": todoData['todo_name'],
-    //   "todo_done": false,
-    //   "todo_desc": todoData['todo_desc'],
-    //   "todo_label": todoData['todo_label'],
-    //   "todo_start": timeString,
-    // };
     todoData['user_id'] = user.user_id;
     todoData['todo_start'] = timeString;
 
-    return await repository.createOne(todoData);
+    // 상위 뷰모델의 함수를 불러
+    return await repository.createTodo(todoData);
   }
 
   // 할일 수정
   Future<bool> updateTodo() async {
     var id = todoData["todo_id"];
 
-    // String timeString = "$hour시 $min분";
     String timeString =
         '${hour.toString().padLeft(2, '0')}:${min.toString().padLeft(2, '0')}:00';
 
-    // Map<String, dynamic> data = {
-    //   "user_id": todoData["user_id"],
-    //   "todo_name": todoData['todo_name'],
-    //   "todo_done": false,
-    //   "todo_desc": todoData['todo_desc'],
-    //   "todo_label": todoData['todo_label'],
-    //   "todo_start": timeString,
-    // };
-
     todoData['todo_start'] = timeString;
-    return await repository.updateOne(id.toString(), todoData);
+    return await repository.updateTodo(id.toString(), todoData);
   }
 }

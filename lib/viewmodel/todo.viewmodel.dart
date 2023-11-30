@@ -6,9 +6,10 @@ import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
 
 // 전체 투두리스트 상태를 관리
-class TodoViewModel extends ChangeNotifier {
+class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   final TodoRepository _todoRepository;
   final UserInfo _user;
 
@@ -179,5 +180,17 @@ class TodoViewModel extends ChangeNotifier {
   void setSelectedAlarmTime(dynamic alarmTime) {
     _selectedAlarmTime = alarmTime;
     notifyListeners();
+  }
+
+  @override
+  Future<bool> createTodo(Map<String, dynamic> data) {
+    // TODO: implement createTodo
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> updateTodo(String id, Map<String, dynamic> data) {
+    // TODO: implement updateTodo
+    throw UnimplementedError();
   }
 }
