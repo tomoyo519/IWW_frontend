@@ -36,20 +36,17 @@ class MyGroup extends StatelessWidget {
               )
             ],
           ),
-          // AppBar(
-          //   bottom: TabBar(tabs: const [
-          //     Tab(icon: Icon(Icons.groups_outlined)),
-          //     Tab(icon: Icon(Icons.manage_search_outlined))
-          //   ]),
-          // ),
           body: DefaultTabController(
             length: 2,
             child: Column(
               children: [
                 TabBar(
+                  labelColor: Colors.black,
+                  indicatorColor: Colors.black,
+                  indicatorSize: TabBarIndicatorSize.tab,
                   tabs: <Widget>[
-                    Tab(icon: Icon(Icons.groups_outlined)),
-                    Tab(icon: Icon(Icons.manage_search_outlined)),
+                    Tab(text: "내 그룹"),
+                    Tab(text: "그룹 검색"),
                   ],
                 ),
                 Expanded(

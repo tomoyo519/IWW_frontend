@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
+import 'package:iww_frontend/view/group/fields/time.dart';
 import 'package:iww_frontend/view/group/groupMain.dart';
 import 'package:iww_frontend/view/todo/fields/label_list_modal.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
@@ -219,19 +220,6 @@ class _NewGroupState extends State<NewGroup> {
                                                       ),
                                                       child: Column(
                                                         children: [
-                                                          // 할일 상세내용 입력 필드
-                                                          MultiProvider(
-                                                            providers: [
-                                                              ChangeNotifierProvider(
-                                                                  create: (context) =>
-                                                                      MyGroupViewModel(
-                                                                          _groupRepository,
-                                                                          _userInfo)),
-                                                            ],
-                                                            child:
-                                                                GroupNameField(),
-                                                          ),
-
                                                           MultiProvider(
                                                             providers: [
                                                               ChangeNotifierProvider(
@@ -243,7 +231,17 @@ class _NewGroupState extends State<NewGroup> {
                                                             child:
                                                                 GroupRoutineField(),
                                                           ),
-
+                                                          MultiProvider(
+                                                            providers: [
+                                                              ChangeNotifierProvider(
+                                                                  create: (context) =>
+                                                                      MyGroupViewModel(
+                                                                          _groupRepository,
+                                                                          _userInfo)),
+                                                            ],
+                                                            child:
+                                                                GroupTimeField(),
+                                                          ),
                                                           MultiProvider(
                                                             providers: [
                                                               ChangeNotifierProvider(
