@@ -1,8 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/repository/room.repository.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
+import 'package:iww_frontend/model/item/item.model.dart';
+import 'package:provider/provider.dart';
 
 class MyRoomViewModel with ChangeNotifier {
-  int _roomOwner = 0;
+  final int _userId;
+  final RoomRepository _roomRepository;
+  int roomOwner;
+  List<Item> items = [];
+
+  MyRoomViewModel(this._userId, this._roomRepository) : roomOwner = _userId {
+    fetchItems();
+  }
+
+  factory MyRoomViewModel.fromProvider(BuildContext context, int roomOwner) {
+    final roomRepository = context.read<RoomRepository>();
+    return MyRoomViewModel(roomOwner, roomRepository);
+  }
+
+  void fetchItems() async {
+    items = await _roomRepository.getItemsOfMyRoom(roomOwner);
+    notifyListeners();
+  }
 
   final Map<String, AssetImage> _backgrounds = {
     'bg1': AssetImage('assets/bg/bg1.png'),
@@ -81,14 +101,10 @@ class MyRoomViewModel with ChangeNotifier {
     ),
   };
 
-  set roomOwner(int roomOwnerId) {
-    _roomOwner = roomOwnerId;
-  }
-
-  bool isMyRoom() => _roomOwner == 0;
+  bool isMyRoom() => _userId == roomOwner;
 
   // 방에 놓을 오브젝트들
-  List<Widget> getObjects() {
+  List<Widget> getRoomObjects() {
     if (isMyRoom()) {
       return [_assets['small_fox']!];
     } else {

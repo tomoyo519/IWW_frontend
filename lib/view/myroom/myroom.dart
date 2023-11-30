@@ -17,10 +17,12 @@ class MyRoom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 의존성
+    final userId = context.read<UserInfo>().user_id;
     final authService = Provider.of<AuthService>(context, listen: false);
     final roomRepository = Provider.of<RoomRepository>(context, listen: false);
     final commentRepository =
         Provider.of<CommentRepository>(context, listen: false);
+
     return MultiProvider(providers: [
       ChangeNotifierProvider<CommentsProvider>(
           create: (_) => CommentsProvider(
@@ -28,18 +30,29 @@ class MyRoom extends StatelessWidget {
                 roomRepository,
                 commentRepository,
               )),
-      ChangeNotifierProvider<MyRoomViewModel>(create: (_) => MyRoomViewModel()),
-      ChangeNotifierProvider(create: (_) => InventoryState()),
+      ChangeNotifierProvider<MyRoomViewModel>(
+          create: (_) => MyRoomViewModel(userId, roomRepository)),
+      ChangeNotifierProvider(create: (_) => MyRoomState()),
     ], child: MyRoomPage());
+  }
+}
+
+class MyRoomState extends ChangeNotifier {
+  double growth = 0.0;
+  final maxGrowth = 300.0;
+
+  void toggleInventory() {
+    growth = growth == 0.0 ? maxGrowth : 0.0;
   }
 }
 
 class MyRoomPage extends StatelessWidget {
   const MyRoomPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    var inventoryState = context.watch<InventoryState>();
+    var myRoomState = context.watch<MyRoomState>();
 
     return Stack(fit: StackFit.expand, children: [
       Positioned(
@@ -48,7 +61,7 @@ class MyRoomPage extends StatelessWidget {
           right: 0,
           child: AnimatedContainer(
               width: double.infinity,
-              height: screenHeight - inventoryState.intventoryHeight,
+              height: screenHeight - myRoomState.growth,
               color: Colors.blue,
               duration: Duration(milliseconds: 500),
               curve: Curves.easeInOut,
@@ -58,7 +71,7 @@ class MyRoomPage extends StatelessWidget {
           left: 0,
           right: 0,
           child: AnimatedContainer(
-              height: inventoryState.intventoryHeight,
+              height: myRoomState.growth,
               duration: Duration(milliseconds: 500),
               curve: Curves.easeInOut,
               child: InventoryView()))
@@ -98,7 +111,6 @@ class RenderMyRoom extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authService = Provider.of<AuthService>(context);
     var roomState = context.watch<MyRoomViewModel>();
 
     // Naviator를 통해서 argument를 전달할 경우 받는 방법
@@ -116,7 +128,7 @@ class RenderMyRoom extends StatelessWidget {
           ),
         ),
         child: Stack(
-            alignment: Alignment.center, children: roomState.getObjects()));
+            alignment: Alignment.center, children: roomState.getRoomObjects()));
 
     // 유저의 펫 정보 불러오기
 
@@ -270,7 +282,8 @@ class BottomButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     // NOTE 여기서 비동기 연산 수행
     final commentsProvider = context.read<CommentsProvider>();
-    final inventoryState = context.read<InventoryState>();
+    // final inventoryState = context.read<InventoryState>();
+    final myRoomState = context.watch<MyRoomState>();
     var roomState = context.watch<MyRoomViewModel>();
     final currentUserId = Provider.of<UserInfo>(context, listen: false);
 
@@ -314,7 +327,7 @@ class BottomButtons extends StatelessWidget {
           ElevatedButton(
               onPressed: () {
                 // Navigator.pushNamed(context, '/inventory');
-                inventoryState.toggleInventory();
+                myRoomState.toggleInventory();
               },
               child: Text('인벤토리')),
           SizedBox(width: 20),

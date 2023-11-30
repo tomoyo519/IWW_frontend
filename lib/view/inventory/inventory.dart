@@ -2,37 +2,26 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/repository/room.repository.dart';
+import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
+import 'package:iww_frontend/repository/room.repository.dart';
 
 class Inventory extends StatelessWidget {
   const Inventory({super.key});
 
   @override
   Widget build(BuildContext context) {
+    var userInfo = context.watch<UserInfo>();
+
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => InventoryState()),
+        ChangeNotifierProvider(
+            create: (_) => MyRoomViewModel(userInfo.user_id, RoomRepository())),
       ],
       child: InventoryView(),
     );
-  }
-}
-
-class InventoryState with ChangeNotifier {
-  List<Item> items = [];
-  double _inventoryHeight = 0.0;
-
-  get intventoryHeight => _inventoryHeight;
-
-  void toggleInventory() {
-    _inventoryHeight = _inventoryHeight == 0.0 ? 300.0 : 0.0;
-    notifyListeners();
-  }
-
-  void fetchItems() {
-    notifyListeners();
   }
 }
 
@@ -41,7 +30,7 @@ class InventoryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var inventoryState = context.watch<InventoryState>();
+    var myRoomViewModel = context.watch<MyRoomViewModel>();
 
     return Container(
       decoration: BoxDecoration(
@@ -56,11 +45,11 @@ class InventoryView extends StatelessWidget {
             child: GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3),
-                itemCount: inventoryState.items.length,
+                itemCount: myRoomViewModel.items.length,
                 itemBuilder: (context, idx) {
                   return Padding(
                     padding: const EdgeInsets.all(2.0),
-                    child: Card(child: Text(inventoryState.items[idx].name)),
+                    child: Card(child: Text(myRoomViewModel.items[idx].name)),
                   );
                 })),
       ),
