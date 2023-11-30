@@ -23,15 +23,7 @@ class TodoProgress extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: Colors.white,
-        // gradient: LinearGradient(
-        //   begin: Alignment.topLeft,
-        //   end: Alignment.bottomRight,
-        //   colors: [
-        //     Color.fromARGB(255, 255, 159, 63),
-        //     Color.fromARGB(255, 54, 244, 203)
-        //   ], // Gradient colors
-        // ),
+        color: Colors.amber.shade50,
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.2),

@@ -6,7 +6,7 @@ import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
 import 'package:iww_frontend/utils/logger.dart';
 
-class TodoRepository implements BaseTodoViewModel {
+class TodoRepository {
   /// ================== ///
   ///         Get        ///
   /// ================== ///
@@ -53,8 +53,8 @@ class TodoRepository implements BaseTodoViewModel {
       "/todo",
       body: json,
     ).then((response) {
-      LOG.log("Create Todo: ${response.statusCode}, ${response.body}");
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
+        LOG.log("Todo created: ${response.statusCode}, ${response.body}");
         return true;
       }
       return false;

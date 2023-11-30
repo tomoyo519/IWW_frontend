@@ -5,7 +5,6 @@ import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_common/spinner.dart';
-import 'package:iww_frontend/view/modals/todo_first_done.dart';
 import 'package:iww_frontend/view/todo/todo_my_tile.dart';
 import 'package:iww_frontend/view/todo/todo_editor.dart';
 import 'package:iww_frontend/view/todo/todo_group_tile.dart';
@@ -39,7 +38,9 @@ class ToDoList extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // ==== 그룹투두 ==== //
+                      // TODO: 이런식으로 섹션 나누지 말고
+                      // TODO: 그룹 또는 개인투두가 없는 경우 등등을 고려해야함.
+                      // * ==== 그룹투두 ==== * //
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 15),
                         child: Text(
@@ -58,7 +59,7 @@ class ToDoList extends StatelessWidget {
                           child:
                               GroupTodoTile(todo: todo, viewModel: viewModel),
                         ),
-                      // ==== 개인투두 ==== //
+                      // * ==== 개인투두 ==== * //
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 15),
                         child: Text(
@@ -109,7 +110,7 @@ class ToDoList extends StatelessWidget {
 
   // 할일 수정
   _showTodoEditor(BuildContext context, Todo todo) {
-    final todoRepository = Provider.of<TodoRepository>(context, listen: false);
+    final todoviewmodel = context.read<TodoViewModel>();
     final userInfo = Provider.of<UserInfo>(context, listen: false);
 
     showModalBottomSheet(
@@ -120,7 +121,7 @@ class ToDoList extends StatelessWidget {
           create: (_) => EditorModalViewModel(
             of: todo,
             user: userInfo,
-            repository: todoRepository,
+            parent: todoviewmodel,
           ),
           child: EditorModal(
             init: todo,

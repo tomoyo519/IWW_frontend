@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/providers.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
+import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/view/_navigation/routes.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/view/_common/loading.dart';
@@ -83,13 +84,18 @@ void main() async {
                   : MultiProvider(
                       // 인증된 사용자의 경우 아래와 같은 정보 주입
                       providers: [
-                        Provider<UserInfo>.value(value: authService.user!),
+                        Provider<UserInfo>.value(
+                          value: authService.user!,
+                        ),
                         ChangeNotifierProvider(
                           create: (context) => UserProvider(
                             Provider.of<UserRepository>(context, listen: false),
                             authService.user!,
                           ),
-                        )
+                        ),
+                        ChangeNotifierProvider(
+                          create: (context) => EventService(),
+                        ),
                       ],
                       child: MainPage(),
                     ), // lib/view/main_page.dart
