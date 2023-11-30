@@ -3,10 +3,10 @@ import 'dart:convert';
 
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
-import 'package:iww_frontend/repository/base_todo.repository.dart';
+import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
 import 'package:iww_frontend/utils/logger.dart';
 
-class TodoRepository implements BaseTodoRepository {
+class TodoRepository implements BaseTodoViewModel {
   /// ================== ///
   ///         Get        ///
   /// ================== ///
@@ -47,7 +47,7 @@ class TodoRepository implements BaseTodoRepository {
   ///       Create       ///
   /// ================== ///
   @override
-  Future<bool> createOne(Map<String, dynamic> data) async {
+  Future<bool> createTodo(Map<String, dynamic> data) async {
     var json = jsonEncode(data);
     return await RemoteDataSource.post(
       "/todo",
@@ -65,7 +65,7 @@ class TodoRepository implements BaseTodoRepository {
   ///       Update       ///
   /// ================== ///
   @override
-  Future<bool> updateOne(String id, Map<String, dynamic> data) async {
+  Future<bool> updateTodo(String id, Map<String, dynamic> data) async {
     var json = jsonEncode(data);
     return await RemoteDataSource.put(
       "/todo/$id",

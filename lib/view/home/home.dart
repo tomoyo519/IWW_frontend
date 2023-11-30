@@ -90,8 +90,6 @@ class TodoPage extends StatelessWidget {
 
   // 할일 신규 생성
   void _createTodo(BuildContext context) async {
-    Navigator.pop(context);
-
     final viewModel = context.read<EditorModalViewModel>();
 
     LOG.log('${viewModel.todoData} viewModel.todoData');
@@ -104,6 +102,8 @@ class TodoPage extends StatelessWidget {
             content: const Text('할일이 추가되었어요!'),
           ),
         );
+
+        Navigator.pop(context);
       }
     });
   }

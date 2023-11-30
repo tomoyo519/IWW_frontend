@@ -232,6 +232,7 @@ class _GroupDetailState extends State<GroupDetail> {
                                       },
                                     );
                                   },
+                                  // ==== Group Routine ==== //
                                   child: Container(
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(12),

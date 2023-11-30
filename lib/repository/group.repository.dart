@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/group/group.model.dart';
 import 'package:iww_frontend/model/group/groupDetail.model.dart';
-import 'package:iww_frontend/repository/base_todo.repository.dart';
+import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
 import 'package:iww_frontend/utils/logger.dart';
 
-class GroupRepository implements BaseTodoRepository {
+class GroupRepository implements BaseTodoViewModel {
   /// ================== ///
   ///         Get        ///
   /// ================== ///
@@ -102,7 +102,7 @@ class GroupRepository implements BaseTodoRepository {
   }
 
   @override
-  Future<bool> createOne(Map<String, dynamic> data) async {
+  Future<bool> createTodo(Map<String, dynamic> data) async {
     var json = jsonEncode(data);
     return await RemoteDataSource.post("/group", body: json).then((res) {
       if (res.statusCode == 201) {
@@ -113,7 +113,7 @@ class GroupRepository implements BaseTodoRepository {
   }
 
   @override
-  Future<bool> updateOne(String id, Map<String, dynamic> data) async {
+  Future<bool> updateTodo(String id, Map<String, dynamic> data) async {
     // TODO: unimplemented.
     return true;
   }
