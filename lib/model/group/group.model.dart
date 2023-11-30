@@ -2,8 +2,8 @@ class Group {
   int groupId;
   String grpName;
   String? grpDesc;
-  int catId;
-  String catName;
+  int? catId;
+  String? catName;
   String ownerName;
   String memCnt;
 
@@ -13,8 +13,8 @@ class Group {
     required this.ownerName,
     required this.memCnt,
     this.grpDesc,
-    required this.catName,
-    required this.catId,
+    this.catName,
+    this.catId,
   });
 
   factory Group.fromJson(Map<String, dynamic> body) {
