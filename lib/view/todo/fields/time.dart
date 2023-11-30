@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/view/todo/layout/form-field.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
 import 'package:provider/provider.dart';
 
 class TodoTimeField extends StatelessWidget {
@@ -16,7 +17,7 @@ class TodoTimeField extends StatelessWidget {
 
     // 타이머에 세팅
     if (selectedTime != null && context.mounted) {
-      Provider.of<TodoEditorViewModel>(
+      Provider.of<EditorModalViewModel>(
         context,
         listen: false,
       ).todoStart = selectedTime;
@@ -31,7 +32,7 @@ class TodoTimeField extends StatelessWidget {
         onTap: () => _onTap(context),
         child: TodoFormFieldLayout(
             icon: Icons.access_alarm_rounded,
-            child: Consumer<TodoEditorViewModel>(
+            child: Consumer<EditorModalViewModel>(
               builder: (context, viewModel, child) {
                 String timeString = '${viewModel.hour}시 ${viewModel.min}분';
                 return Text(timeString.toString());

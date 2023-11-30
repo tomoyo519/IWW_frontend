@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/view/todo/fields/label_list_modal.dart';
 import 'package:iww_frontend/view/todo/layout/form-field.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
 import 'package:provider/provider.dart';
 
 class TodoRoutineField extends StatelessWidget {
@@ -16,7 +17,7 @@ class TodoRoutineField extends StatelessWidget {
           return LabelListModal(
             content: "routine",
             setLabel: (int newLabel) {
-              Provider.of<TodoEditorViewModel>(
+              Provider.of<EditorModalViewModel>(
                 context,
                 listen: false,
               ).todoRoutine = LabelListModal.routines[newLabel];
@@ -31,7 +32,7 @@ class TodoRoutineField extends StatelessWidget {
       onTap: () => _onTap(context),
       child: TodoFormFieldLayout(
           icon: Icons.star_border_rounded,
-          child: Consumer<TodoEditorViewModel>(
+          child: Consumer<EditorModalViewModel>(
             builder: (context, viewModel, child) =>
                 Text(viewModel.todoRoutine ?? LabelListModal.routines[0]),
           )),

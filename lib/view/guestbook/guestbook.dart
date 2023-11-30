@@ -47,9 +47,9 @@ class CommentsProvider with ChangeNotifier {
   }
 
   // 현재 유저 정보 반환
-  Future<int?> getUserId() async {
-    return await _authService.getCurrentUser().then((user) => user?.user_id);
-  }
+  // Future<int?> getUserId() async {
+  //   return await _authService._getCurrentUser().then((user) => user?.user_id);
+  // }
 }
 
 // 방명록 bottom sheet 트리거

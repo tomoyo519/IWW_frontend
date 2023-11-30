@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/style/colors.dart';
-import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
 import 'package:provider/provider.dart';
 
 // 할일 제목 필드
@@ -17,7 +16,7 @@ class TodoNameField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.read<TodoEditorViewModel>();
+    final viewModel = context.read<EditorModalViewModel>();
     // 폼 필드 테두리 옵션
     var borderOption = OutlineInputBorder(
       borderRadius: BorderRadius.circular(15),

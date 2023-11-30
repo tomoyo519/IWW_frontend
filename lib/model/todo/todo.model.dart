@@ -1,15 +1,33 @@
 import "dart:convert";
-import "dart:developer";
 import "package:http/http.dart" as http;
 import "package:intl/intl.dart";
-import 'package:iww_frontend/datasource/remoteDataSource.dart';
+
+// TodoNameField(),
+// Padding(
+//   padding: EdgeInsets.symmetric(
+//     // horizontal: 10,
+//     vertical: 15,
+//   ),
+//   child: Column(
+//     children: [
+//       // 할일 상세내용 입력 필드
+//       TodoDateField(),
+//       TodoLabelField(),
+//       TodoTimeField(),
+//       TodoRoutineField(),
+//       TodoDescField(),
+//     ],
+//   ),
+// ),
 
 class Todo {
   int todoId;
   int userId;
   String todoName;
   String? todoDesc;
-  String todoLabel;
+
+  int? todoLabel;
+
   String todoDate;
   bool todoDone;
   String todoStart;
@@ -18,22 +36,22 @@ class Todo {
   int? grpId;
   bool todoDeleted;
 
-  Todo(
-      {required this.todoId,
-      required this.userId,
-      required this.todoName,
-      this.todoDesc,
-      String? todoLabel,
-      String? todoDate,
-      bool? todoDone,
-      String? todoStart,
-      String? todoEnd,
-      this.todoImg,
-      this.grpId,
-      bool? todoDeleted})
-      : todoDate = todoDate ?? defaultDate(),
+  Todo({
+    required this.todoId,
+    required this.userId,
+    required this.todoName,
+    this.todoDesc,
+    int? todoLabel,
+    String? todoDate,
+    bool? todoDone,
+    String? todoStart,
+    String? todoEnd,
+    this.todoImg,
+    this.grpId,
+    bool? todoDeleted,
+  })  : todoDate = todoDate ?? defaultDate(),
         todoDone = todoDone ?? false,
-        todoLabel = todoLabel ?? "",
+        todoLabel = todoLabel ?? 0,
         todoStart = todoStart ?? "00:00",
         todoEnd = todoEnd ?? "00:00",
         todoDeleted = todoDeleted ?? false;

@@ -1,7 +1,7 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/main.dart';
 import 'package:iww_frontend/service/auth.service.dart';
+import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
 import 'package:iww_frontend/viewmodel/signup.viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -44,7 +44,9 @@ class SignUp extends StatelessWidget {
 
       // UI 업데이트
       _pageController.nextPage(
-          duration: Duration(milliseconds: 300), curve: Curves.ease);
+        duration: Duration(milliseconds: 300),
+        curve: Curves.ease,
+      );
     }
   }
 
@@ -76,20 +78,30 @@ class SignUp extends StatelessWidget {
 
   // 회원가입 버튼 클릭
   void _signup(BuildContext context) async {
-    if (_telFormKey.currentState!.validate()) {
-      final viewModel = context.read<SignUpViewModel>();
-      // 회원가입 요청
-      await viewModel.signUp().then((userInfo) {
-        if (userInfo != null) {
-          _pageController.dispose(); // 해제
-          log("Succeeded in signing up");
-          Navigator.pushNamed(context, "/contact");
-        }
-        log("Succeeded to signup");
-      });
-    } else {
-      // TODO: 예외처리?
-    }
+    // final viewModel = context.read<SignUpViewModel>();
+    // if (_telFormKey.currentState!.validate()) {
+    //   // 회원가입 요청
+    //   await viewModel.signUp().then(
+    //     (userInfo) {
+    //       if (userInfo != null) {
+    //         _pageController.dispose(); // 해제
+    //         LOG.log("Succeeded in signing up");
+    //         Navigator.pushNamedAndRemoveUntil(
+    //             context, "/contact", ((route) => false));
+    //         return;
+    //       }
+    //       viewModel.disconnect();
+    //       LOG.log("Faild to signup");
+    //       GlobalNavigator.navigatorKey.currentState
+    //           ?.pushNamedAndRemoveUntil("/landing", (route) => false);
+    //     },
+    //   );
+    // } else {
+    //   viewModel.disconnect();
+    //   LOG.log("Exception while signing up");
+    //   GlobalNavigator.navigatorKey.currentState
+    //       ?.pushNamedAndRemoveUntil("/landing", (route) => false);
+    // }
   }
 
   @override

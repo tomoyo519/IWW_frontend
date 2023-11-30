@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
-  // TODO: 외부에서 제목, 액션을 주입하게 변경
   final Widget? title;
   final List<Widget>? actions;
 

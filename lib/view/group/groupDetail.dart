@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/datasource/remoteDataSource.dart';
+import 'package:iww_frontend/model/group/group.model.dart';
+import 'package:iww_frontend/model/routine/routine.model.dart';
+import 'package:iww_frontend/model/todo/todo.model.dart';
+import 'package:iww_frontend/model/user/user-info.model.dart';
+import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
-import 'package:iww_frontend/view/todo/fields/label_list_modal.dart';
-import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
-import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/view/todo/todo_editor.dart';
+import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
+import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 
 final List<String> labels = [
+  '전체',
   '운동',
   '식단',
   '회사업무',
@@ -18,176 +26,257 @@ final List<String> labels = [
 ];
 
 class GroupDetail extends StatefulWidget {
-  GroupDetail({this.group, super.key});
-  final group;
+  final Group group;
+  GroupDetail({required this.group, super.key});
 
   @override
   State<GroupDetail> createState() => _GroupDetailState();
 }
 
 class _GroupDetailState extends State<GroupDetail> {
-  List<dynamic> groupRoutine = [];
+  List<Routine> groupRoutine = [];
   List<dynamic> groupMems = [];
+  bool myGroup = false;
+  bool isLoading = true;
   late TextEditingController _controller;
-  getData() async {
-    print(widget.group);
-    var result = await http.get(Uri.parse(
-        'http://yousayrun.store:8088/group/${widget.group["grp_id"]}'));
+  late GlobalKey<FormState> _formKey;
 
+  getData() async {
+    var result = await RemoteDataSource.get('/group/${widget.group.groupId}');
     var resultJson = jsonDecode(result.body);
 
-    if (result.body.isNotEmpty) {
+    if (result.statusCode == 200) {
       setState(() {
-        groupRoutine = resultJson["rout_detail"];
+        // Group, Routine Type 맞춰서 수정
+        List<dynamic> jsonRoutList = resultJson["result"]["rout_detail"];
+        groupRoutine = jsonRoutList
+            .map((e) => Routine.fromGroupDetailJson(e, widget.group.groupId))
+            .toList();
+
+        groupMems = resultJson["result"]["grp_mems"];
+        isLoading = false;
       });
 
-      setState(() => groupMems = resultJson["grp_mems"]);
+      for (var i = 0; i < groupMems.length; i++) {
+        if (groupMems[i]["user_id"] == 1) {
+          setState(() {
+            myGroup = true;
+          });
+        }
+      }
+    } else {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
   joinGroup(grp_id) async {
     // TODO - user_id 수정하기.
     var data = jsonEncode({
-      "user_id": "6",
-      "grp_id": grp_id.toString(),
+      "user_id": 1,
+      "grp_id": grp_id,
     });
+    var result =
+        await RemoteDataSource.post("/group/${grp_id}/join/1", body: data);
+    if (result.statusCode == 201) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: const Text("그룹 가입이 완료 되었어요!")));
 
-    var result = await http
-        .post(Uri.parse('http://yousayrun.store:8088/group/${grp_id}/join/6'),
-            headers: <String, String>{
-              'Content-Type': 'application/json; charset=UTF-8',
-            },
-            body: data)
-        .catchError((err) {
-      print(err);
-      return null;
+      Navigator.pushNamed(context, "/group");
+    }
+  }
+
+  exitGroup(grp_id) async {
+    //탈퇴하기;
+    // TODO - user_id 수정하기.
+    var data = jsonEncode({
+      "user_id": 1,
+      "grp_id": grp_id,
     });
-
-    print(result.body);
+    var result =
+        await RemoteDataSource.delete("/group/${grp_id}/left/${1}", body: data);
+    LOG.log(result.body);
+    if (result.statusCode == 200) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: const Text("그룹 탈퇴가 완료 되었어요!")));
+      Navigator.pushNamed(context, "/group");
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: const Text("그룹 탈퇴 실패했어요. 재시도 해주세요.")));
+      Navigator.pop(context);
+    }
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getData();
-    print(widget.group["grp_desc"]);
-    _controller = TextEditingController(text: widget.group["grp_decs"]);
+
+    _controller = TextEditingController(text: widget.group.grpDesc);
+    _formKey = GlobalKey<FormState>();
+  }
+
+  // TODO: 루틴 수정 시
+  void _updateRoutine(BuildContext context) {
+    final viewmodel = context.read<EditorModalViewModel>();
+
+    LOG.log("Not implemented. ${viewmodel.hour}");
+    Navigator.pop(context);
+  }
+
+  // 할일 수정
+  void _showTodoEditor(BuildContext context, Routine? routine) {
+    final groupRepository =
+        Provider.of<GroupRepository>(context, listen: false);
+    final userInfo = Provider.of<UserInfo>(context, listen: false);
+    Todo? todo = routine?.generateTodo(userInfo.user_id);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (bottomSheetContext) {
+        return ChangeNotifierProvider(
+          create: (_) => EditorModalViewModel(
+            of: todo,
+            user: userInfo,
+            repository: groupRepository,
+          ),
+          child: EditorModal(
+            init: todo,
+            title: "루틴 수정",
+            formKey: _formKey,
+            onSave: (context) => _updateRoutine(context),
+            onCancel: (context) => Navigator.pop(context),
+          ),
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: MyAppBar(),
-        body: Container(
-            margin: EdgeInsets.all(10),
-            // padding: EdgeInsets.all(10),
-
-            child: Column(children: [
-              Text(
-                widget.group["grp_name"],
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-              ),
-              Divider(color: Colors.grey, thickness: 1, indent: 10),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      showModalBottomSheet(
-                          context: context,
-                          builder: (c) {
-                            return LabelListModal(
-                              content: "label",
-                              setLabel: (newLabel) {
-                                Provider.of<TodoViewModel>(context,
-                                        listen: false)
-                                    .setSelectedLabel(newLabel);
-                              },
-                            );
-                          });
-                    },
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.15,
-                      alignment: Alignment.center,
-                      // TODO - 수정되어야 함.
-                      child: Text("카테고리"),
+    return !isLoading
+        ? Scaffold(
+            appBar: MyAppBar(),
+            body: Container(
+                margin: EdgeInsets.all(10),
+                child: Column(children: [
+                  Text(
+                    widget.group.grpName,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                  ),
+                  Divider(color: Colors.grey, thickness: 1, indent: 10),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {},
+                        child: Container(
+                            width: MediaQuery.of(context).size.width * 0.15,
+                            alignment: Alignment.center,
+                            // TODO - 수정되어야 함.
+                            child: Text(widget.group.catName)),
+                      ),
+                    ],
+                  ),
+                  TextField(
+                    readOnly: true,
+                    controller: _controller,
+                    decoration: InputDecoration(
+                      hintText: "우리 그룹에 대한 설명이에요",
+                      contentPadding: EdgeInsets.symmetric(vertical: 30),
+                      border: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Colors.black, width: 1)),
                     ),
                   ),
-                ],
-              ),
-              TextField(
-                controller: _controller,
-                decoration: InputDecoration(
-                  hintText: "우리 그룹에 대한 설명이에요",
-                  contentPadding: EdgeInsets.symmetric(vertical: 30),
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black, width: 1)),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "기본 루틴",
-                      style: TextStyle(fontSize: 16),
-                    )),
-              ),
-              Divider(color: Colors.grey, thickness: 1, indent: 10),
-              Expanded(
-                child: ListView.builder(
-                    itemCount: groupRoutine.length,
-                    itemBuilder: (c, i) {
-                      return groupRoutine.isNotEmpty
-                          ? Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                      color: Colors.black26, width: 1)),
-                              alignment: Alignment.center,
-                              margin: EdgeInsets.all(10),
-                              padding: EdgeInsets.all(10),
-                              child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Checkbox(
-                                      onChanged: null,
-                                      value: false,
-                                    ),
-                                    Text(groupRoutine[i]["rout_name"]),
-                                    Icon(Icons.groups_outlined)
-                                  ]),
-                            )
-                          : Text("비었음");
-                    }),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "참가자",
-                      style: TextStyle(fontSize: 16),
-                    )),
-              ),
-              Divider(color: Colors.grey, thickness: 1, indent: 10),
-              Expanded(
-                child: Container(
-                  height: 200,
-                  child: GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        childAspectRatio: 2 / 1, crossAxisCount: 3),
-                    itemCount: groupMems.isEmpty ? 0 : groupMems.length,
-                    itemBuilder: (context, index) {
-                      print('groupMems[index]:${groupMems[index]}');
-                      return Column(
-                        children: [
-                          groupMems.isNotEmpty
-                              ? Container(
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "기본 루틴",
+                          style: TextStyle(fontSize: 16),
+                        )),
+                  ),
+                  Divider(color: Colors.grey, thickness: 1, indent: 10),
+                  Expanded(
+                    child: ListView.builder(
+                        itemCount: groupRoutine.length,
+                        itemBuilder: (c, i) {
+                          return groupRoutine.isNotEmpty
+                              ? GestureDetector(
+                                  onLongPress: () {
+                                    _showTodoEditor(context, groupRoutine[i]);
+                                  },
+                                  onTap: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      useRootNavigator: true,
+                                      builder: (BuildContext context) {
+                                        return Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.8,
+                                          child: Column(
+                                            // TODO - 사진추가
+                                            children: [Text('사용자 사진이 보여지는 화면')],
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                            color: Colors.black26, width: 1)),
+                                    alignment: Alignment.center,
+                                    margin: EdgeInsets.all(10),
+                                    padding: EdgeInsets.all(10),
+                                    child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Checkbox(
+                                            onChanged: null,
+                                            value: false,
+                                          ),
+                                          Text(groupRoutine[i].routName),
+                                          Icon(Icons.groups_outlined)
+                                        ]),
+                                  ),
+                                )
+                              : Text("조회된 그룹이 없습니다.");
+                        }),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "참가자",
+                          style: TextStyle(fontSize: 16),
+                        )),
+                  ),
+                  Divider(color: Colors.grey, thickness: 1, indent: 10),
+                  Expanded(
+                    child: Container(
+                      height: 200,
+                      child: GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            childAspectRatio: 2 / 1, crossAxisCount: 3),
+                        itemCount: groupMems.isEmpty ? 0 : groupMems.length,
+                        itemBuilder: (context, index) {
+                          return Column(
+                            children: [
+                              Container(
                                   height: 50,
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(12),
@@ -202,33 +291,57 @@ class _GroupDetailState extends State<GroupDetail> {
                                         MainAxisAlignment.spaceEvenly,
                                     children: [
                                       Icon(Icons.account_circle_rounded),
-                                      groupMems[index]["user_name"] != null
-                                          ? Text(groupMems[index]["user_name"])
-                                          : Text("정다희"),
+                                      Text(groupMems[index]["user_name"] ?? "")
                                     ],
                                   ))
-                              : Text("텅")
-                        ],
-                      );
-                    },
+                            ],
+                          );
+                        },
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              Divider(color: Colors.grey, thickness: 1, indent: 10),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.7,
-                height: 40,
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                      backgroundColor: Color(0xFF3A00E5),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10)))),
-                  onPressed: () {
-                    joinGroup(widget.group["grp_id"]);
-                  },
-                  child: Text("참가하기", style: TextStyle(color: Colors.white)),
-                ),
-              )
-            ])));
+                  if (!myGroup) ...[
+                    Divider(color: Colors.grey, thickness: 1, indent: 10),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.7,
+                      height: 40,
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                            backgroundColor: Color(0xFF3A00E5),
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)))),
+                        onPressed: () {
+                          joinGroup(widget.group.groupId);
+                        },
+                        child:
+                            Text("참가하기", style: TextStyle(color: Colors.white)),
+                      ),
+                    )
+                  ],
+                  if (myGroup) ...[
+                    Divider(color: Colors.grey, thickness: 1, indent: 10),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.7,
+                      height: 40,
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                            backgroundColor: Color(0xFF3A00E5),
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)))),
+                        onPressed: () {
+                          exitGroup(widget.group.groupId);
+                        },
+                        child:
+                            Text("탈퇴하기", style: TextStyle(color: Colors.white)),
+                      ),
+                    )
+                  ]
+                ])))
+        : Lottie.asset('assets/spinner.json',
+            repeat: true,
+            animate: true,
+            height: MediaQuery.of(context).size.height * 0.3);
   }
 }

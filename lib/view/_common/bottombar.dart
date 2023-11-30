@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class MyBottomNav extends StatelessWidget implements PreferredSizeWidget {
-  const MyBottomNav({super.key});
+  final Function(BuildContext context)? onAddClick;
+  const MyBottomNav({super.key, this.onAddClick});
 // TODO : size 변경해야 함.
   @override
   Size get preferredSize => Size.fromHeight(52);
@@ -19,18 +20,32 @@ class MyBottomNav extends StatelessWidget implements PreferredSizeWidget {
             context, "/group", (Route<dynamic> route) => false);
         break;
       case 2:
+        if (onAddClick != null) {
+          onAddClick!(context);
+        }
+        // Navigator.pushNamedAndRemoveUntil(
+        //     context,
+        //     "/myroom",
+        //     arguments: true,
+        //     (Route<dynamic> route) => false);
+        break;
+      case 3:
+        Navigator.pushNamedAndRemoveUntil(
+            context, '/shop', (Route<dynamic> route) => false);
+      case 4:
         Navigator.pushNamedAndRemoveUntil(
             context,
             "/myroom",
             arguments: true,
             (Route<dynamic> route) => false);
-        break;
-      case 4:
-        Navigator.pushNamedAndRemoveUntil(
-            context, '/mypage', (Route<dynamic> route) => false);
       default:
         Navigator.pushNamedAndRemoveUntil(
-            context, '/landing', (Route<dynamic> route) => false);
+            context,
+            "/myroom",
+            arguments: true,
+            (Route<dynamic> route) => false);
+      // Navigator.pushNamedAndRemoveUntil(
+      //     context, '/landing', (Route<dynamic> route) => false);
       // throw UnimplementedError('no widget for uri $uri');
     }
   }
@@ -46,17 +61,27 @@ class MyBottomNav extends StatelessWidget implements PreferredSizeWidget {
         onTap: (i) {
           goHome(context, i);
         },
-        items: const [
+        items: [
           BottomNavigationBarItem(
               icon: Icon(Icons.check_box_outlined), label: "할일"),
           BottomNavigationBarItem(
               icon: Icon(Icons.group_outlined), label: "그룹"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined), label: "마이룸"),
+              icon: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Colors.orange,
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: Icon(
+                  Icons.add,
+                  color: Colors.white,
+                ),
+              ),
+              label: "추가"),
           BottomNavigationBarItem(
               icon: Icon(Icons.shopping_cart_outlined), label: "상점"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.perm_identity_outlined), label: "마이페이지"),
+              icon: Icon(Icons.home_outlined), label: "마이페이지"),
         ]);
   }
 }

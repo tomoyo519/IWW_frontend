@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:iww_frontend/utils/logger.dart';
 import 'groupDetail.dart';
+import 'package:lottie/lottie.dart';
 
 final List<String> labels = [
   '운동',
@@ -30,15 +32,16 @@ class _GroupSearchState extends State<GroupSearch> {
     //TODO - group_id/label_id/keyword
     var result = await http
         .get(Uri.parse(
-            'http://yousayrun.store:8088/group/search/6/${labelNum}/${keyword}'))
+            'http://yousayrun.store:8088/group/search/1/${labelNum}/${keyword}'))
         .catchError((err) {
-      print(err);
       return null;
     });
-    print(result.body);
+    LOG.log(result.body);
     if (result.statusCode == 200) {
+      Map<String, dynamic> jsonData = jsonDecode(result.body);
       setState(() {
-        groupList = jsonDecode(result.body);
+        List<dynamic> result = jsonData['results'];
+        groupList = result;
       });
     }
   }
@@ -86,46 +89,47 @@ class _GroupSearchState extends State<GroupSearch> {
             ),
           ],
         ),
-        Expanded(
-          child: ListView.builder(
-              itemCount: groupList.isNotEmpty ? groupList.length : 1,
-              itemBuilder: (c, i) {
-                return groupList.isNotEmpty
-                    ? TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (c) =>
-                                      GroupDetail(group: groupList[i])));
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          margin: EdgeInsets.all(5),
-                          padding: EdgeInsets.all(25),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              border:
-                                  Border.all(color: Colors.black26, width: 1)),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                groupList[i]["grp_name"],
-                                style: TextStyle(color: Colors.black),
-                              ),
-                              Text('${groupList[i]["mem_cnt"]}/100',
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w800))
-                            ],
-                          ),
-                        ))
-                    : Container(
-                        child: Text('조회된 그룹이 없습니다.'),
-                      );
-              }),
-        ),
+        groupList.isNotEmpty
+            ? Expanded(
+                child: ListView.builder(
+                    itemCount: groupList.length,
+                    itemBuilder: (c, i) {
+                      return TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (c) =>
+                                        GroupDetail(group: groupList[i])));
+                          },
+                          child: Container(
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.all(5),
+                            padding: EdgeInsets.all(25),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                    color: Colors.black26, width: 1)),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  groupList[i]["grp_name"],
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                                Text('${groupList[i]["mem_cnt"]}/100',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w800))
+                              ],
+                            ),
+                          ));
+                    }),
+              )
+            : Lottie.asset('assets/spinner.json',
+                repeat: true,
+                animate: true,
+                height: MediaQuery.of(context).size.height * 0.3)
       ]),
     );
   }

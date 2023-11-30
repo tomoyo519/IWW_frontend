@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:http/http.dart';
@@ -7,6 +6,7 @@ import 'package:iww_frontend/datasource/localStorage.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/user/get-user-by-contact.dto.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
+import 'package:iww_frontend/utils/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// 로컬 캐시 및 DB에서 유저 데이터를 관리합니다.
@@ -32,7 +32,6 @@ class UserRepository {
       return null;
     }
 
-    // log("이건가? ${response.body}, ${response.statusCode}");
     var remoteUserInfo = UserInfo.fromJson(json.decode(response.body));
     var isLocallySaved = await saveUserInLocal(remoteUserInfo);
     if (!isLocallySaved) {
@@ -50,9 +49,11 @@ class UserRepository {
     File image = await LocalStorage.read("$userId.jpg");
 
     return await RemoteDataSource.postFormData(
-            "/user/$userId/profile", 'profile',
-            file: image, filename: '$userId.jpg')
-        .then((response) => response.statusCode == 201);
+      "/user/$userId/profile",
+      'profile',
+      file: image,
+      filename: '$userId.jpg',
+    ).then((response) => response.statusCode == 201);
   }
 
   // 유저 정보를 SharedPreference에 저장
@@ -66,7 +67,7 @@ class UserRepository {
       await pref.setInt("user_hp", user.user_hp);
       return true;
     } catch (error) {
-      log("Failed to save user in shared preference: $error");
+      LOG.log("Failed to save user in shared preference: $error");
       return false;
     }
   }
@@ -79,6 +80,7 @@ class UserRepository {
   Future<UserInfo?> getUserByKakaoId(String userKakaoId) async {
     return await RemoteDataSource.get("/user?user_kakao_id=$userKakaoId")
         .then((response) {
+      LOG.log("Get user by kakao id ${response.body}");
       if (response.statusCode == 200 && response.body.isNotEmpty) {
         var jsonData = json.decode(response.body);
         return UserInfo.fromJson(jsonData);
@@ -118,7 +120,7 @@ class UserRepository {
           return null;
         }
       } else {
-        log("Fail to fetch user infos");
+        LOG.log("Fail to fetch user infos");
         return null;
       }
     });
@@ -139,26 +141,23 @@ class UserRepository {
         userKakaoId != null &&
         userHp != null) {
       return UserInfo(
-          user_id: userId,
-          user_name: userName,
-          user_tel: userTel,
-          user_kakao_id: userKakaoId,
-          user_hp: userHp);
+        user_id: userId,
+        user_name: userName,
+        user_tel: userTel,
+        user_kakao_id: userKakaoId,
+        user_hp: userHp,
+      );
     }
     return null;
   }
 
-  // 로컬 SharedPreference에서 유저 아이디 가져오기
-  // Future<int?> getUserId() async {
-  //   final SharedPreferences pref = await SharedPreferences.getInstance();
-  //   return pref.getInt("user_id");
-  // }
-
   /// ================== ///
   ///       Update       ///
   /// ================== ///
-
-  // TODO:
+  Future<bool> updateUserPet(int userId, int petId) {
+    return RemoteDataSource.put("/user/$userId/pet/$petId")
+        .then((response) => response.statusCode == 200);
+  }
 
   /// ================== ///
   ///       Delete       ///
@@ -172,7 +171,6 @@ class UserRepository {
 
   // 유저 카카오 아이디를 기준으로 DB에서 삭제 처리
   Future<bool> deleteUserByKakaoId(String kakaoId) async {
-    log("@@ $kakaoId");
     return RemoteDataSource.delete("/user?user_kakao_id=$kakaoId")
         .then((response) => response.statusCode == 200);
   }

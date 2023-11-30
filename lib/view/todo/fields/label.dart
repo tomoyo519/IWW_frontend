@@ -1,8 +1,10 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/todo/fields/label_list_modal.dart';
 import 'package:iww_frontend/view/todo/layout/form-field.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
 import 'package:provider/provider.dart';
 
 class TodoLabelField extends StatelessWidget {
@@ -12,14 +14,14 @@ class TodoLabelField extends StatelessWidget {
 
   // 필드를 탭하면 실행
   _onTap(BuildContext context) {
-    log("taptap");
+    LOG.log("taptap");
     showModalBottomSheet(
         context: context,
         builder: (bottomSheetContext) {
           return LabelListModal(
             content: "label",
             setLabel: (int newLabel) {
-              Provider.of<TodoEditorViewModel>(
+              Provider.of<EditorModalViewModel>(
                 context,
                 listen: false,
               ).todoLabel = newLabel;
@@ -34,10 +36,10 @@ class TodoLabelField extends StatelessWidget {
       onTap: () => _onTap(context),
       child: TodoFormFieldLayout(
           icon: Icons.label_important_outline,
-          child: Consumer<TodoEditorViewModel>(
+          child: Consumer<EditorModalViewModel>(
             builder: (context, viewModel, child) {
               return Text((viewModel.todoData['todo_label'] != null)
-                  ? LabelListModal.labels[viewModel.todoData['todo_label']]
+                  ? LabelListModal.labels[(viewModel.todoData['todo_label'])]
                   : LabelListModal.labels[0]);
             },
           )),

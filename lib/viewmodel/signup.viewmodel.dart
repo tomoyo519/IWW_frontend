@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/service/auth.service.dart';
+import 'package:iww_frontend/utils/logger.dart';
 
 class SignUpViewModel extends ChangeNotifier {
   final AuthService authService;
@@ -11,6 +12,7 @@ class SignUpViewModel extends ChangeNotifier {
   // User information
   String _name = '';
   String _tel = '';
+
   String get name => _name;
   set name(String val) => _name = val;
   set tel(String val) => _tel = val;
@@ -32,11 +34,18 @@ class SignUpViewModel extends ChangeNotifier {
 
   void sendSms() {
     // TODO: Send sms via firebase.
-    log("문자를 보냈다고 치자");
+    LOG.log("문자를 보냈다고 치자");
   }
 
   // 회원가입
-  Future<UserInfo?> signUp() async {
-    return await authService.signup(_name, _tel);
-  }
+  // Future<UserInfo?> signUp() async {
+  //   await authService.signup(_name, _tel);
+  //   // notifyListeners();
+  //   return authService.user;
+  // }
+
+  // // 연결 끊기
+  // Future<void> disconnect() async {
+  //   await authService.disconnect();
+  // }
 }

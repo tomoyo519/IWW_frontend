@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:iww_frontend/utils/logger.dart';
 import 'package:path_provider/path_provider.dart';
 
 class LocalStorage {
@@ -7,7 +9,21 @@ class LocalStorage {
   static final _instance = LocalStorage._internal();
   static LocalStorage get instance => _instance;
 
-  static Future<String?> save(String url, String path) async {
+  static final _storage = FlutterSecureStorage();
+
+  // Save in secured storage
+  static Future<void> saveKey(String key, String value) async {
+    LOG.log("Save user {$key: $value} in secured storage.");
+    await _storage.write(key: key, value: value);
+  }
+
+  // Read from secured storage
+  static Future<String?> readKey(String key) async {
+    final jwtToken = await _storage.read(key: key);
+    return jwtToken;
+  }
+
+  static Future<String?> saveFromUrl(String url, String path) async {
     // 네트워크에서 이미지 데이터 가져오기
     var response = await http.get(Uri.parse(url));
     var bytes = response.bodyBytes;
