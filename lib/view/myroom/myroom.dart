@@ -340,6 +340,17 @@ class BottomButtons extends StatelessWidget {
                 // Navigator.pushNamed(context, '/inventory');
                 myRoomState.toggleGrowth();
               },
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                (Set<MaterialState> states) {
+                  // 눌렸을 때의 상태인 경우 색상 변경
+                  if (states.contains(MaterialState.pressed)) {
+                    return Colors.deepOrange; // 눌렸을 때의 색상
+                  }
+                  // 기본 색상
+                  return Colors.white;
+                },
+              )),
               child: Text('인벤토리')),
           SizedBox(width: 20),
           buildFriendButton(),
