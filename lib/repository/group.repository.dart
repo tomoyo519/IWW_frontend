@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/group/group.model.dart';
 import 'package:iww_frontend/model/group/groupDetail.model.dart';
-import 'package:iww_frontend/repository/base_todo.repository.dart';
+import 'package:iww_frontend/repository/base_todo.viewmodel.dart';
 
-class GroupRepository implements BaseTodoRepository {
+class GroupRepository implements BaseTodoViewModel {
   /// ================== ///
   ///         Get        ///
   /// ================== ///
@@ -81,6 +81,8 @@ class GroupRepository implements BaseTodoRepository {
     });
   }
 
+  // TODO: create one은 routine 1개 생성과 연결
+  // TODO: 상태를 상위 ViewModel로 전송하도록 수정 필요
   @override
   Future<bool> createOne(Map<String, dynamic> data) async {
     var json = jsonEncode(data);

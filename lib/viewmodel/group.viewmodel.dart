@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/repository/base_todo.viewmodel.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/model/group/group.model.dart';
 import 'package:iww_frontend/model/group/groupDetail.model.dart';
 import 'package:iww_frontend/utils/logger.dart';
 
 // 그룹 리스트 화면의 상태를 관리
-class MyGroupViewModel extends ChangeNotifier {
+class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
   final GroupRepository _groupRepository;
   // final UserInfo? _userInfo;
 
@@ -96,6 +97,18 @@ class MyGroupViewModel extends ChangeNotifier {
       LOG.log('err:$err');
       return false;
     }
+  }
+
+  @override
+  Future<bool> createOne(Map<String, dynamic> data) {
+    // TODO: implement createOne
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> updateOne(String id, Map<String, dynamic> data) {
+    // TODO: implement updateOne
+    throw UnimplementedError();
   }
 }
 

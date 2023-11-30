@@ -2,18 +2,17 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
-import 'package:iww_frontend/repository/base_todo.repository.dart';
-import 'package:iww_frontend/repository/todo.repository.dart';
+import 'package:iww_frontend/repository/base_todo.viewmodel.dart';
 
 class EditorModalViewModel extends ChangeNotifier {
   final Todo? of; // 초기화된 투두 데이터
   final UserInfo user;
-  final BaseTodoRepository repository;
+  final BaseTodoViewModel? parent;
 
   EditorModalViewModel({
     this.of,
     required this.user,
-    required this.repository,
+    required this.parent,
   }) : _todoData = of?.toMap() ?? <String, dynamic>{};
 
   // 폼 상태 관리
@@ -77,7 +76,7 @@ class EditorModalViewModel extends ChangeNotifier {
     todoData['user_id'] = user.user_id;
     todoData['todo_start'] = timeString;
 
-    return await repository.createOne(todoData);
+    return await parent?.createOne(todoData) ?? false;
   }
 
   // 할일 수정
@@ -98,6 +97,6 @@ class EditorModalViewModel extends ChangeNotifier {
     // };
 
     todoData['todo_start'] = timeString;
-    return await repository.updateOne(id.toString(), todoData);
+    return await parent?.updateOne(id.toString(), todoData) ?? false;
   }
 }

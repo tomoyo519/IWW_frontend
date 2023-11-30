@@ -28,8 +28,7 @@ class EditorModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 키보드에 따른 높이 조정
-    // 키보드가 열려 있는지 확인
+    // 키보드에 따른 높이 조정 키보드가 열려 있는지 확인
     final bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom != 0;
 
     return FractionallySizedBox(
@@ -47,7 +46,7 @@ class EditorModal extends StatelessWidget {
               child: SingleChildScrollView(
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    color: MyColors.background,
+                    color: Colors.white,
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(

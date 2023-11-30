@@ -1,14 +1,14 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
+import 'package:iww_frontend/repository/base_todo.viewmodel.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
 
 // 전체 투두리스트 상태를 관리
-class TodoViewModel extends ChangeNotifier {
+class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   final TodoRepository _todoRepository;
   final UserInfo _user;
 
@@ -53,7 +53,9 @@ class TodoViewModel extends ChangeNotifier {
 
   Future<void> setTodos() async {}
 
-  // 할일 목록 가져오기
+  // ****************************** //
+  // *         Fetch Data         * //
+  // ****************************** //
   Future<void> fetchTodos() async {
     // 상태 업데이트
     int userId = _user.user_id;
@@ -64,6 +66,10 @@ class TodoViewModel extends ChangeNotifier {
     _groupTodos = data.where((todo) => todo.grpId != null).toList();
     waiting = false;
   }
+
+  // ****************************** //
+  // *        Delete Data         * //
+  // ****************************** //
 
   // 할일 삭제하고 목록 업데이트
   Future<bool> deleteTodo(int todoId) async {
@@ -78,6 +84,10 @@ class TodoViewModel extends ChangeNotifier {
       return false;
     });
   }
+
+  // ****************************** //
+  // *        Update Data         * //
+  // ****************************** //
 
   // 할일 완료하고 목록 업데이트
   Future<bool> checkTodo(Todo todo, bool checked,
@@ -101,6 +111,10 @@ class TodoViewModel extends ChangeNotifier {
         .where((e) => e.todoDate == today && e.todoDone == true)
         .length;
   }
+
+  // ****************************** //
+  // *         Fetch Data         * //
+  // ****************************** //
 
   // 기본 할일 체크
   Future<bool> _checkNormalTodo(Todo todo, bool checked) async {
@@ -179,5 +193,19 @@ class TodoViewModel extends ChangeNotifier {
   void setSelectedAlarmTime(dynamic alarmTime) {
     _selectedAlarmTime = alarmTime;
     notifyListeners();
+  }
+
+  @override
+  Future<bool> createOne(Map<String, dynamic> data) {
+    // 데이터를 받아서 todo에 셋하고 리포지토리로 넘김
+    // TODO: implement createOne
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> updateOne(String id, Map<String, dynamic> data) {
+    // 데이터를 받아서 todo에 셋하고 리포지토리로 넘김
+    // TODO: implement updateOne
+    throw UnimplementedError();
   }
 }

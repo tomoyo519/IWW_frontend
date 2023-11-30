@@ -142,7 +142,7 @@ class _GroupDetailState extends State<GroupDetail> {
           create: (_) => EditorModalViewModel(
             of: todo,
             user: userInfo,
-            repository: groupRepository,
+            parent: groupRepository,
           ),
           child: EditorModal(
             init: todo,
