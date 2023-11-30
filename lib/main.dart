@@ -88,14 +88,14 @@ void main() async {
                           value: authService.user!,
                         ),
                         ChangeNotifierProvider(
-                          create: (context) => EventService(),
-                        ),
-                        ChangeNotifierProvider(
                           create: (context) => UserProvider(
                             Provider.of<UserRepository>(context, listen: false),
                             authService.user!,
                           ),
-                        )
+                        ),
+                        ChangeNotifierProvider(
+                          create: (context) => EventService(),
+                        ),
                       ],
                       child: MainPage(),
                     ), // lib/view/main_page.dart
