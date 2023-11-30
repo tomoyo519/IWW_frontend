@@ -52,6 +52,8 @@ class _GroupDetailState extends State<GroupDetail> {
       setState(() {
         // Group, Routine Type 맞춰서 수정
         List<dynamic> jsonRoutList = resultJson["result"]["rout_detail"];
+
+        LOG.log(resultJson["result"]["rout_detail"]);
         groupRoutine = jsonRoutList
             .map((e) => Routine.fromGroupDetailJson(e, widget.group.groupId))
             .toList();

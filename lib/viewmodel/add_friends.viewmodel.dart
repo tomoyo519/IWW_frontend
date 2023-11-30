@@ -43,7 +43,7 @@ class FindContactViewModel extends ChangeNotifier {
     }
     // 연락처 권한 거부. 홈으로 이동
     GlobalNavigator.navigatorKey.currentState
-        ?.pushNamedAndRemoveUntil("/home", (route) => false);
+        ?.pushNamedAndRemoveUntil("/todo", (route) => false);
   }
 
   // 친구추가

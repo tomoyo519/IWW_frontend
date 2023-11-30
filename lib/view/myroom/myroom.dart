@@ -4,7 +4,7 @@ import 'package:iww_frontend/repository/room.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';
-import 'package:iww_frontend/view/_common/bottombar.dart';
+import 'package:iww_frontend/view/_navigation/main_page.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
@@ -29,7 +29,7 @@ class MyRoom extends StatelessWidget {
               )),
       ChangeNotifierProvider<MyRoomViewModel>(create: (_) => MyRoomViewModel()),
       ChangeNotifierProvider(create: (_) => InventoryState()),
-    ], child: Scaffold(body: MyRoomPage(), bottomNavigationBar: MyBottomNav()));
+    ], child: MyRoomPage());
   }
 }
 

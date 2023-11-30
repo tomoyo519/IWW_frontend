@@ -35,7 +35,7 @@ class AddFriends extends StatelessWidget {
       appBar: MyAppBar(title: Text("친구 찾아보기"), actions: [
         TextButton(
           onPressed: () {
-            Navigator.pushNamed(context, '/home');
+            Navigator.pushNamed(context, '/todo');
           },
           child: Selector<FindContactViewModel, int>(
             selector: (_, model) => model.friendCnt,

@@ -34,10 +34,12 @@ class _GroupListState extends State<GroupList> {
 
       var response = jsonData['results'];
       LOG.log('response: $response');
-      setState(() {
-        List<dynamic> result = jsonData['results'];
-        groups = result.map((e) => Group.fromJson(e)).toList();
-      });
+      if (mounted) {
+        setState(() {
+          List<dynamic> result = jsonData['results'];
+          groups = result.map((e) => Group.fromJson(e)).toList();
+        });
+      }
     }
   }
 
