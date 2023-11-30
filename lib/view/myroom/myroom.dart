@@ -38,11 +38,14 @@ class MyRoom extends StatelessWidget {
 }
 
 class MyRoomState extends ChangeNotifier {
-  double growth = 0.0;
-  final maxGrowth = 300.0;
+  double _growth = 0.0;
+  final maxGrowth = 350.0;
+
+  get growth => _growth;
 
   void toggleGrowth() {
-    growth = growth == 0.0 ? maxGrowth : 0.0;
+    _growth = (growth == 0.0) ? maxGrowth : 0.0;
+    notifyListeners();
   }
 }
 
