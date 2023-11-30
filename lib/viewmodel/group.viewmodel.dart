@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/repository/base_todo.viewmodel.dart';
+import 'package:iww_frontend/model/routine/routine.model.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/model/group/group.model.dart';
 import 'package:iww_frontend/model/group/groupDetail.model.dart';
 import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
 
 // 그룹 리스트 화면의 상태를 관리
 class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
@@ -21,8 +24,8 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
   Map<String, dynamic> _groupData = {};
   Map<String, dynamic> get groupData => _groupData;
 
-  String? _groupRoutine;
-  String? get groupRoutine => _groupRoutine;
+  List<Routine> _groupRoutine = [];
+  List<Routine> get groupRoutine => _groupRoutine;
 
   set groupDesc(String val) {
     _groupData['grp_decs'] = val;
@@ -39,7 +42,7 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
     notifyListeners();
   }
 
-  set groupRoutine(String? val) {
+  set groupRoutine(List<Routine> val) {
     _groupRoutine = val;
     notifyListeners();
   }
@@ -74,23 +77,15 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
 
   Future<bool?> createGroup() async {
     try {
-      var json = {
+      Map<String, dynamic> json = {
         "grpInfo": (groupData),
-        "routInfo": groupRoutine ??
-            [
-              {
-                "rout_name": "아침에 일어나기",
-                "rout_desc": "이부자리 정리하기",
-                "rout_repeat": 1111100,
-                "rout_srt": "200000",
-                "rout_end": "200000"
-              }
-            ]
+        "routInfo": jsonEncode(groupRoutine.map((e) => jsonEncode(e)).toList()),
       };
+
       LOG.log('json: $json');
       groupData["user_id"] = "1";
 
-      var rest = (await _groupRepository.createOne(json) ?? []);
+      bool rest = (await _groupRepository.createTodo(json));
       LOG.log('rest:$rest');
       return true;
     } catch (err) {
@@ -100,15 +95,29 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
   }
 
   @override
-  Future<bool> createOne(Map<String, dynamic> data) {
-    // TODO: implement createOne
-    throw UnimplementedError();
+  // EditorModal에서 폼 데이터를 가져와서 상태로 지정
+  Future<bool> createTodo(Map<String, dynamic> data) async {
+    LOG.log("???? $data");
+    Routine routine = Routine.fromTodoJson(data);
+
+    if (_groupRoutine.length < 3) {
+      _groupRoutine.add(routine);
+      notifyListeners();
+      return true;
+    }
+    notifyListeners();
+    return false;
   }
 
   @override
-  Future<bool> updateOne(String id, Map<String, dynamic> data) {
-    // TODO: implement updateOne
-    throw UnimplementedError();
+  Future<bool> updateTodo(String id, Map<String, dynamic> data) async {
+    int idx = _groupRoutine.indexWhere((rout) => rout.routId.toString() == id);
+    if (idx == -1) {
+      LOG.log("Error updating routine! not found.");
+      return false;
+    }
+    _groupRoutine[idx] = Routine.fromJson(data);
+    return true;
   }
 }
 

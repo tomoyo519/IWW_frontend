@@ -179,7 +179,7 @@ class _GroupDetailState extends State<GroupDetail> {
                             width: MediaQuery.of(context).size.width * 0.15,
                             alignment: Alignment.center,
                             // TODO - 수정되어야 함.
-                            child: Text(widget.group.catName)),
+                            child: Text(widget.group.catName ?? "카테고리")),
                       ),
                     ],
                   ),
@@ -232,6 +232,7 @@ class _GroupDetailState extends State<GroupDetail> {
                                       },
                                     );
                                   },
+                                  // ==== Group Routine ==== //
                                   child: Container(
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(12),

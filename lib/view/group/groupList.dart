@@ -36,7 +36,7 @@ class _GroupListState extends State<GroupList> {
       LOG.log('response: $response');
       if (mounted) {
         setState(() {
-          List<dynamic> result = jsonData['results'];
+          List<dynamic> result = jsonData['result'];
           groups = result.map((e) => Group.fromJson(e)).toList();
         });
       }

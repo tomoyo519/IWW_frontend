@@ -6,6 +6,7 @@ import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/repository/base_todo.viewmodel.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
 
 // 전체 투두리스트 상태를 관리
 class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
@@ -196,16 +197,14 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   }
 
   @override
-  Future<bool> createOne(Map<String, dynamic> data) {
-    // 데이터를 받아서 todo에 셋하고 리포지토리로 넘김
-    // TODO: implement createOne
+  Future<bool> createTodo(Map<String, dynamic> data) {
+    // TODO: implement createTodo
     throw UnimplementedError();
   }
 
   @override
-  Future<bool> updateOne(String id, Map<String, dynamic> data) {
-    // 데이터를 받아서 todo에 셋하고 리포지토리로 넘김
-    // TODO: implement updateOne
+  Future<bool> updateTodo(String id, Map<String, dynamic> data) {
+    // TODO: implement updateTodo
     throw UnimplementedError();
   }
 }

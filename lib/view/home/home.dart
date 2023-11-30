@@ -27,20 +27,24 @@ class TodoPage extends StatelessWidget {
     );
   }
 
-  // ==== Helper ==== //
-  T _findContext<T>(BuildContext context) {
-    return Provider.of<T>(context, listen: false);
-  }
+  // 할일 신규 생성
+  void _createTodo(BuildContext context) async {
+    final viewModel = context.read<EditorModalViewModel>();
 
-  // ==== Helper ==== //
-  List<ChangeNotifierProvider> _getProviders(BuildContext context) {
-    final UserInfo user = _findContext<UserInfo>(context);
-    final TodoRepository repository = _findContext<TodoRepository>(context);
+    LOG.log('${viewModel.todoData} viewModel.todoData');
+    await viewModel.createTodo().then((result) {
+      if (result == true && context.mounted) {
+        LOG.log('onsave일떄');
 
-    return [
-      ChangeNotifierProvider<TodoViewModel>(
-          create: (_) => TodoViewModel(repository, user)),
-    ];
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('할일이 추가되었어요!'),
+          ),
+        );
+
+        Navigator.pop(context);
+      }
+    });
   }
 }
 

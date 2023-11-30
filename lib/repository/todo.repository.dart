@@ -3,10 +3,10 @@ import 'dart:convert';
 
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
-import 'package:iww_frontend/repository/base_todo.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
 import 'package:iww_frontend/utils/logger.dart';
 
-class TodoRepository {
+class TodoRepository implements BaseTodoViewModel {
   /// ================== ///
   ///         Get        ///
   /// ================== ///

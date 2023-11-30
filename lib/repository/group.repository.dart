@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/group/group.model.dart';
 import 'package:iww_frontend/model/group/groupDetail.model.dart';
-import 'package:iww_frontend/repository/base_todo.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
+import 'package:iww_frontend/utils/logger.dart';
 
 class GroupRepository implements BaseTodoViewModel {
   /// ================== ///
@@ -22,6 +23,25 @@ class GroupRepository implements BaseTodoViewModel {
             jsonData.map((data) => Group.fromJson(data)).toList();
         print(data);
         return data;
+      }
+      return null;
+    });
+  }
+
+  Future<List<Group>?> getAllGroupList(
+      int? userId, int catId, String keyword) async {
+    return await RemoteDataSource.get(
+            "/group/search/${userId ?? 1}/${catId}/${keyword}")
+        .then((res) {
+      if (res.statusCode == 200) {
+        LOG.log('thisisres/data: ${res.body}');
+        var jsonData = jsonDecode(res.body);
+        if (jsonData.isEmpty) {
+          return null;
+        }
+        // List<Group>? data =
+        //     jsonData["results"].map((data) => Group.fromJson(data)).toList();
+        // return data;
       }
       return null;
     });
@@ -84,7 +104,7 @@ class GroupRepository implements BaseTodoViewModel {
   // TODO: create one은 routine 1개 생성과 연결
   // TODO: 상태를 상위 ViewModel로 전송하도록 수정 필요
   @override
-  Future<bool> createOne(Map<String, dynamic> data) async {
+  Future<bool> createTodo(Map<String, dynamic> data) async {
     var json = jsonEncode(data);
     return await RemoteDataSource.post("/group", body: json).then((res) {
       if (res.statusCode == 201) {
@@ -95,7 +115,7 @@ class GroupRepository implements BaseTodoViewModel {
   }
 
   @override
-  Future<bool> updateOne(String id, Map<String, dynamic> data) async {
+  Future<bool> updateTodo(String id, Map<String, dynamic> data) async {
     // TODO: unimplemented.
     return true;
   }
