@@ -10,7 +10,7 @@ import 'package:iww_frontend/model/user/user-info.model.dart';
 
 class ShopRepository {
   Map<String, Map<String, List<ShopInfo>>> dummy = {
-    "results": {
+    "result": {
       "pet": [
         ShopInfo(
             item_id: 6,
@@ -62,12 +62,12 @@ class ShopRepository {
     return await RemoteDataSource.get('/item-shop/${userId ?? 1}').then((res) {
       if (res.statusCode == 200) {
         var jsonData = jsonDecode(res.body);
-        LOG.log('res.body:${jsonData["results"]["펫"]}');
+        LOG.log('res.body:${jsonData["result"]}');
         return List<ShopInfo>.from(
-            jsonData["results"]["펫"].map((item) => ShopInfo.fromJson(item)));
+            jsonData["result"]["pet"].map((item) => ShopInfo.fromJson(item)));
       } else {
-        if (dummy["results"] != null && dummy["results"]!["pet"] != null) {
-          return Future.value(List<ShopInfo>.from(dummy["results"]!["pet"]!));
+        if (dummy["result"] != null && dummy["result"]!["pet"] != null) {
+          return Future.value(List<ShopInfo>.from(dummy["result"]!["pet"]!));
         } else {
           return Future.value([]);
         }
@@ -76,6 +76,7 @@ class ShopRepository {
     // return Future.value(dummy["results"]?["pet"] ?? []);
   }
 
+// background
   Future<List<ShopInfo>> getFuns() async {
     int? userId = await _getUser();
     // TODO - userId 어케써ㅜ
@@ -84,27 +85,47 @@ class ShopRepository {
       if (res.statusCode == 200) {
         var jsonData = jsonDecode(res.body);
 
-        LOG.log('res.body:${jsonData["results"]}');
-        return List<ShopInfo>.from(
-            jsonData["results"]["펫"].map((item) => ShopInfo.fromJson(item)));
+        LOG.log('res.body:${jsonData["result"]}');
+        return List<ShopInfo>.from(jsonData["result"]["background"]
+            .map((item) => ShopInfo.fromJson(item)));
       } else {
-        if (dummy["results"] != null && dummy["results"]!["pet"] != null) {
-          return Future.value(List<ShopInfo>.from(dummy["results"]!["pet"]!));
+        if (dummy["result"] != null && dummy["result"]!["background"] != null) {
+          return Future.value(
+              List<ShopInfo>.from(dummy["result"]!["background"]!));
         } else {
           return Future.value([]);
         }
       }
     });
-    // return Future.value(dummy["results"]?["pet"] ?? []);
+    // return Future.value(dummy["result"]?["pet"] ?? []);
   }
 
+// motion
   Future<List<ShopInfo>> getEmoj() async {
-    return Future.value(dummy["results"]?["emoticon"] ?? []);
+    int? userId = await _getUser();
+    // TODO - userId 어케써ㅜ
+    LOG.log('userId: ${userId}');
+    return await RemoteDataSource.get('/item-shop/${userId ?? 1}').then((res) {
+      if (res.statusCode == 200) {
+        var jsonData = jsonDecode(res.body);
+
+        LOG.log('res.body:${jsonData["result"]}');
+        return List<ShopInfo>.from(jsonData["result"]["motion"]
+            .map((item) => ShopInfo.fromJson(item)));
+      } else {
+        if (dummy["result"] != null && dummy["result"]!["motion"] != null) {
+          return Future.value(List<ShopInfo>.from(dummy["result"]!["motion"]!));
+        } else {
+          return Future.value([]);
+        }
+      }
+    });
+    // return Future.value(dummy["result"]?["pet"] ?? []);
   }
 
   Future<bool> purchaseItem(itemId) async {
     int? userId = await _getUser();
-    var json = jsonEncode({"user_id": userId, "item_id": itemId});
+    var json = jsonEncode({"user_id": userId ?? 1, "item_id": itemId});
     return await RemoteDataSource.post('/item-shop/${userId ?? 1}/${itemId}',
             body: json)
         .then((res) {

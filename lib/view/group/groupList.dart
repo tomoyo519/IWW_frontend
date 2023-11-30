@@ -32,7 +32,7 @@ class _GroupListState extends State<GroupList> {
     if (result.statusCode == 200) {
       var jsonData = jsonDecode(result.body);
 
-      var response = jsonData['results'];
+      var response = jsonData['result'];
       LOG.log('response: $response');
       if (mounted) {
         setState(() {

@@ -27,6 +27,7 @@ class _NewGroupState extends State<NewGroup> {
   String categoryName = '';
   String groupDesc = '';
   late GlobalKey<FormState> _formKey;
+
   List<Map<String, dynamic>> routine = [
     {
       "rout_name": "",
@@ -205,6 +206,58 @@ class _NewGroupState extends State<NewGroup> {
               ),
               Text("기본 루틴"),
               Divider(color: Colors.grey, thickness: 1, indent: 10),
+              if (viewModel.groupRoutine.isNotEmpty) ...[
+                Expanded(
+                  child: ListView.builder(
+                      itemCount: viewModel.groupRoutine.length,
+                      itemBuilder: (c, i) {
+                        return GestureDetector(
+                          onLongPress: () {
+                            _showTodoEditor(context, viewModel.groupRoutine[i]);
+                          },
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              useRootNavigator: true,
+                              builder: (BuildContext context) {
+                                return Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.8,
+                                  child: Column(
+                                    // TODO - 사진추가
+                                    children: [Text('사용자 사진이 보여지는 화면')],
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                          // ==== Group Routine ==== //
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                    color: Colors.black26, width: 1)),
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.all(10),
+                            padding: EdgeInsets.all(10),
+                            child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Checkbox(
+                                    onChanged: null,
+                                    value: false,
+                                  ),
+                                  Text(viewModel.groupRoutine[i].routName),
+                                  Icon(Icons.groups_outlined)
+                                ]),
+                          ),
+                        );
+                      }),
+                ),
+              ],
               Container(
                   child: TextButton(
                       child: Container(

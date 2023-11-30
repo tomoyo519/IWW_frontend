@@ -39,9 +39,12 @@ class GroupRepository implements BaseTodoViewModel {
         if (jsonData.isEmpty) {
           return null;
         }
-        // List<Group>? data =
-        //     jsonData["results"].map((data) => Group.fromJson(data)).toList();
-        // return data;
+        List<dynamic> results = jsonData["result"];
+        List<Group> data = results
+            .map((data) => Group.fromJson(data as Map<String, dynamic>))
+            .toList()
+            .cast<Group>();
+        return data;
       }
       return null;
     });
@@ -105,6 +108,7 @@ class GroupRepository implements BaseTodoViewModel {
   Future<bool> createTodo(Map<String, dynamic> data) async {
     var json = jsonEncode(data);
     return await RemoteDataSource.post("/group", body: json).then((res) {
+      LOG.log(res.body);
       if (res.statusCode == 201) {
         return true;
       }
