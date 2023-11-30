@@ -89,13 +89,10 @@ class _NewGroupState extends State<NewGroup> {
 
   @override
   Widget build(BuildContext context) {
-    final _userInfo = Provider.of<UserInfo>(context, listen: false);
-    final _groupRepository =
+    final groupRepository =
         Provider.of<GroupRepository>(context, listen: false);
-    final _authService = Provider.of<AuthService>(context, listen: false);
-    final myGroupViewModel =
-        Provider.of<MyGroupViewModel>(context, listen: false);
-    final MyGroupViewModel viewModel = context.watch<MyGroupViewModel>();
+
+    final MyGroupViewModel viewModel = context.read<MyGroupViewModel>();
     return Scaffold(
         appBar: MyAppBar(),
         body: Container(
@@ -207,8 +204,8 @@ class _NewGroupState extends State<NewGroup> {
                                                         ChangeNotifierProvider(
                                                             create: (context) =>
                                                                 MyGroupViewModel(
-                                                                    _groupRepository,
-                                                                    _userInfo)),
+                                                                  groupRepository,
+                                                                )),
                                                       ],
                                                       child: GroupNameField(),
                                                     ),
@@ -225,8 +222,8 @@ class _NewGroupState extends State<NewGroup> {
                                                               ChangeNotifierProvider(
                                                                   create: (context) =>
                                                                       MyGroupViewModel(
-                                                                          _groupRepository,
-                                                                          _userInfo)),
+                                                                        groupRepository,
+                                                                      )),
                                                             ],
                                                             child:
                                                                 GroupRoutineField(),
@@ -236,8 +233,8 @@ class _NewGroupState extends State<NewGroup> {
                                                               ChangeNotifierProvider(
                                                                   create: (context) =>
                                                                       MyGroupViewModel(
-                                                                          _groupRepository,
-                                                                          _userInfo)),
+                                                                        groupRepository,
+                                                                      )),
                                                             ],
                                                             child:
                                                                 GroupTimeField(),
@@ -247,8 +244,8 @@ class _NewGroupState extends State<NewGroup> {
                                                               ChangeNotifierProvider(
                                                                   create: (context) =>
                                                                       MyGroupViewModel(
-                                                                          _groupRepository,
-                                                                          _userInfo)),
+                                                                        groupRepository,
+                                                                      )),
                                                             ],
                                                             child:
                                                                 GroupDescField(),

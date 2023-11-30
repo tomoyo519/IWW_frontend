@@ -95,7 +95,7 @@ class AuthService extends ChangeNotifier {
 
     // 유저 정보로 가져오기
     user = UserInfo.fromJson(body['result']);
-    return _navigate("/home");
+    return _navigate("/todo");
   }
 
   // =============== //
@@ -115,7 +115,7 @@ class AuthService extends ChangeNotifier {
     Map<String, dynamic> userInfo = json.decode(jsonUserInfo);
     LOG.log("Local login success! ${userInfo['user_name']}");
     user = UserInfo.fromJson(userInfo);
-    return _navigate("/home");
+    return _navigate("/todo");
   }
 
   // =============== //

@@ -70,7 +70,6 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - assets/
-    - assets/thumbnail/
     - assets/todo/
     - assets/bg/
     - assets/pets/
