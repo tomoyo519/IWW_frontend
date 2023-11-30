@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/view/_common/bottom_sheet_header.dart';
+import 'package:iww_frontend/repository/group.repository.dart';
 
 class LabelListModal extends StatelessWidget {
   final content;
   final Function(int) setLabel;
 
+  Map<int, String>? catList;
   LabelListModal({
     super.key,
     required this.content,
@@ -12,11 +14,18 @@ class LabelListModal extends StatelessWidget {
   });
 
   static final List<String> labels = [
-    '🏫 공부/학업',
-    '🍎 다이어트',
-    '👊 운동/건강',
-    '📕 자기계발',
-    '🏝️ 취미/여행',
+    '전체',
+    '공부',
+    '운동',
+    '코딩',
+    '게임',
+    '명상',
+    '학업',
+    '독서',
+    '여행',
+    '약속',
+    '집안일',
+    '취미',
   ];
 
   static final List<String> routines = [
