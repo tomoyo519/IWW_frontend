@@ -54,28 +54,30 @@ class MyRoomPage extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
     var myRoomState = context.watch<MyRoomState>();
 
-    return Stack(fit: StackFit.expand, children: [
-      Positioned(
-          top: 0,
-          left: 0,
-          right: 0,
-          child: AnimatedContainer(
-              width: double.infinity,
-              height: screenHeight - myRoomState.growth,
-              color: Colors.blue,
-              duration: Duration(milliseconds: 500),
-              curve: Curves.easeInOut,
-              child: MyRoomComponent())),
-      Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: AnimatedContainer(
-              height: myRoomState.growth,
-              duration: Duration(milliseconds: 500),
-              curve: Curves.easeInOut,
-              child: InventoryView()))
-    ]);
+    return Center(
+      child: Stack(fit: StackFit.expand, children: [
+        Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: AnimatedContainer(
+                width: double.infinity,
+                height: screenHeight - myRoomState.growth,
+                color: Colors.blue,
+                duration: Duration(milliseconds: 500),
+                curve: Curves.easeInOut,
+                child: MyRoomComponent())),
+        Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: AnimatedContainer(
+                height: myRoomState.growth,
+                duration: Duration(milliseconds: 500),
+                curve: Curves.easeInOut,
+                child: InventoryView()))
+      ]),
+    );
   }
 }
 
@@ -86,21 +88,27 @@ class MyRoomComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        RenderMyRoom(),
-        // Positioned(height: 800, bottom: 100, child: UnderLayer()),
-        Positioned(
-            left: 0, right: 0, bottom: 100, height: 150, child: UnderLayer()),
-        Positioned(
-          left: 0,
-          right: 0,
-          bottom: 60,
-          height: 50,
-          child: BottomButtons(),
-        ),
-      ],
+    return Expanded(
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          RenderMyRoom(),
+          // Positioned(height: 800, bottom: 100, child: UnderLayer()),
+          Positioned(
+              left: 0,
+              right: 0,
+              bottom: MediaQuery.of(context).padding.bottom + 160,
+              height: 150,
+              child: UnderLayer()),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: kBottomNavigationBarHeight + 80,
+            height: 50,
+            child: BottomButtons(),
+          ),
+        ],
+      ),
     );
   }
 }
