@@ -1,8 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
+import 'package:iww_frontend/repository/room.repository.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/model/item/item.model.dart';
 
 class Inventory extends StatelessWidget {
   const Inventory({super.key});
@@ -19,13 +21,17 @@ class Inventory extends StatelessWidget {
 }
 
 class InventoryState with ChangeNotifier {
-  var items = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+  List<Item> items = [];
   double _inventoryHeight = 0.0;
 
   get intventoryHeight => _inventoryHeight;
 
   void toggleInventory() {
     _inventoryHeight = _inventoryHeight == 0.0 ? 300.0 : 0.0;
+    notifyListeners();
+  }
+
+  void fetchItems() {
     notifyListeners();
   }
 }
@@ -54,7 +60,7 @@ class InventoryView extends StatelessWidget {
                 itemBuilder: (context, idx) {
                   return Padding(
                     padding: const EdgeInsets.all(2.0),
-                    child: Card(child: Text(inventoryState.items[idx])),
+                    child: Card(child: Text(inventoryState.items[idx].name)),
                   );
                 })),
       ),
