@@ -70,11 +70,12 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
 
         // ),
         borderRadius: BorderRadius.circular(10),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: GroupTodoTile.gradients[0],
-        ),
+        color: Colors.orange.shade100,
+        // gradient: LinearGradient(
+        //   begin: Alignment.topLeft,
+        //   end: Alignment.bottomRight,
+        //   colors: GroupTodoTile.gradients[0],
+        // ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -187,7 +188,10 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
     LOG.log(pickedFile.toString());
 
     if (pickedFile != null) {
-      setState(() => _imageFile = File(pickedFile.path));
+      setState(() {
+        _imageFile = File(pickedFile.path);
+        LOG.log("image file ${_imageFile.toString()}");
+      });
       final formatter = DateFormat('yyyy-MM-dd');
       final formattedDate = formatter.format(DateTime.now());
 
@@ -222,10 +226,10 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                   userId: widget.todo.userId,
                   path: pickedFile.path,
                 );
+                LOG.log("@@@@@@@@@@@@@@@ Result: $result");
                 if (result == true && context.mounted) {
-                  LOG.log("why?");
-                  Navigator.pop(context);
                   _handleTodoCashReward(context: context, value: true);
+                  Navigator.pop(context);
                 }
               },
             )
@@ -277,9 +281,11 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                     final viewModel = context.read<TodoViewModel>();
                     final result = await viewModel.checkTodo(widget.todo, false,
                         userId: widget.todo.userId, path: "");
-                    if (result == true && context.mounted) {
+                    if (context.mounted) {
                       Navigator.pop(context);
-                      _handleTodoCashReward(context: context, value: false);
+                      if (result == true) {
+                        _handleTodoCashReward(context: context, value: false);
+                      }
                     }
                   },
                 ),

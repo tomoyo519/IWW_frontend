@@ -1,52 +1,53 @@
+import 'dart:io';
 import 'dart:convert';
 
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
-import 'dart:io';
+import 'package:iww_frontend/repository/base_todo.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
-import 'package:iww_frontend/viewmodel/dummy/todo.dart';
 
-class TodoRepository {
+class TodoRepository implements BaseTodoRepository {
   /// ================== ///
   ///         Get        ///
   /// ================== ///
   Future<List<Todo>> getTodos(int? userId) async {
-    var rtn = await DummyData.todoDummy();
-    LOG.log("$rtn");
-    return rtn;
-    // return await RemoteDataSource.get("/todo/user/${userId ?? 1}")
-    //     .then((response) {
-    //   if (response.statusCode == 200) {
-    //     List<dynamic> jsonData = jsonDecode(response.body);
+    // var rtn = await DummyData.todoDummy();
+    // LOG.log("$rtn");
+    // return rtn;
+    return await RemoteDataSource.get("/todo/user/${userId ?? 1}")
+        .then((response) {
+      if (response.statusCode == 200) {
+        List<dynamic> jsonData = jsonDecode(response.body);
 
-    //     // 만약 할일이 없으면
-    //     if (jsonData.isEmpty) {
-    //       return [];
-    //     }
+        // 만약 할일이 없으면
+        if (jsonData.isEmpty) {
+          return [];
+        }
 
-    //     List<Todo>? data = jsonData.map((data) => Todo.fromJson(data)).toList();
-    //     // 오늘
-    //     DateTime yesterday = DateTime.now().subtract(Duration(days: 1));
-    //     data = data
-    //         .where((element) =>
-    //             DateTime.parse(
-    //               element.todoDate,
-    //             ).isAfter(yesterday) ||
-    //             element.todoDone == false)
-    //         .toList();
+        List<Todo>? data = jsonData.map((data) => Todo.fromJson(data)).toList();
+        // 오늘
+        DateTime yesterday = DateTime.now().subtract(Duration(days: 1));
+        data = data
+            .where((element) =>
+                DateTime.parse(
+                  element.todoDate,
+                ).isAfter(yesterday) ||
+                element.todoDone == false)
+            .toList();
 
-    //     // 정렬해서 넘김
-    //     data.sort((a, b) => a.todoDate.compareTo(b.todoDate));
-    //     return data;
-    //   }
-    //   return [];
-    // });
+        // 정렬해서 넘김
+        data.sort((a, b) => a.todoDate.compareTo(b.todoDate));
+        return data;
+      }
+      return [];
+    });
   }
 
   /// ================== ///
   ///       Create       ///
   /// ================== ///
-  Future<bool> createTodo(Map<String, dynamic> data) async {
+  @override
+  Future<bool> createOne(Map<String, dynamic> data) async {
     var json = jsonEncode(data);
     return await RemoteDataSource.post(
       "/todo",
@@ -63,7 +64,8 @@ class TodoRepository {
   /// ================== ///
   ///       Update       ///
   /// ================== ///
-  Future<bool> updateTodo(String id, Map<String, dynamic> data) async {
+  @override
+  Future<bool> updateOne(String id, Map<String, dynamic> data) async {
     var json = jsonEncode(data);
     return await RemoteDataSource.put(
       "/todo/$id",

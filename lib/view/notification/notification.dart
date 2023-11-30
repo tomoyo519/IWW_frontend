@@ -47,24 +47,25 @@ class _MyNotificationState extends State<MyNotification> {
             var noti = notifications[index];
             return ListTile(
               leading: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0),
-                  child: CircleAvatar(
-                      radius: 20,
-                      // backgroundImage: NetworkImage(
-                      //     '${Secrets.REMOTE_SERVER_URL}/image/${noti.senderId}.jpg'),
-                      // onBackgroundImageError: (exception, stackTrace) {},
-                      // child: Image.network(
-                      //   '${Secrets.REMOTE_SERVER_URL}/image/${noti.senderId}.jpg',
-                      //   fit: BoxFit.cover,
-                      //   errorBuilder: (context, error, stackTrace) {
-                      //     return CircleAvatar(
-                      //       radius: 20,
-                      //       backgroundImage: AssetImage('assets/profile.jpg'),
-                      //     );
-                      //   },
-                      // )
-                      backgroundImage: AssetImage('assets/thumbnail/profile.jpg'),
-                      )),
+                padding: EdgeInsets.symmetric(horizontal: 8.0),
+                child: CircleAvatar(
+                  radius: 20,
+                  backgroundImage: AssetImage('assets/profile.jpg'),
+                  // backgroundImage: NetworkImage(
+                  //     '${Secrets.REMOTE_SERVER_URL}/image/${noti.senderId}.jpg'),
+                  // onBackgroundImageError: (exception, stackTrace) {},
+                  // child: Image.network(
+                  //   '${Secrets.REMOTE_SERVER_URL}/image/${noti.senderId}.jpg',
+                  //   fit: BoxFit.cover,
+                  //   errorBuilder: (context, error, stackTrace) {
+                  //     return CircleAvatar(
+                  //       radius: 20,
+                  //       backgroundImage: AssetImage('assets/profile.jpg'),
+                  //     );
+                  //   },
+                  // ),
+                ),
+              ),
               title: Text(buildNotiMessage(noti)),
               trailing: buildTrailWidget(noti),
               onTap: () => navigateToSender(noti),

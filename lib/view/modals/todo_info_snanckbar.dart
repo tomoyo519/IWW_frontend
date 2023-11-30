@@ -7,14 +7,20 @@ void showCustomSnackBar(
 }) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      content: Row(
-        children: [
-          SizedBox(width: 25, child: icon),
-          Text(
-            text, // 텍스트
-            style: TextStyle(color: Colors.black54),
-          )
-        ],
+      content: Container(
+        padding: EdgeInsets.all(5),
+        margin: EdgeInsets.all(5),
+        decoration: BoxDecoration(
+            color: Colors.white, borderRadius: BorderRadius.circular(10)),
+        child: Row(
+          children: [
+            SizedBox(width: 25, child: icon),
+            Text(
+              text, // 텍스트
+              style: TextStyle(color: Colors.black54),
+            )
+          ],
+        ),
       ),
       elevation: 0,
       backgroundColor: Colors.transparent,

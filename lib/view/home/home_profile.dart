@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/view/_common/profile_image.dart';
-import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:provider/provider.dart';
 
 // 홈에 표시되는 프로필 영역
@@ -11,7 +10,6 @@ class HomeProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final todo = Provider.of<TodoViewModel>(context);
     final user = Provider.of<UserInfo>(context);
 
     return SizedBox(

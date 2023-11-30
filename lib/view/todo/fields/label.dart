@@ -21,7 +21,7 @@ class TodoLabelField extends StatelessWidget {
           return LabelListModal(
             content: "label",
             setLabel: (int newLabel) {
-              Provider.of<TodoEditorViewModel>(
+              Provider.of<EditorModalViewModel>(
                 context,
                 listen: false,
               ).todoLabel = newLabel;
@@ -36,7 +36,7 @@ class TodoLabelField extends StatelessWidget {
       onTap: () => _onTap(context),
       child: TodoFormFieldLayout(
           icon: Icons.label_important_outline,
-          child: Consumer<TodoEditorViewModel>(
+          child: Consumer<EditorModalViewModel>(
             builder: (context, viewModel, child) {
               return Text((viewModel.todoData['todo_label'] != null)
                   ? LabelListModal.labels[(viewModel.todoData['todo_label'])]

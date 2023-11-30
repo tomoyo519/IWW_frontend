@@ -7,6 +7,7 @@ import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/modals/custom_fullscreen_modal.dart';
 import 'package:iww_frontend/view/modals/todo_first_done.dart';
 import 'package:iww_frontend/view/modals/todo_info_snanckbar.dart';
+import 'package:iww_frontend/view/pet/evolutionPet.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user.provider.dart';
 import 'package:lottie/lottie.dart';
@@ -111,7 +112,7 @@ class _MyTodoTileState extends State<MyTodoTile> {
   Future<void> _onTodoCheck(bool value, bool isGroup) async {
     // 개인 todo 인 경우 UI 업데이트
     final todomodel = context.read<TodoViewModel>();
-    await todomodel.checkTodo(widget.todo, value).then((value) {
+    await todomodel.checkTodo(widget.todo, value).then((_) {
       _handleTodoCashReward(context: context, value: value);
     });
   }
@@ -129,30 +130,35 @@ class _MyTodoTileState extends State<MyTodoTile> {
   }) {
     final usermodel = context.read<UserProvider>();
     final todomodel = context.read<TodoViewModel>();
+    final todaystodo = todomodel.getTodaysChecked(DateTime.now());
 
     if (value == true) {
       // 펫 경험치 업데이트
       usermodel.petExp += 10;
 
+      // if (usermodel.petExp >= 50) {
+      //   _showPetEvolutaionModal(context);
+      // }
+
       // 유저 Hp 업데이트
 
-      var cash = todomodel.isTodaysFirstTodo ? 100 : 10;
+      var cash = todaystodo == 0 ? 100 : 10;
       usermodel.userCash += cash;
 
       // UI
-      if (todomodel.notifyUser) {
+      if (todaystodo == 0) {
         _showFirstTodoDoneModal(context);
-        todomodel.notifyUser = false;
+        // todomodel.notifyUser = false;
         return;
       }
       _showCheckSnackBar(context, "할일이 완료되었어요! +$cash");
     } else {
       // 펫 경험치 업데이트
 
-      // 유저 Hp 업데이트
+      // 유저 Hp 업데이트;
 
       // 오늘의 마지막 투두이면
-      var cash = todomodel.getTodaysChecked(DateTime.now()) == 1 ? 100 : 10;
+      var cash = todaystodo == 1 ? 100 : 10;
       usermodel.userCash -= cash;
 
       _showCheckSnackBar(context, "할일을 취소했어요 -$cash");
@@ -169,6 +175,15 @@ class _MyTodoTileState extends State<MyTodoTile> {
         animate: true,
       ),
     );
+  }
+
+  Future<void> _showPetEvolutaionModal(BuildContext context) async {
+    Future.microtask(() async {
+      await showCustomFullScreenModal(
+        context,
+        EvolPet(),
+      );
+    });
   }
 
   // * 첫 투두 완료 모달 *//

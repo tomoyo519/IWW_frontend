@@ -16,7 +16,7 @@ class DummyData {
         "todo_done": false,
         "todo_start": null,
         "todo_end": '00:00:00',
-        "grp_id": 1,
+        "grp_id": null,
         "todo_img": "false",
         "todo_deleted": null,
       }),

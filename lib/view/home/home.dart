@@ -42,12 +42,12 @@ class MyHomePage extends StatelessWidget {
       isScrollControlled: true,
       builder: (bottomSheetContext) {
         return ChangeNotifierProvider(
-          create: (_) => TodoEditorViewModel(
+          create: (_) => EditorModalViewModel(
             user: userInfo,
-            todoRepository: todoRepository,
+            repository: todoRepository,
           ),
-          child: TodoEditorModal(
-            todo: null,
+          child: EditorModal(
+            init: null,
             title: "할일 추가",
             formKey: _formKey,
             onSave: (context) => _createTodo(context),
@@ -73,9 +73,7 @@ class MyHomePage extends StatelessWidget {
             actions: [
               IconButton(
                 icon: Icon(Icons.notifications_outlined),
-                onPressed: () {
-                  Navigator.pushNamed(context, '/notification');
-                },
+                onPressed: () => Navigator.pushNamed(context, "/notification"),
                 color: (Colors.black),
               ),
               IconButton(
@@ -102,7 +100,7 @@ class MyHomePage extends StatelessWidget {
   void _createTodo(BuildContext context) async {
     Navigator.pop(context);
 
-    final viewModel = context.read<TodoEditorViewModel>();
+    final viewModel = context.read<EditorModalViewModel>();
 
     LOG.log('${viewModel.todoData} viewModel.todoData');
     await viewModel.createTodo().then((result) {

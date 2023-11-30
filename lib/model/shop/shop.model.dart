@@ -18,8 +18,8 @@ class ShopInfo {
   factory ShopInfo.fromJson(Map<String, dynamic> data) {
     return ShopInfo(
       item_id: data["item_id"],
-      item_name: data["user_name"],
-      item_cost: data["user_tel"],
+      item_name: data["item_name"],
+      item_cost: data["item_cost"],
       item_path: data["item_path"],
     );
   }
