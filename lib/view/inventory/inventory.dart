@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
 import 'package:iww_frontend/repository/room.repository.dart';
+import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
+import 'package:iww_frontend/secrets/secrets.dart';
 
 class Inventory extends StatelessWidget {
   const Inventory({super.key});
@@ -31,6 +33,7 @@ class InventoryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var myRoomViewModel = context.watch<MyRoomViewModel>();
+    LOG.log('${Secrets.REMOTE_SERVER_URL}/image/원숭이.png');
 
     return Container(
       decoration: BoxDecoration(
@@ -49,7 +52,16 @@ class InventoryView extends StatelessWidget {
                 itemBuilder: (context, idx) {
                   return Padding(
                     padding: const EdgeInsets.all(2.0),
-                    child: Card(child: Text(myRoomViewModel.items[idx].name)),
+                    child: Card(
+                        child: Column(
+                      children: [
+                        Text(myRoomViewModel.items[idx].name),
+                        Image.network(
+                          '${Secrets.REMOTE_SERVER_URL}/image/${myRoomViewModel.items[idx].image}',
+                          fit: BoxFit.cover,
+                        )
+                      ],
+                    )),
                   );
                 })),
       ),
