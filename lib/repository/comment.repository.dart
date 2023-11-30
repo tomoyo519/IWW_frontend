@@ -23,8 +23,8 @@ class CommentRepository {
         List<Comment> fetchedComments = data.map((commentData) {
           return Comment(
             comId: commentData['com_id'].toString(),
-            authorId: commentData['author_id'].toString(),
-            username: commentData['user_name'],
+            authorId: commentData['author']['user_id'].toString(),
+            authorName: commentData['author']['user_name'],
             content: commentData['content'],
             isMod: commentData['is_mod'],
           );

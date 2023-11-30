@@ -65,7 +65,7 @@ void showCommentsBottomSheet(BuildContext context,
         builder: (BuildContext context) {
           return CommentsBottomSheet(
             commentsProvider: commentsProvider,
-            userId: userId,
+            userId: userId.toString(),
             ownerId: ownerId,
           );
         });
@@ -177,23 +177,24 @@ class CommentsBottomSheet extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 8.0),
         child: CircleAvatar(
           radius: 20,
-          backgroundImage: NetworkImage(comment.userImage),
-          onBackgroundImageError: (exception, stackTrace) {},
-          child: Image.network(
-            comment.userImage,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return CircleAvatar(
-                radius: 20,
-                backgroundImage: AssetImage("assets/profile.jpg"),
-              );
-            },
-          ),
+          backgroundImage: AssetImage(comment.userImage),
+          // backgroundImage: NetworkImage(comment.userImage),
+          // onBackgroundImageError: (exception, stackTrace) {},
+          // child: Image.network(
+          //   comment.userImage,
+          //   fit: BoxFit.cover,
+          //   errorBuilder: (context, error, stackTrace) {
+          //     return CircleAvatar(
+          //       radius: 20,
+          //       backgroundImage: AssetImage("assets/profile.jpg"),
+          //     );
+          //   },
+          // ),
         ),
       ),
       title: Row(
         children: [
-          Text(comment.username),
+          Text(comment.authorName),
           if (comment.isMod)
             Padding(
               padding: EdgeInsets.only(left: 8),

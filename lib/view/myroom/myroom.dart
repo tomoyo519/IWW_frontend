@@ -272,7 +272,7 @@ class BottomButtons extends StatelessWidget {
     final commentsProvider = context.read<CommentsProvider>();
     final inventoryState = context.read<InventoryState>();
     var roomState = context.watch<MyRoomViewModel>();
-    final currentUserId = Provider.of<UserInfo>(context, listen: false);
+    final user = Provider.of<UserInfo>(context, listen: false);
 
     ElevatedButton buildFriendButton() {
       if (roomState.isMyRoom()) {
@@ -304,7 +304,7 @@ class BottomButtons extends StatelessWidget {
                   showCommentsBottomSheet(
                     context,
                     commentsProvider,
-                    currentUserId,
+                    user.user_id,
                     roomOwenerId,
                   );
                 }
