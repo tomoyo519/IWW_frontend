@@ -9,6 +9,7 @@ import 'package:iww_frontend/view/_common/appbar.dart';
 import 'dart:convert';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/todo/todo_editor.dart';
+import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -129,9 +130,8 @@ class _GroupDetailState extends State<GroupDetail> {
 
   // 할일 수정
   void _showTodoEditor(BuildContext context, Routine? routine) {
-    final groupRepository =
-        Provider.of<GroupRepository>(context, listen: false);
     final userInfo = Provider.of<UserInfo>(context, listen: false);
+    final groupmodel = context.read<MyGroupViewModel>();
     Todo? todo = routine?.generateTodo(userInfo.user_id);
 
     showModalBottomSheet(
@@ -142,7 +142,7 @@ class _GroupDetailState extends State<GroupDetail> {
           create: (_) => EditorModalViewModel(
             of: todo,
             user: userInfo,
-            parent: groupRepository,
+            parent: groupmodel,
           ),
           child: EditorModal(
             init: todo,

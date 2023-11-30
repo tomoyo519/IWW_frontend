@@ -110,7 +110,7 @@ class ToDoList extends StatelessWidget {
 
   // 할일 수정
   _showTodoEditor(BuildContext context, Todo todo) {
-    final todoRepository = Provider.of<TodoRepository>(context, listen: false);
+    final todoviewmodel = context.read<TodoViewModel>();
     final userInfo = Provider.of<UserInfo>(context, listen: false);
 
     showModalBottomSheet(
@@ -121,7 +121,7 @@ class ToDoList extends StatelessWidget {
           create: (_) => EditorModalViewModel(
             of: todo,
             user: userInfo,
-            parent: null,
+            parent: todoviewmodel,
           ),
           child: EditorModal(
             init: todo,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
+import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/home/home_profile.dart';
 import 'package:iww_frontend/view/modals/todo_info_snanckbar.dart';
@@ -15,6 +16,17 @@ import 'package:provider/provider.dart';
 class TodoPage extends StatelessWidget {
   TodoPage({super.key});
 
+  List<ChangeNotifierProvider> _getProviders(BuildContext context) {
+    return [
+      ChangeNotifierProvider<TodoViewModel>(
+        create: (context) => TodoViewModel(
+          Provider.of<TodoRepository>(context, listen: false),
+          Provider.of<UserInfo>(context, listen: false),
+        ),
+      )
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final UserInfo user = Provider.of<UserInfo>(context, listen: false);
@@ -25,26 +37,6 @@ class TodoPage extends StatelessWidget {
         return MyTodo(user: user);
       }),
     );
-  }
-
-  // 할일 신규 생성
-  void _createTodo(BuildContext context) async {
-    final viewModel = context.read<EditorModalViewModel>();
-
-    LOG.log('${viewModel.todoData} viewModel.todoData');
-    await viewModel.createTodo().then((result) {
-      if (result == true && context.mounted) {
-        LOG.log('onsave일떄');
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('할일이 추가되었어요!'),
-          ),
-        );
-
-        Navigator.pop(context);
-      }
-    });
   }
 }
 
@@ -61,15 +53,6 @@ class MyTodo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Future.microtask(() {
-    //   showCustomFullScreenModal(
-    //     context,
-    //     EvolPetModal(),
-    //   );
-    // });
-
-    // return Text("Hello World");
-
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -108,14 +91,6 @@ class MyTodo extends StatelessWidget {
               style: IconButton.styleFrom(
                 elevation: 1,
                 backgroundColor: Colors.orange,
-                // gradient: LinearGradient(
-                //   begin: Alignment.topLeft,
-                //   end: Alignment.bottomRight,
-                //   colors: [
-                //     Color.fromARGB(255, 255, 211, 169),
-                //     Color.fromARGB(255, 233, 255, 250)
-                //   ], // Gradient colors
-                // ),
                 shadowColor: Colors.black45,
               ),
               icon: Icon(
@@ -132,10 +107,8 @@ class MyTodo extends StatelessWidget {
 
   // 클릭하면 할일 추가 모달 띄우기
   Future<void> _showTodoEditor(BuildContext context) async {
-    final todoRepository = Provider.of<TodoRepository>(context, listen: false);
     final userInfo = Provider.of<UserInfo>(context, listen: false);
-
-    final todoviewmodel = context.read<TodoViewModel>().check;
+    final todoviewmodel = context.read<TodoViewModel>();
 
     return showModalBottomSheet(
       context: context,
@@ -144,7 +117,7 @@ class MyTodo extends StatelessWidget {
         return ChangeNotifierProvider(
           create: (_) => EditorModalViewModel(
             user: userInfo,
-            parent: null,
+            parent: todoviewmodel,
           ),
           child: EditorModal(
             init: null,
@@ -169,17 +142,6 @@ class MyTodo extends StatelessWidget {
         );
       },
     );
-
-    // .then((value) {
-    //   if (value == true) {
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       SnackBar(
-    //         content: const Text('할일이 추가되었어요!'),
-    //       ),
-    //     );
-    //   }
-    //   // context.watch<TodoViewModel>().waiting = false;
-    // }
   }
 
   // ==== 할일 신규 생성 ==== //
@@ -187,10 +149,10 @@ class MyTodo extends StatelessWidget {
     Navigator.pop(context);
 
     final editormodel = context.read<EditorModalViewModel>();
+    LOG.log("home.dart _createTodo 실행");
     return await editormodel.createTodo().then((result) {
       if (result == true && context.mounted) {
-        // 할일 추가 성공
-        Navigator.pop(context);
+        // Navigator.pop(context);
         return true;
       }
       return false;

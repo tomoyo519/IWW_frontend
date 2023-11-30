@@ -5,7 +5,7 @@ import 'package:iww_frontend/model/group/groupDetail.model.dart';
 import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
 import 'package:iww_frontend/utils/logger.dart';
 
-class GroupRepository implements BaseTodoViewModel {
+class GroupRepository {
   /// ================== ///
   ///         Get        ///
   /// ================== ///

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
-import 'package:iww_frontend/repository/base_todo.viewmodel.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
@@ -25,6 +24,7 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   }
 
   // ===== Status ===== //
+  Todo? _newTodo;
   List<Todo> _todos = [];
   List<Todo> _groupTodos = [];
   bool _waiting = true;
@@ -193,18 +193,27 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
 
   void setSelectedAlarmTime(dynamic alarmTime) {
     _selectedAlarmTime = alarmTime;
+
     notifyListeners();
   }
 
   @override
-  Future<bool> createTodo(Map<String, dynamic> data) {
-    // TODO: implement createTodo
-    throw UnimplementedError();
+  Future<bool> createTodo(Map<String, dynamic> data) async {
+    LOG.log("Create new todo.");
+    return await _todoRepository.createTodo(data);
   }
 
   @override
-  Future<bool> updateTodo(String id, Map<String, dynamic> data) {
-    // TODO: implement updateTodo
-    throw UnimplementedError();
+  Future<bool> updateTodo(String id, Map<String, dynamic> data) async {
+    return await _todoRepository.updateTodo(id, data).then(
+      (value) {
+        if (value == true) {
+          int idx = _todos.indexWhere((todo) => todo.todoId.toString() == id);
+          _todos[idx] = Todo.fromJson(data);
+          return true;
+        }
+        return false;
+      },
+    );
   }
 }
