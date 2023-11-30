@@ -3,6 +3,7 @@ import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/group/group.model.dart';
 import 'package:iww_frontend/model/group/groupDetail.model.dart';
 import 'package:iww_frontend/repository/base_todo.repository.dart';
+import 'package:iww_frontend/utils/logger.dart';
 
 class GroupRepository implements BaseTodoRepository {
   /// ================== ///
@@ -22,6 +23,25 @@ class GroupRepository implements BaseTodoRepository {
             jsonData.map((data) => Group.fromJson(data)).toList();
         print(data);
         return data;
+      }
+      return null;
+    });
+  }
+
+  Future<List<Group>?> getAllGroupList(
+      int? userId, int catId, String keyword) async {
+    return await RemoteDataSource.get(
+            "/group/search/${userId ?? 1}/${catId}/${keyword}")
+        .then((res) {
+      if (res.statusCode == 200) {
+        LOG.log('thisisres/data: ${res.body}');
+        var jsonData = jsonDecode(res.body);
+        if (jsonData.isEmpty) {
+          return null;
+        }
+        // List<Group>? data =
+        //     jsonData["results"].map((data) => Group.fromJson(data)).toList();
+        // return data;
       }
       return null;
     });

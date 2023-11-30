@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
-import 'package:iww_frontend/view/group/fields/time.dart';
-import 'package:iww_frontend/view/group/groupMain.dart';
+
 import 'package:iww_frontend/view/todo/fields/label_list_modal.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:provider/provider.dart';
-import 'package:iww_frontend/view/_common/bottom_sheet_header.dart';
-import 'package:iww_frontend/style/colors.dart';
-import 'package:iww_frontend/view/group/fields/name.dart';
-import 'package:iww_frontend/view/group/fields/desc.dart';
-import 'package:iww_frontend/view/group/fields/label.dart';
-import 'package:iww_frontend/view/group/fields/routine.dart';
+
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
+import 'package:iww_frontend/view/todo/todo_editor.dart';
+import 'package:iww_frontend/model/todo/todo.model.dart';
+import 'package:iww_frontend/model/routine/routine.model.dart';
 
 class NewGroup extends StatefulWidget {
   const NewGroup({super.key});
@@ -27,6 +25,7 @@ class _NewGroupState extends State<NewGroup> {
   String groupName = '';
   String categoryName = '';
   String groupDesc = '';
+  late GlobalKey<FormState> _formKey;
   List<Map<String, dynamic>> routine = [
     {
       "rout_name": "",
@@ -53,7 +52,19 @@ class _NewGroupState extends State<NewGroup> {
     });
   }
 
-  setRoutine(Map<String, dynamic> routine) {}
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _formKey = GlobalKey<FormState>();
+  }
+
+  void _updateRoutine(BuildContext context) {
+    final viewmodel = context.read<EditorModalViewModel>();
+
+    LOG.log("Not implemented. ${viewmodel.hour}");
+    Navigator.pop(context);
+  }
 
   _createGroup(BuildContext context) async {
     //새로운 그룹 만들기;
@@ -82,6 +93,33 @@ class _NewGroupState extends State<NewGroup> {
 
   void onSave(BuildContext context) {
     //저장누르면 루틴 추가하는 로직
+  }
+  void _showTodoEditor(BuildContext context, Routine? routine) {
+    final groupRepository =
+        Provider.of<GroupRepository>(context, listen: false);
+    final userInfo = Provider.of<UserInfo>(context, listen: false);
+    Todo? todo = routine?.generateTodo(userInfo.user_id);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (bottomSheetContext) {
+        return ChangeNotifierProvider(
+          create: (_) => EditorModalViewModel(
+            of: todo,
+            user: userInfo,
+            repository: groupRepository,
+          ),
+          child: EditorModal(
+            init: todo,
+            title: "루틴 추가",
+            formKey: _formKey,
+            onSave: (context) => _updateRoutine(context),
+            onCancel: (context) => Navigator.pop(context),
+          ),
+        );
+      },
+    );
   }
 
   // GlobalKey<FormState>를 초기화합니다.
@@ -165,104 +203,7 @@ class _NewGroupState extends State<NewGroup> {
                         ]),
                       ),
                       onPressed: () {
-                        showModalBottomSheet(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return FractionallySizedBox(
-                                heightFactor: 0.9,
-                                child: GestureDetector(
-                                  onTap: () => FocusScope.of(context).unfocus(),
-                                  child: Column(children: [
-                                    BottomSheetModalHeader(
-                                      title: groupName,
-                                      onSave: onSave,
-                                      onCancel: onCancel,
-                                    ),
-                                    Expanded(
-                                      child: SingleChildScrollView(
-                                        child: DecoratedBox(
-                                          decoration: BoxDecoration(
-                                            color: MyColors.background,
-                                          ),
-                                          child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                horizontal: 10,
-                                                vertical: 10,
-                                              ),
-                                              child: Form(
-                                                key: formKey,
-                                                child: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.max,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  // 할일 제목 입력 필드
-                                                  children: [
-                                                    MultiProvider(
-                                                      providers: [
-                                                        ChangeNotifierProvider(
-                                                            create: (context) =>
-                                                                MyGroupViewModel(
-                                                                  groupRepository,
-                                                                )),
-                                                      ],
-                                                      child: GroupNameField(),
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                        // horizontal: 10,
-                                                        vertical: 15,
-                                                      ),
-                                                      child: Column(
-                                                        children: [
-                                                          MultiProvider(
-                                                            providers: [
-                                                              ChangeNotifierProvider(
-                                                                  create: (context) =>
-                                                                      MyGroupViewModel(
-                                                                        groupRepository,
-                                                                      )),
-                                                            ],
-                                                            child:
-                                                                GroupRoutineField(),
-                                                          ),
-                                                          MultiProvider(
-                                                            providers: [
-                                                              ChangeNotifierProvider(
-                                                                  create: (context) =>
-                                                                      MyGroupViewModel(
-                                                                        groupRepository,
-                                                                      )),
-                                                            ],
-                                                            child:
-                                                                GroupTimeField(),
-                                                          ),
-                                                          MultiProvider(
-                                                            providers: [
-                                                              ChangeNotifierProvider(
-                                                                  create: (context) =>
-                                                                      MyGroupViewModel(
-                                                                        groupRepository,
-                                                                      )),
-                                                            ],
-                                                            child:
-                                                                GroupDescField(),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              )),
-                                        ),
-                                      ),
-                                    )
-                                  ]),
-                                ),
-                              );
-                            });
+                        _showTodoEditor(context, null);
                       })),
               Spacer(),
               SizedBox(
