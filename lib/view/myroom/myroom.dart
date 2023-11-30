@@ -41,7 +41,7 @@ class MyRoomState extends ChangeNotifier {
   double growth = 0.0;
   final maxGrowth = 300.0;
 
-  void toggleInventory() {
+  void toggleGrowth() {
     growth = growth == 0.0 ? maxGrowth : 0.0;
   }
 }
@@ -327,7 +327,7 @@ class BottomButtons extends StatelessWidget {
           ElevatedButton(
               onPressed: () {
                 // Navigator.pushNamed(context, '/inventory');
-                myRoomState.toggleInventory();
+                myRoomState.toggleGrowth();
               },
               child: Text('인벤토리')),
           SizedBox(width: 20),
