@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/group/group.model.dart';
@@ -16,6 +14,7 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 final List<String> labels = [
+  '전체',
   '운동',
   '식단',
   '회사업무',
@@ -43,10 +42,8 @@ class _GroupDetailState extends State<GroupDetail> {
   late GlobalKey<FormState> _formKey;
 
   getData() async {
-    LOG.log('widget.group:::::::::::::::::::::::::::${widget.group}');
     var result = await RemoteDataSource.get('/group/${widget.group.groupId}');
     var resultJson = jsonDecode(result.body);
-    LOG.log('resultJson::::::$resultJson');
 
     if (result.statusCode == 200) {
       setState(() {
@@ -94,6 +91,23 @@ class _GroupDetailState extends State<GroupDetail> {
 
   exitGroup(grp_id) async {
     //탈퇴하기;
+    // TODO - user_id 수정하기.
+    var data = jsonEncode({
+      "user_id": 1,
+      "grp_id": grp_id,
+    });
+    var result =
+        await RemoteDataSource.delete("/group/${grp_id}/left/${1}", body: data);
+    LOG.log(result.body);
+    if (result.statusCode == 200) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: const Text("그룹 탈퇴가 완료 되었어요!")));
+      Navigator.pushNamed(context, "/group");
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: const Text("그룹 탈퇴 실패했어요. 재시도 해주세요.")));
+      Navigator.pop(context);
+    }
   }
 
   @override

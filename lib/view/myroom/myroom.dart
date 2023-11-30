@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'dart:async';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:iww_frontend/view/inventory/inventory.dart';
+import 'package:iww_frontend/model/user/user-info.model.dart';
 
 class MyRoom extends StatelessWidget {
   const MyRoom({super.key});
@@ -268,10 +269,10 @@ class BottomButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // NOTE 여기서 비동기 연산 수행
-    final authService = Provider.of<AuthService>(context);
     final commentsProvider = context.read<CommentsProvider>();
     final inventoryState = context.read<InventoryState>();
     var roomState = context.watch<MyRoomViewModel>();
+    final currentUserId = Provider.of<UserInfo>(context, listen: false);
 
     ElevatedButton buildFriendButton() {
       if (roomState.isMyRoom()) {
@@ -299,17 +300,11 @@ class BottomButtons extends StatelessWidget {
               onPressed: () async {
                 String? roomOwenerId = commentsProvider.roomOwnerId;
 
-                final currentUser = authService.user;
-                // 로그인 유저 없으면 6
-                var userId = (currentUser != null)
-                    ? currentUser.user_id.toString()
-                    : '6';
-
                 if (context.mounted) {
                   showCommentsBottomSheet(
                     context,
                     commentsProvider,
-                    userId,
+                    currentUserId,
                     roomOwenerId,
                   );
                 }

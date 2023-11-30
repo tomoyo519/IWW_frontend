@@ -23,7 +23,7 @@ class GroupList extends StatefulWidget {
 
 class _GroupListState extends State<GroupList> {
   List<Group> groups = [];
-
+  bool isClicked = false;
   getList() async {
     UserInfo userInfo = Provider.of<UserInfo>(context, listen: false);
     int userId = userInfo.user_id;
@@ -57,10 +57,12 @@ class _GroupListState extends State<GroupList> {
               child: ListView.builder(
                   itemCount: groups.length,
                   itemBuilder: (c, i) {
+                    print(groups[i]);
                     return TextButton(
                         onPressed: () => Navigator.pushNamed(
                             context, "/group/detail",
                             arguments: groups[i]),
+
                         //   {
                         // Navigator.push(
                         //     context,
@@ -71,7 +73,7 @@ class _GroupListState extends State<GroupList> {
                         child: Container(
                           alignment: Alignment.center,
                           margin: EdgeInsets.all(5),
-                          padding: EdgeInsets.all(25),
+                          padding: EdgeInsets.all(12),
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
                               border:
@@ -79,14 +81,32 @@ class _GroupListState extends State<GroupList> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                groups[i].grpName,
-                                style: TextStyle(color: Colors.black),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start, //
+                                children: [
+                                  Text(
+                                    groups[i].grpName,
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w800),
+                                  ),
+                                  Text(
+                                    groups[i].grpDesc ?? "그룹에 대한 설명입니다.",
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Text(
+                                    ' ${groups[i].catName}',
+                                    style: TextStyle(fontSize: 13),
+                                  ),
+                                ],
                               ),
-                              Text('${groups[i].memCnt}/100',
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w800))
+                              Text('멤버 ${groups[i].memCnt}명',
+                                  style: TextStyle(fontSize: 13))
                             ],
                           ),
                         ));
