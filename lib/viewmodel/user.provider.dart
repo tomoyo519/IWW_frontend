@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
+import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 
 // == 전역 유저 상태 관리 == //
 class UserInfo extends ChangeNotifier {
+  final AuthService _authService;
   final UserRepository _repository;
   final UserModel _user;
 
   UserInfo(
+    this._authService,
     this._repository,
     this._user,
   ) {
@@ -44,10 +47,10 @@ class UserInfo extends ChangeNotifier {
   late String _mainPetName;
 
   // === Getters === //
+  UserModel get user => _user;
   int get userId => _user.user_id;
   String get userName => _user.user_name;
 
-  UserModel get user => _user;
   int get petId => _mainPet;
   int get petLv => _mainPerLv;
   int get userCash => _userCash;
@@ -77,16 +80,35 @@ class UserInfo extends ChangeNotifier {
     notifyListeners();
   }
 
-  // === Stream listener === //
+  ///** Event Listener
+  /// 다른 뷰모델로부터 유저 상태를
+  /// 업데이트해야 할 필요가 있음을 알림받습니다.
+  /// 서비스 서버의 User Table이 업데이트된 경우
+  /// _fetchUser로 다시 정보를 받아옵니다.
+  /// */
   void listenEvents() {
-    EventService.stream.listen((event) {
-      if (event == EventType.update_status) {
+    EventService.stream.listen((event) async {
+      if (event.type == EventType.status) {
         LOG.log("업데이트 유저 정보");
+        UserModel prev = _user;
+        await _fetchUser();
+
+        UserModel curr = _user;
+        _triggerEvent(prev, curr);
       }
     });
   }
 
-  // === CRUD === //
+  // ==== CRUD ==== //
+  Future<UserModel?> _fetchUser() async {
+    UserModel? fetched = await _repository.getUserByName(_userName);
+    if (fetched == null) {
+      _authService.user = null;
+      return null;
+    }
+    return fetched;
+  }
+
   Future<void> updateUserHp(int hp) async {
     _userHp = hp;
     waiting = false;
@@ -100,5 +122,26 @@ class UserInfo extends ChangeNotifier {
   Future<void> updateUserCash(int cash) async {
     _userCash = cash;
     waiting = false;
+  }
+
+  // ==== 유저 정보 변경에 따른 이벤트 트리거 ==== //
+  void _triggerEvent(UserModel prev, UserModel curr) {
+    // 캐시 업데이트 이벤트
+    int cash = curr.user_cash - prev.user_cash;
+    if (cash == 100) {
+      // EventService.publish(event)
+      EventService.publish(Event(
+        type: EventType.show_first_todo_modal,
+        message: "첫 할일 달성 완료!",
+      ));
+    } else {
+      bool value = cash > 0;
+      EventService.publish(Event(
+        type: EventType.show_todo_snackbar,
+        message: "할일을 ${value ? "달성" : "취소"}했어요! ${value ? "+" : "-"}$cash",
+      ));
+    }
+
+    // 펫 진화 이벤트
   }
 }

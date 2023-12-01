@@ -39,10 +39,10 @@ class _MainPageState extends State<MainPage> {
 
     // * ==== Event Listener ==== * //
     EventService.stream.listen((event) {
-      if (event == EventType.show_todo_snackbar) {
+      if (event.type == EventType.show_todo_snackbar) {
         showCustomSnackBar(
           context,
-          text: "할일이 완료되었어요! +10",
+          text: event.message ?? "",
           icon: Lottie.asset(
             "/star.json",
             animate: false,

@@ -7,7 +7,6 @@ import 'package:iww_frontend/datasource/localStorage.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/main.dart';
 import 'package:iww_frontend/model/auth/login_result.dart';
-import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
@@ -104,7 +103,7 @@ class AuthService extends ChangeNotifier {
     LOG.log("Start to listen app link");
     return linkStream.listen((String? link) async {
       if (link != null) {
-        LOG.log("app link: $link");
+        LOG.log("App link received");
         await _handleResponse(link);
       } else {
         LOG.log("Auth status: failed");
@@ -132,18 +131,10 @@ class AuthService extends ChangeNotifier {
       return _navigate("/signup");
     }
 
-    await LocalStorage.saveKey("jwt", token);
-    String? savedToken = await LocalStorage.readKey("jwt");
-    if (savedToken == null) {
-      LOG.log("이런 예외는 생각지도 못했어요..");
-      return _navigate("/landing");
-    }
-
-    // 토큰과 함꼐 서버로 로그인 요청
-    Response response = await RemoteDataSource.get(
-      "/auth/login",
-      headers: {"Authorization": "Bearer $token"},
-    );
+    // 토큰과 함꼐 서버로 유저 정보 요청
+    RemoteDataSource.setAuthHeader("Bearer $token");
+    LOG.log("Auth: ${RemoteDataSource.baseHeaders['Authorization'] ?? 'wtf'}");
+    Response response = await RemoteDataSource.get("/user");
 
     // 응답 파싱
     Map<String, dynamic> body = json.decode(response.body);
@@ -153,16 +144,26 @@ class AuthService extends ChangeNotifier {
       return _navigate("/landing");
     }
 
-    // 로컬스토리지에 저장 후
+    // 토큰과 유저 정보 로컬스토리지에 저장 후
+    await LocalStorage.saveKey("jwt", token);
+    LOG.log("User Logged in! ${body['result']}");
     await LocalStorage.saveKey(
       "user_info",
-      body['result'],
+      jsonEncode(body['result']),
     );
 
-    // 유저 정보로 가져오기
-    user = UserModel.fromJson(body['result']);
+    String? userInfoStr = await LocalStorage.readKey('user_info');
+    if (userInfoStr == null) {
+      LOG.log("이런 예외는 생각지도 못했어요.. $userInfoStr");
+      LocalStorage.clearKey();
+      status = AuthStatus.failed;
+      return _navigate('/landing');
+    }
+
+    // 상태로 가져오기
+    user = UserModel.fromJson(jsonDecode(userInfoStr));
     status = AuthStatus.success;
-    return _navigate("/todo");
+    LOG.log("User Logged in!");
   }
 
   // 내비게이션

@@ -34,10 +34,21 @@ enum EventType {
   show_first_todo_modal,
 
   // 유저 상태 업데이트 이벤트
-  update_status,
+  status,
   update_user_hp,
-  update_user_reward,
+  update_user_cash,
+
   update_user_pet_exp,
+}
+
+class Event {
+  final EventType type;
+  final String? message;
+
+  Event({
+    required this.type,
+    this.message,
+  });
 }
 
 //** 앱 내 이벤트를 감지하고 모달 띄울 것을 알려줍니다.
@@ -46,12 +57,12 @@ enum EventType {
 // */
 class EventService {
   static final EventService _instance = EventService._internal();
-  static final _streamController = StreamController<EventType>.broadcast();
+  static final _streamController = StreamController<Event>.broadcast();
 
   EventService._internal();
-  static Stream<EventType> get stream => _streamController.stream;
+  static Stream<Event> get stream => _streamController.stream;
 
-  static void publish(EventType event, {String? aux}) {
+  static void publish(Event event) {
     LOG.log("Event received: $event");
     _streamController.add(event);
   }

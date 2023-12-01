@@ -141,19 +141,12 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
       waiting = false;
       return false;
     }
-    if (value == true && todo.grpId == null) {
-      // ==== 개인 투두가 완료된 경우 ==== //
-      String now = DateFormat('yyyy-MM-dd').format(DateTime.now());
-      if (todo.todoDate.compareTo(now) < 0) {
-        EventService.publish(EventType.update_status);
-      }
-    } else if (value == false && todo.grpId == null) {
-      // ==== 개인 투두가 취소된 경우 ==== //
-    } else if (value == true && todo.grpId != null) {
-      // ==== 그룹 투두가 완료된 경우 ==== //
-    } else if (value == false && todo.grpId != null) {
-      // ==== 그룹 투두가 취소된 경우 ==== //
-    }
+
+    // todo update 결과를 user model로 전송
+    // user info 상태를 fetch 하도록 알림
+    EventService.publish(
+      Event(type: EventType.status),
+    );
 
     _todos[idx].todoDone = value;
     waiting = false;

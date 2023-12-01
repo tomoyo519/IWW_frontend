@@ -12,8 +12,9 @@ class LoginWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool waiting = context.watch<AuthService>().waiting;
-    final UserModel? user = context.watch<AuthService>().user;
+    final bool waiting = context.read<AuthService>().waiting;
+    final UserModel? user = context.read<AuthService>().user;
+    final AuthService authService = context.read<AuthService>();
 
     return waiting
         ? Placeholder()
@@ -21,6 +22,7 @@ class LoginWrapper extends StatelessWidget {
             ? LandingPage()
             : ChangeNotifierProvider<UserInfo>(
                 create: (context) => UserInfo(
+                  authService,
                   Provider.of<UserRepository>(context, listen: false),
                   user,
                 ),

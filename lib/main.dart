@@ -40,21 +40,21 @@ void main() async {
   AuthService authService = AuthService(userRepository);
 
   // 앱 진입 시 로컬 로그인 시도
-  // await authService.localLogin();
+  await authService.localLogin();
 
   // 만약 테스트유저 접속시
-  authService.user = UserModel(
-    user_id: 1,
-    user_name: "sojeong",
-    user_tel: "010-0000-0000",
-    user_kakao_id: "user_kakao_id",
-    user_hp: 0,
-    user_cash: 0,
-    last_login: "",
-    login_cnt: 0,
-    login_seq: 0,
-  );
-  authService.waiting = false;
+  // authService.user = UserModel(
+  //   user_id: 1,
+  //   user_name: "sojeong",
+  //   user_tel: "010-0000-0000",
+  //   user_kakao_id: "user_kakao_id",
+  //   user_hp: 0,
+  //   user_cash: 0,
+  //   last_login: "",
+  //   login_cnt: 0,
+  //   login_seq: 0,
+  // );
+  // authService.waiting = false;
 
   runApp(
     MultiProvider(
@@ -93,6 +93,7 @@ void main() async {
                         // ),
                         ChangeNotifierProvider(
                           create: (context) => UserInfo(
+                            authService,
                             Provider.of<UserRepository>(context, listen: false),
                             authService.user!,
                           ),
