@@ -8,115 +8,66 @@ class MyRoomViewModel with ChangeNotifier {
   final int _userId;
   final RoomRepository _roomRepository;
   int roomOwner;
-  List<Item> items = [];
+  List<Item> roomObjects = [];
+  List<Item> inventory = [];
+
 
   MyRoomViewModel(this._userId, this._roomRepository) : roomOwner = _userId {
-    fetchItems();
+    fetchInventory();
+    fetchMyRoom();
   }
 
-  factory MyRoomViewModel.fromProvider(BuildContext context, int roomOwner) {
-    final roomRepository = context.read<RoomRepository>();
-    return MyRoomViewModel(roomOwner, roomRepository);
-  }
-
-  void fetchItems() async {
-    items = await _roomRepository.getItemsOfMyRoom(roomOwner);
+  void fetchMyRoom() async {
+    roomObjects = await _roomRepository.getItemsOfMyRoom(roomOwner);
     notifyListeners();
   }
 
-  final Map<String, AssetImage> _backgrounds = {
-    'bg1': AssetImage('assets/bg/bg1.png'),
-    'bg2': AssetImage('assets/bg/bg2.png'),
-    'bg3': AssetImage('assets/bg/bg3.png'),
-    'bg5': AssetImage('assets/bg/bg5.png'),
-    'bg6': AssetImage('assets/bg/bg6.png'),
-    'bg7': AssetImage('assets/bg/bg7.jpg'),
-  };
+  void fetchInventory() async {
+    inventory = await _roomRepository.getItemsOfInventory(_userId);
+    notifyListeners();
+  }
 
-  // TODO get assets from DB
-  final Map<String, dynamic> _assets = {
-    'cat': ModelViewer(
-      // loading: Loading.eager,
-      shadowIntensity: 1,
-      src: 'assets/cat.glb',
-      alt: 'cuttest pet ever',
-      // autoRotate: true,
-      autoPlay: true,
-      // iosSrc: 'assets/cat2.usdz',
-      cameraOrbit: "30deg,180deg, 0m",
-      cameraTarget: "0m 300m 300m",
-      disableZoom: true,
-    ),
-    'kitsune': ModelViewer(
-      // loading: Loading.eager,
-      shadowIntensity: 1,
-      src: 'assets/pets/kitsune.glb',
-      alt: 'kitsune',
-      // autoRotate: true,
-      autoPlay: true,
-      animationName: "walk",
-      cameraOrbit: "30deg, 0deg, 0m",
-      cameraTarget: "0m 1m 0.4m",
-      disableZoom: true,
-    ),
-    'kitsune_ani': ModelViewer(
-      // loading: Loading.eager,
-      shadowIntensity: 1,
-      src: 'assets/pets/kitsune_ani.glb',
-      alt: 'kitsune',
-      // autoRotate: true,
-      // autoPlay: true,
-      // iosSrc: 'assets/cat2.usdz',
-      cameraOrbit: "330deg, 0deg, 0m",
-      cameraTarget: "0m 2m 1m",
-      disableZoom: true,
-    ),
-    'small_fox': ModelViewer(
-      loading: Loading.eager,
-      shadowIntensity: 1,
-      src: 'assets/pets/small_fox.glb',
-      alt: 'kitsune',
-      // autoRotate: true,
-      autoPlay: true,
-      // iosSrc: 'assets/cat2.usdz',
-      animationName: "Jump",
-      cameraTarget: "0.3m 1.1m 0.7m",
-      interactionPrompt: InteractionPrompt.none,
-      cameraOrbit: "330deg,0deg, 0m",
-      disableZoom: true,
-    ),
-    'mid_fox': ModelViewer(
-      // loading: Loading.eager,
-      shadowIntensity: 1,
-      src: 'assets/pets/mid_fox.glb',
-      alt: 'kitsune',
-      // autoRotate: true,
-      autoPlay: true,
-      // iosSrc: 'assets/cat2.usdz',
-      cameraTarget: "0m 0.8m 0.4m",
-      animationName: "Idle_A",
-      cameraOrbit: "30deg, 150deg, 0m",
-      interactionPrompt: InteractionPrompt.none,
-      disableZoom: true,
-    ),
-  };
+  void addItemToMyRoom(int itemId) async {
+    await _roomRepository.addItemToMyRoom(_userId, itemId);
+    fetchMyRoom();
+  }
+
+  void removeItemFromMyRoom(int itemId) async {
+    await _roomRepository.removeItemFromMyRoom(_userId, itemId);
+    fetchMyRoom();
+  }
+
+  void changeRoomOwner(int userId) {
+    roomOwner = userId;
+    fetchMyRoom();
+  }
 
   bool isMyRoom() => _userId == roomOwner;
 
-  // 방에 놓을 오브젝트들
-  List<Widget> getRoomObjects() {
-    if (isMyRoom()) {
-      return [_assets['small_fox']!];
-    } else {
-      return [_assets['small_fox']!, _assets['mid_fox']!];
+
+  /// itemType
+  /// 1. pet
+  /// 2. furniture
+  /// 3. pet's motion
+  /// 4. background
+  String getBackgroundImagePath() {
+    for (var element in roomObjects) {
+      if (element.itemType == 4) {
+        return element.path!;
+      }
     }
+    // default background
+    return "";
   }
 
-  AssetImage getBackground() {
-    if (isMyRoom()) {
-      return _backgrounds['bg1']!;
-    } else {
-      return _backgrounds['bg5']!;
+  String getPetPath() {
+    for (var element in roomObjects) {
+      if (element.itemType == 1) {
+        return element.path!;
+      }
     }
+    // default pet
+    return "";
   }
+
 }

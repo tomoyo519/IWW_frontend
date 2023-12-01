@@ -48,16 +48,16 @@ class InventoryView extends StatelessWidget {
             child: GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3),
-                itemCount: myRoomViewModel.items.length,
+                itemCount: myRoomViewModel.inventory.length,
                 itemBuilder: (context, idx) {
                   return Padding(
                     padding: const EdgeInsets.all(2.0),
                     child: Card(
                         child: Column(
                       children: [
-                        Text(myRoomViewModel.items[idx].name),
+                        Text(myRoomViewModel.inventory[idx].name),
                         Image.network(
-                          '${Secrets.REMOTE_SERVER_URL}/image/${myRoomViewModel.items[idx].image}',
+                          '${Secrets.REMOTE_SERVER_URL}/image/${myRoomViewModel.inventory[idx].path}',
                           fit: BoxFit.cover,
                         )
                       ],
