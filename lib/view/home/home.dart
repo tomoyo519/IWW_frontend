@@ -10,6 +10,7 @@ import 'package:iww_frontend/view/todo/todo_list.dart';
 import 'package:iww_frontend/view/todo/todo_progress.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/user.provider.dart';
 import 'package:provider/provider.dart';
 
 // 홈 레이아웃 및 의존성 주입
@@ -21,7 +22,7 @@ class TodoPage extends StatelessWidget {
       ChangeNotifierProvider<TodoViewModel>(
         create: (context) => TodoViewModel(
           Provider.of<TodoRepository>(context, listen: false),
-          Provider.of<UserInfo>(context, listen: false),
+          Provider.of<UserInfo>(context, listen: false).user,
         ),
       )
     ];
@@ -152,7 +153,6 @@ class MyTodo extends StatelessWidget {
     LOG.log("home.dart _createTodo 실행");
     return await editormodel.createTodo().then((result) {
       if (result == true && context.mounted) {
-        // Navigator.pop(context);
         return true;
       }
       return false;

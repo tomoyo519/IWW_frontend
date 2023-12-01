@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
+import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/repository/friend.repository.dart';
 
 class FriendList extends StatefulWidget {
-
   const FriendList({super.key});
 
   @override
@@ -11,7 +11,7 @@ class FriendList extends StatefulWidget {
 }
 
 class _FriendListState extends State<FriendList> {
-  List<UserInfo> friends = [];
+  List<UserModel> friends = [];
   final FriendRepository friendRepository = FriendRepository();
 
   @override
@@ -21,7 +21,7 @@ class _FriendListState extends State<FriendList> {
   }
 
   Future<void> fetchFriend() async {
-    List<UserInfo> fetchedFriends = await friendRepository.getFriends();
+    List<UserModel> fetchedFriends = await friendRepository.getFriends();
     setState(() {
       friends = fetchedFriends;
     });

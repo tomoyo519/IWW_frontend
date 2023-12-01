@@ -6,6 +6,7 @@ import 'package:iww_frontend/view/modals/todo_info_snanckbar.dart';
 import 'package:iww_frontend/view/todo/fields/label_list_modal.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
+import 'package:iww_frontend/viewmodel/user.provider.dart';
 import 'package:provider/provider.dart';
 
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
@@ -116,7 +117,7 @@ class _NewGroupState extends State<NewGroup> {
     final groupRepository =
         Provider.of<GroupRepository>(context, listen: false);
     final userInfo = Provider.of<UserInfo>(context, listen: false);
-    Todo? todo = routine?.generateTodo(userInfo.user_id);
+    Todo? todo = routine?.generateTodo(userInfo.userId);
     MyGroupViewModel groupmodel = context.read<MyGroupViewModel>();
 
     showModalBottomSheet(

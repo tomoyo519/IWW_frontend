@@ -14,7 +14,7 @@ class TodoProgress extends StatelessWidget {
   Widget build(BuildContext context) {
     DateTime today = DateTime.now().add(Duration(hours: 9));
     final viewmodel = context.watch<TodoViewModel>();
-    final usermodel = context.watch<UserProvider>();
+    final usermodel = context.watch<UserInfo>();
 
     final cash = NumberFormat('#,##0').format(
       usermodel.userCash,

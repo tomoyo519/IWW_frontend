@@ -1,28 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
+import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
+import 'package:iww_frontend/service/event.service.dart';
+import 'package:iww_frontend/utils/logger.dart';
 
 // == 전역 유저 상태 관리 == //
-class UserProvider extends ChangeNotifier {
-  final UserRepository userRepository;
-  final UserInfo userInfo;
+class UserInfo extends ChangeNotifier {
+  final UserRepository _repository;
+  final UserModel _user;
 
-  UserProvider(
-    this.userRepository,
-    this.userInfo,
+  UserInfo(
+    this._repository,
+    this._user,
   ) {
-    _userName = userInfo.user_name;
-    _userTel = userInfo.user_tel;
-    _userHp = userInfo.user_hp;
+    _userName = _user.user_name;
+    _userTel = _user.user_tel;
+    _userHp = _user.user_hp;
 
     _userCash = 45000;
     _userLoginCnt = 100;
 
-    // == Pet == //
-    _mainPet = userInfo.pet_id ?? 1;
+    // === Pet === //
+    _mainPet = 1;
     _mainPerLv = 9;
     _mainPetExp = 180;
     _mainPetName = "왕귀여워";
+
+    listenEvents();
   }
 
   // === Status === //
@@ -39,22 +44,15 @@ class UserProvider extends ChangeNotifier {
   late String _mainPetName;
 
   // === Getters === //
+  int get userId => _user.user_id;
+  String get userName => _user.user_name;
 
+  UserModel get user => _user;
   int get petId => _mainPet;
   int get petLv => _mainPerLv;
   int get userCash => _userCash;
   int get petExp => _mainPetExp;
   String get mainPetName => _mainPetName;
-
-  UserInfo get user {
-    return UserInfo(
-      user_id: userInfo.user_id,
-      user_name: _userName,
-      user_tel: _userTel,
-      user_kakao_id: user.user_kakao_id,
-      user_hp: _userHp,
-    );
-  }
 
   // === Setters === //
   bool _waiting = true;
@@ -77,6 +75,15 @@ class UserProvider extends ChangeNotifier {
   set userCash(int cash) {
     _userCash = cash;
     notifyListeners();
+  }
+
+  // === Stream listener === //
+  void listenEvents() {
+    EventService.stream.listen((event) {
+      if (event == EventType.update_status) {
+        LOG.log("업데이트 유저 정보");
+      }
+    });
   }
 
   // === CRUD === //

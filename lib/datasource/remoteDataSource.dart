@@ -17,6 +17,7 @@ class RemoteDataSource {
   static const Map<String, String> baseHeaders = {
     // TODO: 여기에 기본 헤더를 정의합니다.
     "Content-Type": "application/json; charset=UTF-8",
+    "Authorizatoin": Secrets.JWT_TOKEN,
   };
 
   // POST form data
@@ -97,7 +98,7 @@ class RemoteDataSource {
   }) async {
     // 기본 헤더 추가
     headers = (headers != null) ? {...headers, ...baseHeaders} : baseHeaders;
-    LOG.log("send get $url");
+    LOG.log("send get ${server + url}");
     return await http.get(Uri.parse(server + url), headers: headers);
   }
 

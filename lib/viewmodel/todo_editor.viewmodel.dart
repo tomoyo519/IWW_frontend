@@ -4,6 +4,7 @@ import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/user.provider.dart';
 
 class EditorModalViewModel extends ChangeNotifier {
   final Todo? of; // 초기화된 투두 데이터
@@ -67,7 +68,7 @@ class EditorModalViewModel extends ChangeNotifier {
     String timeString =
         '${hour.toString().padLeft(2, '0')}:${min.toString().padLeft(2, '0')}:00';
 
-    todoData['user_id'] = user.user_id;
+    todoData['user_id'] = user.userId;
     todoData['todo_start'] = timeString;
 
     // 상위 뷰모델의 함수를 불러

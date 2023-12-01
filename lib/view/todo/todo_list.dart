@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
-import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
+import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_common/spinner.dart';
 import 'package:iww_frontend/view/todo/todo_my_tile.dart';
@@ -10,6 +11,7 @@ import 'package:iww_frontend/view/todo/todo_editor.dart';
 import 'package:iww_frontend/view/todo/todo_group_tile.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/user.provider.dart';
 import 'package:provider/provider.dart';
 
 class ToDoList extends StatelessWidget {
@@ -56,8 +58,10 @@ class ToDoList extends StatelessWidget {
                           onTap: () => _showTodoEditor(context, todo),
                           onLongPress: () =>
                               _showTodoDeleteModal(context, todo),
-                          child:
-                              GroupTodoTile(todo: todo, viewModel: viewModel),
+                          child: GroupTodoTile(
+                            todo: todo,
+                            viewModel: viewModel,
+                          ),
                         ),
                       // * ==== 개인투두 ==== * //
                       Padding(
@@ -75,7 +79,11 @@ class ToDoList extends StatelessWidget {
                           onTap: () => _showTodoEditor(context, todo),
                           onLongPress: () =>
                               _showTodoDeleteModal(context, todo),
-                          child: MyTodoTile(todo: todo, viewModel: viewModel),
+                          child: MyTodoTile(
+                            todo: todo,
+                            viewModel: viewModel,
+                            onCheck: _onMyTodoCheck,
+                          ),
                         ),
                     ],
                   ),
@@ -83,56 +91,102 @@ class ToDoList extends StatelessWidget {
     );
   }
 
-  // 할일 삭제
-  _showTodoDeleteModal(BuildContext context, Todo todo) {
-    showCupertinoModalPopup(
-      context: context,
-      builder: (BuildContext buildContext) => CupertinoActionSheet(
-        title: Text('할일을 삭제하시겠어요?'),
-        actions: <Widget>[
-          CupertinoActionSheetAction(
-            isDestructiveAction: true,
-            onPressed: () => _onClickDelete(context, todo),
-            child: Text('할일을 삭제할래요!'),
-          ),
-        ],
-        cancelButton: CupertinoActionSheetAction(
-          isDefaultAction: true,
-          onPressed: () {
-            LOG.log('취소 선택');
-            Navigator.pop(context);
-          },
-          child: Text('취소'),
-        ),
-      ),
-    );
-  }
+  // ****************************** //
+  // *                            * //
+  // *       On Todo Check        * //
+  // *                            * //
+  // ****************************** //
 
-  // 할일 수정
-  _showTodoEditor(BuildContext context, Todo todo) {
-    final todoviewmodel = context.read<TodoViewModel>();
-    final userInfo = Provider.of<UserInfo>(context, listen: false);
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (bottomSheetContext) {
-        return ChangeNotifierProvider(
-          create: (_) => EditorModalViewModel(
-            of: todo,
-            user: userInfo,
-            parent: todoviewmodel,
-          ),
-          child: EditorModal(
-            init: todo,
-            title: "할일 수정",
-            formKey: _formKey,
-            onSave: (context) => _updateTodo(context),
-            onCancel: (context) => Navigator.pop(context),
+  // 할일 체크했을때의 로직
+  Future<AppEvent?> _onMyTodoCheck(
+    BuildContext context,
+    Todo todo,
+    bool value,
+    // bool isGroup,
+  ) async {
+    // 개인 todo 인 경우 UI 업데이트
+    final todomodel = context.read<TodoViewModel>();
+    return await todomodel.checkTodo(todo, value).then(
+          (_) => _handleTodoReward(
+            context: context,
+            value: value,
           ),
         );
-      },
-    );
+  }
+
+  // ****************************** //
+  // *                            * //
+  // *        Cash Reward         * //
+  // *                            * //
+  // ****************************** //
+
+  // 리워드 지급
+  AppEvent? _handleTodoReward({
+    required BuildContext context,
+    required bool value,
+  }) {
+    // 할일 리스트에서 상태를 다 갱신하고 들어온다.
+    // final usermodel = context.read<UserProvider>();
+    // final todomodel = context.read<TodoViewModel>();
+
+    // final now = DateTime.now();
+    // final todaystodo = todomodel.getTodaysChecked(now);
+
+    // // * ==== 펫 경험치 업데이트 ==== * //
+    // usermodel.petExp += 5 * (value == true ? 1 : -1);
+
+    // if (usermodel.petExp > 100) {
+    //   LOG.log("펫 진화 이벤트");
+    // }
+
+    // // * ==== 유저 HP 업데이트 ==== * //
+    // double rate = (todaystodo / todomodel.total) * 100;
+    // if (rate > 70) {
+    //   // usermodel.userHp += 10;
+    // } else {
+    //   // usermodel.userHp -= 10;
+    // }
+
+    // // * ==== 유저 캐시 업데이트 ==== * //
+    // int reward = 0;
+    // 이미 지난 투두를 달성한 경우 보상을 업데이트하지 않음
+    // if (todo.todoDate.compareTo(todayformatted) < 0) {
+    //   return AppEvent(
+    //     type: AppEventType.snackbar,
+    //     title: "어제 투두를 달성했네요!",
+    //     description: "",
+    //   );
+    // }
+    // 오늘 완료한 투두 개수(방금 갱신됨)가 1이고 완료를 체크했으면
+    // if (todaystodo == 1 && value == true) {
+    //   usermodel.userCash += 100;
+
+    //   return AppEvent(
+    //     type: AppEventType.fullmodal,
+    //     title: "first_todo_done",
+    //     description: "앞으로도 더 많은 할일을 달성하세요",
+    //     icon: Icon(
+    //       Icons.money,
+    //     ),
+    //   );
+    // } else if (todaystodo == 0 && value == false) {
+    //   // 체크값이 false인데 오늘 완료한 투두 개수 (방금 갱신됨)가 0이면
+    //   usermodel.userCash -= 100;
+    //   reward = 100;
+    // } else {
+    //   // 일반 유저 캐시 업데이트
+    //   usermodel.userCash += 10 * (value == true ? 1 : -1);
+    //   reward = 10;
+    // }
+
+    // return AppEvent(
+    //   type: AppEventType.snackbar,
+    //   title: value == true ? "할일을 달성했어요! +$reward" : "할일을 취소했어요 -$reward",
+    //   description: "",
+    //   icon: Icon(
+    //     Icons.money,
+    //   ),
+    // );
   }
 
   // todo delete modal onclick callback
@@ -175,6 +229,64 @@ class ToDoList extends StatelessWidget {
         }
       }
     });
+  }
+
+  // ****************************** //
+  // *                            * //
+  // *       Show Modal UI        * //
+  // *                            * //
+  // ****************************** //
+
+  // 할일 삭제
+  _showTodoDeleteModal(BuildContext context, Todo todo) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext buildContext) => CupertinoActionSheet(
+        title: Text('할일을 삭제하시겠어요?'),
+        actions: <Widget>[
+          CupertinoActionSheetAction(
+            isDestructiveAction: true,
+            onPressed: () => _onClickDelete(context, todo),
+            child: Text('할일을 삭제할래요!'),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          isDefaultAction: true,
+          onPressed: () {
+            LOG.log('취소 선택');
+            Navigator.pop(context);
+          },
+          child: Text('취소'),
+        ),
+      ),
+    );
+  }
+
+  // 할일 수정
+  _showTodoEditor(BuildContext context, Todo todo) {
+    final todoviewmodel = context.read<TodoViewModel>();
+    final userInfo = context.read<UserInfo>();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (bottomSheetContext) {
+        return ChangeNotifierProvider(
+          create: (_) => EditorModalViewModel(
+            of: todo,
+            user: userInfo,
+            parent: todoviewmodel,
+          ),
+          child: EditorModal(
+            init: todo,
+            title: "할일 수정",
+            formKey: _formKey,
+            onSave: (context) => _updateTodo(context),
+            onCancel: (context) => Navigator.pop(context),
+          ),
+        );
+      },
+    );
   }
 }
 

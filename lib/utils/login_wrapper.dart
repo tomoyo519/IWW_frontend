@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/model/user/user-info.model.dart';
+import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/view/signup/landing.dart';
@@ -13,19 +13,18 @@ class LoginWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool waiting = context.watch<AuthService>().waiting;
-    final UserInfo? user = context.watch<AuthService>().user;
+    final UserModel? user = context.watch<AuthService>().user;
 
     return waiting
         ? Placeholder()
         : (user == null)
             ? LandingPage()
-            : Provider<UserInfo>.value(
-                value: user,
-                child: ChangeNotifierProvider<UserProvider>(
-                  create: (context) => UserProvider(
-                      Provider.of<UserRepository>(context, listen: false),
-                      user),
-                  child: child,
-                ));
+            : ChangeNotifierProvider<UserInfo>(
+                create: (context) => UserInfo(
+                  Provider.of<UserRepository>(context, listen: false),
+                  user,
+                ),
+                child: child,
+              );
   }
 }

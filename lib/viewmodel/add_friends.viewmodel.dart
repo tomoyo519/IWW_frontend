@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/main.dart';
 import 'package:iww_frontend/model/user/get-user-by-contact.dto.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
+import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/repository/friend.repository.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
+import 'package:iww_frontend/viewmodel/user.provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:contacts_service/contacts_service.dart';
 
@@ -15,7 +17,7 @@ class FindContactViewModel extends ChangeNotifier {
 
   // UI State
   bool isFetched = false;
-  List<UserInfo> friends = [];
+  List<UserModel> friends = [];
   int get friendCnt => friends.length;
 
   // 연락처를 기준으로 서버에서 유저를 찾아 반환 (유저 아이디만)

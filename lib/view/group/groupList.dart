@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/group/group.model.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
+import 'package:iww_frontend/viewmodel/user.provider.dart';
 import 'package:provider/provider.dart';
 import 'groupDetail.dart';
 import 'newGroup.dart';
@@ -26,7 +27,7 @@ class _GroupListState extends State<GroupList> {
   bool isClicked = false;
   getList() async {
     UserInfo userInfo = Provider.of<UserInfo>(context, listen: false);
-    int userId = userInfo.user_id;
+    int userId = userInfo.userId;
 
     var result = await RemoteDataSource.get('/group/$userId/groups');
     if (result.statusCode == 200) {

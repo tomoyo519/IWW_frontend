@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/view/_common/profile_image.dart';
+import 'package:iww_frontend/viewmodel/user.provider.dart';
 import 'package:provider/provider.dart';
 
 // 홈에 표시되는 프로필 영역
@@ -26,7 +27,7 @@ class HomeProfile extends StatelessWidget {
               child: ProfileImage(
                 width: 70,
                 height: 70,
-                userId: user.user_id,
+                userId: user.userId,
               ),
             ),
           ),
@@ -39,7 +40,7 @@ class HomeProfile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "안녕하세요 ${user.user_name}님 👋",
+                  "안녕하세요 ${user.userName}님 👋",
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,

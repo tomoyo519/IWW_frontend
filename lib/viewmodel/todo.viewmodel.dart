@@ -2,15 +2,19 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
+import 'package:iww_frontend/model/todo/todo_update.dto.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
+import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
+import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/user.provider.dart';
 
 // 전체 투두리스트 상태를 관리
 class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   final TodoRepository _todoRepository;
-  final UserInfo _user;
+  final UserModel _user;
 
   // 생성자
   TodoViewModel(this._todoRepository, this._user) {
@@ -43,6 +47,14 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   bool get isTodaysFirstTodo => _isTodaysFirstTodo;
   bool get notifyUser => _notifyUser;
 
+  // 오늘 기준으로 완료된 할일 개수를 리턴
+  int getTodaysChecked(DateTime now) {
+    final today = DateFormat('yyyy-MM-dd').format(now);
+    return _todos
+        .where((e) => e.todoDate == today && e.todoDone == true)
+        .length;
+  }
+
   // ===== Status Setters ===== //
   set notifyUser(bool val) => _notifyUser = val;
   set waiting(bool val) {
@@ -51,8 +63,6 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
       notifyListeners();
     }
   }
-
-  Future<void> setTodos() async {}
 
   // ****************************** //
   // *         Fetch Data         * //
@@ -91,86 +101,63 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   // ****************************** //
 
   // 할일 완료하고 목록 업데이트
-  Future<bool> checkTodo(Todo todo, bool checked,
-      {int? userId, String? path}) async {
-    // waiting = true;
-
-    LOG.log("check todo");
-
-    if (path == null) {
-      // 만약 이미지 경로가 없으면 일반 할일 체크로 처리합니다.
-      return _checkNormalTodo(todo, checked);
+  // 전체 투두 비율을 계산해서 리워드 이벤트 트리거
+  Future<bool> checkTodo(
+    Todo todo,
+    bool value, {
+    int? userId,
+    String? path,
+  }) async {
+    // 만약 이미지 경로가 없으면 일반 할일 체크로 처리합니다.
+    if (userId == null || path == null) {
+      return await _todoRepository
+          .checkNormalTodo(todo.todoId.toString(), value)
+          .then((result) => _updateTodoStatus(result, todo, value));
     }
-    // 이미지 경로가 있으면 그룹 할일 체크로 처리합니다.
-    return await _checkGroupTodo(userId, todo, checked, path);
-  }
 
-  // 오늘 기준으로 완료된 할일 개수를 리턴
-  int getTodaysChecked(DateTime now) {
-    final today = DateFormat('yyyy-MM-dd').format(now);
-    return _todos
-        .where((e) => e.todoDate == today && e.todoDone == true)
-        .length;
-  }
-
-  // ****************************** //
-  // *         Fetch Data         * //
-  // ****************************** //
-
-  // 기본 할일 체크
-  Future<bool> _checkNormalTodo(Todo todo, bool checked) async {
-    // return _updateTodoStatus(true, todo, checked);
-    return await _todoRepository
-        .checkNormalTodo(todo.todoId.toString(), checked)
-        .then((value) => _updateTodoStatus(value, todo, checked));
-  }
-
-  // 그룹 할일 체크
-  Future<bool> _checkGroupTodo(
-      int? userId_, Todo todo, bool checked, String path) async {
-    var userId = userId_.toString();
-    var todoId = todo.todoId.toString();
-    return await _todoRepository
-        .checkGroupTodo(userId, todoId, checked, path)
-        .then((value) => _updateTodoStatus(value, todo, checked));
+    // FIXME: 이미지 경로가 있으면 그룹 할일 체크로 처리합니다.
+    return false;
+    // var todoId = todo.todoId.toString();
+    // return await _todoRepository
+    //     .checkGroupTodo(userId.toString(), todoId, value, path)
+    //     .then((result) => _updateTodoStatus(result, todo, value));
   }
 
   // 할일 리스트에서 상태 갱신
-  Future<bool> _updateTodoStatus(bool value, Todo todo, bool checked) async {
-    if (!value) {
+  Future<bool> _updateTodoStatus(
+    TodoUpdateDto? result,
+    Todo todo,
+    bool value,
+  ) async {
+    if (result == null) {
+      LOG.log("Failed to update todo status.");
       waiting = false;
       return false;
     }
 
-    LOG.log("Update group todo status $value");
     int idx = _todos.indexWhere((e) => e.todoId == todo.todoId);
-    if (idx != -1) {
-      _checkIfFirstTodo(todo, checked);
-      _todos[idx].todoDone = checked;
+    if (idx == -1) {
+      LOG.log("Failed to find todo by id in todos list");
+      waiting = false;
+      return false;
+    }
+    if (value == true && todo.grpId == null) {
+      // ==== 개인 투두가 완료된 경우 ==== //
+      String now = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      if (todo.todoDate.compareTo(now) < 0) {
+        EventService.publish(EventType.update_status);
+      }
+    } else if (value == false && todo.grpId == null) {
+      // ==== 개인 투두가 취소된 경우 ==== //
+    } else if (value == true && todo.grpId != null) {
+      // ==== 그룹 투두가 완료된 경우 ==== //
+    } else if (value == false && todo.grpId != null) {
+      // ==== 그룹 투두가 취소된 경우 ==== //
     }
 
+    _todos[idx].todoDone = value;
     waiting = false;
     return idx != -1;
-  }
-
-  // 업데이트에 성공한 경우 할일에 따른 보상 처리
-  void _checkIfFirstTodo(Todo todo, bool checked) {
-    final now = DateTime.now();
-    // 오늘 완료한 투두 개수
-    int todaysDone = getTodaysChecked(now);
-
-    if (checked == true && todaysDone == 0) {
-      // 아직 첫 투두 완료 모달창이 안 떴고
-      // 오늘의 첫 투두를 완료한 경우,
-      // 모달창을 띄웁니다
-      _notifyUser = true;
-      _isTodaysFirstTodo = true;
-    } else if (checked == false && todaysDone == 1) {
-      // 마지막으로 체크되어있던 투두를 취소하는 경우
-      // 유저 캐시를 -100
-      _notifyUser = true;
-      _isTodaysFirstTodo = false;
-    }
   }
 
   // === Calendar Status === //
