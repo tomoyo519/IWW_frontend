@@ -10,6 +10,7 @@ import 'dart:async';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:iww_frontend/view/inventory/inventory.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
+import 'package:model_viewer_plus/model_viewer_plus.dart';
 
 class MyRoom extends StatelessWidget {
   const MyRoom({super.key});
@@ -120,6 +121,41 @@ class MyRoomComponent extends StatelessWidget {
 class RenderMyRoom extends StatelessWidget {
   const RenderMyRoom({super.key});
 
+  List<Widget> renderRoomObjects(BuildContext context) {
+    var roomState = context.watch<MyRoomViewModel>();
+
+    List<Widget> layers = [];
+
+    // 펫
+    layers.add(ModelViewer(
+      src: 'assets/pet/${roomState.getPetPath()}',
+      alt: 'A 3D model of an astronaut',
+      ar: true,
+      autoRotate: true,
+      autoPlay: true,
+      disableZoom: true,
+      cameraOrbit: "30deg,180deg, 0m",
+      cameraTarget: "0m 300m 300m",
+    ));
+
+    // 가구들
+    for (int i = 0; i < roomState.roomObjects.length; i++) {
+      var element = roomState.roomObjects[i];
+      if (element.itemType == 2) {
+        layers.add(Positioned(
+          top: 0,
+          left: i * 100.0,
+          child: Image.asset(
+            'assets/furniture/${element.path}',
+            fit: BoxFit.cover,
+          ),
+        ));
+      }
+    }
+
+    return layers;
+  }
+
   @override
   Widget build(BuildContext context) {
     var roomState = context.watch<MyRoomViewModel>();
@@ -131,15 +167,17 @@ class RenderMyRoom extends StatelessWidget {
       print("[log/myroom]: $e");
     }
 
+    // 배경 안에 stack으로 object를 쌓는다
     return Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: roomState.getBackground(),
+            image:
+                AssetImage('assets/bg/${roomState.getBackgroundImagePath()}'),
             fit: BoxFit.cover,
           ),
         ),
         child: Stack(
-            alignment: Alignment.center, children: roomState.getRoomObjects()));
+            alignment: Alignment.center, children: renderRoomObjects(context)));
 
     // 유저의 펫 정보 불러오기
 
