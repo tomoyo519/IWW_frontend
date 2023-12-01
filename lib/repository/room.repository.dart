@@ -13,13 +13,11 @@ class RoomRepository {
       List<Item> items = (parsedJson['result'] as List<dynamic>)
           .map((item) => Item.fromJson(item))
           .toList();
-      LOG.log('Get room: ${response.statusCode}');
-      LOG.log('items: ${response.body}');
+      LOG.log('[Room status]: ${response.body}');
 
       return items;
     });
   }
-
 
   // NOTE 하위 3개의 함수의 인자 userId는 항상 나 자신의 userId 입니다.
   // 나의 인벤토리 정보 가져오기
@@ -30,8 +28,7 @@ class RoomRepository {
       List<Item> items = (parsedJson['result'] as List<dynamic>)
           .map((item) => Item.fromJson(item))
           .toList();
-      LOG.log('Get room: ${response.statusCode}');
-      LOG.log('items: ${response.body}');
+      LOG.log('[Inventory status] ${response.body}');
 
       return items;
     });
