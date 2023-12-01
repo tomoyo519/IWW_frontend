@@ -1,4 +1,3 @@
-import 'package:flutter/rendering.dart';
 import 'package:iww_frontend/model/comment/comment.model.dart';
 import 'dart:developer';
 import 'package:flutter/material.dart';
@@ -12,32 +11,6 @@ import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';
 
 class CommentRepository {
-  List<Comment> dummy = [
-    Comment(
-        authorId: '2',
-        comId: '1',
-        username: "피카츄",
-        content: "댓글1",
-        isMod: false),
-    Comment(
-        authorId: '3',
-        comId: '2',
-        username: "라이츄",
-        content: "댓글2",
-        isMod: true),
-    Comment(
-        authorId: '6',
-        comId: '3',
-        username: "파이리",
-        content: "댓글3",
-        isMod: false),
-    Comment(
-        authorId: '4',
-        comId: '4',
-        username: "꼬부기",
-        content: "댓글4",
-        isMod: false),
-  ];
 
   Future<List<Comment>> fetchComments(String ownerId) async {
     // return dummy
@@ -49,9 +22,9 @@ class CommentRepository {
         List<dynamic> data = jsonDecode(response.body);
         List<Comment> fetchedComments = data.map((commentData) {
           return Comment(
-            comId: commentData['com_id'],
-            authorId: commentData['author_id'],
-            username: commentData['user_name'],
+            comId: commentData['com_id'].toString(),
+            authorId: commentData['author']['user_id'].toString(),
+            authorName: commentData['author']['user_name'],
             content: commentData['content'],
             isMod: commentData['is_mod'],
           );

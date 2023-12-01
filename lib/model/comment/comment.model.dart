@@ -5,14 +5,14 @@ class Comment {
   String authorId;
 
   late String userImage;
-  String username;
+  String authorName;
   String content;
   bool isMod;
 
   Comment({
     required this.comId,
     required this.authorId,
-    required this.username,
+    required this.authorName,
     required this.content,
     required this.isMod,
   }) {

@@ -127,7 +127,7 @@ class _NewGroupState extends State<NewGroup> {
           create: (_) => EditorModalViewModel(
             of: todo,
             user: userInfo,
-            repository: groupmodel,
+            parent: groupmodel,
           ),
           child: EditorModal(
             init: todo,

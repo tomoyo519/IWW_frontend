@@ -1,12 +1,16 @@
-// 커스텀 Bottom Sheet Header
+// ignore_for_file: constant_identifier_names, non_constant_identifier_names
+
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/style/colors.dart';
 
+// 커스텀 Bottom Sheet Header
 class BottomSheetModalHeader extends StatelessWidget {
   final void Function(BuildContext)? onSave;
   final void Function(BuildContext)? onCancel;
   final String title;
   final Color? color;
+
+  final double BORDER_RADIUS = 15;
 
   const BottomSheetModalHeader({
     super.key,
@@ -23,10 +27,10 @@ class BottomSheetModalHeader extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(15),
-            topRight: Radius.circular(15),
+            topLeft: Radius.circular(BORDER_RADIUS),
+            topRight: Radius.circular(BORDER_RADIUS),
           ),
-          color: color ?? MyColors.background,
+          color: color ?? Colors.white,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
