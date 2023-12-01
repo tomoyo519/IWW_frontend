@@ -5,7 +5,7 @@ import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'groupDetail.dart';
 import 'package:lottie/lottie.dart';
-import 'package:iww_frontend/view/group/fields/label_list_modal.dart';
+import 'package:iww_frontend/view/todo/fields/label_list_modal.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/model/group/group.model.dart';
 
