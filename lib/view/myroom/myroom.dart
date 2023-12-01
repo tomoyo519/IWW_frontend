@@ -4,13 +4,12 @@ import 'package:iww_frontend/repository/room.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';
-import 'package:iww_frontend/view/_navigation/main_page.dart';
+import 'package:iww_frontend/view/myroom/orbitting_widget.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:iww_frontend/view/inventory/inventory.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
-import 'package:model_viewer_plus/model_viewer_plus.dart';
 
 class MyRoom extends StatelessWidget {
   const MyRoom({super.key});
@@ -92,22 +91,26 @@ class MyRoomComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    LOG.log('############## bottom bar height: ${kBottomNavigationBarHeight}');
+
     return Expanded(
       child: Stack(
         fit: StackFit.expand,
         children: [
           RenderMyRoom(),
-          // Positioned(height: 800, bottom: 100, child: UnderLayer()),
+          OrbitingWidget(),
           Positioned(
               left: 0,
               right: 0,
-              bottom: MediaQuery.of(context).padding.bottom + 160,
+              bottom: kBottomNavigationBarHeight +
+                  MediaQuery.of(context).size.height * 0.15,
               height: 150,
               child: UnderLayer()),
           Positioned(
             left: 0,
             right: 0,
-            bottom: kBottomNavigationBarHeight + 80,
+            bottom: kBottomNavigationBarHeight +
+                MediaQuery.of(context).size.height * 0.1,
             height: 50,
             child: BottomButtons(),
           ),
@@ -117,7 +120,6 @@ class MyRoomComponent extends StatelessWidget {
   }
 }
 
-// 나의 펫 렌더링
 class RenderMyRoom extends StatelessWidget {
   const RenderMyRoom({super.key});
 
@@ -126,8 +128,8 @@ class RenderMyRoom extends StatelessWidget {
 
     List<Widget> layers = [];
 
-    // 펫
-    layers.add(roomState.getPetWidget());
+    // 펫 // TODO 추후 삭제 예정
+    // layers.add(roomState.getPetWidget());
 
     LOG.log('[renderRoomObjects] roomObjects: ${roomState.roomObjects.length}');
 

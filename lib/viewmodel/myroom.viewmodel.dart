@@ -73,4 +73,19 @@ class MyRoomViewModel with ChangeNotifier {
     // default pet
     return Text('No pet');
   }
+
+  final Map<String, ModelViewer> _petModels = {
+    'kitsune': ModelViewer(
+      src: 'assets/pets/kitsune.glb',
+      ar: true,
+      disableZoom: true,
+      autoPlay: true,
+      cameraControls: true,
+      cameraOrbit: "40deg 55deg 0.4m",
+      cameraTarget: "0.5m 0.5m 0.5m",
+      shadowIntensity: 1,
+      autoRotate: true,
+      rotationPerSecond: "0.5rad",
+    ),
+  };
 }
