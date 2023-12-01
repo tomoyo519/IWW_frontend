@@ -5,7 +5,7 @@ import 'package:iww_frontend/model/group/groupDetail.model.dart';
 import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
 import 'package:iww_frontend/utils/logger.dart';
 
-class GroupRepository implements BaseTodoViewModel {
+class GroupRepository {
   /// ================== ///
   ///         Get        ///
   /// ================== ///
@@ -104,6 +104,8 @@ class GroupRepository implements BaseTodoViewModel {
     });
   }
 
+  // TODO: create one은 routine 1개 생성과 연결
+  // TODO: 상태를 상위 ViewModel로 전송하도록 수정 필요
   @override
   Future<bool> createTodo(Map<String, dynamic> data) async {
     var json = jsonEncode(data);

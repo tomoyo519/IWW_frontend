@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
@@ -25,6 +24,7 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   }
 
   // ===== Status ===== //
+  Todo? _newTodo;
   List<Todo> _todos = [];
   List<Todo> _groupTodos = [];
   bool _waiting = true;
@@ -54,7 +54,9 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
 
   Future<void> setTodos() async {}
 
-  // 할일 목록 가져오기
+  // ****************************** //
+  // *         Fetch Data         * //
+  // ****************************** //
   Future<void> fetchTodos() async {
     // 상태 업데이트
     int userId = _user.user_id;
@@ -65,6 +67,10 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
     _groupTodos = data.where((todo) => todo.grpId != null).toList();
     waiting = false;
   }
+
+  // ****************************** //
+  // *        Delete Data         * //
+  // ****************************** //
 
   // 할일 삭제하고 목록 업데이트
   Future<bool> deleteTodo(int todoId) async {
@@ -79,6 +85,10 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
       return false;
     });
   }
+
+  // ****************************** //
+  // *        Update Data         * //
+  // ****************************** //
 
   // 할일 완료하고 목록 업데이트
   Future<bool> checkTodo(Todo todo, bool checked,
@@ -102,6 +112,10 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
         .where((e) => e.todoDate == today && e.todoDone == true)
         .length;
   }
+
+  // ****************************** //
+  // *         Fetch Data         * //
+  // ****************************** //
 
   // 기본 할일 체크
   Future<bool> _checkNormalTodo(Todo todo, bool checked) async {
@@ -179,18 +193,27 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
 
   void setSelectedAlarmTime(dynamic alarmTime) {
     _selectedAlarmTime = alarmTime;
+
     notifyListeners();
   }
 
   @override
-  Future<bool> createTodo(Map<String, dynamic> data) {
-    // TODO: implement createTodo
-    throw UnimplementedError();
+  Future<bool> createTodo(Map<String, dynamic> data) async {
+    LOG.log("Create new todo.");
+    return await _todoRepository.createTodo(data);
   }
 
   @override
-  Future<bool> updateTodo(String id, Map<String, dynamic> data) {
-    // TODO: implement updateTodo
-    throw UnimplementedError();
+  Future<bool> updateTodo(String id, Map<String, dynamic> data) async {
+    return await _todoRepository.updateTodo(id, data).then(
+      (value) {
+        if (value == true) {
+          int idx = _todos.indexWhere((todo) => todo.todoId.toString() == id);
+          _todos[idx] = Todo.fromJson(data);
+          return true;
+        }
+        return false;
+      },
+    );
   }
 }
