@@ -1,15 +1,9 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:iww_frontend/repository/comment.repository.dart';
 import 'package:iww_frontend/repository/room.repository.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:iww_frontend/model/comment/comment.model.dart';
-import 'dart:convert';
 import 'package:iww_frontend/service/auth.service.dart';
-import 'package:path/path.dart';
-import 'package:provider/provider.dart';
 
 // 방명록 상태관리
 class CommentsProvider with ChangeNotifier {
@@ -71,7 +65,7 @@ void showCommentsBottomSheet(BuildContext context,
         builder: (BuildContext context) {
           return CommentsBottomSheet(
             commentsProvider: commentsProvider,
-            userId: userId,
+            userId: userId.toString(),
             ownerId: ownerId,
           );
         });
@@ -183,23 +177,24 @@ class CommentsBottomSheet extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 8.0),
         child: CircleAvatar(
           radius: 20,
-          backgroundImage: NetworkImage(comment.userImage),
-          onBackgroundImageError: (exception, stackTrace) {},
-          child: Image.network(
-            comment.userImage,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return CircleAvatar(
-                radius: 20,
-                backgroundImage: AssetImage("assets/profile.jpg"),
-              );
-            },
-          ),
+          backgroundImage: AssetImage(comment.userImage),
+          // backgroundImage: NetworkImage(comment.userImage),
+          // onBackgroundImageError: (exception, stackTrace) {},
+          // child: Image.network(
+          //   comment.userImage,
+          //   fit: BoxFit.cover,
+          //   errorBuilder: (context, error, stackTrace) {
+          //     return CircleAvatar(
+          //       radius: 20,
+          //       backgroundImage: AssetImage("assets/profile.jpg"),
+          //     );
+          //   },
+          // ),
         ),
       ),
       title: Row(
         children: [
-          Text(comment.username),
+          Text(comment.authorName),
           if (comment.isMod)
             Padding(
               padding: EdgeInsets.only(left: 8),
