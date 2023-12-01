@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/model/auth/login_result.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:provider/provider.dart';
-import '../home/home.dart';
 
 /// 앱 초기 랜딩 페이지 화면
 /// 디바이스에 카카오 토큰이 없거나 최초 설치한 유저

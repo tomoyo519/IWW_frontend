@@ -1,20 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'groupDetail.dart';
 import 'package:lottie/lottie.dart';
-
-final List<String> labels = [
-  '운동',
-  '식단',
-  '회사업무',
-  '가족행사',
-  '저녁약속',
-  '청첩장모임',
-  '루틴',
-  '개발공부'
-];
+import 'package:iww_frontend/view/group/fields/label_list_modal.dart';
+import 'package:provider/provider.dart';
+import 'package:iww_frontend/model/group/group.model.dart';
 
 class GroupSearch extends StatefulWidget {
   const GroupSearch({super.key});
@@ -26,24 +19,18 @@ class GroupSearch extends StatefulWidget {
 class _GroupSearchState extends State<GroupSearch> {
   var labelNum = 1;
   String keyword = "";
-  List<dynamic> groupList = [];
-
+  List<Group>? groupList = [];
   getList() async {
-    //TODO - group_id/label_id/keyword
-    var result = await http
-        .get(Uri.parse(
-            'http://yousayrun.store:8088/group/search/1/${labelNum}/${keyword}'))
-        .catchError((err) {
-      return null;
+    final groupRepository =
+        Provider.of<GroupRepository>(context, listen: false);
+
+    var tempList = await groupRepository.getAllGroupList(1, labelNum, keyword);
+
+    setState(() {
+      groupList = tempList;
     });
-    LOG.log(result.body);
-    if (result.statusCode == 200) {
-      Map<String, dynamic> jsonData = jsonDecode(result.body);
-      setState(() {
-        List<dynamic> result = jsonData['results'];
-        groupList = result;
-      });
-    }
+
+    LOG.log('${groupList}');
   }
 
   @override
@@ -62,50 +49,76 @@ class _GroupSearchState extends State<GroupSearch> {
     return Container(
       child: Column(children: [
         Container(
-            padding: EdgeInsets.all(20),
+            height: 60,
+            padding: EdgeInsets.all(10),
             child: SearchBar(
-                onSubmitted: (value) {
-                  letsSearch();
+                onChanged: (value) {
+                  setState(() {
+                    keyword = value;
+                  });
                 },
+                elevation: MaterialStateProperty.all(0),
+                onSubmitted: (value) {
+                  getList();
+                },
+                backgroundColor: MaterialStateProperty.all(
+                    const Color.fromARGB(255, 226, 225, 225)),
+                // backgroundColor: Color(Colors.grey),
                 hintText: "키워드 검색",
                 leading: Icon(Icons.search_outlined))),
         Row(
           children: [
             Expanded(
               child: Container(
-                  height: 50,
-                  margin: EdgeInsets.all(5),
-                  padding: EdgeInsets.all(10),
+                  height: 35,
+                  margin: EdgeInsets.all(1),
+                  padding: EdgeInsets.all(1),
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: labels.length,
+                    itemCount: LabelListModal.labels.length,
                     itemBuilder: (context, index) {
                       return Container(
                           padding: EdgeInsets.symmetric(horizontal: 5),
-                          child: FilledButton(
-                              onPressed: () {}, child: Text(labels[index])));
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.grey, // 배경색을 회색으로 변경
+                                padding: EdgeInsets.all(5), // 패딩을 조절
+
+                                shape: StadiumBorder(), // 모서리를 완전히 둥글게
+                              ),
+                              onPressed: () {},
+                              child: Text(
+                                LabelListModal.labels[index],
+                                style: TextStyle(
+                                  color: Colors.white, // 글자색을 흰색으로 변경
+                                ),
+                              )));
                     },
                   )),
             ),
           ],
         ),
-        groupList.isNotEmpty
+        groupList!.isNotEmpty
             ? Expanded(
                 child: ListView.builder(
-                    itemCount: groupList.length,
+                    itemCount: groupList?.length,
                     itemBuilder: (c, i) {
                       return TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (c) =>
-                                        GroupDetail(group: groupList[i])));
-                          },
+                          onPressed: () => Navigator.pushNamed(
+                              context, "/group/detail",
+                              arguments: groupList?[i]),
+
+                          //   {
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (c) =>
+                          //             GroupDetail(group: groupList?[i])));
+                          // },
                           child: Container(
                             alignment: Alignment.center,
                             margin: EdgeInsets.all(5),
-                            padding: EdgeInsets.all(25),
+                            padding: EdgeInsets.all(12),
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
@@ -113,14 +126,33 @@ class _GroupSearchState extends State<GroupSearch> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  groupList[i]["grp_name"],
-                                  style: TextStyle(color: Colors.black),
+                                Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start, //
+                                  children: [
+                                    Text(
+                                      groupList?[i].grpName ?? "그룹 이름",
+                                      textAlign: TextAlign.left,
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w800),
+                                    ),
+                                    Text(
+                                      groupList?[i].grpDesc ?? "그룹에 대한 설명입니다.",
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    Text(
+                                      ' ${groupList?[i].catName}',
+                                      style: TextStyle(fontSize: 13),
+                                    ),
+                                  ],
                                 ),
-                                Text('${groupList[i]["mem_cnt"]}/100',
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w800))
+                                Text('멤버 ${groupList?[i].memCnt}명',
+                                    style: TextStyle(fontSize: 13))
                               ],
                             ),
                           ));

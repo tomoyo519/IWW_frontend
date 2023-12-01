@@ -4,7 +4,7 @@ import 'package:iww_frontend/repository/room.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';
-import 'package:iww_frontend/view/_common/bottombar.dart';
+import 'package:iww_frontend/view/_navigation/main_page.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
@@ -17,10 +17,12 @@ class MyRoom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 의존성
+    final userId = context.read<UserInfo>().user_id;
     final authService = Provider.of<AuthService>(context, listen: false);
     final roomRepository = Provider.of<RoomRepository>(context, listen: false);
     final commentRepository =
         Provider.of<CommentRepository>(context, listen: false);
+
     return MultiProvider(providers: [
       ChangeNotifierProvider<CommentsProvider>(
           create: (_) => CommentsProvider(
@@ -28,41 +30,57 @@ class MyRoom extends StatelessWidget {
                 roomRepository,
                 commentRepository,
               )),
-      ChangeNotifierProvider<MyRoomViewModel>(create: (_) => MyRoomViewModel()),
-      ChangeNotifierProvider(create: (_) => InventoryState()),
-    ], child: Scaffold(body: MyRoomPage(), bottomNavigationBar: MyBottomNav()));
+      ChangeNotifierProvider<MyRoomViewModel>(
+          create: (_) => MyRoomViewModel(userId, roomRepository)),
+      ChangeNotifierProvider(create: (_) => MyRoomState()),
+    ], child: MyRoomPage());
+  }
+}
+
+class MyRoomState extends ChangeNotifier {
+  double _growth = 0.0;
+  final maxGrowth = 350.0;
+
+  get growth => _growth;
+
+  void toggleGrowth() {
+    _growth = (growth == 0.0) ? maxGrowth : 0.0;
+    notifyListeners();
   }
 }
 
 class MyRoomPage extends StatelessWidget {
   const MyRoomPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    var inventoryState = context.watch<InventoryState>();
+    var myRoomState = context.watch<MyRoomState>();
 
-    return Stack(fit: StackFit.expand, children: [
-      Positioned(
-          top: 0,
-          left: 0,
-          right: 0,
-          child: AnimatedContainer(
-              width: double.infinity,
-              height: screenHeight - inventoryState.intventoryHeight,
-              color: Colors.blue,
-              duration: Duration(milliseconds: 500),
-              curve: Curves.easeInOut,
-              child: MyRoomComponent())),
-      Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: AnimatedContainer(
-              height: inventoryState.intventoryHeight,
-              duration: Duration(milliseconds: 500),
-              curve: Curves.easeInOut,
-              child: InventoryView()))
-    ]);
+    return Center(
+      child: Stack(fit: StackFit.expand, children: [
+        Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: AnimatedContainer(
+                width: double.infinity,
+                height: screenHeight - myRoomState.growth,
+                color: Colors.blue,
+                duration: Duration(milliseconds: 500),
+                curve: Curves.easeInOut,
+                child: MyRoomComponent())),
+        Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: AnimatedContainer(
+                height: myRoomState.growth,
+                duration: Duration(milliseconds: 500),
+                curve: Curves.easeInOut,
+                child: InventoryView()))
+      ]),
+    );
   }
 }
 
@@ -73,21 +91,27 @@ class MyRoomComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        RenderMyRoom(),
-        // Positioned(height: 800, bottom: 100, child: UnderLayer()),
-        Positioned(
-            left: 0, right: 0, bottom: 100, height: 150, child: UnderLayer()),
-        Positioned(
-          left: 0,
-          right: 0,
-          bottom: 60,
-          height: 50,
-          child: BottomButtons(),
-        ),
-      ],
+    return Expanded(
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          RenderMyRoom(),
+          // Positioned(height: 800, bottom: 100, child: UnderLayer()),
+          Positioned(
+              left: 0,
+              right: 0,
+              bottom: MediaQuery.of(context).padding.bottom + 160,
+              height: 150,
+              child: UnderLayer()),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: kBottomNavigationBarHeight + 80,
+            height: 50,
+            child: BottomButtons(),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -98,7 +122,6 @@ class RenderMyRoom extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authService = Provider.of<AuthService>(context);
     var roomState = context.watch<MyRoomViewModel>();
 
     // Naviator를 통해서 argument를 전달할 경우 받는 방법
@@ -116,7 +139,7 @@ class RenderMyRoom extends StatelessWidget {
           ),
         ),
         child: Stack(
-            alignment: Alignment.center, children: roomState.getObjects()));
+            alignment: Alignment.center, children: roomState.getRoomObjects()));
 
     // 유저의 펫 정보 불러오기
 
@@ -270,7 +293,8 @@ class BottomButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     // NOTE 여기서 비동기 연산 수행
     final commentsProvider = context.read<CommentsProvider>();
-    final inventoryState = context.read<InventoryState>();
+    // final inventoryState = context.read<InventoryState>();
+    final myRoomState = context.watch<MyRoomState>();
     var roomState = context.watch<MyRoomViewModel>();
     final user = Provider.of<UserInfo>(context, listen: false);
 
@@ -314,8 +338,19 @@ class BottomButtons extends StatelessWidget {
           ElevatedButton(
               onPressed: () {
                 // Navigator.pushNamed(context, '/inventory');
-                inventoryState.toggleInventory();
+                myRoomState.toggleGrowth();
               },
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                (Set<MaterialState> states) {
+                  // 눌렸을 때의 상태인 경우 색상 변경
+                  if (states.contains(MaterialState.pressed)) {
+                    return Colors.deepOrange; // 눌렸을 때의 색상
+                  }
+                  // 기본 색상
+                  return Colors.white;
+                },
+              )),
               child: Text('인벤토리')),
           SizedBox(width: 20),
           buildFriendButton(),

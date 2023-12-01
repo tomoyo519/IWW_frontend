@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
-import 'package:iww_frontend/view/group/fields/time.dart';
-import 'package:iww_frontend/view/group/groupMain.dart';
+import 'package:iww_frontend/view/modals/todo_info_snanckbar.dart';
+
 import 'package:iww_frontend/view/todo/fields/label_list_modal.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:provider/provider.dart';
-import 'package:iww_frontend/view/_common/bottom_sheet_header.dart';
-import 'package:iww_frontend/style/colors.dart';
-import 'package:iww_frontend/view/group/fields/name.dart';
-import 'package:iww_frontend/view/group/fields/desc.dart';
-import 'package:iww_frontend/view/group/fields/label.dart';
-import 'package:iww_frontend/view/group/fields/routine.dart';
+
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
+import 'package:iww_frontend/view/todo/todo_editor.dart';
+import 'package:iww_frontend/model/todo/todo.model.dart';
+import 'package:iww_frontend/model/routine/routine.model.dart';
 
 class NewGroup extends StatefulWidget {
   const NewGroup({super.key});
@@ -27,6 +26,8 @@ class _NewGroupState extends State<NewGroup> {
   String groupName = '';
   String categoryName = '';
   String groupDesc = '';
+  late GlobalKey<FormState> _formKey;
+
   List<Map<String, dynamic>> routine = [
     {
       "rout_name": "",
@@ -53,7 +54,19 @@ class _NewGroupState extends State<NewGroup> {
     });
   }
 
-  setRoutine(Map<String, dynamic> routine) {}
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _formKey = GlobalKey<FormState>();
+  }
+
+  // void _updateRoutine(BuildContext context) {
+  //   final viewmodel = context.read<EditorModalViewModel>();
+
+  //   LOG.log("Not implemented. ${viewmodel.hour}");
+  //   Navigator.pop(context);
+  // }
 
   _createGroup(BuildContext context) async {
     //새로운 그룹 만들기;
@@ -80,8 +93,52 @@ class _NewGroupState extends State<NewGroup> {
     Navigator.pop(context);
   }
 
-  void onSave(BuildContext context) {
+  Future<void> _onSave(BuildContext context) async {
+    LOG.log("message");
     //저장누르면 루틴 추가하는 로직
+    final editormodel = context.read<EditorModalViewModel>();
+    bool result = await editormodel.createTodo();
+    LOG.log("message $result");
+    if (context.mounted && result == true) {
+      // groupmodel.createTodo(data);
+      Navigator.pop(context);
+      showCustomSnackBar(
+        context,
+        text: "루틴 추가가 완료되었어요!",
+        icon: Icon(
+          Icons.ac_unit_outlined,
+        ),
+      );
+    }
+  }
+
+  void _showTodoEditor(BuildContext context, Routine? routine) {
+    final groupRepository =
+        Provider.of<GroupRepository>(context, listen: false);
+    final userInfo = Provider.of<UserInfo>(context, listen: false);
+    Todo? todo = routine?.generateTodo(userInfo.user_id);
+    MyGroupViewModel groupmodel = context.read<MyGroupViewModel>();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (bottomSheetContext) {
+        return ChangeNotifierProvider(
+          create: (_) => EditorModalViewModel(
+            of: todo,
+            user: userInfo,
+            repository: groupmodel,
+          ),
+          child: EditorModal(
+            init: todo,
+            title: "루틴 추가",
+            formKey: _formKey,
+            onSave: (context) => _onSave(context),
+            onCancel: (context) => Navigator.pop(context),
+          ),
+        );
+      },
+    );
   }
 
   // GlobalKey<FormState>를 초기화합니다.
@@ -89,13 +146,10 @@ class _NewGroupState extends State<NewGroup> {
 
   @override
   Widget build(BuildContext context) {
-    final _userInfo = Provider.of<UserInfo>(context, listen: false);
-    final _groupRepository =
+    final groupRepository =
         Provider.of<GroupRepository>(context, listen: false);
-    final _authService = Provider.of<AuthService>(context, listen: false);
-    final myGroupViewModel =
-        Provider.of<MyGroupViewModel>(context, listen: false);
-    final MyGroupViewModel viewModel = context.watch<MyGroupViewModel>();
+
+    final MyGroupViewModel viewModel = context.read<MyGroupViewModel>();
     return Scaffold(
         appBar: MyAppBar(),
         body: Container(
@@ -152,6 +206,58 @@ class _NewGroupState extends State<NewGroup> {
               ),
               Text("기본 루틴"),
               Divider(color: Colors.grey, thickness: 1, indent: 10),
+              if (viewModel.groupRoutine.isNotEmpty) ...[
+                Expanded(
+                  child: ListView.builder(
+                      itemCount: viewModel.groupRoutine.length,
+                      itemBuilder: (c, i) {
+                        return GestureDetector(
+                          onLongPress: () {
+                            _showTodoEditor(context, viewModel.groupRoutine[i]);
+                          },
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              useRootNavigator: true,
+                              builder: (BuildContext context) {
+                                return Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.8,
+                                  child: Column(
+                                    // TODO - 사진추가
+                                    children: [Text('사용자 사진이 보여지는 화면')],
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                          // ==== Group Routine ==== //
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                    color: Colors.black26, width: 1)),
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.all(10),
+                            padding: EdgeInsets.all(10),
+                            child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Checkbox(
+                                    onChanged: null,
+                                    value: false,
+                                  ),
+                                  Text(viewModel.groupRoutine[i].routName),
+                                  Icon(Icons.groups_outlined)
+                                ]),
+                          ),
+                        );
+                      }),
+                ),
+              ],
               Container(
                   child: TextButton(
                       child: Container(
@@ -168,104 +274,7 @@ class _NewGroupState extends State<NewGroup> {
                         ]),
                       ),
                       onPressed: () {
-                        showModalBottomSheet(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return FractionallySizedBox(
-                                heightFactor: 0.9,
-                                child: GestureDetector(
-                                  onTap: () => FocusScope.of(context).unfocus(),
-                                  child: Column(children: [
-                                    BottomSheetModalHeader(
-                                      title: groupName,
-                                      onSave: onSave,
-                                      onCancel: onCancel,
-                                    ),
-                                    Expanded(
-                                      child: SingleChildScrollView(
-                                        child: DecoratedBox(
-                                          decoration: BoxDecoration(
-                                            color: MyColors.background,
-                                          ),
-                                          child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                horizontal: 10,
-                                                vertical: 10,
-                                              ),
-                                              child: Form(
-                                                key: formKey,
-                                                child: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.max,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  // 할일 제목 입력 필드
-                                                  children: [
-                                                    MultiProvider(
-                                                      providers: [
-                                                        ChangeNotifierProvider(
-                                                            create: (context) =>
-                                                                MyGroupViewModel(
-                                                                    _groupRepository,
-                                                                    _userInfo)),
-                                                      ],
-                                                      child: GroupNameField(),
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                        // horizontal: 10,
-                                                        vertical: 15,
-                                                      ),
-                                                      child: Column(
-                                                        children: [
-                                                          MultiProvider(
-                                                            providers: [
-                                                              ChangeNotifierProvider(
-                                                                  create: (context) =>
-                                                                      MyGroupViewModel(
-                                                                          _groupRepository,
-                                                                          _userInfo)),
-                                                            ],
-                                                            child:
-                                                                GroupRoutineField(),
-                                                          ),
-                                                          MultiProvider(
-                                                            providers: [
-                                                              ChangeNotifierProvider(
-                                                                  create: (context) =>
-                                                                      MyGroupViewModel(
-                                                                          _groupRepository,
-                                                                          _userInfo)),
-                                                            ],
-                                                            child:
-                                                                GroupTimeField(),
-                                                          ),
-                                                          MultiProvider(
-                                                            providers: [
-                                                              ChangeNotifierProvider(
-                                                                  create: (context) =>
-                                                                      MyGroupViewModel(
-                                                                          _groupRepository,
-                                                                          _userInfo)),
-                                                            ],
-                                                            child:
-                                                                GroupDescField(),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              )),
-                                        ),
-                                      ),
-                                    )
-                                  ]),
-                                ),
-                              );
-                            });
+                        _showTodoEditor(context, null);
                       })),
               Spacer(),
               SizedBox(

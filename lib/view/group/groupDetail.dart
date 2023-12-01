@@ -49,6 +49,8 @@ class _GroupDetailState extends State<GroupDetail> {
       setState(() {
         // Group, Routine Type 맞춰서 수정
         List<dynamic> jsonRoutList = resultJson["result"]["rout_detail"];
+
+        LOG.log(resultJson["result"]["rout_detail"]);
         groupRoutine = jsonRoutList
             .map((e) => Routine.fromGroupDetailJson(e, widget.group.groupId))
             .toList();
@@ -177,7 +179,7 @@ class _GroupDetailState extends State<GroupDetail> {
                             width: MediaQuery.of(context).size.width * 0.15,
                             alignment: Alignment.center,
                             // TODO - 수정되어야 함.
-                            child: Text(widget.group.catName)),
+                            child: Text(widget.group.catName ?? "카테고리")),
                       ),
                     ],
                   ),
@@ -230,6 +232,7 @@ class _GroupDetailState extends State<GroupDetail> {
                                       },
                                     );
                                   },
+                                  // ==== Group Routine ==== //
                                   child: Container(
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(12),
