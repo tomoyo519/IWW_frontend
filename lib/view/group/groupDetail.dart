@@ -186,39 +186,41 @@ class _GroupDetailState extends State<GroupDetail> {
           child: Column(
             // TODO - 사진추가, 빈값일 경우 텅 보여주기
             children: [
-              Container(
-                  child: Expanded(
-                child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3, // 각 행에 3개의 그리드 항목이 표시됩니다.
-                    childAspectRatio: 1.0, // 그리드 항목의 가로세로 비율을 1:1로 설정합니다.
-                  ),
-                  itemCount: routineImgs?.length ?? 0,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Column(
-                        children: [
-                          Container(
-                            height: MediaQuery.of(context).size.height *
-                                0.15, // 높이를 줄입니다.
-                            width: MediaQuery.of(context).size.width *
-                                0.3, // 너비를 줄입니다.
-                            margin: EdgeInsets.all(2),
-                            padding: EdgeInsets.all(2),
-                            child: Image.network(
-                              '${Secrets.REMOTE_SERVER_URL}/group-image/' +
-                                  routineImgs![index].todoImg,
-                              fit:
-                                  BoxFit.cover, // 이미지가 부모 위젯의 크기에 맞게 조절되도록 합니다.
+              routineImgs!.isNotEmpty
+                  ? Container(
+                      child: Expanded(
+                      child: GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3, // 각 행에 3개의 그리드 항목이 표시됩니다.
+                          childAspectRatio: 1.0, // 그리드 항목의 가로세로 비율을 1:1로 설정합니다.
+                        ),
+                        itemCount: routineImgs?.length ?? 0,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: Column(
+                              children: [
+                                Container(
+                                  height: MediaQuery.of(context).size.height *
+                                      0.15, // 높이를 줄입니다.
+                                  width: MediaQuery.of(context).size.width *
+                                      0.3, // 너비를 줄입니다.
+                                  margin: EdgeInsets.all(2),
+                                  padding: EdgeInsets.all(2),
+                                  child: Image.network(
+                                    '${Secrets.REMOTE_SERVER_URL}/group-image/' +
+                                        routineImgs![index].todoImg,
+                                    fit: BoxFit
+                                        .cover, // 이미지가 부모 위젯의 크기에 맞게 조절되도록 합니다.
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-              )),
+                    ))
+                  : Text("텅"),
             ],
           ),
         );

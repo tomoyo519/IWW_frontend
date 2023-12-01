@@ -61,11 +61,13 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
     try {
       // int userId = _userInfo.user_id;
       // TODO - userId 안들어옴;
-      // LOG.log('$userId');
-      groups = (await _groupRepository.getMyGroupList(1) ?? []);
+      LOG.log('왜 실행안되?????????????');
+      groups = (await _groupRepository.getMyGroupList(1)) ?? [];
 
+      LOG.log('야호:::::${groups}');
       waiting = false;
     } catch (err) {
+      LOG.log('error: $err');
       waiting = false;
       groups = [];
     } finally {
@@ -79,15 +81,19 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
     try {
       groupData["user_id"] = 1;
       groupData["cat_id"] = groupData["cat_id"];
+
       Map<String, dynamic> json = {
-        "grpInfo": groupData,
-        "routInfo": jsonEncode(groupRoutine.map((e) => e.toJSON()).toList()),
+        "grpInfo": (groupData),
+        "routInfo": (groupRoutine.map((e) => e.toJSON()).toList()),
       };
 
       LOG.log('json: $json');
 
       bool rest = (await _groupRepository.createTodo(json));
       LOG.log('rest:$rest');
+
+      fetchMyGroupList();
+
       return true;
     } catch (err) {
       LOG.log('err:$err');

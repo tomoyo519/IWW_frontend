@@ -86,6 +86,7 @@ class _NewGroupState extends State<NewGroup> {
         );
         Navigator.pop(context);
       }
+      myGroupViewModel.fetchMyGroupList();
     });
   }
 

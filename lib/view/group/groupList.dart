@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/group/group.model.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
+import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'groupDetail.dart';
 import 'newGroup.dart';
@@ -51,6 +52,9 @@ class _GroupListState extends State<GroupList> {
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.read<MyGroupViewModel>();
+    final myGroups = viewModel.groups;
+    LOG.log('thiismygroups:, ${myGroups}');
     return Column(children: [
       groups.isNotEmpty
           ? Expanded(
