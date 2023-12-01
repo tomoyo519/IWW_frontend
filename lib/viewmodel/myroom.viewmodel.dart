@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/room.repository.dart';
+import 'package:iww_frontend/utils/logger.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
 import 'package:provider/provider.dart';
@@ -10,7 +11,6 @@ class MyRoomViewModel with ChangeNotifier {
   int roomOwner;
   List<Item> roomObjects = [];
   List<Item> inventory = [];
-
 
   MyRoomViewModel(this._userId, this._roomRepository) : roomOwner = _userId {
     fetchInventory();
@@ -44,30 +44,33 @@ class MyRoomViewModel with ChangeNotifier {
 
   bool isMyRoom() => _userId == roomOwner;
 
-
   /// itemType
   /// 1. pet
   /// 2. furniture
   /// 3. pet's motion
   /// 4. background
-  String getBackgroundImagePath() {
+  AssetImage getBackgroundImage() {
     for (var element in roomObjects) {
       if (element.itemType == 4) {
-        return element.path!;
+        return AssetImage('assets/bg/${element.path}');
       }
     }
     // default background
-    return "";
+    return AssetImage('assets/bg/bg15.png');
   }
 
-  String getPetPath() {
+  Widget getPetWidget() {
     for (var element in roomObjects) {
       if (element.itemType == 1) {
-        return element.path!;
+        return ModelViewer(
+          src: 'assets/pets/${element.path}',
+          autoPlay: true,
+          cameraOrbit: "40deg 55deg 0.4m",
+          cameraTarget: "0.5m 0.5m 0.5m",
+        );
       }
     }
     // default pet
-    return "";
+    return Text('No pet');
   }
-
 }

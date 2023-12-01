@@ -127,24 +127,19 @@ class RenderMyRoom extends StatelessWidget {
     List<Widget> layers = [];
 
     // 펫
-    layers.add(ModelViewer(
-      src: 'assets/pet/${roomState.getPetPath()}',
-      alt: 'A 3D model of an astronaut',
-      ar: true,
-      autoRotate: true,
-      autoPlay: true,
-      disableZoom: true,
-      cameraOrbit: "30deg,180deg, 0m",
-      cameraTarget: "0m 300m 300m",
-    ));
+    layers.add(roomState.getPetWidget());
+
+    LOG.log('[renderRoomObjects] roomObjects: ${roomState.roomObjects.length}');
 
     // 가구들
     for (int i = 0; i < roomState.roomObjects.length; i++) {
       var element = roomState.roomObjects[i];
       if (element.itemType == 2) {
         layers.add(Positioned(
-          top: 0,
+          top: 50 + (i % 2 == 0 ? 0 : 100),
           left: i * 100.0,
+          width: 100,
+          height: 100,
           child: Image.asset(
             'assets/furniture/${element.path}',
             fit: BoxFit.cover,
@@ -153,6 +148,7 @@ class RenderMyRoom extends StatelessWidget {
       }
     }
 
+    LOG.log('############### 갔니?????');
     return layers;
   }
 
@@ -171,8 +167,7 @@ class RenderMyRoom extends StatelessWidget {
     return Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image:
-                AssetImage('assets/bg/${roomState.getBackgroundImagePath()}'),
+            image: roomState.getBackgroundImage(),
             fit: BoxFit.cover,
           ),
         ),
@@ -235,7 +230,7 @@ class _StatusBarState extends State<StatusBar> with TickerProviderStateMixin {
         _hp >= 1 ? _hp : _hp += 0.1;
         _exp >= 1 ? _exp : _exp += 0.2;
 
-        LOG.log("HP: $_hp, EXP: $_exp");
+        // LOG.log("HP: $_hp, EXP: $_exp");
       });
     });
   }
