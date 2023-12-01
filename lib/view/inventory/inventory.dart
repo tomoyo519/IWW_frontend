@@ -33,12 +33,12 @@ class InventoryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var myRoomViewModel = context.watch<MyRoomViewModel>();
-    LOG.log('${Secrets.REMOTE_SERVER_URL}/image/원숭이.png');
+    LOG.log('인벤토리 왔니?');
 
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage("assets/bg/bg7.jpg"),
+          image: AssetImage("assets/bg/bg17.png"),
           fit: BoxFit.cover,
         ),
       ),
@@ -56,9 +56,10 @@ class InventoryView extends StatelessWidget {
                         child: Column(
                       children: [
                         Text(myRoomViewModel.inventory[idx].name),
-                        Image.network(
-                          '${Secrets.REMOTE_SERVER_URL}/image/${myRoomViewModel.inventory[idx].path}',
+                        Image.asset(
+                          'assets/thumbnail/${myRoomViewModel.inventory[idx].path!.split('.')[0]}.png',
                           fit: BoxFit.cover,
+                          height: 80,
                         )
                       ],
                     )),
