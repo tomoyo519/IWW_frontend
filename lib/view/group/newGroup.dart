@@ -215,23 +215,7 @@ class _NewGroupState extends State<NewGroup> {
                           onLongPress: () {
                             _showTodoEditor(context, viewModel.groupRoutine[i]);
                           },
-                          onTap: () {
-                            showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              useRootNavigator: true,
-                              builder: (BuildContext context) {
-                                return Container(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.8,
-                                  child: Column(
-                                    // TODO - 사진추가
-                                    children: [Text('사용자 사진이 보여지는 화면')],
-                                  ),
-                                );
-                              },
-                            );
-                          },
+
                           // ==== Group Routine ==== //
                           child: Container(
                             decoration: BoxDecoration(

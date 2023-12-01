@@ -40,10 +40,6 @@ class _GroupSearchState extends State<GroupSearch> {
     getList();
   }
 
-  letsSearch() {
-    print('digh');
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -78,15 +74,20 @@ class _GroupSearchState extends State<GroupSearch> {
                     itemCount: LabelListModal.labels.length,
                     itemBuilder: (context, index) {
                       return Container(
-                          padding: EdgeInsets.symmetric(horizontal: 5),
+                          padding: EdgeInsets.symmetric(horizontal: 3),
                           child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.grey, // 배경색을 회색으로 변경
-                                padding: EdgeInsets.all(5), // 패딩을 조절
+                                padding: EdgeInsets.all(2), // 패딩을 조절
 
                                 shape: StadiumBorder(), // 모서리를 완전히 둥글게
                               ),
-                              onPressed: () {},
+                              onPressed: () {
+                                setState(() {
+                                  labelNum = index;
+                                });
+                                getList();
+                              },
                               child: Text(
                                 LabelListModal.labels[index],
                                 style: TextStyle(

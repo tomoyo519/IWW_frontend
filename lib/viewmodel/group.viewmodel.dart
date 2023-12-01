@@ -77,10 +77,10 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
 
   Future<bool?> createGroup() async {
     try {
-      groupData["user_id"] = "1";
-      groupData["cat_id"] = groupData["cat_id"].toString();
+      groupData["user_id"] = 1;
+      groupData["cat_id"] = groupData["cat_id"];
       Map<String, dynamic> json = {
-        "grpInfo": (groupData),
+        "grpInfo": groupData,
         "routInfo": jsonEncode(groupRoutine.map((e) => e.toJSON()).toList()),
       };
 

@@ -3,8 +3,10 @@ import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/group/group.model.dart';
 import 'package:iww_frontend/model/routine/routine.model.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
+import 'package:iww_frontend/model/group/groupImg.model.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
+import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
 import 'dart:convert';
 import 'package:iww_frontend/utils/logger.dart';
@@ -40,6 +42,7 @@ class _GroupDetailState extends State<GroupDetail> {
   bool isLoading = true;
   late TextEditingController _controller;
   late GlobalKey<FormState> _formKey;
+  List<GroupImg>? routineImgs;
 
   getData() async {
     var result = await RemoteDataSource.get('/group/${widget.group.groupId}');
@@ -49,8 +52,7 @@ class _GroupDetailState extends State<GroupDetail> {
       setState(() {
         // Group, Routine Type 맞춰서 수정
         List<dynamic> jsonRoutList = resultJson["result"]["rout_detail"];
-
-        LOG.log(resultJson["result"]["rout_detail"]);
+        LOG.log('jsonResult: $jsonRoutList');
         groupRoutine = jsonRoutList
             .map((e) => Routine.fromGroupDetailJson(e, widget.group.groupId))
             .toList();
@@ -156,6 +158,74 @@ class _GroupDetailState extends State<GroupDetail> {
     );
   }
 
+  void _setRoutinePicture(int rout_id) async {
+    var result = await RemoteDataSource.get(
+            "/group/${widget.group.groupId}/user/${rout_id}/image")
+        .then((res) {
+      if (res.statusCode == 200) {
+        var json = jsonDecode(res.body);
+        LOG.log(res.body);
+        setState(() {
+          routineImgs = (json["result"] as List)
+              .map((item) => GroupImg.fromJson(item))
+              .toList();
+        });
+      }
+      LOG.log('thisisroutineImgs: ${routineImgs}');
+    });
+
+    // ignore: use_build_context_synchronously
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useRootNavigator: true,
+      builder: (BuildContext context) {
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.8,
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            // TODO - 사진추가, 빈값일 경우 텅 보여주기
+            children: [
+              Container(
+                  child: Expanded(
+                child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3, // 각 행에 3개의 그리드 항목이 표시됩니다.
+                    childAspectRatio: 1.0, // 그리드 항목의 가로세로 비율을 1:1로 설정합니다.
+                  ),
+                  itemCount: routineImgs?.length ?? 0,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Column(
+                        children: [
+                          Container(
+                            height: MediaQuery.of(context).size.height *
+                                0.15, // 높이를 줄입니다.
+                            width: MediaQuery.of(context).size.width *
+                                0.3, // 너비를 줄입니다.
+                            margin: EdgeInsets.all(2),
+                            padding: EdgeInsets.all(2),
+                            child: Image.network(
+                              '${Secrets.REMOTE_SERVER_URL}/group-image/' +
+                                  routineImgs![index].todoImg,
+                              fit:
+                                  BoxFit.cover, // 이미지가 부모 위젯의 크기에 맞게 조절되도록 합니다.
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              )),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return !isLoading
@@ -214,23 +284,7 @@ class _GroupDetailState extends State<GroupDetail> {
                                     _showTodoEditor(context, groupRoutine[i]);
                                   },
                                   onTap: () {
-                                    showModalBottomSheet(
-                                      context: context,
-                                      isScrollControlled: true,
-                                      useRootNavigator: true,
-                                      builder: (BuildContext context) {
-                                        return Container(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.8,
-                                          child: Column(
-                                            // TODO - 사진추가
-                                            children: [Text('사용자 사진이 보여지는 화면')],
-                                          ),
-                                        );
-                                      },
-                                    );
+                                    _setRoutinePicture(groupRoutine[i].routId);
                                   },
                                   // ==== Group Routine ==== //
                                   child: Container(

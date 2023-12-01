@@ -24,8 +24,8 @@ class Routine {
       'rout_name': routName,
       'rout_desc': routDesc,
       'rout_repeat': routRepeat,
-      'routSrt': routSrt,
-      'routEnd': routEnd,
+      'rout_srt': routSrt,
+      'rout_end': routEnd,
     };
   }
 
