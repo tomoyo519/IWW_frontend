@@ -2,7 +2,7 @@ class Item {
   int id;
   String name;
   int itemType;
-  String? image;
+  String? path;
   String? description;
   String? petName;
   int? petExp;
@@ -11,7 +11,7 @@ class Item {
     required this.id,
     required this.name,
     required this.itemType,
-    this.image,
+    this.path,
     this.description,
     this.petName,
     this.petExp,
@@ -21,7 +21,8 @@ class Item {
       : id = json['item_id'],
         name = json['item_name'],
         description = json['item_desc'],
-        image = json['item_path'],
+        path = json['item_path'],
         petName = json['pet_name'],
-        petExp = json['pet_exp'];
+        petExp = json['pet_exp'],
+        itemType = json['item_type'];
 }
