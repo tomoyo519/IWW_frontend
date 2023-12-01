@@ -1,6 +1,7 @@
 class Item {
   int id;
   String name;
+  int itemType;
   String? image;
   String? description;
   String? petName;
@@ -9,6 +10,7 @@ class Item {
   Item({
     required this.id,
     required this.name,
+    required this.itemType,
     this.image,
     this.description,
     this.petName,
