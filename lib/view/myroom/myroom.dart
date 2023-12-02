@@ -59,6 +59,7 @@ class MyRoomPage extends StatelessWidget {
 
     return Center(
       child: Stack(fit: StackFit.expand, children: [
+        // 마이룸 화면 구성
         Positioned(
             top: 0,
             left: 0,
@@ -70,6 +71,7 @@ class MyRoomPage extends StatelessWidget {
                 duration: Duration(milliseconds: 500),
                 curve: Curves.easeInOut,
                 child: MyRoomComponent())),
+        // 하단 인벤토리 뷰
         Positioned(
             bottom: 0,
             left: 0,
@@ -97,8 +99,9 @@ class MyRoomComponent extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
+          // 방 렌더링
           RenderMyRoom(),
-          
+          // 펫 렌더링
           Positioned(
             left: 0,
             bottom: kBottomNavigationBarHeight
@@ -108,12 +111,14 @@ class MyRoomComponent extends StatelessWidget {
             height: MediaQuery.of(context).size.height,
             child: context.watch<MyRoomViewModel>().getPetWidget(),
           ),
+          // 상단 상태바
           Positioned(
               left: 0,
               right: 0,
               top: MediaQuery.of(context).size.height * 0.01,
               height: 150,
               child: UnderLayer()),
+          // 하단 버튼
           Positioned(
             left: 0,
             right: 0,
@@ -144,12 +149,12 @@ class RenderMyRoom extends StatelessWidget {
 
     // 1/3 step: 배경 지정
     return Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: roomState.getBackgroundImage(),
-            fit: BoxFit.cover,
-          ),
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: roomState.getBackgroundImage(),
+          fit: BoxFit.cover,
         ),
+      ),
       child: roomState.renderRoomObjects(),
     );
 
@@ -372,48 +377,47 @@ class BottomButtons extends StatelessWidget {
   }
 }
 
+//  // bottom buttons
+//   layers.children.add(Positioned(
+//     bottom: 0,
+//     child: Row(
+//       mainAxisSize: MainAxisSize.min,
+//       mainAxisAlignment: MainAxisAlignment.center,
+//       crossAxisAlignment: CrossAxisAlignment.end,
+//       children: [
+//         ElevatedButton(
+//             onPressed: () async {
+//               String? roomOwenerId = commentsProvider.roomOwnerId;
 
-  //  // bottom buttons
-  //   layers.children.add(Positioned(
-  //     bottom: 0,
-  //     child: Row(
-  //       mainAxisSize: MainAxisSize.min,
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       crossAxisAlignment: CrossAxisAlignment.end,
-  //       children: [
-  //         ElevatedButton(
-  //             onPressed: () async {
-  //               String? roomOwenerId = commentsProvider.roomOwnerId;
+//               final currentUser = await authService.getCurrentUser();
+//               // 로그인 유저 없으면 6
+//               var userId = (currentUser != null)
+//                   ? currentUser.user_id.toString()
+//                   : '6';
 
-  //               final currentUser = await authService.getCurrentUser();
-  //               // 로그인 유저 없으면 6
-  //               var userId = (currentUser != null)
-  //                   ? currentUser.user_id.toString()
-  //                   : '6';
-
-  //               if (context.mounted) {
-  //                 showCommentsBottomSheet(
-  //                   context,
-  //                   commentsProvider,
-  //                   userId,
-  //                   roomOwenerId,
-  //                 );
-  //               }
-  //             },
-  //             child: Text('방명록')),
-  //         SizedBox(width: 20),
-  //         ElevatedButton(
-  //             onPressed: () {
-  //               Navigator.pushNamed(context, '/inventory');
-  //             },
-  //             child: Text('인벤토리')),
-  //         SizedBox(width: 20),
-  //         ElevatedButton(
-  //             onPressed: () {
-  //               Navigator.pushNamedAndRemoveUntil(
-  //                 context, '/friends', (Route<dynamic> route) => false);
-  //             },
-  //             child: Text('친구목록')),
-  //       ],
-  //     ),
-  //   ));
+//               if (context.mounted) {
+//                 showCommentsBottomSheet(
+//                   context,
+//                   commentsProvider,
+//                   userId,
+//                   roomOwenerId,
+//                 );
+//               }
+//             },
+//             child: Text('방명록')),
+//         SizedBox(width: 20),
+//         ElevatedButton(
+//             onPressed: () {
+//               Navigator.pushNamed(context, '/inventory');
+//             },
+//             child: Text('인벤토리')),
+//         SizedBox(width: 20),
+//         ElevatedButton(
+//             onPressed: () {
+//               Navigator.pushNamedAndRemoveUntil(
+//                 context, '/friends', (Route<dynamic> route) => false);
+//             },
+//             child: Text('친구목록')),
+//       ],
+//     ),
+//   ));
