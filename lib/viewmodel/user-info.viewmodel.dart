@@ -37,9 +37,11 @@ class UserInfo extends ChangeNotifier {
   UserModel get userModel => _user;
   int get userId => _user.user_id;
   String get userName => _user.user_name;
+  String get userTel => _userTel;
 
   int get petId => _petId;
   int get userCash => _userCash;
+  int get userHp => _userHp;
   int get petExp => _petExp;
   String get mainPetName => _petName;
 

@@ -31,6 +31,7 @@ final Map<String, WidgetBuilder> ROUTE_TABLE = {
   '/myroom': (context) => LoginWrapper(child: MyRoom()),
   '/group': (context) => LoginWrapper(child: MyGroupPage()),
   '/mypage': (context) => LoginWrapper(child: MyPage()),
+
   '/friends': (context) => LoginWrapper(child: MyFriend()),
   '/shop': (context) => LoginWrapper(child: ShopPage()),
   '/notification': (context) => LoginWrapper(child: MyNotification()),
