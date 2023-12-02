@@ -110,7 +110,7 @@ class MyRoomComponent extends StatelessWidget {
             left: 0,
             right: 0,
             bottom: kBottomNavigationBarHeight +
-                MediaQuery.of(context).size.height * 0.1,
+                MediaQuery.of(context).size.height * 0.12,
             height: 50,
             child: BottomButtons(),
           ),
