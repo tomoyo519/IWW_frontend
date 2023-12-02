@@ -98,12 +98,20 @@ class MyRoomComponent extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           RenderMyRoom(),
-          OrbitingWidget(),
+          
+          Positioned(
+            left: 0,
+            bottom: kBottomNavigationBarHeight
+            // + MediaQuery.of(context).size.height * 0.05
+            ,
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            child: context.watch<MyRoomViewModel>().getPetWidget(),
+          ),
           Positioned(
               left: 0,
               right: 0,
-              bottom: kBottomNavigationBarHeight +
-                  MediaQuery.of(context).size.height * 0.15,
+              top: MediaQuery.of(context).size.height * 0.01,
               height: 150,
               child: UnderLayer()),
           Positioned(
@@ -125,20 +133,15 @@ class RenderMyRoom extends StatelessWidget {
 
   List<Widget> renderRoomObjects(BuildContext context) {
     var roomState = context.watch<MyRoomViewModel>();
+    LOG.log('방에 있는 오브젝트 개수: ${roomState.roomObjects.length}');
 
     List<Widget> layers = [];
-
-    // 펫 // TODO 추후 삭제 예정
-    // layers.add(roomState.getPetWidget());
-
-    LOG.log('[renderRoomObjects] roomObjects: ${roomState.roomObjects.length}');
-
-    // 가구들
+    // 2/3 step: 가구 추가
     for (int i = 0; i < roomState.roomObjects.length; i++) {
       var element = roomState.roomObjects[i];
       if (element.itemType == 2) {
         layers.add(Positioned(
-          top: 50 + (i % 2 == 0 ? 0 : 100),
+          top: 200 + (i % 2 == 0 ? 0 : 100),
           left: i * 100.0,
           width: 100,
           height: 100,
@@ -165,7 +168,7 @@ class RenderMyRoom extends StatelessWidget {
       print("[log/myroom]: $e");
     }
 
-    // 배경 안에 stack으로 object를 쌓는다
+    // 1/3 step: 배경 지정
     return Container(
         decoration: BoxDecoration(
           image: DecorationImage(
