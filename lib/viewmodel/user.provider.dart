@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/model/user/user.model.dart';
@@ -10,52 +12,38 @@ import 'package:iww_frontend/utils/logger.dart';
 class UserInfo extends ChangeNotifier {
   final AuthService _authService;
   final UserRepository _repository;
-  UserModel _user;
+  UserModel _user; // fetch result
 
   UserInfo(
     this._authService,
     this._repository,
     this._user,
   ) {
-    _userName = _user.user_name;
-    _userTel = _user.user_tel;
-    _userHp = _user.user_hp;
+    // 사용자가 변경 가능한 필드
+    _setStatus(_user);
 
-    _userCash = _user.user_cash;
-    _loginCnt = user.login_cnt;
-
-    // === Pet === //
-    _mainPet = 1;
-    _mainPerLv = 9;
-    _mainPetExp = 180;
-    _mainPetName = "왕귀여워";
-
-    listenEvents();
+    _listenEvents();
   }
 
   // === Status === //
-  // TODO: 객체로 묶을 수 있으면 묶기
   late String _userName;
   late String _userTel;
   late int _userHp;
   late int _userCash;
-  late int _loginCnt;
 
-  late int _mainPet;
-  late int _mainPerLv;
-  late int _mainPetExp;
-  late String _mainPetName;
+  late int _petId;
+  late int _petExp;
+  late String _petName;
 
   // === Getters === //
   UserModel get user => _user;
   int get userId => _user.user_id;
   String get userName => _user.user_name;
 
-  int get petId => _mainPet;
-  int get petLv => _mainPerLv;
+  int get petId => _petId;
   int get userCash => _userCash;
-  int get petExp => _mainPetExp;
-  String get mainPetName => _mainPetName;
+  int get petExp => _petExp;
+  String get mainPetName => _petName;
 
   // === Setters === //
   bool _waiting = true;
@@ -71,7 +59,7 @@ class UserInfo extends ChangeNotifier {
   }
 
   set petExp(int exp) {
-    _mainPetExp = exp;
+    _petExp = exp;
     notifyListeners();
   }
 
@@ -86,15 +74,42 @@ class UserInfo extends ChangeNotifier {
   /// 서비스 서버의 User Table이 업데이트된 경우
   /// _fetchUser로 다시 정보를 받아옵니다.
   /// */
-  void listenEvents() {
+  void _listenEvents() {
     EventService.stream.listen((event) async {
       if (event.type == EventType.status) {
-        UserModel prev = _user;
-        await _fetchUser();
+        // 유저 리워드 상태 업데이트 알림
+        Map<String, int> message = json.decode(
+          event.message!,
+        );
 
-        UserModel curr = _user;
-        _triggerEvent(prev, curr);
+        int prevCash = _userCash;
+        _userCash = message['user_cash']!;
+        _petExp = message['pet_exp']!;
+
+        // 캐시 업데이트 이벤트
+        int cash = _userCash - prevCash;
+        if (cash == 100) {
+          // EventService.publish(event)
+          EventService.publish(Event(
+            type: EventType.show_first_todo_modal,
+            message: "첫 할일 달성 완료!",
+          ));
+        } else {
+          bool value = cash > 0;
+          EventService.publish(Event(
+            type: EventType.show_todo_snackbar,
+            message: "할일을 ${value ? "달성" : "취소"}했어요! $cash",
+          ));
+        }
+
+        // 펫 진화 이벤트
+        // if(_petId.)
       }
+
+      // UserModel prev = _user;
+      // await _fetchUser();
+      // UserModel curr = _user;
+      // _triggerEvent(prev, curr);
     });
   }
 
@@ -105,7 +120,7 @@ class UserInfo extends ChangeNotifier {
       _authService.user = null; // 인가 정보를 삭제
       return;
     }
-    _user = fetched;
+    _setStatus(fetched);
   }
 
   Future<void> updateUserHp(int hp) async {
@@ -114,7 +129,7 @@ class UserInfo extends ChangeNotifier {
   }
 
   Future<void> updatePetExp(int exp) async {
-    _mainPetExp = exp;
+    _petExp = exp;
     waiting = false;
   }
 
@@ -124,23 +139,36 @@ class UserInfo extends ChangeNotifier {
   }
 
   // ==== 유저 정보 변경에 따른 이벤트 트리거 ==== //
-  void _triggerEvent(UserModel prev, UserModel curr) {
-    // 캐시 업데이트 이벤트
-    int cash = curr.user_cash - prev.user_cash;
-    if (cash == 100) {
-      // EventService.publish(event)
-      EventService.publish(Event(
-        type: EventType.show_first_todo_modal,
-        message: "첫 할일 달성 완료!",
-      ));
-    } else {
-      bool value = cash > 0;
-      EventService.publish(Event(
-        type: EventType.show_todo_snackbar,
-        message: "할일을 ${value ? "달성" : "취소"}했어요! $cash",
-      ));
-    }
+  // void _triggerEvent(EventType type, ) {
+  //   // 캐시 업데이트 이벤트
+  //   int cash = curr.user_cash - prev.user_cash;
+  //   if (cash == 100) {
+  //     // EventService.publish(event)
+  //     EventService.publish(Event(
+  //       type: EventType.show_first_todo_modal,
+  //       message: "첫 할일 달성 완료!",
+  //     ));
+  //   } else {
+  //     bool value = cash > 0;
+  //     EventService.publish(Event(
+  //       type: EventType.show_todo_snackbar,
+  //       message: "할일을 ${value ? "달성" : "취소"}했어요! $cash",
+  //     ));
+  //   }
 
-    // 펫 진화 이벤트
+  //   // 펫 진화 이벤트
+  // }
+
+  void _setStatus(UserModel user) {
+    // 사용자가 변경 가능한 필드
+    _userName = user.user_name;
+    _userTel = user.user_tel;
+    _userHp = user.user_hp;
+    _userCash = user.user_cash;
+
+    // === Pet === //
+    _petId = 1;
+    _petExp = 180;
+    _petName = "왕귀여워";
   }
 }

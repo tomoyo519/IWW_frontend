@@ -98,8 +98,14 @@ class _RenderPageState extends State<RenderPage> {
   StreamSubscription? _sub;
 
   @override
-  void initState() {
+  void initState() async {
     super.initState();
+
+    // * ======================= * //
+    // *                         * //
+    // *     Initialize User     * //
+    // *                         * //
+    // * ======================= * //
 
     // 1. 카카오 로그인 로직
     _sub = widget.auth.listenRedirect();
@@ -124,6 +130,7 @@ class _RenderPageState extends State<RenderPage> {
     //   login_seq: 0,
     // );
 
+    await widget.auth.initializeTodo();
     widget.auth.waiting = false;
   }
 

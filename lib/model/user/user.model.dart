@@ -15,6 +15,9 @@ class UserModel extends ChangeNotifier {
   final int login_seq;
   final String last_login;
 
+  late int todo_today_total;
+  late int todo_today_done;
+
   UserModel({
     required this.user_id,
     required this.user_name,
@@ -25,7 +28,10 @@ class UserModel extends ChangeNotifier {
     required this.login_cnt,
     required this.login_seq,
     required this.last_login,
-  });
+  })  :
+        // late constructor
+        todo_today_done = 0,
+        todo_today_total = 0;
 
   factory UserModel.fromJson(Map<String, dynamic> data) {
     return UserModel(
@@ -40,4 +46,6 @@ class UserModel extends ChangeNotifier {
       last_login: data['last_login'],
     );
   }
+
+  // void initTodoFields(int todo_t)
 }

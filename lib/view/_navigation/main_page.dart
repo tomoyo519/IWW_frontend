@@ -34,17 +34,21 @@ class _MainPageState extends State<MainPage> {
     _pageIdx = 0; // 초기 탭을 지정합니다
 
     // * ==== Event Listener ==== * //
-    EventService.stream.listen((event) {
-      if (event.type == EventType.show_todo_snackbar) {
-        Future.microtask(() {
-          showCustomSnackBar(
-            context,
-            text: event.message ?? "",
-            icon: Icon(Icons.notifications),
+    EventService.stream.listen(
+      (event) {
+        if (event.type == EventType.show_todo_snackbar) {
+          Future.microtask(
+            () {
+              showCustomSnackBar(
+                context,
+                text: event.message ?? "",
+                icon: Icon(Icons.notifications),
+              );
+            },
           );
-        });
-      }
-    });
+        }
+      },
+    );
   }
 
   // 무조건 있어야함!

@@ -83,7 +83,6 @@ class AuthService extends ChangeNotifier {
 
     if (jsonUserInfo == null) {
       LOG.log("Failed to login in local.");
-      waiting = false;
       return;
     }
 
@@ -95,12 +94,43 @@ class AuthService extends ChangeNotifier {
     // 토큰 세팅하기
     var token = await LocalStorage.readKey('jwt');
     RemoteDataSource.setAuthHeader("Bearer $token");
-    waiting = false;
   }
 
   // =============== //
   //     Helpers     //
   // =============== //
+
+  // 유저 로그인이 완료된 경우 오늘자 투두 생성
+  // 투두 정보 가져와서 세팅해주기
+  Future<void> initializeTodo() async {
+    if (_user == null) {
+      LOG.log("Can't initialize todo of unknown user.");
+      return;
+    }
+
+    await RemoteDataSource.post("/todo/user/${_user!.user_id}").then(
+      (response) {
+        if (response.statusCode == 201) {
+          var jsonBody = jsonDecode(response.body);
+          LOG.log("Initialize todo: $jsonBody");
+        }
+      },
+    );
+
+    await RemoteDataSource.get('/todo/today/count').then(
+      (response) {
+        if (response.statusCode == 200) {
+          var jsonBody = jsonDecode(response.body);
+          LOG.log("Today's todo count: $jsonBody");
+        }
+      },
+    );
+  }
+
+  // 할일 및 펫 정보 가져와서 초기 세팅
+  Future<void> initializeItems() async {
+    await RemoteDataSource.get("/item");
+  }
 
   // 서비스 서버로부터 JWT 토큰 수신
   StreamSubscription? listenRedirect() {
@@ -109,16 +139,13 @@ class AuthService extends ChangeNotifier {
       if (link != null) {
         LOG.log("App link received");
         await _handleResponse(link);
-        waiting = false;
       } else {
         LOG.log("Auth status: failed");
         status = AuthStatus.failed;
-        waiting = false;
       }
     }, onError: (error) {
       LOG.log("Auth status: failed. $error");
       status = AuthStatus.failed;
-      waiting = false;
     });
   }
 

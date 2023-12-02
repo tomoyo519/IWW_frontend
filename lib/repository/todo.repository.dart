@@ -11,9 +11,6 @@ class TodoRepository {
   ///         Get        ///
   /// ================== ///
   Future<List<Todo>> getTodos(int? userId) async {
-    // var rtn = await DummyData.todoDummy();
-    // LOG.log("$rtn");
-    // return rtn;
     return await RemoteDataSource.get("/todo/user/${userId ?? 1}")
         .then((response) {
       if (response.statusCode == 200) {
@@ -78,7 +75,7 @@ class TodoRepository {
   }
 
   /// ================== ///
-  ///       Patch       ///
+  ///       Patch        ///
   /// ================== ///
   Future<TodoUpdateDto?> checkNormalTodo(String id, bool checked) async {
     return await RemoteDataSource.patch(
