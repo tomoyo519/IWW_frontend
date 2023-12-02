@@ -65,8 +65,12 @@ class MyRoomViewModel with ChangeNotifier {
         return ModelViewer(
           src: 'assets/pets/${element.path}',
           autoPlay: true,
+          animationName: "walk",
           cameraOrbit: "40deg 55deg 0.4m",
-          cameraTarget: "0.5m 0.5m 0.5m",
+          cameraTarget: "0.5m 0m 0m",
+          interactionPrompt: InteractionPrompt.none,
+          autoRotate: true,
+          rotationPerSecond: "0.5rad",
         );
       }
     }
@@ -80,6 +84,7 @@ class MyRoomViewModel with ChangeNotifier {
       ar: true,
       disableZoom: true,
       autoPlay: true,
+      interactionPrompt: InteractionPrompt.none,
       cameraControls: true,
       cameraOrbit: "40deg 55deg 0.4m",
       cameraTarget: "0.5m 0.5m 0.5m",

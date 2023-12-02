@@ -30,11 +30,11 @@ class _OrbitingWidgetState extends State<OrbitingWidget>
 
     _controller.addListener(() {
       setState(() {
-        double width = MediaQuery.of(context).size.width / 2; // 화면의 가로 중앙값
-        double height = MediaQuery.of(context).size.height / 2; // 화면의 세로 중앙값
+        double width = MediaQuery.of(context).size.width / 6; // 화면의 가로 중앙값
+        double height = MediaQuery.of(context).size.height / 22; // 화면의 세로 중앙값
 
-        _left = cos(_animation.value) * width * 0.7; // 타원의 가로 반경
-        _top = sin(_animation.value) * height * 0.2; // 타원의 세로 반경
+        _left = width + cos(_animation.value) * 20; // 타원의 가로 반경
+        _top = height + sin(_animation.value) * 10; // 타원의 세로 반경
       });
     });
   }
@@ -53,7 +53,11 @@ class _OrbitingWidgetState extends State<OrbitingWidget>
     return Positioned(
       left: _left,
       top: _top,
-      child: SizedBox(height: 300, width: 300, child: roomState.getPetWidget()),
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        child: roomState.getPetWidget(),
+      ),
     );
   }
 }
