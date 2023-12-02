@@ -39,7 +39,6 @@ class UserProvider extends ChangeNotifier {
   late String _mainPetName;
 
   // === Getters === //
-
   int get petId => _mainPet;
   int get petLv => _mainPerLv;
   int get userCash => _userCash;
