@@ -4,7 +4,7 @@ import 'package:iww_frontend/repository/room.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';
-import 'package:iww_frontend/view/_navigation/main_page.dart';
+import 'package:iww_frontend/view/myroom/orbitting_widget.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
@@ -91,22 +91,26 @@ class MyRoomComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    LOG.log('############## bottom bar height: ${kBottomNavigationBarHeight}');
+
     return Expanded(
       child: Stack(
         fit: StackFit.expand,
         children: [
           RenderMyRoom(),
-          // Positioned(height: 800, bottom: 100, child: UnderLayer()),
+          OrbitingWidget(),
           Positioned(
               left: 0,
               right: 0,
-              bottom: MediaQuery.of(context).padding.bottom + 160,
+              bottom: kBottomNavigationBarHeight +
+                  MediaQuery.of(context).size.height * 0.15,
               height: 150,
               child: UnderLayer()),
           Positioned(
             left: 0,
             right: 0,
-            bottom: kBottomNavigationBarHeight + 80,
+            bottom: kBottomNavigationBarHeight +
+                MediaQuery.of(context).size.height * 0.12,
             height: 50,
             child: BottomButtons(),
           ),
@@ -116,9 +120,39 @@ class MyRoomComponent extends StatelessWidget {
   }
 }
 
-// 나의 펫 렌더링
 class RenderMyRoom extends StatelessWidget {
   const RenderMyRoom({super.key});
+
+  List<Widget> renderRoomObjects(BuildContext context) {
+    var roomState = context.watch<MyRoomViewModel>();
+
+    List<Widget> layers = [];
+
+    // 펫 // TODO 추후 삭제 예정
+    // layers.add(roomState.getPetWidget());
+
+    LOG.log('[renderRoomObjects] roomObjects: ${roomState.roomObjects.length}');
+
+    // 가구들
+    for (int i = 0; i < roomState.roomObjects.length; i++) {
+      var element = roomState.roomObjects[i];
+      if (element.itemType == 2) {
+        layers.add(Positioned(
+          top: 50 + (i % 2 == 0 ? 0 : 100),
+          left: i * 100.0,
+          width: 100,
+          height: 100,
+          child: Image.asset(
+            'assets/furniture/${element.path}',
+            fit: BoxFit.cover,
+          ),
+        ));
+      }
+    }
+
+    LOG.log('############### 갔니?????');
+    return layers;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -131,15 +165,16 @@ class RenderMyRoom extends StatelessWidget {
       print("[log/myroom]: $e");
     }
 
+    // 배경 안에 stack으로 object를 쌓는다
     return Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: roomState.getBackground(),
+            image: roomState.getBackgroundImage(),
             fit: BoxFit.cover,
           ),
         ),
         child: Stack(
-            alignment: Alignment.center, children: roomState.getRoomObjects()));
+            alignment: Alignment.center, children: renderRoomObjects(context)));
 
     // 유저의 펫 정보 불러오기
 
@@ -197,7 +232,7 @@ class _StatusBarState extends State<StatusBar> with TickerProviderStateMixin {
         _hp >= 1 ? _hp : _hp += 0.1;
         _exp >= 1 ? _exp : _exp += 0.2;
 
-        LOG.log("HP: $_hp, EXP: $_exp");
+        // LOG.log("HP: $_hp, EXP: $_exp");
       });
     });
   }
