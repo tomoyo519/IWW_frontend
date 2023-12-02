@@ -8,7 +8,7 @@ class PetModels {
     }
 
     LOG.log('NO SUCH PET: $petName');
-    return _pets['kitsune']!;
+    return _pets['구미호_03']!;
   }
 
   // 이 두가지는 개입하는 순간 모델링 속도가 느려짐
@@ -16,7 +16,7 @@ class PetModels {
   // fieldOfView: "120deg",
   // 2 2 0 (좀 작은 버전)
   static final Map<String, ModelViewer> _pets = {
-    '구미호03': ModelViewer(
+    '구미호_03': ModelViewer(
       src: 'assets/pets/kitsune.glb',
       interactionPrompt: InteractionPrompt.none,
       autoPlay: true,
@@ -30,7 +30,7 @@ class PetModels {
       autoRotateDelay: 0,
       rotationPerSecond: "0.6rad",
     ),
-    '구미호02': ModelViewer(
+    '구미호_02': ModelViewer(
       src: 'assets/pets/mid_fox.glb',
       interactionPrompt: InteractionPrompt.none,
       autoPlay: true,
@@ -45,7 +45,7 @@ class PetModels {
       autoRotateDelay: 0,
       rotationPerSecond: "0.7rad",
     ),
-    '구미호01': ModelViewer(
+    '구미호_01': ModelViewer(
       src: 'assets/pets/small_fox.glb',
       interactionPrompt: InteractionPrompt.none,
       autoPlay: true,

@@ -27,9 +27,17 @@ class MyRoomViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void addItemToMyRoom(int itemId) async {
+  Future<bool> addItemToMyRoom(int itemId, itemType) async {
+    if (roomObjects.map((e) => e.itemType).contains(itemType)) {
+      LOG.log('펫과 배경화면은 하나만 있어요');
+
+      
+      return false;
+    }
+    
     await _roomRepository.addItemToMyRoom(_userId, itemId);
     fetchMyRoom();
+    return true;
   }
 
   void removeItemFromMyRoom(int itemId) async {
@@ -91,7 +99,7 @@ class MyRoomViewModel with ChangeNotifier {
     String petName = '';
     for (var element in roomObjects) {
       if (element.itemType == 1) {
-        petName = element.path!.split('.')[0];
+        petName = element.name.split('.')[0];
         break;
       }
     }
