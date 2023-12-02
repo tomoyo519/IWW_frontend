@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/repository/room.repository.dart';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
@@ -20,7 +20,7 @@ class Inventory extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-            create: (_) => MyRoomViewModel(userInfo.user_id, RoomRepository())),
+            create: (_) => MyRoomViewModel(userInfo.userId, RoomRepository())),
       ],
       child: InventoryView(),
     );

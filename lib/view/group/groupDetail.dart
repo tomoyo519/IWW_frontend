@@ -4,7 +4,6 @@ import 'package:iww_frontend/model/group/group.model.dart';
 import 'package:iww_frontend/model/routine/routine.model.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/model/group/groupImg.model.dart';
-import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
@@ -14,6 +13,7 @@ import 'package:iww_frontend/view/group/groupMain.dart';
 import 'package:iww_frontend/view/todo/todo_editor.dart';
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
@@ -146,9 +146,9 @@ class _GroupDetailState extends State<GroupDetail> {
 
   // 할일 수정
   void _showTodoEditor(BuildContext context, Routine? routine) {
-    final userInfo = Provider.of<UserInfo>(context, listen: false);
+    final userInfo = context.read<UserInfo>();
     final groupmodel = context.read<MyGroupViewModel>();
-    Todo? todo = routine?.generateTodo(userInfo.user_id);
+    Todo? todo = routine?.generateTodo(userInfo.userId);
 
     showModalBottomSheet(
       context: context,

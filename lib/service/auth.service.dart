@@ -7,7 +7,7 @@ import 'package:iww_frontend/datasource/localStorage.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/main.dart';
 import 'package:iww_frontend/model/auth/login_result.dart';
-import 'package:iww_frontend/model/user/user-info.model.dart';
+import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:iww_frontend/utils/logger.dart';
@@ -21,9 +21,9 @@ class AuthService extends ChangeNotifier {
   // =============== //
   //      Status     //
   // =============== //
-  UserInfo? _user;
-  UserInfo? get user => _user;
-  set user(UserInfo? val) {
+  UserModel? _user;
+  UserModel? get user => _user;
+  set user(UserModel? val) {
     _user = val;
     notifyListeners();
   }
@@ -35,6 +35,9 @@ class AuthService extends ChangeNotifier {
     notifyListeners();
   }
 
+  String? _kakaoId;
+  String? get kakaoId => _kakaoId;
+
   AuthStatus _status = AuthStatus.waiting;
   AuthStatus get status => _status;
   set status(AuthStatus val) {
@@ -43,63 +46,35 @@ class AuthService extends ChangeNotifier {
   }
 
   StreamSubscription? _sub;
+  StreamSubscription? get stream => _sub;
+
+  // =============== //
+  //      SignUp     //
+  // =============== //
+  Future<UserModel?> signup(String name, String tel) async {
+    if (_kakaoId == null) return null;
+    return await userRepository.createUser(name, tel, _kakaoId!);
+  }
 
   // =============== //
   //      Login      //
   // =============== //
   Future<void> login() async {
     // 카카오 인증 시작
-    AuthCodeClient.instance.authorize(
+    await AuthCodeClient.instance
+        .authorize(
       clientId: Secrets.KAKAO_REST_API_KEY,
+      // TODO: Fix to REMOTE_SERVER_URL
       redirectUri: '${Secrets.TEST_SERVER_URL}/auth',
-    );
-
-    // 서비스 서버가 보내는 JWT 토큰 수신
-    _sub = await _onRedirected();
-
-    _sub?.cancel();
-    // AuthStatus status = await _onRedirected();
-
-    // 회원가입이 필요한 경우
-    if (status == AuthStatus.permission) {
-      LOG.log("User need to signup");
-      return _navigate("/signup");
-    }
-
-    // 인증에 실패한 경우
-    if (status == AuthStatus.failed) {
-      LOG.log("Auth status: failed");
-      return _navigate("/landing");
-    }
-
-    String? token = await LocalStorage.readKey("jwt");
-    if (token == null) {
-      return _navigate("/landing");
-    }
-
-    // 토큰과 함꼐 서버로 로그인 요청
-    Response response = await RemoteDataSource.get(
-      "/auth/login",
-      headers: {"Authorization": "Bearer $token"},
-    );
-
-    // 응답 파싱
-    Map<String, dynamic> body = json.decode(response.body);
-    if (response.statusCode != 200) {
-      LOG.log("Server login failed ${body.toString()}");
-      return _navigate("/landing");
-    }
-
-    // 로컬스토리지에 저장 후
-    await LocalStorage.saveKey("user_info", jsonEncode(body['result']));
-
-    // 유저 정보로 가져오기
-    user = UserInfo.fromJson(body['result']);
-    return _navigate("/todo");
+    )
+        .onError((error, stackTrace) {
+      status = AuthStatus.failed;
+      return 'error';
+    });
   }
 
   // =============== //
-  //      Login      //
+  //   Local Login   //
   // =============== //
 
   Future<void> localLogin() async {
@@ -108,47 +83,70 @@ class AuthService extends ChangeNotifier {
 
     if (jsonUserInfo == null) {
       LOG.log("Failed to login in local.");
-      return _navigate("/landing");
+      return;
     }
 
     // 유저 정보로 가져오기
     Map<String, dynamic> userInfo = json.decode(jsonUserInfo);
     LOG.log("Local login success! ${userInfo['user_name']}");
-    user = UserInfo.fromJson(userInfo);
-    return _navigate("/todo");
+    user = UserModel.fromJson(userInfo);
+
+    // 토큰 세팅하기
+    var token = await LocalStorage.readKey('jwt');
+    RemoteDataSource.setAuthHeader("Bearer $token");
   }
 
   // =============== //
   //     Helpers     //
   // =============== //
 
+  // 유저 로그인이 완료된 경우 오늘자 투두 생성
+  // 투두 정보 가져와서 세팅해주기
+  Future<void> initializeTodo() async {
+    if (_user == null) {
+      LOG.log("Can't initialize todo of unknown user.");
+      return;
+    }
+
+    await RemoteDataSource.post("/todo/user/${_user!.user_id}").then(
+      (response) {
+        if (response.statusCode == 201) {
+          var jsonBody = jsonDecode(response.body);
+          LOG.log("Initialize todo: $jsonBody");
+        }
+      },
+    );
+
+    await RemoteDataSource.get('/todo/today/count').then(
+      (response) {
+        if (response.statusCode == 200) {
+          var jsonBody = jsonDecode(response.body);
+          LOG.log("Today's todo count: $jsonBody");
+        }
+      },
+    );
+  }
+
+  // 할일 및 펫 정보 가져와서 초기 세팅
+  Future<void> initializeItems() async {
+    await RemoteDataSource.get("/item");
+  }
+
   // 서비스 서버로부터 JWT 토큰 수신
-  Future<StreamSubscription> _onRedirected() async {
+  StreamSubscription? listenRedirect() {
+    LOG.log("Start to listen app link");
     return linkStream.listen((String? link) async {
-      LOG.log("listen stream...");
       if (link != null) {
+        LOG.log("App link received");
         await _handleResponse(link);
       } else {
+        LOG.log("Auth status: failed");
         status = AuthStatus.failed;
-        return;
       }
     }, onError: (error) {
-      LOG.log("Error: $error");
+      LOG.log("Auth status: failed. $error");
       status = AuthStatus.failed;
-      return;
     });
-
-    // try {
-    //   final link = await getInitialLink();
-    //   if (link != null) {
-    //     // throw Exception("No redirected link.");
-
-    //   } else
-
-    // } catch (error) {
-    //   LOG.log("Error while handling $error");
-    //   return AuthStatus.failed;
-    // }
   }
 
   Future<void> _handleResponse(String link) async {
@@ -156,24 +154,44 @@ class AuthService extends ChangeNotifier {
     String token = params['token']!;
     String kakaoId = params['kakao_id']!;
 
+    // 회원가입이 필요한 경우
     if (token == 'access_denied') {
-      kakaoId = kakaoId;
+      _kakaoId = kakaoId;
+      LOG.log("User need to signup");
       status = AuthStatus.permission;
+      // return _navigate("/signup");
+    }
+
+    // 토큰과 함꼐 서버로 유저 정보 요청
+    RemoteDataSource.setAuthHeader("Bearer $token");
+    Response response = await RemoteDataSource.get("/user");
+
+    // 응답 파싱
+    Map<String, dynamic> body = json.decode(response.body);
+    if (response.statusCode != 200) {
+      LOG.log("Server login failed ${body.toString()}");
+      status = AuthStatus.failed;
+    }
+
+    // 토큰과 유저 정보 로컬스토리지에 저장 후
+    await LocalStorage.saveKey("jwt", token);
+    LOG.log("User Logged in! ${body['result']}");
+    await LocalStorage.saveKey(
+      "user_info",
+      jsonEncode(body['result']),
+    );
+
+    String? userInfoStr = await LocalStorage.readKey('user_info');
+    if (userInfoStr == null) {
+      LOG.log("이런 예외는 생각지도 못했어요.. $userInfoStr");
+      LocalStorage.clearKey();
+      status = AuthStatus.failed;
       return;
     }
 
-    await LocalStorage.saveKey("jwt", token);
+    // 상태로 가져오기
+    user = UserModel.fromJson(jsonDecode(userInfoStr));
     status = AuthStatus.success;
-    return;
-  }
-
-  // 내비게이션
-  Future<void> _navigate(String path, {Object? arguments}) async {
-    GlobalNavigator.navigatorKey.currentState?.pushNamedAndRemoveUntil(
-      path,
-      (route) => false,
-      arguments: arguments,
-    );
-    waiting = false;
+    LOG.log("User Logged in!");
   }
 }

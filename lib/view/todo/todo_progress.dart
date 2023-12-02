@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
-import 'package:iww_frontend/viewmodel/user.provider.dart';
+import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
@@ -14,7 +13,7 @@ class TodoProgress extends StatelessWidget {
   Widget build(BuildContext context) {
     DateTime today = DateTime.now().add(Duration(hours: 9));
     final viewmodel = context.watch<TodoViewModel>();
-    final usermodel = context.watch<UserProvider>();
+    final usermodel = context.watch<UserInfo>();
 
     final cash = NumberFormat('#,##0').format(
       usermodel.userCash,

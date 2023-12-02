@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/model/user/user-info.model.dart';
+import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 
@@ -38,14 +38,9 @@ class SignUpViewModel extends ChangeNotifier {
   }
 
   // 회원가입
-  // Future<UserInfo?> signUp() async {
-  //   await authService.signup(_name, _tel);
-  //   // notifyListeners();
-  //   return authService.user;
-  // }
-
-  // // 연결 끊기
-  // Future<void> disconnect() async {
-  //   await authService.disconnect();
-  // }
+  Future<UserModel?> signUp() async {
+    await authService.signup(_name, _tel);
+    // notifyListeners();
+    return authService.user;
+  }
 }
