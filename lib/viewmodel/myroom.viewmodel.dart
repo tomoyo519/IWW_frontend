@@ -5,8 +5,6 @@ import 'package:iww_frontend/model/pet/pet_models.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
 
-import 'package:iww_frontend/model/pet/pet_models.dart';
-
 class MyRoomViewModel with ChangeNotifier {
   final RoomRepository _roomRepository;
   final int _userId; // 로그인한 사용자의 id
@@ -57,7 +55,7 @@ class MyRoomViewModel with ChangeNotifier {
         return AssetImage('assets/bg/${element.path}');
       }
     }
-    // default background
+    LOG.log("NO BACKGROUND IMAGE. default: bg15.png");
     return AssetImage('assets/bg/bg15.png');
   }
 
