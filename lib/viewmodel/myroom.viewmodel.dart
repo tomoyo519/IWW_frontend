@@ -9,16 +9,16 @@ class MyRoomViewModel with ChangeNotifier {
   final RoomRepository _roomRepository;
   final int _userId; // 로그인한 사용자의 id
   List<Item> inventory = []; // 사용자의 인벤토리
-  int roomOwner; // 현재 있는 방의 주인 (기본값은 로그인한 사용자의 id)
+  int _roomOwner; // 현재 있는 방의 주인 (기본값은 로그인한 사용자의 id)
   List<Item> roomObjects = []; // 현재 방에 존재하는 오브젝트 리스트
 
-  MyRoomViewModel(this._userId, this._roomRepository) : roomOwner = _userId {
+  MyRoomViewModel(this._userId, this._roomRepository) : _roomOwner = _userId {
     fetchInventory();
     fetchMyRoom();
   }
 
   void fetchMyRoom() async {
-    roomObjects = await _roomRepository.getItemsOfMyRoom(roomOwner);
+    roomObjects = await _roomRepository.getItemsOfMyRoom(_roomOwner);
     notifyListeners();
   }
 
@@ -37,12 +37,12 @@ class MyRoomViewModel with ChangeNotifier {
     fetchMyRoom();
   }
 
-  void changeRoomOwner(int userId) {
-    roomOwner = userId;
+  set roomOwner(int userId) {
+    _roomOwner = userId;
     fetchMyRoom();
   }
 
-  bool isMyRoom() => _userId == roomOwner;
+  bool isMyRoom() => _userId == _roomOwner;
 
   /// itemType
   /// 1. pet
@@ -97,7 +97,5 @@ class MyRoomViewModel with ChangeNotifier {
     }
     // default pet
     return PetModels.getPetWidget(petName);
-  }
-
- 
+  } 
 }
