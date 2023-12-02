@@ -48,32 +48,35 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
   }
 
   List<Group> groups = [];
-  bool waiting = true;
-  bool _isDisposed = false;
-
-  @override
-  void dispose() {
-    _isDisposed = true;
-    super.dispose();
+  bool iswait = true;
+  bool get waiting => iswait;
+  set waiting(bool val) {
+    iswait = val;
+    notifyListeners();
   }
 
   Future<void> fetchMyGroupList() async {
+    // waiting = true;
+    LOG.log('fetchMygroupList 실행');
     try {
       // int userId = _userInfo.user_id;
       // TODO - userId 안들어옴;
-      LOG.log('왜 실행안되?????????????');
-      groups = (await _groupRepository.getMyGroupList(1)) ?? [];
-
-      LOG.log('야호:::::${groups}');
-      waiting = false;
+      List<Group>? data = await _groupRepository.getMyGroupList(1);
+      // 이름으로 정렬하여 넘겨봅시다
+      data?.sort((a, b) => a.grpName.compareTo(b.grpName));
+      groups = data ?? [];
+      LOG.log('notify 전 ${groups.length}');
+      // waiting = false;
+      // notifyListeners();
     } catch (err) {
-      LOG.log('error: $err');
-      waiting = false;
       groups = [];
+      LOG.log('error: $err');
+      // waiting = false;
+      // notifyListeners();
     } finally {
       notifyListeners();
       waiting = false;
-      if (!_isDisposed) {}
+      LOG.log("notify 후 ${groups.length}");
     }
   }
 
@@ -91,9 +94,10 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
 
       bool rest = (await _groupRepository.createTodo(json));
       LOG.log('rest:$rest');
-
-      fetchMyGroupList();
-
+      // if(rest == true){
+      //   groups.add()
+      // }
+      //  ();
       return true;
     } catch (err) {
       LOG.log('err:$err');
@@ -157,6 +161,11 @@ class GroupDetailModel extends ChangeNotifier {
       grpMems = (await _groupRepository.getMember(1) ?? []);
 
       waiting = false;
+
+      if (!_isDisposed) {
+        waiting = false;
+        notifyListeners();
+      }
     } catch (err) {
       waiting = false;
       groupDetail = null;

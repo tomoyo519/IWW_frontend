@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
@@ -10,32 +9,23 @@ import 'package:iww_frontend/view/todo/todo_list.dart';
 import 'package:iww_frontend/view/todo/todo_progress.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 
 // 홈 레이아웃 및 의존성 주입
 class TodoPage extends StatelessWidget {
   TodoPage({super.key});
 
-  List<ChangeNotifierProvider> _getProviders(BuildContext context) {
-    return [
-      ChangeNotifierProvider<TodoViewModel>(
-        create: (context) => TodoViewModel(
-          Provider.of<TodoRepository>(context, listen: false),
-          Provider.of<UserInfo>(context, listen: false),
-        ),
-      )
-    ];
-  }
-
   @override
   Widget build(BuildContext context) {
     final UserInfo user = Provider.of<UserInfo>(context, listen: false);
 
-    return MultiProvider(
-      providers: _getProviders(context),
-      child: Builder(builder: (context) {
-        return MyTodo(user: user);
-      }),
+    return ChangeNotifierProvider<TodoViewModel>(
+      create: (context) => TodoViewModel(
+        Provider.of<TodoRepository>(context, listen: false),
+        Provider.of<UserInfo>(context, listen: false).userId,
+      ),
+      child: MyTodo(user: user),
     );
   }
 }
@@ -152,7 +142,6 @@ class MyTodo extends StatelessWidget {
     LOG.log("home.dart _createTodo 실행");
     return await editormodel.createTodo().then((result) {
       if (result == true && context.mounted) {
-        // Navigator.pop(context);
         return true;
       }
       return false;

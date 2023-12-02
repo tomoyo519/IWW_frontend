@@ -4,12 +4,12 @@ import 'package:iww_frontend/repository/room.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';
-import 'package:iww_frontend/view/myroom/orbitting_widget.dart';
+import 'package:iww_frontend/view/_navigation/main_page.dart';
+import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:iww_frontend/view/inventory/inventory.dart';
-import 'package:iww_frontend/model/user/user-info.model.dart';
 
 class MyRoom extends StatelessWidget {
   const MyRoom({super.key});
@@ -17,7 +17,7 @@ class MyRoom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 의존성
-    final userId = context.read<UserInfo>().user_id;
+    final userId = context.read<UserInfo>().userId;
     final authService = Provider.of<AuthService>(context, listen: false);
     final roomRepository = Provider.of<RoomRepository>(context, listen: false);
     final commentRepository =
@@ -344,7 +344,7 @@ class BottomButtons extends StatelessWidget {
                   showCommentsBottomSheet(
                     context,
                     commentsProvider,
-                    user.user_id,
+                    user.userId,
                     roomOwenerId,
                   );
                 }

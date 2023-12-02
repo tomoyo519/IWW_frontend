@@ -33,13 +33,13 @@ List<AppPage> GET_APP_PAGES() {
       route: "/group",
       label: "그룹",
       icon: Icons.people_alt_outlined,
-      builder: (context) => MyGroup(),
+      builder: (context) => MyGroupPage(),
       appbar: [notification],
-      float: ActionPage(
-        route: '/group/new',
-        label: '새로운 그룹',
-        icon: Icons.add,
-      ),
+      // float: ActionPage(
+      //   route: '/group/new',
+      //   label: '새로운 그룹',
+      //   icon: Icons.add,
+      // ),
     ),
     AppPage(
       route: "/myroom",
@@ -63,7 +63,7 @@ List<AppPage> GET_APP_PAGES() {
     ),
     AppPage(
       route: "/mypage",
-      label: "마이",
+      label: "마이페이지",
       icon: Icons.person_outline_rounded,
       builder: (context) => MyPage(),
       appbar: [notification],

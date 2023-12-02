@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/model/user/user-info.model.dart';
-import 'package:iww_frontend/repository/user.repository.dart';
-import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/view/_navigation/app_page.config.dart';
 import 'package:iww_frontend/view/_navigation/app_page.model.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
-import 'package:provider/provider.dart';
+import 'package:iww_frontend/view/modals/todo_info_snanckbar.dart';
+import 'package:lottie/lottie.dart';
 
 // 전체 페이지 내비게이터
 class MainPage extends StatefulWidget implements PreferredSizeWidget {
@@ -34,20 +32,29 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
     _pageIdx = 0; // 초기 탭을 지정합니다
+
+    // * ==== Event Listener ==== * //
+    EventService.stream.listen(
+      (event) {
+        if (event.type == EventType.show_todo_snackbar) {
+          Future.microtask(
+            () {
+              showCustomSnackBar(
+                context,
+                text: event.message ?? "",
+                icon: Icon(Icons.notifications),
+              );
+            },
+          );
+        }
+      },
+    );
   }
 
   // 무조건 있어야함!
   @override
   Widget build(BuildContext context) {
     AppPage currPage = widget.pages[_pageIdx];
-
-    // 앱 내 이벤트 매니저
-    final EventService events = Provider.of<EventService>(context);
-
-    // 수신된 알림을 렌더링합니다.
-    Future.microtask(() {
-      events.alert(context);
-    });
 
     return Scaffold(
       // * ======= APPBAR ======= * //

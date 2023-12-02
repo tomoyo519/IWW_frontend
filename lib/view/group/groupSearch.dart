@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/utils/login_wrapper.dart';
+import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'groupDetail.dart';
 import 'package:lottie/lottie.dart';
 import 'package:iww_frontend/view/todo/fields/label_list_modal.dart';
@@ -20,7 +22,9 @@ class _GroupSearchState extends State<GroupSearch> {
   var labelNum = 1;
   String keyword = "";
   List<Group>? groupList = [];
+
   getList() async {
+    // final viewModel = context.watch<MyGroupViewModel>();
     final groupRepository =
         Provider.of<GroupRepository>(context, listen: false);
 
@@ -29,8 +33,6 @@ class _GroupSearchState extends State<GroupSearch> {
     setState(() {
       groupList = tempList;
     });
-
-    LOG.log('${groupList}');
   }
 
   @override
@@ -105,17 +107,28 @@ class _GroupSearchState extends State<GroupSearch> {
                     itemCount: groupList?.length,
                     itemBuilder: (c, i) {
                       return TextButton(
-                          onPressed: () => Navigator.pushNamed(
-                              context, "/group/detail",
-                              arguments: groupList?[i]),
-
-                          //   {
-                          // Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //         builder: (c) =>
-                          //             GroupDetail(group: groupList?[i])));
-                          // },
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => LoginWrapper(
+                                    child: MultiProvider(
+                                  providers: [
+                                    ChangeNotifierProvider(
+                                        create: (_) => GroupDetailModel(
+                                            Provider.of<GroupRepository>(
+                                                context,
+                                                listen: false))),
+                                    ChangeNotifierProvider.value(
+                                        value: context.read<MyGroupViewModel>())
+                                  ],
+                                  child: GroupDetail(
+                                    group: groupList![i],
+                                  ),
+                                )),
+                              ),
+                            );
+                          },
                           child: Container(
                             alignment: Alignment.center,
                             margin: EdgeInsets.all(5),

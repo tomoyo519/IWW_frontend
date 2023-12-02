@@ -12,16 +12,18 @@ class GroupRepository {
   Future<List<Group>?> getMyGroupList(int? userId) async {
     return await RemoteDataSource.get("/group/${userId ?? 1}/groups")
         .then((res) {
-      LOG.log('🙇‍♀️🙇‍♀️🙇‍♀️🙇‍♀️🙇‍♀️🙇‍♀️🙇‍♀️:${res.body}');
       if (res.statusCode == 200) {
         var jsonData = jsonDecode(res.body);
 
-        if (jsonData.isEmpty || jsonData["result"] == null) {
+        if (jsonData.isEmpty) {
           return null;
         }
-
+        List<dynamic> results = jsonData["result"];
+        LOG.log('${results}');
         List<Group> data = // 수정된 부분
-            jsonData["result"].map((data) => Group.fromJson(data)).toList();
+            results
+                .map((data) => Group.fromJson(data as Map<String, dynamic>))
+                .toList();
         return data;
       }
       return null;
@@ -34,7 +36,6 @@ class GroupRepository {
             "/group/search/${userId ?? 1}/${catId}/${keyword}")
         .then((res) {
       if (res.statusCode == 200) {
-        LOG.log('thisisres/data: ${res.body}');
         var jsonData = jsonDecode(res.body);
         if (jsonData.isEmpty) {
           return null;

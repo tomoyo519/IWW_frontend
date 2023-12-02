@@ -1,11 +1,40 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:provider/provider.dart';
 
 /// 앱 초기 랜딩 페이지 화면
 /// 디바이스에 카카오 토큰이 없거나 최초 설치한 유저
-class LandingPage extends StatelessWidget {
+class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
+
+  @override
+  State<LandingPage> createState() => _LandingPageState();
+}
+
+class _LandingPageState extends State<LandingPage> {
+  StreamSubscription? _sub;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // 서비스 서버가 보내는 JWT 토큰 수신
+    _sub = Provider.of<AuthService>(
+      context,
+      listen: false,
+    ).listenRedirect();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    // 스트림 해제
+    if (_sub != null) {
+      _sub!.cancel();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,10 +50,10 @@ class LandingPage extends StatelessWidget {
             const Text("펫과 함께하는 소셜 투두리스트"),
             ElevatedButton(
               // 로그인 수행
-              onPressed: () => Provider.of<AuthService>(
-                context,
-                listen: false,
-              ).login(),
+              onPressed: () async {
+                final auth = Provider.of<AuthService>(context, listen: false);
+                await auth.login();
+              },
               style: ElevatedButton.styleFrom(
                 elevation: 0,
                 padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
