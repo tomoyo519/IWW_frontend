@@ -38,7 +38,7 @@ final Map<String, WidgetBuilder> ROUTE_TABLE = {
       child: GroupDetail(
           group: ModalRoute.of(context)?.settings.arguments as Group)),
   '/group/new': (context) => ChangeNotifierProvider(
-        create: (context) => MyGroupViewModel(
+        create: (context) => GroupDetailModel(
             Provider.of<GroupRepository>(context, listen: false)),
         child: LoginWrapper(child: NewGroup()),
       ),

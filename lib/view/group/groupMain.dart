@@ -58,11 +58,9 @@ class MyGroup extends StatelessWidget {
                 children: [
                   MultiProvider(
                     providers: [
-                      // ChangeNotifierProvider(
-                      //   create: (context) => MyGroupViewModel(
-                      //     groupRepository,
-                      //   ),
-                      // ),
+                      ChangeNotifierProvider.value(
+                        value: context.read<MyGroupViewModel>(),
+                      ),
                       ChangeNotifierProvider(
                         create: (context) => GroupDetailModel(
                           groupRepository,
