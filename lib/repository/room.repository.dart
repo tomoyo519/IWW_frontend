@@ -36,7 +36,7 @@ class RoomRepository {
 
   // 나의의 룸에 아이템 추가하기
   Future<void> addItemToMyRoom(int userId, int itemId) async {
-    return await RemoteDataSource.post('/room/$userId/$itemId')
+    return await RemoteDataSource.post('/room/$userId/$itemId', body: {})
         .then((response) {
       LOG.log('Add item to my room: ${response.statusCode}');
       LOG.log('Add item to my room: ${response.body}');
