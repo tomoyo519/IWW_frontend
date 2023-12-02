@@ -61,7 +61,6 @@ class AuthService extends ChangeNotifier {
   // =============== //
   Future<void> login() async {
     // 카카오 인증 시작
-
     await AuthCodeClient.instance
         .authorize(
       clientId: Secrets.KAKAO_REST_API_KEY,
@@ -84,14 +83,19 @@ class AuthService extends ChangeNotifier {
 
     if (jsonUserInfo == null) {
       LOG.log("Failed to login in local.");
-      return _navigate("/landing");
+      waiting = false;
+      return;
     }
 
     // 유저 정보로 가져오기
     Map<String, dynamic> userInfo = json.decode(jsonUserInfo);
     LOG.log("Local login success! ${userInfo['user_name']}");
     user = UserModel.fromJson(userInfo);
-    return _navigate("/todo");
+
+    // 토큰 세팅하기
+    var token = await LocalStorage.readKey('jwt');
+    RemoteDataSource.setAuthHeader("Bearer $token");
+    waiting = false;
   }
 
   // =============== //
@@ -105,16 +109,16 @@ class AuthService extends ChangeNotifier {
       if (link != null) {
         LOG.log("App link received");
         await _handleResponse(link);
+        waiting = false;
       } else {
         LOG.log("Auth status: failed");
         status = AuthStatus.failed;
-        return _navigate("/landing");
-        // return;
+        waiting = false;
       }
     }, onError: (error) {
       LOG.log("Auth status: failed. $error");
       status = AuthStatus.failed;
-      return _navigate("/landing");
+      waiting = false;
     });
   }
 
@@ -128,12 +132,11 @@ class AuthService extends ChangeNotifier {
       _kakaoId = kakaoId;
       LOG.log("User need to signup");
       status = AuthStatus.permission;
-      return _navigate("/signup");
+      // return _navigate("/signup");
     }
 
     // 토큰과 함꼐 서버로 유저 정보 요청
     RemoteDataSource.setAuthHeader("Bearer $token");
-    LOG.log("Auth: ${RemoteDataSource.baseHeaders['Authorization'] ?? 'wtf'}");
     Response response = await RemoteDataSource.get("/user");
 
     // 응답 파싱
@@ -141,7 +144,6 @@ class AuthService extends ChangeNotifier {
     if (response.statusCode != 200) {
       LOG.log("Server login failed ${body.toString()}");
       status = AuthStatus.failed;
-      return _navigate("/landing");
     }
 
     // 토큰과 유저 정보 로컬스토리지에 저장 후
@@ -157,22 +159,12 @@ class AuthService extends ChangeNotifier {
       LOG.log("이런 예외는 생각지도 못했어요.. $userInfoStr");
       LocalStorage.clearKey();
       status = AuthStatus.failed;
-      return _navigate('/landing');
+      return;
     }
 
     // 상태로 가져오기
     user = UserModel.fromJson(jsonDecode(userInfoStr));
     status = AuthStatus.success;
     LOG.log("User Logged in!");
-  }
-
-  // 내비게이션
-  Future<void> _navigate(String path, {Object? arguments}) async {
-    GlobalNavigator.navigatorKey.currentState?.pushNamedAndRemoveUntil(
-      path,
-      (route) => false,
-      arguments: arguments,
-    );
-    waiting = false;
   }
 }

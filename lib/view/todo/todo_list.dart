@@ -98,7 +98,7 @@ class ToDoList extends StatelessWidget {
   // ****************************** //
 
   // 할일 체크했을때의 로직
-  Future<AppEvent?> _onMyTodoCheck(
+  Future<void> _onMyTodoCheck(
     BuildContext context,
     Todo todo,
     bool value,
@@ -106,87 +106,7 @@ class ToDoList extends StatelessWidget {
   ) async {
     // 개인 todo 인 경우 UI 업데이트
     final todomodel = context.read<TodoViewModel>();
-    return await todomodel.checkTodo(todo, value).then(
-          (_) => _handleTodoReward(
-            context: context,
-            value: value,
-          ),
-        );
-  }
-
-  // ****************************** //
-  // *                            * //
-  // *        Cash Reward         * //
-  // *                            * //
-  // ****************************** //
-
-  // 리워드 지급
-  AppEvent? _handleTodoReward({
-    required BuildContext context,
-    required bool value,
-  }) {
-    // 할일 리스트에서 상태를 다 갱신하고 들어온다.
-    // final usermodel = context.read<UserProvider>();
-    // final todomodel = context.read<TodoViewModel>();
-
-    // final now = DateTime.now();
-    // final todaystodo = todomodel.getTodaysChecked(now);
-
-    // // * ==== 펫 경험치 업데이트 ==== * //
-    // usermodel.petExp += 5 * (value == true ? 1 : -1);
-
-    // if (usermodel.petExp > 100) {
-    //   LOG.log("펫 진화 이벤트");
-    // }
-
-    // // * ==== 유저 HP 업데이트 ==== * //
-    // double rate = (todaystodo / todomodel.total) * 100;
-    // if (rate > 70) {
-    //   // usermodel.userHp += 10;
-    // } else {
-    //   // usermodel.userHp -= 10;
-    // }
-
-    // // * ==== 유저 캐시 업데이트 ==== * //
-    // int reward = 0;
-    // 이미 지난 투두를 달성한 경우 보상을 업데이트하지 않음
-    // if (todo.todoDate.compareTo(todayformatted) < 0) {
-    //   return AppEvent(
-    //     type: AppEventType.snackbar,
-    //     title: "어제 투두를 달성했네요!",
-    //     description: "",
-    //   );
-    // }
-    // 오늘 완료한 투두 개수(방금 갱신됨)가 1이고 완료를 체크했으면
-    // if (todaystodo == 1 && value == true) {
-    //   usermodel.userCash += 100;
-
-    //   return AppEvent(
-    //     type: AppEventType.fullmodal,
-    //     title: "first_todo_done",
-    //     description: "앞으로도 더 많은 할일을 달성하세요",
-    //     icon: Icon(
-    //       Icons.money,
-    //     ),
-    //   );
-    // } else if (todaystodo == 0 && value == false) {
-    //   // 체크값이 false인데 오늘 완료한 투두 개수 (방금 갱신됨)가 0이면
-    //   usermodel.userCash -= 100;
-    //   reward = 100;
-    // } else {
-    //   // 일반 유저 캐시 업데이트
-    //   usermodel.userCash += 10 * (value == true ? 1 : -1);
-    //   reward = 10;
-    // }
-
-    // return AppEvent(
-    //   type: AppEventType.snackbar,
-    //   title: value == true ? "할일을 달성했어요! +$reward" : "할일을 취소했어요 -$reward",
-    //   description: "",
-    //   icon: Icon(
-    //     Icons.money,
-    //   ),
-    // );
+    await todomodel.checkTodo(todo, value);
   }
 
   // todo delete modal onclick callback
@@ -208,8 +128,6 @@ class ToDoList extends StatelessWidget {
   // todo editor onsave callback
   // 기존 할일 수정
   Future<void> _updateTodo(BuildContext context) async {
-    Navigator.pop(context);
-
     final viewModel = context.read<EditorModalViewModel>();
     await viewModel.updateTodo().then((result) {
       if (result == true) {
@@ -219,13 +137,7 @@ class ToDoList extends StatelessWidget {
               content: const Text('변경이 완료 되었어요!'),
             ),
           );
-
-          // 일정 시간 후에 화면을 닫습니다.
-          // Future.delayed(Duration(seconds: 3), () {
-          //   if (context.mounted) {
-          //     Navigator.pop(context);
-          //   }
-          // });
+          Navigator.pop(context);
         }
       }
     });

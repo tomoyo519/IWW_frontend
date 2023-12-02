@@ -63,7 +63,7 @@ class EventService {
   static Stream<Event> get stream => _streamController.stream;
 
   static void publish(Event event) {
-    LOG.log("Event received: $event");
+    LOG.log("Event received: ${event.type}");
     _streamController.add(event);
   }
 

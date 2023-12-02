@@ -17,26 +17,16 @@ import 'package:provider/provider.dart';
 class TodoPage extends StatelessWidget {
   TodoPage({super.key});
 
-  List<ChangeNotifierProvider> _getProviders(BuildContext context) {
-    return [
-      ChangeNotifierProvider<TodoViewModel>(
-        create: (context) => TodoViewModel(
-          Provider.of<TodoRepository>(context, listen: false),
-          Provider.of<UserInfo>(context, listen: false).user,
-        ),
-      )
-    ];
-  }
-
   @override
   Widget build(BuildContext context) {
     final UserInfo user = Provider.of<UserInfo>(context, listen: false);
 
-    return MultiProvider(
-      providers: _getProviders(context),
-      child: Builder(builder: (context) {
-        return MyTodo(user: user);
-      }),
+    return ChangeNotifierProvider<TodoViewModel>(
+      create: (context) => TodoViewModel(
+        Provider.of<TodoRepository>(context, listen: false),
+        Provider.of<UserInfo>(context, listen: false).user,
+      ),
+      child: MyTodo(user: user),
     );
   }
 }

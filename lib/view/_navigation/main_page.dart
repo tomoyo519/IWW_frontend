@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/model/user/user-info.model.dart';
-import 'package:iww_frontend/repository/user.repository.dart';
-import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/service/event.service.dart';
-import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_navigation/app_page.config.dart';
 import 'package:iww_frontend/view/_navigation/app_page.model.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
@@ -40,14 +36,13 @@ class _MainPageState extends State<MainPage> {
     // * ==== Event Listener ==== * //
     EventService.stream.listen((event) {
       if (event.type == EventType.show_todo_snackbar) {
-        showCustomSnackBar(
-          context,
-          text: event.message ?? "",
-          icon: Lottie.asset(
-            "/star.json",
-            animate: false,
-          ),
-        );
+        Future.microtask(() {
+          showCustomSnackBar(
+            context,
+            text: event.message ?? "",
+            icon: Icon(Icons.notifications),
+          );
+        });
       }
     });
   }

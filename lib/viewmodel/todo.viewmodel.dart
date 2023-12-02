@@ -76,6 +76,7 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
     _todos = data.where((todo) => todo.grpId == null).toList();
     _groupTodos = data.where((todo) => todo.grpId != null).toList();
     waiting = false;
+    notifyListeners();
   }
 
   // ****************************** //
@@ -173,25 +174,29 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
 
   void setSelectedAlarmTime(dynamic alarmTime) {
     _selectedAlarmTime = alarmTime;
-
     notifyListeners();
   }
 
   @override
   Future<bool> createTodo(Map<String, dynamic> data) async {
-    LOG.log("Create new todo.");
-    return await _todoRepository.createTodo(data);
+    waiting = true;
+    bool result = await _todoRepository.createTodo(data);
+    fetchTodos();
+    return result;
   }
 
   @override
   Future<bool> updateTodo(String id, Map<String, dynamic> data) async {
+    waiting = true;
     return await _todoRepository.updateTodo(id, data).then(
       (value) {
         if (value == true) {
           int idx = _todos.indexWhere((todo) => todo.todoId.toString() == id);
           _todos[idx] = Todo.fromJson(data);
+          fetchTodos();
           return true;
         }
+        fetchTodos();
         return false;
       },
     );

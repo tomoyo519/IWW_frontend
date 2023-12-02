@@ -85,7 +85,6 @@ class TodoRepository {
       "/todo/$id",
       body: {"todo_done": checked},
     ).then((response) {
-      LOG.log("Check Todo: ${response.statusCode}, ${response.body}");
       if (response.statusCode == 200) {
         // String jsonBody = jsonDecode(response.body);
 

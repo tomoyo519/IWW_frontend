@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/datasource/localStorage.dart';
 import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/providers.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
@@ -11,6 +12,7 @@ import 'package:iww_frontend/view/_navigation/transition.dart';
 import 'package:iww_frontend/view/notification/notification.dart';
 import 'package:iww_frontend/view/signup/landing.dart';
 import 'package:iww_frontend/viewmodel/user.provider.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_template.dart';
@@ -40,6 +42,8 @@ void main() async {
   AuthService authService = AuthService(userRepository);
 
   // 앱 진입 시 로컬 로그인 시도
+  // 카카오 로그인으로 연결하기 위해 스토리지에 저장된 정보 삭제
+  // await LocalStorage.clearKey();
   await authService.localLogin();
 
   // 만약 테스트유저 접속시
@@ -81,27 +85,7 @@ void main() async {
           // 미인증 사용자인 경우 → Landing
           // 인증된 사용자인 경우 → MainPage
           // */
-          home: authService.waiting
-              ? LoadingPage()
-              : authService.user == null
-                  ? LandingPage()
-                  : MultiProvider(
-                      // 인증된 사용자의 경우 아래와 같은 정보 주입
-                      providers: [
-                        // Provider<UserInfo>.value(
-                        //   value: authService.user!,
-                        // ),
-                        ChangeNotifierProvider(
-                          create: (context) => UserInfo(
-                            authService,
-                            Provider.of<UserRepository>(context, listen: false),
-                            authService.user!,
-                          ),
-                        ),
-                      ],
-                      child: MainPage(),
-                    ), // lib/view/main_page.dart
-
+          home: RenderPage(),
           routes: ROUTE_TABLE, // lib/route.dart
 
           //** Navigator에 푸시될 때 트랜지션
@@ -117,4 +101,30 @@ void main() async {
       ),
     ),
   );
+}
+
+class RenderPage extends StatelessWidget {
+  const RenderPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    AuthService auth = context.watch<AuthService>();
+    return auth.waiting
+        ? LoadingPage()
+        : auth.user == null
+            ? LandingPage()
+            : MultiProvider(
+                // 인증된 사용자의 경우 아래와 같은 정보 주입
+                providers: [
+                  ChangeNotifierProvider(
+                    create: (context) => UserInfo(
+                      auth,
+                      Provider.of<UserRepository>(context, listen: false),
+                      auth.user!,
+                    ),
+                  ),
+                ],
+                child: MainPage(), // lib/view/main_page.dart
+              );
+  }
 }

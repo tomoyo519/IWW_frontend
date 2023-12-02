@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 class MyTodoTile extends StatefulWidget {
   final Todo todo;
   final TodoViewModel viewModel;
-  final Future<AppEvent?> Function(BuildContext, Todo, bool) onCheck;
+  final Future<void> Function(BuildContext, Todo, bool) onCheck;
 
   const MyTodoTile({
     super.key,

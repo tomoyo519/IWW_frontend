@@ -10,7 +10,7 @@ import 'package:iww_frontend/utils/logger.dart';
 class UserInfo extends ChangeNotifier {
   final AuthService _authService;
   final UserRepository _repository;
-  final UserModel _user;
+  UserModel _user;
 
   UserInfo(
     this._authService,
@@ -21,8 +21,8 @@ class UserInfo extends ChangeNotifier {
     _userTel = _user.user_tel;
     _userHp = _user.user_hp;
 
-    _userCash = 45000;
-    _userLoginCnt = 100;
+    _userCash = _user.user_cash;
+    _loginCnt = user.login_cnt;
 
     // === Pet === //
     _mainPet = 1;
@@ -39,7 +39,7 @@ class UserInfo extends ChangeNotifier {
   late String _userTel;
   late int _userHp;
   late int _userCash;
-  late int _userLoginCnt;
+  late int _loginCnt;
 
   late int _mainPet;
   late int _mainPerLv;
@@ -89,7 +89,6 @@ class UserInfo extends ChangeNotifier {
   void listenEvents() {
     EventService.stream.listen((event) async {
       if (event.type == EventType.status) {
-        LOG.log("업데이트 유저 정보");
         UserModel prev = _user;
         await _fetchUser();
 
@@ -100,13 +99,13 @@ class UserInfo extends ChangeNotifier {
   }
 
   // ==== CRUD ==== //
-  Future<UserModel?> _fetchUser() async {
-    UserModel? fetched = await _repository.getUserByName(_userName);
+  Future<void> _fetchUser() async {
+    UserModel? fetched = await _repository.getUser();
     if (fetched == null) {
-      _authService.user = null;
-      return null;
+      _authService.user = null; // 인가 정보를 삭제
+      return;
     }
-    return fetched;
+    _user = fetched;
   }
 
   Future<void> updateUserHp(int hp) async {
@@ -138,7 +137,7 @@ class UserInfo extends ChangeNotifier {
       bool value = cash > 0;
       EventService.publish(Event(
         type: EventType.show_todo_snackbar,
-        message: "할일을 ${value ? "달성" : "취소"}했어요! ${value ? "+" : "-"}$cash",
+        message: "할일을 ${value ? "달성" : "취소"}했어요! $cash",
       ));
     }
 
