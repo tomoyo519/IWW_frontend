@@ -6,6 +6,7 @@ import 'package:iww_frontend/view/modals/todo_info_snanckbar.dart';
 import 'package:iww_frontend/view/todo/fields/label_list_modal.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk_talk.dart';
 import 'package:provider/provider.dart';
 
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
@@ -70,24 +71,28 @@ class _NewGroupState extends State<NewGroup> {
 
   _createGroup(BuildContext context) async {
     //새로운 그룹 만들기;
-    final myGroupViewModel =
-        Provider.of<MyGroupViewModel>(context, listen: false);
+    // final myGroupViewModel =
+    //     Provider.of<MyGroupViewModel>(context, listen: false);
 
     final viewModel = context.read<MyGroupViewModel>();
-    LOG.log('myGroupViewModel.groupData: ${myGroupViewModel.groupData}');
-    LOG.log('groupName:$groupName');
+    LOG.log('myGroupViewModel.groupData: ${viewModel.groups}');
+    // LOG.log('groupName:$groupName');
     // TODO - userId 넣기
-    await viewModel.createGroup().then((res) {
-      if (res == true) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('그룹 생성이 완료 되었어요!'),
-          ),
-        );
-        Navigator.pop(context);
-      }
-      myGroupViewModel.fetchMyGroupList();
-    });
+    await viewModel.createGroup().then(
+      (res) async {
+        if (res == true) {
+          await viewModel.fetchMyGroupList();
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text('그룹 생성이 완료 되었어요!'),
+              ),
+            );
+            Navigator.pop(context, true);
+          }
+        }
+      },
+    );
   }
 
   void onCancel(BuildContext context) {
@@ -150,7 +155,10 @@ class _NewGroupState extends State<NewGroup> {
     final groupRepository =
         Provider.of<GroupRepository>(context, listen: false);
 
-    final MyGroupViewModel viewModel = context.read<MyGroupViewModel>();
+    UserInfo user = Provider.of<UserInfo>(context, listen: false);
+
+    final MyGroupViewModel viewModel = context.watch<MyGroupViewModel>();
+    LOG.log('${viewModel.groups}');
     return Scaffold(
         appBar: MyAppBar(),
         body: Container(
