@@ -59,6 +59,34 @@ class MyRoomViewModel with ChangeNotifier {
     return AssetImage('assets/bg/bg15.png');
   }
 
+  Widget renderRoomObjects() {
+    LOG.log('방에 있는 오브젝트 개수: ${roomObjects.length}');
+
+    List<Widget> layers = [];
+    // 2/3 step: 가구 추가
+    for (int i = 0; i < roomObjects.length; i++) {
+      var element = roomObjects[i];
+      if (element.itemType == 2) {
+        layers.add(Positioned(
+          top: 200 + (i % 2 == 0 ? 0 : 100),
+          left: i * 100.0,
+          width: 100,
+          height: 100,
+          child: Image.asset(
+            'assets/furniture/${element.path}',
+            fit: BoxFit.cover,
+          ),
+        ));
+      }
+    }
+
+    LOG.log('방안의 가구 배치 완료');
+    return Stack(
+      alignment: Alignment.center,
+      children: layers,
+    );
+  }
+
   ModelViewer getPetWidget() {
     String petName = '';
     for (var element in roomObjects) {

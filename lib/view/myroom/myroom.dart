@@ -131,32 +131,6 @@ class MyRoomComponent extends StatelessWidget {
 class RenderMyRoom extends StatelessWidget {
   const RenderMyRoom({super.key});
 
-  List<Widget> renderRoomObjects(BuildContext context) {
-    var roomState = context.watch<MyRoomViewModel>();
-    LOG.log('방에 있는 오브젝트 개수: ${roomState.roomObjects.length}');
-
-    List<Widget> layers = [];
-    // 2/3 step: 가구 추가
-    for (int i = 0; i < roomState.roomObjects.length; i++) {
-      var element = roomState.roomObjects[i];
-      if (element.itemType == 2) {
-        layers.add(Positioned(
-          top: 200 + (i % 2 == 0 ? 0 : 100),
-          left: i * 100.0,
-          width: 100,
-          height: 100,
-          child: Image.asset(
-            'assets/furniture/${element.path}',
-            fit: BoxFit.cover,
-          ),
-        ));
-      }
-    }
-
-    LOG.log('############### 갔니?????');
-    return layers;
-  }
-
   @override
   Widget build(BuildContext context) {
     var roomState = context.watch<MyRoomViewModel>();
@@ -176,8 +150,8 @@ class RenderMyRoom extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-        child: Stack(
-            alignment: Alignment.center, children: renderRoomObjects(context)));
+      child: roomState.renderRoomObjects(),
+    );
 
     // 유저의 펫 정보 불러오기
 
