@@ -11,35 +11,39 @@ class PetModels {
     return _pets['kitsune']!;
   }
 
+  // 이 두가지는 개입하는 순간 모델링 속도가 느려짐
+  // cameraOrbit: "0deg 50deg 0deg",
+  // fieldOfView: "120deg",
+  // 2 2 0 (좀 작은 버전)
   static final Map<String, ModelViewer> _pets = {
     'kitsune': ModelViewer(
+      src: 'assets/pets/kitsune.glb',
       interactionPrompt: InteractionPrompt.none,
       autoPlay: true,
       autoRotate: true,
       shadowIntensity: 1,
       disableZoom: true,
       cameraControls: false,
-      src: 'assets/pets/kitsune.glb',
       animationName: "Walk",
-      cameraTarget: "0.9m 0.9m -0.3m", // x, y, z
-      // 2 2 0 (좀 작은 버전)
+      cameraTarget: "0.7m 0.7m 0m", // x, y, z
+      cameraOrbit: "0deg 70deg 5m",
       autoRotateDelay: 0,
       rotationPerSecond: "0.6rad",
-      // 이 두가지는 개입하는 순간 모델링 속도가 느려짐
-      // cameraOrbit: "0deg 50deg 0deg",
-      // fieldOfView: "120deg",
     ),
     'small_fox': ModelViewer(
+      src: 'assets/pets/small_fox.glb',
       interactionPrompt: InteractionPrompt.none,
       autoPlay: true,
       autoRotate: true,
       shadowIntensity: 1,
       disableZoom: true,
       cameraControls: false,
-      src: 'assets/pets/small_fox.glb',
-      animationName: "Jump",
-      cameraOrbit: "330deg,0deg, 0m",
-      cameraTarget: "0.3m 1.1m 0.7m",
+      animationName: "Walk",
+      cameraTarget: "0.7m 0.7m 0m", // x, y, z
+      cameraOrbit: "0deg 70deg 5m",
+      // fieldOfView: "90deg",
+      autoRotateDelay: 0,
+      rotationPerSecond: "0.7rad",
     ),
     'mid_fox': ModelViewer(
       interactionPrompt: InteractionPrompt.none,
