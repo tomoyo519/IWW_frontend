@@ -76,6 +76,7 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
     // 카운트
     _todayDone = data.where((todo) => todo.todoDone == true).length;
     _todayTotal = data.length;
+    waiting = false;
   }
 
   // ****************************** //

@@ -1,12 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/service/event.service.dart';
-import 'package:iww_frontend/utils/logger.dart';
 
 // == 전역 유저 상태 관리 == //
 class UserInfo extends ChangeNotifier {

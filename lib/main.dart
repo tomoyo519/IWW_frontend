@@ -98,7 +98,7 @@ class _RenderPageState extends State<RenderPage> {
   StreamSubscription? _sub;
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
 
     // * ======================= * //
@@ -108,8 +108,8 @@ class _RenderPageState extends State<RenderPage> {
     // * ======================= * //
 
     // 1. 카카오 로그인 로직
-    _sub = widget.auth.listenRedirect();
-    widget.auth.login();
+    // _sub = widget.auth.listenRedirect();
+    // widget.auth.login();
 
     // 2. 로컬 로그인 로직
     // 카카오 로그인으로 연결하기 위해 스토리지에 저장된 정보 삭제
@@ -118,19 +118,19 @@ class _RenderPageState extends State<RenderPage> {
     // });
 
     // 3. 테스트유저 접속
-    // widget.auth.user = UserModel(
-    //   user_id: 1,
-    //   user_name: "sojeong",
-    //   user_tel: "010-0000-0000",
-    //   user_kakao_id: "user_kakao_id",
-    //   user_hp: 0,
-    //   user_cash: 0,
-    //   last_login: "",
-    //   login_cnt: 0,
-    //   login_seq: 0,
-    // );
+    widget.auth.user = UserModel(
+      user_id: 29,
+      user_name: "이소정",
+      user_tel: "01071632489",
+      user_kakao_id: "3164637603",
+      user_hp: 10,
+      user_cash: 100000,
+      last_login: "2023-11-30 15:21:48.509743",
+      login_cnt: 0,
+      login_seq: 0,
+    );
 
-    await widget.auth.initializeTodo();
+    // widget.auth.initializeTodo();
     widget.auth.waiting = false;
   }
 
