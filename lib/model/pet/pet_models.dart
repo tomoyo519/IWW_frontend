@@ -20,12 +20,14 @@ class PetModels {
       disableZoom: true,
       cameraControls: false,
       src: 'assets/pets/kitsune.glb',
-      animationName: "Fly",
-      cameraTarget: "2m 2m 0m", // 회전방향 (각도), 높이(클수록 작아짐), 회전 반경
-      // cameraOrbit: ,
+      animationName: "Walk",
+      cameraTarget: "0.9m 0.9m -0.3m", // x, y, z
+      // 2 2 0 (좀 작은 버전)
       autoRotateDelay: 0,
-      // fieldOfView: "20deg",
       rotationPerSecond: "0.6rad",
+      // 이 두가지는 개입하는 순간 모델링 속도가 느려짐
+      // cameraOrbit: "0deg 50deg 0deg",
+      // fieldOfView: "120deg",
     ),
     'small_fox': ModelViewer(
       interactionPrompt: InteractionPrompt.none,

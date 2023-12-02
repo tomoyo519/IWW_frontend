@@ -104,11 +104,10 @@ class MyRoomComponent extends StatelessWidget {
           // 펫 렌더링
           Positioned(
             left: 0,
-            bottom: kBottomNavigationBarHeight
-            // + MediaQuery.of(context).size.height * 0.05
-            ,
+            bottom: kBottomNavigationBarHeight +
+                MediaQuery.of(context).size.height * 0.1,
             width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
+            height: MediaQuery.of(context).size.height / 1.5,
             child: context.watch<MyRoomViewModel>().getPetWidget(),
           ),
           // 상단 상태바
