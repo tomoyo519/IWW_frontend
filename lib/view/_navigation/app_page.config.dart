@@ -63,7 +63,7 @@ List<AppPage> GET_APP_PAGES() {
     ),
     AppPage(
       route: "/mypage",
-      label: "마이",
+      label: "마이페이지",
       icon: Icons.person_outline_rounded,
       builder: (context) => MyPage(),
       appbar: [notification],

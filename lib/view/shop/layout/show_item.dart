@@ -57,10 +57,13 @@ class ShowItem extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 Expanded(
-                                    flex: 7,
-                                    child: Image.network(
-                                        '${Secrets.REMOTE_SERVER_URL}/image/' +
-                                            allpets?[idx].item_path)),
+                                  flex: 7,
+                                  child: Image.asset(
+                                    'assets/thumbnail/' +
+                                        allpets?[idx].item_path,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
                                 Expanded(
                                   flex: 3,
                                   child: Container(
