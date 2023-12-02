@@ -19,6 +19,7 @@ class GroupRepository implements BaseTodoViewModel {
           return null;
         }
         List<dynamic> results = jsonData["result"];
+        LOG.log('${results}');
         List<Group> data = // 수정된 부분
             results
                 .map((data) => Group.fromJson(data as Map<String, dynamic>))
@@ -35,7 +36,6 @@ class GroupRepository implements BaseTodoViewModel {
             "/group/search/${userId ?? 1}/${catId}/${keyword}")
         .then((res) {
       if (res.statusCode == 200) {
-        LOG.log('thisisres/data: ${res.body}');
         var jsonData = jsonDecode(res.body);
         if (jsonData.isEmpty) {
           return null;

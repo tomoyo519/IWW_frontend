@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/group/group.model.dart';
+import 'package:iww_frontend/repository/group.repository.dart';
+import 'package:iww_frontend/utils/login_wrapper.dart';
+import 'package:iww_frontend/view/group/groupDetail.dart';
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/utils/logger.dart';
@@ -12,8 +15,9 @@ class GroupList extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewModel = context.watch<MyGroupViewModel>();
     final myGroups = viewModel.groups;
+    LOG.log('GroupList build() called');
     return Column(children: [
-      viewModel.iswait
+      viewModel.waiting
           ? Expanded(
               child: Container(
                 child: Lottie.asset('assets/spinner.json',
@@ -28,9 +32,30 @@ class GroupList extends StatelessWidget {
                       itemCount: myGroups.length,
                       itemBuilder: (c, i) {
                         return TextButton(
-                            onPressed: () => Navigator.pushNamed(
-                                context, "/group/detail",
-                                arguments: myGroups[i]),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => LoginWrapper(
+                                      child: MultiProvider(
+                                    providers: [
+                                      ChangeNotifierProvider.value(
+                                        value: context.read<MyGroupViewModel>(),
+                                      ),
+                                      ChangeNotifierProvider(
+                                        create: (_) => GroupDetailModel(
+                                          Provider.of<GroupRepository>(context,
+                                              listen: false),
+                                        ),
+                                      )
+                                    ],
+                                    child: GroupDetail(
+                                      group: myGroups[i],
+                                    ),
+                                  )),
+                                ),
+                              );
+                            },
                             child: Container(
                               alignment: Alignment.center,
                               margin: EdgeInsets.all(5),
