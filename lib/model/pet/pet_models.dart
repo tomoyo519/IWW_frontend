@@ -26,7 +26,7 @@ class PetModels {
       cameraControls: false,
       animationName: "Walk",
       cameraTarget: "0.7m 0.7m 0m", // x, y, z
-      cameraOrbit: "0deg 70deg 5m",
+      cameraOrbit: "0deg 70deg 8m",
       autoRotateDelay: 0,
       rotationPerSecond: "0.6rad",
     ),
@@ -40,7 +40,7 @@ class PetModels {
       cameraControls: false,
       animationName: "Walk",
       cameraTarget: "0.7m 0.7m 0m", // x, y, z
-      cameraOrbit: "0deg 70deg 5m",
+      cameraOrbit: "0deg 70deg 8m",
       // fieldOfView: "90deg",
       autoRotateDelay: 0,
       rotationPerSecond: "0.7rad",
