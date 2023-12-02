@@ -59,7 +59,7 @@ class MyRoomViewModel with ChangeNotifier {
     return AssetImage('assets/bg/bg15.png');
   }
 
-  Widget renderRoomObjects() {
+  Widget renderRoomObjects(BuildContext context) {
     LOG.log('방에 있는 오브젝트 개수: ${roomObjects.length}');
 
     List<Widget> layers = [];
@@ -68,7 +68,7 @@ class MyRoomViewModel with ChangeNotifier {
       var element = roomObjects[i];
       if (element.itemType == 2) {
         layers.add(Positioned(
-          top: 200 + (i % 2 == 0 ? 0 : 100),
+          top: MediaQuery.of(context).size.height / 6.0,
           left: i * 100.0,
           width: 100,
           height: 100,

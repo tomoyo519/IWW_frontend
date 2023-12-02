@@ -102,12 +102,8 @@ class MyRoomComponent extends StatelessWidget {
           // 방 렌더링
           RenderMyRoom(),
           // 펫 렌더링
-          Positioned(
-            left: 0,
-            bottom: kBottomNavigationBarHeight +
-                MediaQuery.of(context).size.height * 0.1,
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height / 1.5,
+          SizedBox(
+            height: MediaQuery.of(context).size.height,
             child: context.watch<MyRoomViewModel>().getPetWidget(),
           ),
           // 상단 상태바
@@ -154,7 +150,7 @@ class RenderMyRoom extends StatelessWidget {
           fit: BoxFit.cover,
         ),
       ),
-      child: roomState.renderRoomObjects(),
+      child: roomState.renderRoomObjects(context),
     );
 
     // 유저의 펫 정보 불러오기
