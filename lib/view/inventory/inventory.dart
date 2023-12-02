@@ -25,6 +25,27 @@ class Inventory extends StatelessWidget {
 class InventoryView extends StatelessWidget {
   const InventoryView({super.key});
 
+  void onePetOneBgAlert(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('삐빅! 문제가 발생했어요'),
+          content: Text('펫과 배경은 하나만 선택할 수 있습니다.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                // 다이얼로그 닫기
+                Navigator.of(context).pop();
+              },
+              child: Text('확인'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var myRoomViewModel = context.watch<MyRoomViewModel>();
@@ -46,15 +67,22 @@ class InventoryView extends StatelessWidget {
                 itemCount: myRoomViewModel.inventory.length,
                 itemBuilder: (context, idx) {
                   return GestureDetector(
-                    onTap: () {
+                    onTap: () async {
                       var itemId = myRoomViewModel.inventory[idx].id;
+                      var itemType = myRoomViewModel.inventory[idx].itemType;
                       if (myRoomViewModel.roomObjects
                           .map((e) => e.id)
                           .contains(itemId)) {
                         myRoomViewModel.removeItemFromMyRoom(itemId);
                       } else {
-                        myRoomViewModel.addItemToMyRoom(itemId);
+                        bool result = await myRoomViewModel.addItemToMyRoom(
+                            itemId, itemType);
+                        if (!result) {
+                          // ignore: use_build_context_synchronously
+                          onePetOneBgAlert(context);
+                        }
                       }
+
                     },
                     child: Container(
                       padding: const EdgeInsets.all(2.0),
