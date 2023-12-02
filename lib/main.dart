@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/datasource/localStorage.dart';
+import 'package:iww_frontend/model/auth/login_result.dart';
 import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/providers.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
@@ -42,6 +43,34 @@ void main() async {
   // 인증에 필요한 리포지토리 및 서비스 초기화
   UserRepository userRepository = UserRepository();
   AuthService authService = AuthService(userRepository);
+
+  // * ======================= * //
+  // *                         * //
+  // *     Initialize User     * //
+  // *                         * //
+  // * ======================= * //
+
+  // 1. 카카오 로그인 로직
+  authService.oauthLogin();
+
+  // 2. 로컬 로그인 로직 [미사용]
+  // 카카오 로그인으로 연결하기 위해 스토리지에 저장된 정보 삭제
+  // LocalStorage.clearKey().then((value) async {
+  //   await authService.localLogin();
+  // });
+
+  // 3. 테스트유저 접속
+  // authService.user = UserModel(
+  //   user_id: 29,
+  //   user_name: "이소정",
+  //   user_tel: "01071632489",
+  //   user_kakao_id: "3164637603",
+  //   user_hp: 10,
+  //   user_cash: 100000,
+  //   last_login: "2023-11-30 15:21:48.509743",
+  //   login_cnt: 0,
+  //   login_seq: 0,
+  // );
 
   runApp(
     MultiProvider(
@@ -95,52 +124,18 @@ class RenderPage extends StatefulWidget {
 }
 
 class _RenderPageState extends State<RenderPage> {
-  StreamSubscription? _sub;
-
   @override
   void initState() {
     super.initState();
-
-    // * ======================= * //
-    // *                         * //
-    // *     Initialize User     * //
-    // *                         * //
-    // * ======================= * //
-
-    // 1. 카카오 로그인 로직
-    // _sub = widget.auth.listenRedirect();
-    // widget.auth.login();
-
-    // 2. 로컬 로그인 로직
-    // 카카오 로그인으로 연결하기 위해 스토리지에 저장된 정보 삭제
-    // LocalStorage.clearKey().then((value) {
-    //   widget.auth.localLogin();
-    // });
-
-    // 3. 테스트유저 접속
-    widget.auth.user = UserModel(
-      user_id: 29,
-      user_name: "이소정",
-      user_tel: "01071632489",
-      user_kakao_id: "3164637603",
-      user_hp: 10,
-      user_cash: 100000,
-      last_login: "2023-11-30 15:21:48.509743",
-      login_cnt: 0,
-      login_seq: 0,
-    );
-
-    // widget.auth.initializeTodo();
-    widget.auth.waiting = false;
   }
 
   @override
   void dispose() {
     super.dispose();
     // 스트림 해제
-    if (_sub != null) {
-      _sub!.cancel();
-    }
+    // if (_sub != null) {
+    //   _sub!.cancel();
+    // }
   }
 
   @override

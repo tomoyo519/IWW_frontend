@@ -51,6 +51,7 @@ class AuthService extends ChangeNotifier {
   // =============== //
   //      SignUp     //
   // =============== //
+
   Future<UserModel?> signup(String name, String tel) async {
     if (_kakaoId == null) return null;
     return await userRepository.createUser(name, tel, _kakaoId!);
@@ -59,23 +60,37 @@ class AuthService extends ChangeNotifier {
   // =============== //
   //      Login      //
   // =============== //
-  Future<void> login() async {
-    // 카카오 인증 시작
-    await AuthCodeClient.instance
-        .authorize(
-      clientId: Secrets.KAKAO_REST_API_KEY,
-      // TODO: Fix to REMOTE_SERVER_URL
-      redirectUri: '${Secrets.TEST_SERVER_URL}/auth',
-    )
-        .onError((error, stackTrace) {
-      status = AuthStatus.failed;
-      return 'error';
-    });
-  }
 
-  // =============== //
-  //   Local Login   //
-  // =============== //
+  void oauthLogin() {
+    LOG.log("Start to listen app link");
+    _sub = linkStream.listen(
+      (String? link) async {
+        if (link != null) {
+          LOG.log("App link received");
+
+          ///** 앱 초기화 수행
+          /// 1. 로그인 인증
+          /// 2. 할일 초기화
+          /// */
+          await _authorize(link);
+          await _initializeTodo();
+          waiting = false;
+          _sub?.cancel();
+        } else {
+          LOG.log("Auth status: failed");
+          status = AuthStatus.failed;
+          _sub?.cancel();
+        }
+      },
+      onError: (error) {
+        LOG.log("Auth status: failed. $error");
+        status = AuthStatus.failed;
+        _sub?.cancel();
+      },
+    );
+
+    _kakaoLogin();
+  }
 
   Future<void> localLogin() async {
     // 로컬스토리지에서 유저 정보 꺼내기
@@ -96,13 +111,23 @@ class AuthService extends ChangeNotifier {
     RemoteDataSource.setAuthHeader("Bearer $token");
   }
 
-  // =============== //
-  //     Helpers     //
-  // =============== //
+  // 카카오 인증 시작
+  Future<void> _kakaoLogin() async {
+    await AuthCodeClient.instance
+        .authorize(
+      clientId: Secrets.KAKAO_REST_API_KEY,
+      // TODO: Fix to REMOTE_SERVER_URL
+      redirectUri: '${Secrets.TEST_SERVER_URL}/auth',
+    )
+        .onError((error, stackTrace) {
+      status = AuthStatus.failed;
+      return 'error';
+    });
+  }
 
   // 유저 로그인이 완료된 경우 오늘자 투두 생성
   // 투두 정보 가져와서 세팅해주기
-  Future<void> initializeTodo() async {
+  Future<void> _initializeTodo() async {
     if (_user == null) {
       LOG.log("Can't initialize todo of unknown user.");
       return;
@@ -113,6 +138,8 @@ class AuthService extends ChangeNotifier {
         if (response.statusCode == 201) {
           var jsonBody = jsonDecode(response.body);
           LOG.log("Initialize todo: $jsonBody");
+        } else {
+          LOG.log("Error: ${response.body}");
         }
       },
     );
@@ -122,34 +149,21 @@ class AuthService extends ChangeNotifier {
         if (response.statusCode == 200) {
           var jsonBody = jsonDecode(response.body);
           LOG.log("Today's todo count: $jsonBody");
+        } else {
+          LOG.log("Error: ${response.body}");
         }
       },
     );
   }
 
   // 할일 및 펫 정보 가져와서 초기 세팅
-  Future<void> initializeItems() async {
+  Future<void> _initializeItems() async {
     await RemoteDataSource.get("/item");
   }
 
-  // 서비스 서버로부터 JWT 토큰 수신
-  StreamSubscription? listenRedirect() {
-    LOG.log("Start to listen app link");
-    return linkStream.listen((String? link) async {
-      if (link != null) {
-        LOG.log("App link received");
-        await _handleResponse(link);
-      } else {
-        LOG.log("Auth status: failed");
-        status = AuthStatus.failed;
-      }
-    }, onError: (error) {
-      LOG.log("Auth status: failed. $error");
-      status = AuthStatus.failed;
-    });
-  }
-
-  Future<void> _handleResponse(String link) async {
+  /// 서비스 서버로부터 응답을 받아 인증 정보를 처리합니다.
+  /// [@var		object	async]
+  Future<void> _authorize(String link) async {
     Map<String, String> params = Uri.parse(link).queryParameters;
     String token = params['token']!;
     String kakaoId = params['kakao_id']!;
@@ -159,7 +173,6 @@ class AuthService extends ChangeNotifier {
       _kakaoId = kakaoId;
       LOG.log("User need to signup");
       status = AuthStatus.permission;
-      // return _navigate("/signup");
     }
 
     // 토큰과 함꼐 서버로 유저 정보 요청
@@ -175,7 +188,6 @@ class AuthService extends ChangeNotifier {
 
     // 토큰과 유저 정보 로컬스토리지에 저장 후
     await LocalStorage.saveKey("jwt", token);
-    LOG.log("User Logged in! ${body['result']}");
     await LocalStorage.saveKey(
       "user_info",
       jsonEncode(body['result']),
@@ -192,6 +204,6 @@ class AuthService extends ChangeNotifier {
     // 상태로 가져오기
     user = UserModel.fromJson(jsonDecode(userInfoStr));
     status = AuthStatus.success;
-    LOG.log("User Logged in!");
+    LOG.log("User authorization success: ${user!.user_id}");
   }
 }

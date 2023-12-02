@@ -85,7 +85,11 @@ class RemoteDataSource {
     headers = (headers != null) ? {...headers, ...baseHeaders} : baseHeaders;
 
     // Json string으로 변환하여 요청
-    String bodyString = body is Map ? json.encode(body) : body.toString();
+    String? bodyString = body == null
+        ? null
+        : body is Map
+            ? json.encode(body)
+            : body.toString();
 
     return await http.post(
       Uri.parse(server + url),
