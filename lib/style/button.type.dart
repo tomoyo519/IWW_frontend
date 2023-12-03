@@ -1,0 +1,4 @@
+enum MyButtonType {
+  primary,
+  secondary,
+}
