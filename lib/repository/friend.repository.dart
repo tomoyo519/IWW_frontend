@@ -56,6 +56,8 @@ class FriendRepository {
   ];
 
   Future<List<FriendInfo>> getFriends(int userId) async {
+    List<FriendInfo> friends = [];
+
     await RemoteDataSource.get("/friend/$userId").then((response) {
       LOG.log("Get friends: ${response.statusCode}");
       if (response.statusCode == 200) {
@@ -63,14 +65,16 @@ class FriendRepository {
         List<dynamic> resultList = data["result"];
 
         // user_id, user_name, total_exp, pet_name 네 개의 필드 수신
-        List<FriendInfo> friends =
+        friends =
             resultList.map((dynamic item) => FriendInfo.fromJson(item)).toList();
-        return friends;
-      } else {
-        return [];
+
+        LOG.log('친구 숫자!: ${friends.length}, total: ${data['total']}');
       }
+    }).catchError((onError) {
+      LOG.log("getFriends 에러발생!! $onError");
     });
-    return [];
+
+    return friends;
   }
 
   // 친구 생성

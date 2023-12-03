@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/friend/friend.model.dart';
 import 'package:iww_frontend/repository/friend.repository.dart';
+import 'package:iww_frontend/utils/logger.dart';
 
 class FriendList extends StatefulWidget {
   final int userId;
@@ -33,6 +34,8 @@ class _FriendListState extends State<FriendList> {
 
   @override
   Widget build(BuildContext context) {
+    LOG.log('전달받은 friend수: ${friends.length}');
+
     return Column(
       children: [
         Expanded(
@@ -61,7 +64,7 @@ class _FriendListState extends State<FriendList> {
                         'assets/kingfisher.png'), // TODO 사용자 펫의 이미지로 수정
                   ),
                   title: Text(user.userName),
-                  subtitle: Text('${user.petName}, totalExp: ${user.totalExp}'),
+                  subtitle: Text('${user.petName}, 총 경험치  : ${user.totalExp}'),
                 ),
               ),
             );
