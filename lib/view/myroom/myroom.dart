@@ -4,12 +4,12 @@ import 'package:iww_frontend/repository/room.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';
-import 'package:iww_frontend/view/myroom/orbitting_widget.dart';
+import 'package:iww_frontend/view/_navigation/main_page.dart';
+import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:iww_frontend/view/inventory/inventory.dart';
-import 'package:iww_frontend/model/user/user-info.model.dart';
 
 class MyRoom extends StatelessWidget {
   const MyRoom({super.key});
@@ -17,7 +17,7 @@ class MyRoom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 의존성
-    final userId = context.read<UserInfo>().user_id;
+    final userId = context.read<UserInfo>().userId;
     final authService = Provider.of<AuthService>(context, listen: false);
     final roomRepository = Provider.of<RoomRepository>(context, listen: false);
     final commentRepository =
@@ -59,6 +59,7 @@ class MyRoomPage extends StatelessWidget {
 
     return Center(
       child: Stack(fit: StackFit.expand, children: [
+        // 마이룸 화면 구성
         Positioned(
             top: 0,
             left: 0,
@@ -70,6 +71,7 @@ class MyRoomPage extends StatelessWidget {
                 duration: Duration(milliseconds: 500),
                 curve: Curves.easeInOut,
                 child: MyRoomComponent())),
+        // 하단 인벤토리 뷰
         Positioned(
             bottom: 0,
             left: 0,
@@ -97,15 +99,16 @@ class MyRoomComponent extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
+          // 방 렌더링
           RenderMyRoom(),
-          OrbitingWidget(),
+          // 상단 상태바
           Positioned(
               left: 0,
               right: 0,
-              bottom: kBottomNavigationBarHeight +
-                  MediaQuery.of(context).size.height * 0.15,
+              top: MediaQuery.of(context).size.height * 0.01,
               height: 150,
               child: UnderLayer()),
+          // 하단 버튼
           Positioned(
             left: 0,
             right: 0,
@@ -123,37 +126,6 @@ class MyRoomComponent extends StatelessWidget {
 class RenderMyRoom extends StatelessWidget {
   const RenderMyRoom({super.key});
 
-  List<Widget> renderRoomObjects(BuildContext context) {
-    var roomState = context.watch<MyRoomViewModel>();
-
-    List<Widget> layers = [];
-
-    // 펫 // TODO 추후 삭제 예정
-    // layers.add(roomState.getPetWidget());
-
-    LOG.log('[renderRoomObjects] roomObjects: ${roomState.roomObjects.length}');
-
-    // 가구들
-    for (int i = 0; i < roomState.roomObjects.length; i++) {
-      var element = roomState.roomObjects[i];
-      if (element.itemType == 2) {
-        layers.add(Positioned(
-          top: 50 + (i % 2 == 0 ? 0 : 100),
-          left: i * 100.0,
-          width: 100,
-          height: 100,
-          child: Image.asset(
-            'assets/furniture/${element.path}',
-            fit: BoxFit.cover,
-          ),
-        ));
-      }
-    }
-
-    LOG.log('############### 갔니?????');
-    return layers;
-  }
-
   @override
   Widget build(BuildContext context) {
     var roomState = context.watch<MyRoomViewModel>();
@@ -165,16 +137,25 @@ class RenderMyRoom extends StatelessWidget {
       print("[log/myroom]: $e");
     }
 
-    // 배경 안에 stack으로 object를 쌓는다
-    return Container(
+    // 1/3 step: 배경 지정
+    return Stack(alignment: Alignment.center, children: [
+      // 펫 렌더링
+
+      Container(
         decoration: BoxDecoration(
           image: DecorationImage(
             image: roomState.getBackgroundImage(),
             fit: BoxFit.cover,
           ),
         ),
-        child: Stack(
-            alignment: Alignment.center, children: renderRoomObjects(context)));
+        child: roomState.renderRoomObjects(context),
+      ),
+      SizedBox(
+        height: MediaQuery.of(context).size.height,
+        child: roomState.getPetWidget(),
+      ),
+    ]
+    );
 
     // 유저의 펫 정보 불러오기
 
@@ -363,7 +344,7 @@ class BottomButtons extends StatelessWidget {
                   showCommentsBottomSheet(
                     context,
                     commentsProvider,
-                    user.user_id,
+                    user.userId,
                     roomOwenerId,
                   );
                 }
@@ -395,48 +376,47 @@ class BottomButtons extends StatelessWidget {
   }
 }
 
+//  // bottom buttons
+//   layers.children.add(Positioned(
+//     bottom: 0,
+//     child: Row(
+//       mainAxisSize: MainAxisSize.min,
+//       mainAxisAlignment: MainAxisAlignment.center,
+//       crossAxisAlignment: CrossAxisAlignment.end,
+//       children: [
+//         ElevatedButton(
+//             onPressed: () async {
+//               String? roomOwenerId = commentsProvider.roomOwnerId;
 
-  //  // bottom buttons
-  //   layers.children.add(Positioned(
-  //     bottom: 0,
-  //     child: Row(
-  //       mainAxisSize: MainAxisSize.min,
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       crossAxisAlignment: CrossAxisAlignment.end,
-  //       children: [
-  //         ElevatedButton(
-  //             onPressed: () async {
-  //               String? roomOwenerId = commentsProvider.roomOwnerId;
+//               final currentUser = await authService.getCurrentUser();
+//               // 로그인 유저 없으면 6
+//               var userId = (currentUser != null)
+//                   ? currentUser.user_id.toString()
+//                   : '6';
 
-  //               final currentUser = await authService.getCurrentUser();
-  //               // 로그인 유저 없으면 6
-  //               var userId = (currentUser != null)
-  //                   ? currentUser.user_id.toString()
-  //                   : '6';
-
-  //               if (context.mounted) {
-  //                 showCommentsBottomSheet(
-  //                   context,
-  //                   commentsProvider,
-  //                   userId,
-  //                   roomOwenerId,
-  //                 );
-  //               }
-  //             },
-  //             child: Text('방명록')),
-  //         SizedBox(width: 20),
-  //         ElevatedButton(
-  //             onPressed: () {
-  //               Navigator.pushNamed(context, '/inventory');
-  //             },
-  //             child: Text('인벤토리')),
-  //         SizedBox(width: 20),
-  //         ElevatedButton(
-  //             onPressed: () {
-  //               Navigator.pushNamedAndRemoveUntil(
-  //                 context, '/friends', (Route<dynamic> route) => false);
-  //             },
-  //             child: Text('친구목록')),
-  //       ],
-  //     ),
-  //   ));
+//               if (context.mounted) {
+//                 showCommentsBottomSheet(
+//                   context,
+//                   commentsProvider,
+//                   userId,
+//                   roomOwenerId,
+//                 );
+//               }
+//             },
+//             child: Text('방명록')),
+//         SizedBox(width: 20),
+//         ElevatedButton(
+//             onPressed: () {
+//               Navigator.pushNamed(context, '/inventory');
+//             },
+//             child: Text('인벤토리')),
+//         SizedBox(width: 20),
+//         ElevatedButton(
+//             onPressed: () {
+//               Navigator.pushNamedAndRemoveUntil(
+//                 context, '/friends', (Route<dynamic> route) => false);
+//             },
+//             child: Text('친구목록')),
+//       ],
+//     ),
+//   ));

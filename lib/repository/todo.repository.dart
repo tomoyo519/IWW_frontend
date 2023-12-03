@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
-import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
+import 'package:iww_frontend/model/todo/todo_update.dto.dart';
 import 'package:iww_frontend/utils/logger.dart';
 
 class TodoRepository {
@@ -11,9 +11,6 @@ class TodoRepository {
   ///         Get        ///
   /// ================== ///
   Future<List<Todo>> getTodos(int? userId) async {
-    // var rtn = await DummyData.todoDummy();
-    // LOG.log("$rtn");
-    // return rtn;
     return await RemoteDataSource.get("/todo/user/${userId ?? 1}")
         .then((response) {
       if (response.statusCode == 200) {
@@ -46,7 +43,6 @@ class TodoRepository {
   /// ================== ///
   ///       Create       ///
   /// ================== ///
-  @override
   Future<bool> createTodo(Map<String, dynamic> data) async {
     var json = jsonEncode(data);
     return await RemoteDataSource.post(
@@ -64,7 +60,6 @@ class TodoRepository {
   /// ================== ///
   ///       Update       ///
   /// ================== ///
-  @override
   Future<bool> updateTodo(String id, Map<String, dynamic> data) async {
     var json = jsonEncode(data);
     return await RemoteDataSource.put(
@@ -80,23 +75,24 @@ class TodoRepository {
   }
 
   /// ================== ///
-  ///       Patch       ///
+  ///       Patch        ///
   /// ================== ///
-  Future<bool> checkNormalTodo(String id, bool checked) async {
+  Future<TodoUpdateDto?> checkNormalTodo(String id, bool checked) async {
     return await RemoteDataSource.patch(
       "/todo/$id",
       body: {"todo_done": checked},
     ).then((response) {
-      LOG.log("Check Todo: ${response.statusCode}, ${response.body}");
       if (response.statusCode == 200) {
-        return true;
+        // String jsonBody = jsonDecode(response.body);
+
+        return TodoUpdateDto.fromJson(response.body);
       }
-      return false;
+      return null;
     });
   }
 
   // 그룹 할일 체크
-  Future<bool> checkGroupTodo(
+  Future<TodoUpdateDto?> checkGroupTodo(
       String userId, String id, bool checked, String path) async {
     return await RemoteDataSource.patch(
       "/todo/$id",
@@ -111,17 +107,16 @@ class TodoRepository {
                   file: image, filename: path)
               .then((res) {
             if (res.statusCode == 200) {
-              return true;
+              var jsonData = jsonDecode(response.body);
+              return TodoUpdateDto.fromJson(jsonData['result']);
             }
-            return false;
+            return null;
           }).catchError((err) {
-            return false;
-          }).catchError((err) {
-            return false;
+            return null;
           });
         }
       }
-      return true;
+      return null;
     });
   }
 

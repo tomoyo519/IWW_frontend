@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/utils/login_wrapper.dart';
@@ -58,11 +57,9 @@ class MyGroup extends StatelessWidget {
                 children: [
                   MultiProvider(
                     providers: [
-                      // ChangeNotifierProvider(
-                      //   create: (context) => MyGroupViewModel(
-                      //     groupRepository,
-                      //   ),
-                      // ),
+                      ChangeNotifierProvider.value(
+                        value: context.read<MyGroupViewModel>(),
+                      ),
                       ChangeNotifierProvider(
                         create: (context) => GroupDetailModel(
                           groupRepository,

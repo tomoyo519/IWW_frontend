@@ -31,6 +31,7 @@ final Map<String, WidgetBuilder> ROUTE_TABLE = {
   '/myroom': (context) => LoginWrapper(child: MyRoom()),
   '/group': (context) => LoginWrapper(child: MyGroupPage()),
   '/mypage': (context) => LoginWrapper(child: MyPage()),
+
   '/friends': (context) => LoginWrapper(child: MyFriend()),
   '/shop': (context) => LoginWrapper(child: ShopPage()),
   '/notification': (context) => LoginWrapper(child: MyNotification()),
@@ -38,7 +39,7 @@ final Map<String, WidgetBuilder> ROUTE_TABLE = {
       child: GroupDetail(
           group: ModalRoute.of(context)?.settings.arguments as Group)),
   '/group/new': (context) => ChangeNotifierProvider(
-        create: (context) => MyGroupViewModel(
+        create: (context) => GroupDetailModel(
             Provider.of<GroupRepository>(context, listen: false)),
         child: LoginWrapper(child: NewGroup()),
       ),

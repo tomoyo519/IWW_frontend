@@ -11,31 +11,34 @@ class LocalStorage {
 
   static final _storage = FlutterSecureStorage();
 
+  // =============== //
+  //     KeyStore    //
+  // =============== //
   // Save in secured storage
   static Future<void> saveKey(String key, String value) async {
-    LOG.log("Save user {$key: $value} in secured storage.");
     await _storage.write(key: key, value: value);
+    LOG.log("Save $key in secured storage.");
   }
 
   // Read from secured storage
   static Future<String?> readKey(String key) async {
-    final jwtToken = await _storage.read(key: key);
-    return jwtToken;
+    final value = await _storage.read(key: key);
+    return value;
   }
 
-  static Future<String?> saveFromUrl(String url, String path) async {
-    // 네트워크에서 이미지 데이터 가져오기
-    var response = await http.get(Uri.parse(url));
-    var bytes = response.bodyBytes;
-    var filepath = await _getPath(path);
-
-    // 파일에 쓰기
-    File file = File(filepath);
-    await file.writeAsBytes(bytes);
-
-    return filepath;
+  // Clear secured storage
+  static Future<void> clearKey() async {
+    await _storage.deleteAll();
   }
 
+  // Delete key
+  static Future<void> deleteKey(String key) async {
+    await _storage.delete(key: key);
+  }
+
+  // =============== //
+  //      Files      //
+  // =============== //
   static Future<File> read(String path) async {
     var filepath = await _getPath(path);
     return File(filepath);
@@ -50,6 +53,19 @@ class LocalStorage {
       return true;
     }
     return false;
+  }
+
+  static Future<String?> saveFromUrl(String url, String path) async {
+    // 네트워크에서 이미지 데이터 가져오기
+    var response = await http.get(Uri.parse(url));
+    var bytes = response.bodyBytes;
+    var filepath = await _getPath(path);
+
+    // 파일에 쓰기
+    File file = File(filepath);
+    await file.writeAsBytes(bytes);
+
+    return filepath;
   }
 
   static Future<String> _getPath(String path) async {

@@ -78,30 +78,28 @@ class SignUp extends StatelessWidget {
 
   // 회원가입 버튼 클릭
   void _signup(BuildContext context) async {
-    // final viewModel = context.read<SignUpViewModel>();
-    // if (_telFormKey.currentState!.validate()) {
-    //   // 회원가입 요청
-    //   await viewModel.signUp().then(
-    //     (userInfo) {
-    //       if (userInfo != null) {
-    //         _pageController.dispose(); // 해제
-    //         LOG.log("Succeeded in signing up");
-    //         Navigator.pushNamedAndRemoveUntil(
-    //             context, "/contact", ((route) => false));
-    //         return;
-    //       }
-    //       viewModel.disconnect();
-    //       LOG.log("Faild to signup");
-    //       GlobalNavigator.navigatorKey.currentState
-    //           ?.pushNamedAndRemoveUntil("/landing", (route) => false);
-    //     },
-    //   );
-    // } else {
-    //   viewModel.disconnect();
-    //   LOG.log("Exception while signing up");
-    //   GlobalNavigator.navigatorKey.currentState
-    //       ?.pushNamedAndRemoveUntil("/landing", (route) => false);
-    // }
+    final viewModel = context.read<SignUpViewModel>();
+    if (_telFormKey.currentState!.validate()) {
+      // 회원가입 요청
+      await viewModel.signUp().then(
+        (userInfo) {
+          if (userInfo != null) {
+            _pageController.dispose(); // 해제
+            LOG.log("Succeeded in signing up");
+            Navigator.pushNamedAndRemoveUntil(
+                context, "/contact", ((route) => false));
+            return;
+          }
+          LOG.log("Faild to signup");
+          GlobalNavigator.navigatorKey.currentState
+              ?.pushNamedAndRemoveUntil("/landing", (route) => false);
+        },
+      );
+    } else {
+      LOG.log("Exception while signing up");
+      GlobalNavigator.navigatorKey.currentState
+          ?.pushNamedAndRemoveUntil("/landing", (route) => false);
+    }
   }
 
   @override

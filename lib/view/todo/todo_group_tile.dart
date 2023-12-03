@@ -5,12 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
+import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/modals/custom_fullscreen_modal.dart';
 import 'package:iww_frontend/view/modals/todo_first_done.dart';
-import 'package:iww_frontend/view/modals/todo_info_snanckbar.dart';
+import 'package:iww_frontend/view/modals/custom_snackbar.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
-import 'package:iww_frontend/viewmodel/user.provider.dart';
+import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
@@ -126,8 +127,12 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                 borderRadius: BorderRadius.circular(8), // 원하는 모서리 둥글기 적용
               ),
             ),
-            // 버튼 클릭 시 수행할 작업
-            onPressed: () => _onTodoCheck(),
+
+            // * ===== 버튼 클릭시 투두 체크 ===== * //
+            onPressed: () => _onGrpTodoCheck(
+              context,
+              widget.todo,
+            ),
             child: Ink(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -144,6 +149,7 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                 ), // 버튼 크기 조정
                 alignment: Alignment.center,
                 child: Text(
+                  // * ==== 투두 상태 ==== * //
                   todoState == 0
                       ? "인증하기"
                       : todoState == 1
@@ -169,109 +175,16 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
   // *                            * //
   // ****************************** //
 
-  Future<void> _onTodoCheck() async {
-    // 이미 체크 완료 되어있는 todo 의 체크를 해제하는 경우.
-    if (widget.todo.todoDone) {
-      // 체크를 해제합니다
-      return await _groupTodoUncheck(context);
-    }
-
-    // 체크가 되어있지 않은 todo를 사진전송 하고 완료 처리 하는 경우,
-    final pickedFile = await _picker
-        .pickImage(source: ImageSource.camera)
-        .onError((error, stackTrace) {
-      // 사용자가 권한거부하여 picker 창이 종료된 경우
-      LOG.log("Error while opening image picker! $error");
-      return null;
-    });
-
-    LOG.log(pickedFile.toString());
-
-    if (pickedFile != null) {
-      setState(() {
-        _imageFile = File(pickedFile.path);
-        LOG.log("image file ${_imageFile.toString()}");
-      });
-      final formatter = DateFormat('yyyy-MM-dd');
-      final formattedDate = formatter.format(DateTime.now());
-
-      if (context.mounted) {
-        return _groupTodoCheck(context, pickedFile, formattedDate);
-      }
-    }
-  }
-
-  // 그룹 투두를 체크한 경우
-  Future<void> _groupTodoCheck(
+  Future<void> _onGrpTodoCheck(
     BuildContext context,
-    XFile pickedFile,
-    String formattedDate,
-  ) {
-    return showGeneralDialog(
-      context: context,
-      pageBuilder: (
-        BuildContext buildContext,
-        Animation<double> animation,
-        Animation<double> secondaryAnimation,
-      ) {
-        return AlertDialog(
-          actions: [
-            TextButton(
-              child: Text('할일 완료!'),
-              onPressed: () async {
-                final viewModel = context.read<TodoViewModel>();
-                final result = await viewModel.checkTodo(
-                  widget.todo,
-                  true,
-                  userId: widget.todo.userId,
-                  path: pickedFile.path,
-                );
-                LOG.log("@@@@@@@@@@@@@@@ Result: $result");
-                if (result == true && context.mounted) {
-                  _handleTodoCashReward(context: context, value: true);
-                  Navigator.pop(context);
-                }
-              },
-            )
-          ],
-          content: Expanded(
-              child: Stack(
-            children: [
-              Image.file(_imageFile),
-              Positioned(
-                bottom: 10,
-                right: 10,
-                child: Container(
-                  padding: EdgeInsets.all(8),
-                  color: Colors.black.withOpacity(0.5),
-                  child: Text(
-                    formattedDate,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          )),
-        );
-      },
-      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-      barrierColor: Colors.black45,
-      transitionDuration: const Duration(milliseconds: 300),
-    );
-  }
-
-  Future<void> _groupTodoUncheck(BuildContext context) async {
-    showGeneralDialog(
-      context: context,
-      pageBuilder: (
-        BuildContext buildContext,
-        Animation<double> animation,
-        Animation<double> secondaryAnimation,
-      ) {
-        return AlertDialog(
+    Todo todo,
+  ) async {
+    // 이미 체크 완료 되어있는 todo 의 체크를 해제하는 경우.
+    if (todo.todoDone && todo.grpId != null) {
+      if (mounted) {
+        showCustomAlertDialog(
+          context: context,
+          content: Text("완료처리가 되어있는 할일이에요.\n할일 체크를 해제하시겠어요?"),
           actions: [
             Row(
               children: [
@@ -279,12 +192,14 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                   child: Text('할일 체크를 해제할래요.'),
                   onPressed: () async {
                     final viewModel = context.read<TodoViewModel>();
-                    final result = await viewModel.checkTodo(widget.todo, false,
+                    final result = await viewModel.checkTodo(
+                        widget.todo.todoId, false,
                         userId: widget.todo.userId, path: "");
                     if (context.mounted) {
                       Navigator.pop(context);
                       if (result == true) {
-                        _handleTodoCashReward(context: context, value: false);
+                        // _handleTodoCashReward(
+                        //     context: context, value: false);
                       }
                     }
                   },
@@ -298,7 +213,112 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
               ],
             )
           ],
-          content: Text("완료처리가 되어있는 할일이에요.\n할일 체크를 해제하시겠어요?"),
+        );
+      }
+    }
+
+    // 체크가 되어있지 않은 todo를 사진전송 하고 완료 처리 하는 경우,
+    final pickedFile = await _picker
+        .pickImage(source: ImageSource.camera)
+        .onError((error, stackTrace) {
+      // 사용자가 권한거부하여 picker 창이 종료된 경우
+      LOG.log("Error while opening image picker! $error");
+      return null;
+    });
+
+    LOG.log(pickedFile.toString());
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+        LOG.log("image file ${_imageFile.toString()}");
+      });
+      final formatter = DateFormat('yyyy-MM-dd');
+      final formattedDate = formatter.format(DateTime.now());
+
+      if (context.mounted) {
+        // * ==== 사진 확인 및 할일 완료 모달 ==== * //
+        showGeneralDialog(
+          context: context,
+          pageBuilder: (
+            BuildContext buildContext,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+          ) {
+            return AlertDialog(
+              actions: [
+                TextButton(
+                  child: Text('할일 완료!'),
+                  onPressed: () async {
+                    // * ==== 버튼 눌렀을때의 로직 ==== * //
+                    final viewModel = context.read<TodoViewModel>();
+                    final result = await viewModel.checkTodo(
+                      widget.todo.todoId,
+                      true,
+                      userId: widget.todo.userId,
+                      path: pickedFile.path,
+                    );
+                    if (result == true && context.mounted) {
+                      // _handleTodoCashReward(context: context, value: true);
+                      var data = {
+                        'userId': widget.todo.userId,
+                        'todoId': widget.todo.todoId,
+                        'photoUrl': pickedFile.path,
+                      };
+
+                      EventService().sendEvent('confirmRequest', data);
+                      
+                      Navigator.pop(context);
+                    }
+                  },
+                )
+              ],
+              content: Expanded(
+                  child: Stack(
+                children: [
+                  Image.file(_imageFile),
+                  Positioned(
+                    bottom: 10,
+                    right: 10,
+                    child: Container(
+                      padding: EdgeInsets.all(8),
+                      color: Colors.black.withOpacity(0.5),
+                      child: Text(
+                        formattedDate,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )),
+            );
+          },
+          barrierLabel:
+              MaterialLocalizations.of(context).modalBarrierDismissLabel,
+          barrierColor: Colors.black45,
+          transitionDuration: const Duration(milliseconds: 300),
+        );
+      }
+    }
+  }
+
+  Future<Object?> showCustomAlertDialog({
+    required BuildContext context,
+    required List<Widget>? actions,
+    required Widget? content,
+  }) {
+    return showGeneralDialog(
+      context: context,
+      pageBuilder: (
+        BuildContext buildContext,
+        Animation<double> animation,
+        Animation<double> secondaryAnimation,
+      ) {
+        return AlertDialog(
+          actions: actions,
+          content: content,
         );
       },
       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
@@ -307,69 +327,87 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
     );
   }
 
-  // ****************************** //
-  // *                            * //
-  // *        Cash Reward         * //
-  // *                            * //
-  // ****************************** //
+  // 그룹 투두를 체크한 경우
+  // Future<void> _groupTodoCheck(
+  //   BuildContext context,
+  //   XFile pickedFile,
+  //   String formattedDate,
+  // ) {
+  //   return
+  // }
 
-  // 리워드 지급
-  void _handleTodoCashReward({
-    required BuildContext context,
-    required bool value,
-  }) {
-    final usermodel = context.read<UserProvider>();
-    final todomodel = context.read<TodoViewModel>();
+  // // ****************************** //
+  // // *                            * //
+  // // *        Cash Reward         * //
+  // // *                            * //
+  // // ****************************** //
 
-    if (value == true) {
-      // 펫 경험치 업데이트
-      usermodel.petExp += 10;
+  // // 리워드 지급
+  // void _handleTodoCashReward({
+  //   required BuildContext context,
+  //   required bool value,
+  // }) {
+  //   final usermodel = context.read<UserProvider>();
+  //   final todomodel = context.read<TodoViewModel>();
 
-      // 유저 Hp 업데이트
+  //   if (value == true) {
+  //     // 펫 경험치 업데이트
+  //     usermodel.petExp += 10;
 
-      var cash = todomodel.isTodaysFirstTodo ? 100 : 25;
-      usermodel.userCash += cash;
+  //     // 유저 Hp 업데이트
 
-      // UI
-      if (todomodel.notifyUser) {
-        _showFirstTodoDoneModal(context);
-        todomodel.notifyUser = false;
-        return;
-      }
-      _showCheckSnackBar(context, "할일이 완료되었어요! +$cash");
-    } else {
-      // 펫 경험치 업데이트
+  //     var cash = todomodel.isTodaysFirstTodo ? 100 : 25;
+  //     usermodel.userCash += cash;
 
-      // 유저 Hp 업데이트
+  //     // UI
+  //     if (todomodel.notifyUser) {
+  //       _showFirstTodoDoneModal(context);
+  //       todomodel.notifyUser = false;
+  //       return;
+  //     }
+  //     _showCheckSnackBar(context, "할일이 완료되었어요! +$cash");
+  //   } else {
+  //     // 펫 경험치 업데이트
 
-      // 오늘의 마지막 투두이면
-      var cash = todomodel.getTodaysChecked(DateTime.now()) == 1 ? 100 : 25;
-      usermodel.userCash -= cash;
+  //     // 유저 Hp 업데이트
 
-      _showCheckSnackBar(context, "할일을 취소했어요 -$cash");
-    }
-  }
+  //     // 오늘의 마지막 투두이면
+  //     var cash = todomodel.getTodaysChecked(DateTime.now()) == 1 ? 100 : 25;
+  //     usermodel.userCash -= cash;
 
-  // 스낵바를 보여줍니다
-  void _showCheckSnackBar(BuildContext context, String message) {
-    showCustomSnackBar(
-      context,
-      text: message,
-      icon: Lottie.asset(
-        "assets/star.json",
-        animate: true,
-      ),
-    );
-  }
+  //     _showCheckSnackBar(context, "할일을 취소했어요 -$cash");
+  //   }
+  // }
 
-  // * 첫 투두 완료 모달 *//
-  Future<void> _showFirstTodoDoneModal(BuildContext context) async {
-    // 위젯 빌드 후에 모달 표시
-    Future.microtask(() async {
-      await showCustomFullScreenModal(
-        context,
-        TodoFirstDoneModal(),
-      );
-    });
+  // // 스낵바를 보여줍니다
+  // void _showCheckSnackBar(BuildContext context, String message) {
+  //   showCustomSnackBar(
+  //     context,
+  //     text: message,
+  //     icon: Lottie.asset(
+  //       "assets/star.json",
+  //       animate: true,
+  //     ),
+  //   );
+  // }
+
+  // // * 첫 투두 완료 모달 *//
+  // Future<void> _showFirstTodoDoneModal(BuildContext context) async {
+  //   // 위젯 빌드 후에 모달 표시
+  //   Future.microtask(() async {
+  //     await showCustomFullScreenModal(
+  //       context,
+  //       TodoFirstDoneModal(),
+  //     );
+  //   });
+  // }
+}
+
+class CutomAlertDialog extends StatelessWidget {
+  const CutomAlertDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
   }
 }

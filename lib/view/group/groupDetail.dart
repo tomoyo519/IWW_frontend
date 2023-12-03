@@ -4,17 +4,19 @@ import 'package:iww_frontend/model/group/group.model.dart';
 import 'package:iww_frontend/model/routine/routine.model.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/model/group/groupImg.model.dart';
-import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
 import 'dart:convert';
 import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/view/group/groupMain.dart';
 import 'package:iww_frontend/view/todo/todo_editor.dart';
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 
 final List<String> labels = [
   '전체',
@@ -82,35 +84,47 @@ class _GroupDetailState extends State<GroupDetail> {
       "user_id": 1,
       "grp_id": grp_id,
     });
-    var result =
-        await RemoteDataSource.post("/group/${grp_id}/join/1", body: data);
-    if (result.statusCode == 201) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: const Text("그룹 가입이 완료 되었어요!")));
 
-      Navigator.pushNamed(context, "/group");
-    }
+    await RemoteDataSource.post("/group/$grp_id/join/1", body: data)
+        .then((res) async {
+      if (res.statusCode == 201) {
+        final viewModel = context.read<MyGroupViewModel>();
+        await viewModel.fetchMyGroupList();
+        if (context.mounted) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: const Text("그룹 가입이 완료 되었어요!")));
+          Navigator.pop(context);
+        }
+      }
+    });
   }
 
   exitGroup(grp_id) async {
     //탈퇴하기;
     // TODO - user_id 수정하기.
+
     var data = jsonEncode({
       "user_id": 1,
       "grp_id": grp_id,
     });
-    var result =
-        await RemoteDataSource.delete("/group/${grp_id}/left/${1}", body: data);
-    LOG.log(result.body);
-    if (result.statusCode == 200) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: const Text("그룹 탈퇴가 완료 되었어요!")));
-      Navigator.pushNamed(context, "/group");
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: const Text("그룹 탈퇴 실패했어요. 재시도 해주세요.")));
-      Navigator.pop(context);
-    }
+    await RemoteDataSource.delete("/group/$grp_id/left/${1}", body: data).then(
+      (result) async {
+        LOG.log("${result.body}, ${result.statusCode}");
+        if (result.statusCode == 200) {
+          final viewModel = context.read<MyGroupViewModel>();
+          await viewModel.fetchMyGroupList();
+          if (context.mounted) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: const Text("그룹 탈퇴가 완료 되었어요!")));
+            Navigator.pop(context);
+          }
+        } else if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: const Text("그룹 탈퇴 실패했어요. 재시도 해주세요.")));
+          Navigator.pop(context);
+        }
+      },
+    );
   }
 
   @override
@@ -132,9 +146,9 @@ class _GroupDetailState extends State<GroupDetail> {
 
   // 할일 수정
   void _showTodoEditor(BuildContext context, Routine? routine) {
-    final userInfo = Provider.of<UserInfo>(context, listen: false);
+    final userInfo = context.read<UserInfo>();
     final groupmodel = context.read<MyGroupViewModel>();
-    Todo? todo = routine?.generateTodo(userInfo.user_id);
+    Todo? todo = routine?.generateTodo(userInfo.userId);
 
     showModalBottomSheet(
       context: context,
@@ -370,8 +384,8 @@ class _GroupDetailState extends State<GroupDetail> {
                             shape: RoundedRectangleBorder(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10)))),
-                        onPressed: () {
-                          joinGroup(widget.group.groupId);
+                        onPressed: () async {
+                          await joinGroup(widget.group.groupId);
                         },
                         child:
                             Text("참가하기", style: TextStyle(color: Colors.white)),
@@ -389,8 +403,8 @@ class _GroupDetailState extends State<GroupDetail> {
                             shape: RoundedRectangleBorder(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10)))),
-                        onPressed: () {
-                          exitGroup(widget.group.groupId);
+                        onPressed: () async {
+                          await exitGroup(widget.group.groupId);
                         },
                         child:
                             Text("탈퇴하기", style: TextStyle(color: Colors.white)),

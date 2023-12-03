@@ -14,10 +14,15 @@ class RemoteDataSource {
 
   static const String server = Secrets.REMOTE_SERVER_URL;
   static RemoteDataSource get instance => _instance;
-  static const Map<String, String> baseHeaders = {
+  static Map<String, String> baseHeaders = {
     // TODO: 여기에 기본 헤더를 정의합니다.
     "Content-Type": "application/json; charset=UTF-8",
   };
+
+  // 인증 완료 시 Authorization 헤더 추가
+  static void setAuthHeader(String token) {
+    baseHeaders['Authorization'] = token;
+  }
 
   // POST form data
   static Future<http.StreamedResponse> postFormData(String url, String field,
@@ -80,7 +85,11 @@ class RemoteDataSource {
     headers = (headers != null) ? {...headers, ...baseHeaders} : baseHeaders;
 
     // Json string으로 변환하여 요청
-    String bodyString = body is Map ? json.encode(body) : body.toString();
+    String? bodyString = body == null
+        ? null
+        : body is Map
+            ? json.encode(body)
+            : body.toString();
 
     return await http.post(
       Uri.parse(server + url),
@@ -97,7 +106,7 @@ class RemoteDataSource {
   }) async {
     // 기본 헤더 추가
     headers = (headers != null) ? {...headers, ...baseHeaders} : baseHeaders;
-    LOG.log("send get $url");
+    LOG.log("send get ${server + url}");
     return await http.get(Uri.parse(server + url), headers: headers);
   }
 

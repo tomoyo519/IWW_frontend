@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
-import 'package:iww_frontend/model/user/user-info.model.dart';
+import 'package:iww_frontend/model/todo/todo_update.dto.dart';
+import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
+import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_common/spinner.dart';
 import 'package:iww_frontend/view/todo/todo_my_tile.dart';
@@ -10,6 +13,7 @@ import 'package:iww_frontend/view/todo/todo_editor.dart';
 import 'package:iww_frontend/view/todo/todo_group_tile.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 
 class ToDoList extends StatelessWidget {
@@ -56,8 +60,10 @@ class ToDoList extends StatelessWidget {
                           onTap: () => _showTodoEditor(context, todo),
                           onLongPress: () =>
                               _showTodoDeleteModal(context, todo),
-                          child:
-                              GroupTodoTile(todo: todo, viewModel: viewModel),
+                          child: GroupTodoTile(
+                            todo: todo,
+                            viewModel: viewModel,
+                          ),
                         ),
                       // * ==== 개인투두 ==== * //
                       Padding(
@@ -75,13 +81,90 @@ class ToDoList extends StatelessWidget {
                           onTap: () => _showTodoEditor(context, todo),
                           onLongPress: () =>
                               _showTodoDeleteModal(context, todo),
-                          child: MyTodoTile(todo: todo, viewModel: viewModel),
+                          child: MyTodoTile(
+                            todo: todo,
+                            viewModel: viewModel,
+                            onCheck: _onNormalTodoChk,
+                          ),
                         ),
                     ],
                   ),
                 ),
     );
   }
+
+  // ****************************** //
+  // *                            * //
+  // *       On Todo Check        * //
+  // *                            * //
+  // ****************************** //
+
+  // 할일 체크했을때의 로직
+  Future<void> _onNormalTodoChk(
+      BuildContext context, Todo todo, bool value) async {
+    // 개인 todo 인 경우 UI 업데이트
+    final todomodel = context.read<TodoViewModel>();
+    final usermodel = context.read<UserInfo>();
+    int userId = usermodel.userId;
+
+    todomodel.checkTodoState(todo, value, userId, null);
+    usermodel.setStateFromTodo(value, false, todomodel.check);
+
+    // * ===== UI UPDATED ===== * //
+
+    // 리워드 계산
+    TodoUpdateDto? result = await todomodel.checkTodo(todo.todoId, value);
+
+    // expect data와 현재 상태를 비교하고 필요시 새로 fetch합니다.
+    if (result == null || // 응답이 없음
+            result.todo.todoDone != value || // 투두 체크 실패
+            result.user.user_cash != usermodel.userCash // 유저 보상 오류
+        ) {
+      usermodel.waiting = true;
+      usermodel.fetchUser();
+      // todomodel.fetchTodos();
+    }
+  }
+
+  // todo delete modal onclick callback
+  Future<void> _onClickDelete(BuildContext context, Todo todo) async {
+    Navigator.pop(context);
+
+    final viewModel = context.read<TodoViewModel>();
+
+    await viewModel.deleteTodo(todo.todoId).then((response) {
+      LOG.log("Delete todo");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('삭제가 완료 되었어요!'),
+        ),
+      );
+    });
+  }
+
+  // todo editor onsave callback
+  // 기존 할일 수정
+  Future<void> _updateTodo(BuildContext context) async {
+    final viewModel = context.read<EditorModalViewModel>();
+    await viewModel.updateTodo().then((result) {
+      if (result == true) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('변경이 완료 되었어요!'),
+            ),
+          );
+          Navigator.pop(context);
+        }
+      }
+    });
+  }
+
+  // ****************************** //
+  // *                            * //
+  // *       Show Modal UI        * //
+  // *                            * //
+  // ****************************** //
 
   // 할일 삭제
   _showTodoDeleteModal(BuildContext context, Todo todo) {
@@ -111,7 +194,7 @@ class ToDoList extends StatelessWidget {
   // 할일 수정
   _showTodoEditor(BuildContext context, Todo todo) {
     final todoviewmodel = context.read<TodoViewModel>();
-    final userInfo = Provider.of<UserInfo>(context, listen: false);
+    final userInfo = context.read<UserInfo>();
 
     showModalBottomSheet(
       context: context,
@@ -133,48 +216,6 @@ class ToDoList extends StatelessWidget {
         );
       },
     );
-  }
-
-  // todo delete modal onclick callback
-  Future<void> _onClickDelete(BuildContext context, Todo todo) async {
-    Navigator.pop(context);
-
-    final viewModel = context.read<TodoViewModel>();
-
-    await viewModel.deleteTodo(todo.todoId).then((response) {
-      LOG.log("Delete todo");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('삭제가 완료 되었어요!'),
-        ),
-      );
-    });
-  }
-
-  // todo editor onsave callback
-  // 기존 할일 수정
-  Future<void> _updateTodo(BuildContext context) async {
-    Navigator.pop(context);
-
-    final viewModel = context.read<EditorModalViewModel>();
-    await viewModel.updateTodo().then((result) {
-      if (result == true) {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('변경이 완료 되었어요!'),
-            ),
-          );
-
-          // 일정 시간 후에 화면을 닫습니다.
-          // Future.delayed(Duration(seconds: 3), () {
-          //   if (context.mounted) {
-          //     Navigator.pop(context);
-          //   }
-          // });
-        }
-      }
-    });
   }
 }
 

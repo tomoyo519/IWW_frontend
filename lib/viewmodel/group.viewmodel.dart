@@ -49,31 +49,34 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
 
   List<Group> groups = [];
   bool iswait = true;
+  bool get waiting => iswait;
   set waiting(bool val) {
     iswait = val;
     notifyListeners();
   }
 
   Future<void> fetchMyGroupList() async {
+    // waiting = true;
+    LOG.log('fetchMygroupList 실행');
     try {
       // int userId = _userInfo.user_id;
       // TODO - userId 안들어옴;
-      LOG.log('fetchMygroupList 실행');
       List<Group>? data = await _groupRepository.getMyGroupList(1);
       // 이름으로 정렬하여 넘겨봅시다
       data?.sort((a, b) => a.grpName.compareTo(b.grpName));
       groups = data ?? [];
-      LOG.log('${groups}');
-      waiting = false;
-      notifyListeners();
+      LOG.log('notify 전 ${groups.length}');
+      // waiting = false;
+      // notifyListeners();
     } catch (err) {
-      LOG.log('error: $err');
-      waiting = false;
       groups = [];
-      notifyListeners();
+      LOG.log('error: $err');
+      // waiting = false;
+      // notifyListeners();
     } finally {
       notifyListeners();
       waiting = false;
+      LOG.log("notify 후 ${groups.length}");
     }
   }
 
