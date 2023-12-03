@@ -1,6 +1,5 @@
 // providers.dart
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/model/user/user-info.model.dart';
 import 'package:iww_frontend/repository/comment.repository.dart';
 import 'package:iww_frontend/repository/friend.repository.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
