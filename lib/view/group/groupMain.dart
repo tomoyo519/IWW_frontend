@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+
 import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
-import 'package:iww_frontend/utils/login_wrapper.dart';
+
 import 'package:iww_frontend/view/group/groupList.dart';
 import 'package:iww_frontend/view/group/groupSearch.dart';
 import 'package:iww_frontend/view/group/newGroup.dart';
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 
 // ==== 종속성 주입을 위한 페이지 위젯 ==== //
@@ -70,39 +72,50 @@ class MyGroup extends StatelessWidget {
                       GroupList(),
                       // ==== Group Create Floating Button ==== //
                       Positioned(
-                        right: 10,
+                        right: 20,
                         bottom: 15,
                         child: IconButton(
                           onPressed: () async {
                             await Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (c) => LoginWrapper(
-                                        child: ChangeNotifierProvider.value(
-                                            value: context
-                                                .read<MyGroupViewModel>(),
-                                            child: NewGroup()),
-                                      )
+                                builder: (c) => MultiProvider(
+                                  providers: [
+                                    ChangeNotifierProvider.value(
+                                        value: context.read<UserInfo>()),
+                                    ChangeNotifierProvider(
+                                      create: (_) => GroupDetailModel(
+                                          Provider.of<GroupRepository>(context,
+                                              listen: false)),
+                                    ),
+                                    ChangeNotifierProvider.value(
+                                        value:
+                                            context.read<MyGroupViewModel>()),
+                                    // ChangeNotifierProvider.value(
+                                    //     value: context.read<UserInfo>())
+                                  ],
+                                  child: NewGroup(),
+                                ),
 
-                                  // MultiProvider(
-                                  //   providers: [
-                                  //     // Provider(
-                                  //     //   create: (context) =>
-                                  //     //       Provider.of<UserInfo>(context,
-                                  //     //           listen: false),
-                                  //     // ),
-                                  //     // ChangeNotifierProvider(
-                                  //     //   create: (context) =>
-                                  //     //       Provider.of<MyGroupViewModel>(
-                                  //     //           context,
-                                  //     //           listen: false),
-                                  //     // ),
-                                  //     ChangeNotifierProvider.value(
-                                  //       value: context.read<MyGroupViewModel>(),
-                                  //     )
-                                  //   ],
-                                  //   child: LoginWrapper(child: NewGroup()),
-                                  ),
+                                // MultiProvider(
+                                //   providers: [
+                                //     // Provider(
+                                //     //   create: (context) =>
+                                //     //       Provider.of<UserInfo>(context,
+                                //     //           listen: false),
+                                //     // ),
+                                //     // ChangeNotifierProvider(
+                                //     //   create: (context) =>
+                                //     //       Provider.of<MyGroupViewModel>(
+                                //     //           context,
+                                //     //           listen: false),
+                                //     // ),
+                                //     ChangeNotifierProvider.value(
+                                //       value: context.read<MyGroupViewModel>(),
+                                //     )
+                                //   ],
+                                //   child: LoginWrapper(child: NewGroup()),
+                              ),
                             );
                             // if (context.mounted &&
                             //     result != null &&

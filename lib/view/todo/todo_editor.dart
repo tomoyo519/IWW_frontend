@@ -32,7 +32,7 @@ class EditorModal extends StatelessWidget {
     final bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom != 0;
 
     return FractionallySizedBox(
-      heightFactor: isKeyboardOpen ? 0.9 : 0.58,
+      heightFactor: isKeyboardOpen ? 1.0 : 0.58,
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Column(

@@ -234,7 +234,10 @@ class _GroupDetailState extends State<GroupDetail> {
                         },
                       ),
                     ))
-                  : Text("텅"),
+                  : Lottie.asset('assets/empty.json',
+                      repeat: true,
+                      animate: true,
+                      height: MediaQuery.of(context).size.height * 0.3),
             ],
           ),
         );

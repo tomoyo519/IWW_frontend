@@ -257,7 +257,8 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                       userId: widget.todo.userId,
                       path: pickedFile.path,
                     );
-                    if (result == true && context.mounted) {
+
+                    if (result != null && context.mounted) {
                       // _handleTodoCashReward(context: context, value: true);
                       var data = {
                         'userId': widget.todo.userId,

@@ -21,7 +21,7 @@ class Group {
     return Group(
       groupId: body['grp_id'],
       grpName: body['grp_name'],
-      grpDesc: body['grp_decs'],
+      grpDesc: body['grp_desc'],
       catId: body['cat_id'],
       catName: body['cat_name'],
       ownerName: body['owner'],
@@ -33,7 +33,7 @@ class Group {
     return {
       'grp_id': groupId,
       'grp_name': grpName,
-      'grp_decs': grpDesc,
+      'grp_desc': grpDesc,
       'cat_id': catId,
       'cat_name': catName,
       'owner': ownerName,
@@ -45,7 +45,7 @@ class Group {
     return {
       'group_id': groupId,
       'grp_name': grpName,
-      'grp_decs': grpDesc,
+      'grp_desc': grpDesc,
       'cat_id': catId,
       'cat_name': catName,
       'owner': ownerName,

@@ -117,8 +117,8 @@ class ToDoList extends StatelessWidget {
 
     // expect data와 현재 상태를 비교하고 필요시 새로 fetch합니다.
     if (result == null || // 응답이 없음
-            result.todo.todoDone != value || // 투두 체크 실패
-            result.user.user_cash != usermodel.userCash // 유저 보상 오류
+            result.todoDone != value || // 투두 체크 실패
+            result.userCash != usermodel.userCash // 유저 보상 오류
         ) {
       usermodel.waiting = true;
       usermodel.fetchUser();

@@ -28,7 +28,7 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
   List<Routine> get groupRoutine => _groupRoutine;
 
   set groupDesc(String val) {
-    _groupData['grp_decs'] = val;
+    _groupData['grp_desc'] = val;
     notifyListeners();
   }
 
@@ -57,6 +57,7 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
 
   Future<void> fetchMyGroupList() async {
     // waiting = true;
+    // TODO - userId 변경하기
     LOG.log('fetchMygroupList 실행');
     try {
       // int userId = _userInfo.user_id;
@@ -65,18 +66,17 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
       // 이름으로 정렬하여 넘겨봅시다
       data?.sort((a, b) => a.grpName.compareTo(b.grpName));
       groups = data ?? [];
-      LOG.log('notify 전 ${groups.length}');
-      // waiting = false;
-      // notifyListeners();
+
+      waiting = false;
+      notifyListeners();
     } catch (err) {
       groups = [];
       LOG.log('error: $err');
-      // waiting = false;
+      // waiting = false–;
       // notifyListeners();
     } finally {
       notifyListeners();
       waiting = false;
-      LOG.log("notify 후 ${groups.length}");
     }
   }
 
