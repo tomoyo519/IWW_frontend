@@ -75,34 +75,6 @@ class UserRepository {
     });
   }
 
-  // 카카오 아이디 기준으로 유저 정보 조회
-  // Future<UserModel?> getUserByKakaoId(String userKakaoId) async {
-  //   return await RemoteDataSource.get("/user?user_kakao_id=$userKakaoId")
-  //       .then((response) {
-  //     LOG.log("Get user by kakao id ${response.body}");
-  //     if (response.statusCode == 200 && response.body.isNotEmpty) {
-  //       var jsonData = json.decode(response.body);
-  //       return UserModel.fromJson(jsonData);
-  //     } else {
-  //       // 해당 유저가 없거나 예외 반환한 경우
-  //       return null;
-  //     }
-  //   });
-  // }
-
-  // // 이름을 기준으로 유저 정보 조회
-  // Future<UserModel?> getUserByName(String name) async {
-  //   return await RemoteDataSource.get("/user?user_name=$name").then((response) {
-  //     if (response.statusCode == 200 && response.body.isNotEmpty) {
-  //       var jsonData = json.decode(response.body);
-  //       return UserModel.fromJson(jsonData);
-  //     } else {
-  //       // 해당 유저가 없거나 예외 반환한 경우
-  //       return null;
-  //     }
-  //   });
-  // }
-
   // 연락처 기준으로 유저 정보 조회
   Future<List<UserModel>?> getUsersByContacts(
       GetUsersByContactsDto body) async {

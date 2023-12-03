@@ -1,9 +1,7 @@
 // 현재 유저의 정보
 // ignore_for_file: non_constant_identifier_names
 
-import 'package:flutter/cupertino.dart';
-
-class UserModel extends ChangeNotifier {
+class UserModel {
   // DB의 유저 테이블 컬럼
   final int user_id;
   final String user_name;

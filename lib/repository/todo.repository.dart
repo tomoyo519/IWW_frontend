@@ -92,7 +92,7 @@ class TodoRepository {
   }
 
   // 그룹 할일 체크
-  Future<bool> checkGroupTodo(
+  Future<TodoUpdateDto?> checkGroupTodo(
       String userId, String id, bool checked, String path) async {
     return await RemoteDataSource.patch(
       "/todo/$id",
@@ -107,17 +107,16 @@ class TodoRepository {
                   file: image, filename: path)
               .then((res) {
             if (res.statusCode == 200) {
-              return true;
+              var jsonData = jsonDecode(response.body);
+              return TodoUpdateDto.fromJson(jsonData['result']);
             }
-            return false;
+            return null;
           }).catchError((err) {
-            return false;
-          }).catchError((err) {
-            return false;
+            return null;
           });
         }
       }
-      return true;
+      return null;
     });
   }
 

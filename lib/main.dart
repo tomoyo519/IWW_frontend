@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/datasource/localStorage.dart';
+import 'package:iww_frontend/model/auth/login_result.dart';
 import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/providers.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
@@ -43,6 +44,24 @@ void main() async {
   UserRepository userRepository = UserRepository();
   AuthService authService = AuthService(userRepository);
 
+  // * ======================= * //
+  // *                         * //
+  // *     Initialize User     * //
+  // *                         * //
+  // * ======================= * //
+
+  // 1. 카카오 로그인 로직
+  // authService.oauthLogin();
+
+  // 2. 로컬 로그인 로직 [미사용]
+  // 카카오 로그인으로 연결하기 위해 스토리지에 저장된 정보 삭제
+  // LocalStorage.clearKey().then((value) async {
+  //   await authService.localLogin();
+  // });
+
+  // 3. 테스트유저 접속
+  authService.testLogin();
+
   runApp(
     MultiProvider(
       providers: getRepositories(),
@@ -64,7 +83,7 @@ void main() async {
             fontFamily: 'Pretendard',
           ),
 
-          home: RenderPage(auth: authService),
+          home: RenderPage(),
           routes: ROUTE_TABLE, // lib/route.dart
 
           //** Navigator에 푸시될 때 트랜지션
@@ -86,78 +105,25 @@ void main() async {
 // 미인증 사용자인 경우 → Landing
 // 인증된 사용자인 경우 → MainPage
 // */
-class RenderPage extends StatefulWidget {
-  final AuthService auth;
-  const RenderPage({super.key, required this.auth});
-
-  @override
-  State<RenderPage> createState() => _RenderPageState();
-}
-
-class _RenderPageState extends State<RenderPage> {
-  StreamSubscription? _sub;
-
-  @override
-  void initState() async {
-    super.initState();
-
-    // * ======================= * //
-    // *                         * //
-    // *     Initialize User     * //
-    // *                         * //
-    // * ======================= * //
-
-    // 1. 카카오 로그인 로직
-    _sub = widget.auth.listenRedirect();
-    widget.auth.login();
-
-    // 2. 로컬 로그인 로직
-    // 카카오 로그인으로 연결하기 위해 스토리지에 저장된 정보 삭제
-    // LocalStorage.clearKey().then((value) {
-    //   widget.auth.localLogin();
-    // });
-
-    // 3. 테스트유저 접속
-    // widget.auth.user = UserModel(
-    //   user_id: 1,
-    //   user_name: "sojeong",
-    //   user_tel: "010-0000-0000",
-    //   user_kakao_id: "user_kakao_id",
-    //   user_hp: 0,
-    //   user_cash: 0,
-    //   last_login: "",
-    //   login_cnt: 0,
-    //   login_seq: 0,
-    // );
-
-    await widget.auth.initializeTodo();
-    widget.auth.waiting = false;
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    // 스트림 해제
-    if (_sub != null) {
-      _sub!.cancel();
-    }
-  }
+class RenderPage extends StatelessWidget {
+  const RenderPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    AuthService auth = context.watch<AuthService>();
-    return auth.waiting
+    AuthService authService = context.watch<AuthService>();
+    return authService.waiting
         ? LoadingPage()
-        : auth.user == null
+        : authService.status != AuthStatus.initialized
             ? LandingPage()
             : MultiProvider(
                 // 인증된 사용자의 경우 아래와 같은 정보 주입
                 providers: [
                   ChangeNotifierProvider(
                     create: (context) => UserInfo(
-                      auth,
+                      authService.user!,
+                      authService.mainPet!,
+                      authService.todayCount!,
                       Provider.of<UserRepository>(context, listen: false),
-                      auth.user!,
                     ),
                   ),
                 ],

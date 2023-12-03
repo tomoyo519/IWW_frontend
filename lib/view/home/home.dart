@@ -3,7 +3,7 @@ import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/home/home_profile.dart';
-import 'package:iww_frontend/view/modals/todo_info_snanckbar.dart';
+import 'package:iww_frontend/view/modals/custom_snackbar.dart';
 import 'package:iww_frontend/view/todo/todo_editor.dart';
 import 'package:iww_frontend/view/todo/todo_list.dart';
 import 'package:iww_frontend/view/todo/todo_progress.dart';
@@ -18,7 +18,7 @@ class TodoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final UserInfo user = Provider.of<UserInfo>(context, listen: false);
+    final UserInfo user = context.read<UserInfo>();
 
     return ChangeNotifierProvider<TodoViewModel>(
       create: (context) => TodoViewModel(

@@ -8,7 +8,7 @@ import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/modals/custom_fullscreen_modal.dart';
 import 'package:iww_frontend/view/modals/todo_first_done.dart';
-import 'package:iww_frontend/view/modals/todo_info_snanckbar.dart';
+import 'package:iww_frontend/view/modals/custom_snackbar.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:lottie/lottie.dart';
@@ -191,7 +191,8 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                   child: Text('할일 체크를 해제할래요.'),
                   onPressed: () async {
                     final viewModel = context.read<TodoViewModel>();
-                    final result = await viewModel.checkTodo(widget.todo, false,
+                    final result = await viewModel.checkTodo(
+                        widget.todo.todoId, false,
                         userId: widget.todo.userId, path: "");
                     if (context.mounted) {
                       Navigator.pop(context);
@@ -250,7 +251,7 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                     // * ==== 버튼 눌렀을때의 로직 ==== * //
                     final viewModel = context.read<TodoViewModel>();
                     final result = await viewModel.checkTodo(
-                      widget.todo,
+                      widget.todo.todoId,
                       true,
                       userId: widget.todo.userId,
                       path: pickedFile.path,

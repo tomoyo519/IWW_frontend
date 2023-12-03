@@ -17,7 +17,7 @@ class LocalStorage {
   // Save in secured storage
   static Future<void> saveKey(String key, String value) async {
     await _storage.write(key: key, value: value);
-    LOG.log("Save {$key: $value} in secured storage.");
+    LOG.log("Save $key in secured storage.");
   }
 
   // Read from secured storage
