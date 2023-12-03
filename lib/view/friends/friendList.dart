@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/model/user/user.model.dart';
+import 'package:iww_frontend/model/friend/friend.model.dart';
 import 'package:iww_frontend/repository/friend.repository.dart';
 
 class FriendList extends StatefulWidget {
@@ -12,8 +12,8 @@ class FriendList extends StatefulWidget {
 }
 
 class _FriendListState extends State<FriendList> {
-  List<UserModel> friends = [];
-  late int _userId = -1; // 나의 id
+  List<FriendInfo> friends = [];
+  late int _userId; // 나의 id
   final FriendRepository friendRepository = FriendRepository();
 
   @override
@@ -24,7 +24,8 @@ class _FriendListState extends State<FriendList> {
   }
 
   Future<void> fetchFriend() async {
-    List<UserModel> fetchedFriends = await friendRepository.getFriends();
+    List<FriendInfo> fetchedFriends =
+        await friendRepository.getFriends(_userId);
     setState(() {
       friends = fetchedFriends;
     });
@@ -32,18 +33,41 @@ class _FriendListState extends State<FriendList> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Expanded(
-          child: ListView.builder(
-              itemCount: friends.length,
-              itemBuilder: (c, i) {
-                return ListTile(
+    return Column(
+      children: [
+        Expanded(
+            child: ListView.builder(
+          itemCount: friends.length,
+          itemBuilder: (context, index) {
+            FriendInfo user = friends[index];
+
+            return Card(
+              child: InkWell(
+                onTap: () {
+                  if (index == 0) {
+                    // 1위에 해당하는 아이템을 클릭했을 때
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      "/myroom",
+                      arguments:
+                          user.userId, // TODO friendId를 넘겨줘야 함. 0일때는 나의 방
+                      (route) => false,
+                    );
+                  }
+                },
+                child: ListTile(
                   leading: CircleAvatar(
-                    backgroundColor: Colors.lightBlue,
+                    backgroundImage: AssetImage(
+                        'assets/kingfisher.png'), // TODO 사용자 펫의 이미지로 수정
                   ),
-                  title: Text(friends[i].user_name),
-                );
-              }))
-    ]);
+                  title: Text(user.userName),
+                  subtitle: Text('${user.petName}, totalExp: ${user.totalExp}'),
+                ),
+              ),
+            );
+          },
+        ))
+      ],
+    );
   }
 }
