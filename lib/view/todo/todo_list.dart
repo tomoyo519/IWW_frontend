@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
+import 'package:iww_frontend/model/todo/todo_update.dto.dart';
+import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
@@ -82,7 +84,7 @@ class ToDoList extends StatelessWidget {
                           child: MyTodoTile(
                             todo: todo,
                             viewModel: viewModel,
-                            onCheck: _onMyTodoCheck,
+                            onCheck: _onNormalTodoChk,
                           ),
                         ),
                     ],
@@ -98,15 +100,30 @@ class ToDoList extends StatelessWidget {
   // ****************************** //
 
   // 할일 체크했을때의 로직
-  Future<void> _onMyTodoCheck(
-    BuildContext context,
-    Todo todo,
-    bool value,
-    // bool isGroup,
-  ) async {
+  Future<void> _onNormalTodoChk(
+      BuildContext context, Todo todo, bool value) async {
     // 개인 todo 인 경우 UI 업데이트
     final todomodel = context.read<TodoViewModel>();
-    await todomodel.checkTodo(todo, value);
+    final usermodel = context.read<UserInfo>();
+    int userId = usermodel.userId;
+
+    todomodel.checkTodoState(todo, value, userId, null);
+    usermodel.setStateFromTodo(value, false, todomodel.check);
+
+    // * ===== UI UPDATED ===== * //
+
+    // 리워드 계산
+    TodoUpdateDto? result = await todomodel.checkTodo(todo.todoId, value);
+
+    // expect data와 현재 상태를 비교하고 필요시 새로 fetch합니다.
+    if (result == null || // 응답이 없음
+            result.todo.todoDone != value || // 투두 체크 실패
+            result.user.user_cash != usermodel.userCash // 유저 보상 오류
+        ) {
+      usermodel.waiting = true;
+      usermodel.fetchUser();
+      // todomodel.fetchTodos();
+    }
   }
 
   // todo delete modal onclick callback

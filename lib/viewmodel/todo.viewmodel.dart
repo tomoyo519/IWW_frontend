@@ -30,7 +30,7 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   // ===== Status ===== //
 
   List<Todo> _todos = [];
-  List<Todo> _Todos = [];
+  List<Todo> _normalTodos = [];
   List<Todo> _groupTodos = [];
   bool _waiting = true;
   bool _isDisposed = false;
@@ -66,11 +66,14 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   // *         Fetch Data         * //
   // ****************************** //
   Future<void> fetchTodos() async {
+    waiting = true;
+
     // 상태 업데이트
     var data = await _todoRepository.getTodos(_userId);
 
     // 분리해서 가져오기
-    _todos = data.where((todo) => todo.grpId == null).toList();
+    _todos = data;
+    _normalTodos = data.where((todo) => todo.grpId == null).toList();
     _groupTodos = data.where((todo) => todo.grpId != null).toList();
 
     // 카운트
@@ -101,121 +104,109 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   // *        Update Data         * //
   // ****************************** //
 
+  void checkTodoState(Todo todo, bool value, int? userId, String? path) {
+    int idx = _todos.indexWhere((e) => e.todoId == todo.todoId);
+    if (idx == -1) {
+      // 투두가 없는 경우
+      LOG.log("Failed to find todo by id in todos list");
+      waiting = false;
+    } else {
+      // 개인 투두인 경우
+      _todos[idx].todoDone = value;
+      waiting = false;
+    }
+  }
+
+  Future<TodoUpdateDto?> checkTodo(int todoId, bool value,
+      {int? userId, String? path}) async {
+    if (userId == null || path == null) {
+      return await _todoRepository.checkNormalTodo(todoId.toString(), value);
+    }
+
+    return await _todoRepository.checkGroupTodo(
+        userId.toString(), todoId.toString(), value, path);
+  }
+
   // 할일 완료하고 목록 업데이트
   // 전체 투두 비율을 계산해서 리워드 이벤트 트리거
-  Future<bool> checkTodo(
-    Todo todo,
-    bool value, {
-    int? userId,
-    String? path,
-  }) async {
-    // 만약 이미지 경로가 없으면 일반 할일 체크로 처리합니다.
-    if (userId == null || path == null) {
-      // 먼저 상태를 예측해서 갱신하고
+  // Future<bool> checkTodo(
+  //   Todo todo,
+  //   bool value, {
+  //   int? userId,
+  //   String? path,
+  // }) async {
+  //   // 1. 만약 이미지 경로가 없으면 일반 할일 체크로 처리합니다.
+  //   if (userId == null || path == null) {
 
-      // 만약 서버에서 온 응답과 다르다면 rollback
-      return await _todoRepository
-          .checkNormalTodo(todo.todoId.toString(), value)
-          .then((result) => _updateTodoStatus(result, todo, value));
-    }
+  //      .then((value) {
+  //       if(value ==)
+  //      })
+  //     // UserInfo로 리워드 갱신 이벤트 발행
+  //     // EventService.publish(
+  //     //   Event(
+  //     //     type: EventType.reward_status,
+  //     //     message: jsonEncode({
+  //     //       "user_cash": cash,
+  //     //       "pet_exp": petExp,
+  //     //     }),
+  //     //   ),
+  //     // );
 
-    // FIXME: 이미지 경로가 있으면 그룹 할일 체크로 처리합니다.
-    return false;
-    // var todoId = todo.todoId.toString();
-    // return await _todoRepository
-    //     .checkGroupTodo(userId.toString(), todoId, value, path)
-    //     .then((result) => _updateTodoStatus(result, todo, value));
-  }
+  //     // 만약 서버에서 온 응답과 다르다면 force fetch
+  //     // String todoId = todo.todoId.toString();
+  //     // TodoUpdateDto? dto = await _todoRepository.checkNormalTodo(todoId, value);
+  //     // if (dto == null) {
+  //     //   _todos[idx].todoDone = !value;
+  //     //   // User에 fetch data 요청
+  //     //   return false;
+  //     // }
 
-// TODO 나중에 리워드 관리자 객체로 옮깁시다.
-  Future<void> _updateTodoState(Todo todo, bool value) async {
-    // 투두 상태를 변경
-    int idx = _todos.indexWhere((e) => e.todoId == todo.todoId);
-    if (idx == -1) {
-      LOG.log("Failed to find todo by id in todos list");
-      waiting = false;
-    }
-    _todos[idx].todoDone = value;
+  //     // // Todo nTodo = dto.todo;
+  //     // UserModel nUser = dto.user;
 
-    // 리워드 계산
-    bool isDone = todo.todoDone;
-    bool isGroup = todo.grpId != null;
-    int cash = _calculateCash(isGroup, isGroup, _todayDone);
-    int petExp = _calculatePetExp(isDone, isGroup, _todayDone);
+  //     // if(nUser.user_cash)
+  //   }
 
-    Map<String, int> update = {
-      "user_cash": cash,
-      "pet_exp": petExp,
-    };
+  //   // FIXME: 이미지 경로가 있으면 그룹 할일 체크로 처리합니다.
+  //   return false;
+  //   // var todoId = todo.todoId.toString();
+  // return await _todoRepository
+  //     .checkGroupTodo(userId.toString(), todoId, value, path)
+  //     .then((result) => _updateTodoStatus(result, todo, value));
+  // }
 
-    // UserInfo로 상태 갱신 이벤트 발행
-    EventService.publish(
-      Event(
-        type: EventType.status,
-        message: json.encode(update),
-      ),
-    );
+  // // 할일 리스트에서 상태 갱신
+  // Future<bool> _updateTodoStatus(
+  //   TodoUpdateDto? result,
+  //   Todo todo,
+  //   bool value,
+  // ) async {
+  //   if (result == null) {
+  //     LOG.log("Failed to update todo status.");
+  //     waiting = false;
+  //     return false;
+  //   }
 
-    waiting = false; // 적용
-  }
+  //   int idx = _todos.indexWhere((e) => e.todoId == todo.todoId);
+  //   if (idx == -1) {
+  //     LOG.log("Failed to find todo by id in todos list");
+  //     waiting = false;
+  //     return false;
+  //   }
 
-  int _calculatePetExp(bool isDone, bool isGroup, int todayDone) {
-    if (!isGroup && todayDone >= 50) {
-      return isDone ? 0 : -5;
-    }
-    return isGroup
-        ? (isDone ? 10 : -10)
-        : isDone
-            ? 5
-            : -5;
-  }
+  //   // todo update 결과를 user model로 전송
+  //   // user info 상태를 fetch 하도록 알림
+  //   // EventService.publish(
+  //   //   Event(
+  //   //     type: EventType.status,
+  //   //     message: jsonEncode(result),
+  //   //   ),
+  //   // );
 
-  int _calculateCash(bool isDone, bool isGroup, int todayDone) {
-    if ((isDone && todayDone == 0) || (!isDone && todayDone == 1)) {
-      return isDone ? 100 : -100;
-    } else if (!isGroup && todayDone >= 10) {
-      return isDone ? 0 : -10;
-    }
-
-    return isGroup
-        ? (isDone ? 25 : -25)
-        : isDone
-            ? 10
-            : -10;
-  }
-
-  // 할일 리스트에서 상태 갱신
-  Future<bool> _updateTodoStatus(
-    TodoUpdateDto? result,
-    Todo todo,
-    bool value,
-  ) async {
-    if (result == null) {
-      LOG.log("Failed to update todo status.");
-      waiting = false;
-      return false;
-    }
-
-    int idx = _todos.indexWhere((e) => e.todoId == todo.todoId);
-    if (idx == -1) {
-      LOG.log("Failed to find todo by id in todos list");
-      waiting = false;
-      return false;
-    }
-
-    // todo update 결과를 user model로 전송
-    // user info 상태를 fetch 하도록 알림
-    EventService.publish(
-      Event(
-        type: EventType.status,
-        message: jsonEncode(result),
-      ),
-    );
-
-    _todos[idx].todoDone = value;
-    waiting = false;
-    return idx != -1;
-  }
+  //   _todos[idx].todoDone = value;
+  //   waiting = false;
+  //   return idx != -1;
+  // }
 
   // === Calendar Status === //
   String _selectedDate = '';

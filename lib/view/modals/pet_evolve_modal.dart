@@ -1,20 +1,29 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/view/modals/custom_fullscreen_modal.dart';
 import 'package:lottie/lottie.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 
-class EvolPetModal extends StatefulWidget {
+// static method
+Future<void> showPetEvolveModal(BuildContext context) {
+  return showCustomFullScreenModal(
+    context,
+    PetEvolveModal(),
+  );
+}
+
+class PetEvolveModal extends StatefulWidget {
   // final
-  const EvolPetModal({
+  const PetEvolveModal({
     super.key,
   });
 
   @override
-  State<EvolPetModal> createState() => _EvolPetModalState();
+  State<PetEvolveModal> createState() => _PetEvolveModalState();
 }
 
-class _EvolPetModalState extends State<EvolPetModal>
+class _PetEvolveModalState extends State<PetEvolveModal>
     with TickerProviderStateMixin {
   late AnimationController _lottieController;
   late AnimationController _fadeController;

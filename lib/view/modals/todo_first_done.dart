@@ -1,5 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/view/modals/custom_fullscreen_modal.dart';
 import 'package:lottie/lottie.dart';
+
+// static method
+Future<void> showTodoFirstDoneModal(BuildContext context) {
+  return showCustomFullScreenModal(
+    context,
+    TodoFirstDoneModal(),
+  );
+}
 
 class TodoFirstDoneModal extends StatelessWidget {
   const TodoFirstDoneModal({

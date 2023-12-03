@@ -51,7 +51,7 @@ void main() async {
   // * ======================= * //
 
   // 1. 카카오 로그인 로직
-  authService.oauthLogin();
+  // authService.oauthLogin();
 
   // 2. 로컬 로그인 로직 [미사용]
   // 카카오 로그인으로 연결하기 위해 스토리지에 저장된 정보 삭제
@@ -60,17 +60,7 @@ void main() async {
   // });
 
   // 3. 테스트유저 접속
-  // authService.user = UserModel(
-  //   user_id: 29,
-  //   user_name: "이소정",
-  //   user_tel: "01071632489",
-  //   user_kakao_id: "3164637603",
-  //   user_hp: 10,
-  //   user_cash: 100000,
-  //   last_login: "2023-11-30 15:21:48.509743",
-  //   login_cnt: 0,
-  //   login_seq: 0,
-  // );
+  authService.testLogin();
 
   runApp(
     MultiProvider(
@@ -93,7 +83,7 @@ void main() async {
             fontFamily: 'Pretendard',
           ),
 
-          home: RenderPage(auth: authService),
+          home: RenderPage(),
           routes: ROUTE_TABLE, // lib/route.dart
 
           //** Navigator에 푸시될 때 트랜지션
@@ -115,44 +105,25 @@ void main() async {
 // 미인증 사용자인 경우 → Landing
 // 인증된 사용자인 경우 → MainPage
 // */
-class RenderPage extends StatefulWidget {
-  final AuthService auth;
-  const RenderPage({super.key, required this.auth});
-
-  @override
-  State<RenderPage> createState() => _RenderPageState();
-}
-
-class _RenderPageState extends State<RenderPage> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    // 스트림 해제
-    // if (_sub != null) {
-    //   _sub!.cancel();
-    // }
-  }
+class RenderPage extends StatelessWidget {
+  const RenderPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    AuthService auth = context.watch<AuthService>();
-    return auth.waiting
+    AuthService authService = context.watch<AuthService>();
+    return authService.waiting
         ? LoadingPage()
-        : auth.user == null
+        : authService.status != AuthStatus.initialized
             ? LandingPage()
             : MultiProvider(
                 // 인증된 사용자의 경우 아래와 같은 정보 주입
                 providers: [
                   ChangeNotifierProvider(
                     create: (context) => UserInfo(
-                      auth,
+                      authService.user!,
+                      authService.mainPet!,
+                      authService.todayCount!,
                       Provider.of<UserRepository>(context, listen: false),
-                      auth.user!,
                     ),
                   ),
                 ],
