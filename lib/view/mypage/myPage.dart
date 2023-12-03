@@ -103,7 +103,7 @@ class MyPage extends StatelessWidget {
                 children: [
                   Column(
                     children: [
-                      Lottie.asset("assets/money4.json",
+                      Lottie.asset("assets/money.json",
                           animate: true, repeat: false, width: 50, height: 50),
                       Text("보유 캐시"),
                       Text(userInfo.userHp.toString() + '원')
