@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
-import 'package:iww_frontend/utils/login_wrapper.dart';
 import 'package:iww_frontend/view/group/groupList.dart';
 import 'package:iww_frontend/view/group/groupSearch.dart';
 import 'package:iww_frontend/view/group/newGroup.dart';

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/group/group.model.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
-import 'package:iww_frontend/utils/login_wrapper.dart';
 import 'package:iww_frontend/view/group/groupDetail.dart';
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
-import 'package:iww_frontend/utils/login_wrapper.dart';
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'groupDetail.dart';
