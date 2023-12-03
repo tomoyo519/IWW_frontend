@@ -35,11 +35,6 @@ List<AppPage> GET_APP_PAGES() {
       icon: Icons.people_alt_outlined,
       builder: (context) => MyGroupPage(),
       appbar: [notification],
-      // float: ActionPage(
-      //   route: '/group/new',
-      //   label: '새로운 그룹',
-      //   icon: Icons.add,
-      // ),
     ),
     AppPage(
       route: "/myroom",
