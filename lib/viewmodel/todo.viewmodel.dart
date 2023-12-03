@@ -123,8 +123,8 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
       return await _todoRepository.checkNormalTodo(todoId.toString(), value);
     }
 
-    return await _todoRepository.checkGroupTodo(
-        userId.toString(), todoId.toString(), value, path);
+    // return await _todoRepository.checkGroupTodo(
+    //     userId.toString(), todoId.toString(), value, path);
   }
 
   // 할일 완료하고 목록 업데이트

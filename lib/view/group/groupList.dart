@@ -52,6 +52,7 @@ class _GroupListState extends State<GroupList> {
     final viewModel = context.watch<MyGroupViewModel>();
     final myGroups = viewModel.groups;
     LOG.log('GroupList build() called');
+
     return Column(children: [
       viewModel.waiting
           ? Expanded(
@@ -72,12 +73,14 @@ class _GroupListState extends State<GroupList> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => LoginWrapper(
-                                      child: MultiProvider(
+                                  builder: (_) => MultiProvider(
+                                    // ==== 종속성 주입 ==== //
                                     providers: [
                                       ChangeNotifierProvider.value(
-                                        value: context.read<MyGroupViewModel>(),
-                                      ),
+                                          value: context.read<UserInfo>()),
+                                      ChangeNotifierProvider.value(
+                                          value:
+                                              context.read<MyGroupViewModel>()),
                                       ChangeNotifierProvider(
                                         create: (_) => GroupDetailModel(
                                           Provider.of<GroupRepository>(context,
@@ -88,7 +91,7 @@ class _GroupListState extends State<GroupList> {
                                     child: GroupDetail(
                                       group: myGroups[i],
                                     ),
-                                  )),
+                                  ),
                                 ),
                               );
                             },

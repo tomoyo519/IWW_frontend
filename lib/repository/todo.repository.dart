@@ -92,7 +92,7 @@ class TodoRepository {
   }
 
   // 그룹 할일 체크
-  Future<TodoUpdateDto?> checkGroupTodo(
+  Future<bool> checkGroupTodo(
       String userId, String id, bool checked, String path) async {
     return await RemoteDataSource.patch(
       "/todo/$id",
@@ -102,21 +102,21 @@ class TodoRepository {
         if (path.isNotEmpty) {
           // TODO - 사진 전송 연결
           var image = File(path);
-          var result = await RemoteDataSource.patchFormData(
+          return await RemoteDataSource.patchFormData(
                   "/group/$id/user/$userId/image", 'file',
                   file: image, filename: path)
               .then((res) {
             if (res.statusCode == 200) {
               var jsonData = jsonDecode(response.body);
-              return TodoUpdateDto.fromJson(jsonData['result']);
+              return true;
             }
-            return null;
+            return false;
           }).catchError((err) {
-            return null;
+            return false;
           });
         }
       }
-      return null;
+      return false;
     });
   }
 
