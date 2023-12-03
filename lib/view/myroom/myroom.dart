@@ -36,6 +36,7 @@ class MyRoom extends StatelessWidget {
   }
 }
 
+// 인벤토리 뷰 토글을 위한 상태관리
 class MyRoomState extends ChangeNotifier {
   double _growth = 0.0;
   final maxGrowth = 350.0;
@@ -48,6 +49,7 @@ class MyRoomState extends ChangeNotifier {
   }
 }
 
+// 마이룸 기본 페이지
 class MyRoomPage extends StatelessWidget {
   const MyRoomPage({super.key});
 
@@ -86,6 +88,7 @@ class MyRoomPage extends StatelessWidget {
   }
 }
 
+// 마이홈 주요 구성 (펫, 배경, 하단 버튼)
 class MyRoomComponent extends StatelessWidget {
   const MyRoomComponent({
     super.key,
@@ -123,6 +126,7 @@ class MyRoomComponent extends StatelessWidget {
   }
 }
 
+// 방 렌더링
 class RenderMyRoom extends StatelessWidget {
   const RenderMyRoom({super.key});
 
@@ -172,6 +176,7 @@ class RenderMyRoom extends StatelessWidget {
   }
 }
 
+// status bar or chatting(빈칸)
 class UnderLayer extends StatelessWidget {
   UnderLayer({Key? key}) : super(key: key);
 
@@ -309,7 +314,7 @@ class BottomButtons extends StatelessWidget {
     // NOTE 여기서 비동기 연산 수행
     final commentsProvider = context.read<CommentsProvider>();
     // final inventoryState = context.read<InventoryState>();
-    final myRoomState = context.watch<MyRoomState>();
+    final myRoomState = context.read<MyRoomState>();
     var roomState = context.watch<MyRoomViewModel>();
     final user = Provider.of<UserInfo>(context, listen: false);
 
@@ -320,13 +325,13 @@ class BottomButtons extends StatelessWidget {
             onPressed: () {
               myRoomState.toggleGrowth();
             },
-            child: Text('마이홈'));
+            child: Text('인벤토리'));
       } else {
         return ElevatedButton(
             onPressed: () {
               // Navigator.pushNamed(context, '/inventory');
             },
-            child: Text('인벤토리'));
+            child: Text('마이홈'));
       }
     }
 
