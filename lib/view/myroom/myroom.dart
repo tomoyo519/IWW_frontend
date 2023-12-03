@@ -313,6 +313,24 @@ class BottomButtons extends StatelessWidget {
     var roomState = context.watch<MyRoomViewModel>();
     final user = Provider.of<UserInfo>(context, listen: false);
 
+    // 인벤토리 <-> 마이홈 버튼
+    ElevatedButton buildInventoryButton() {
+      if (roomState.isMyRoom()) {
+        return ElevatedButton(
+            onPressed: () {
+              myRoomState.toggleGrowth();
+            },
+            child: Text('마이홈'));
+      } else {
+        return ElevatedButton(
+            onPressed: () {
+              // Navigator.pushNamed(context, '/inventory');
+            },
+            child: Text('인벤토리'));
+      }
+    }
+
+    // 친구목록 <-> 친구추가 버튼
     ElevatedButton buildFriendButton() {
       if (roomState.isMyRoom()) {
         return ElevatedButton(
@@ -350,23 +368,7 @@ class BottomButtons extends StatelessWidget {
               },
               child: Text('방명록')),
           SizedBox(width: 20),
-          ElevatedButton(
-              onPressed: () {
-                // Navigator.pushNamed(context, '/inventory');
-                myRoomState.toggleGrowth();
-              },
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                (Set<MaterialState> states) {
-                  // 눌렸을 때의 상태인 경우 색상 변경
-                  if (states.contains(MaterialState.pressed)) {
-                    return Colors.deepOrange; // 눌렸을 때의 색상
-                  }
-                  // 기본 색상
-                  return Colors.white;
-                },
-              )),
-              child: Text('인벤토리')),
+          buildInventoryButton(),
           SizedBox(width: 20),
           buildFriendButton(),
         ],
