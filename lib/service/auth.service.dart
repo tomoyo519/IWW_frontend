@@ -111,10 +111,22 @@ class AuthService extends ChangeNotifier {
       login_seq: 0,
     );
 
+    _mainPet = Item(
+      id: 54,
+      name: "공부미호",
+      itemType: 0,
+    );
+
+    _todayCount = TodoTodayCount(
+      todoTotal: 10,
+      todoDone: 0,
+    );
+
     RemoteDataSource.setAuthHeader("Bearer ${Secrets.JWT_TOKEN}");
     EventService.setUserId(29);
 
-    await _initialize();
+    // await _initialize();
+    status = AuthStatus.initialized;
     waiting = false;
   }
 
