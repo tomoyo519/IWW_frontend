@@ -4,6 +4,7 @@ Future<Object?> showCustomFullScreenModal(
   BuildContext context,
   Widget child,
 ) {
+  var screen = MediaQuery.of(context).size;
   return showGeneralDialog(
     context: context,
     pageBuilder: (
@@ -11,11 +12,11 @@ Future<Object?> showCustomFullScreenModal(
       Animation<double> animation,
       Animation<double> secondaryAnimation,
     ) {
-      return Container(
-        width: double.infinity,
-        height: double.infinity,
-        color: Colors.amber.shade50,
-        child: SafeArea(
+      return Material(
+        child: Container(
+          width: screen.width,
+          height: screen.height,
+          color: Colors.white,
           child: child,
         ),
       );
@@ -24,7 +25,7 @@ Future<Object?> showCustomFullScreenModal(
     barrierLabel: MaterialLocalizations.of(
       context,
     ).modalBarrierDismissLabel,
-    // barrierColor: Colors.black45,
+    barrierColor: Colors.black45,
     transitionDuration: const Duration(
       milliseconds: 200,
     ),

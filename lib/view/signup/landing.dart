@@ -21,10 +21,10 @@ class _LandingPageState extends State<LandingPage> {
     super.initState();
 
     // 서비스 서버가 보내는 JWT 토큰 수신
-    _sub = Provider.of<AuthService>(
+    Provider.of<AuthService>(
       context,
       listen: false,
-    ).listenRedirect();
+    ).oauthLogin();
   }
 
   @override
@@ -52,7 +52,7 @@ class _LandingPageState extends State<LandingPage> {
               // 로그인 수행
               onPressed: () async {
                 final auth = Provider.of<AuthService>(context, listen: false);
-                await auth.login();
+                auth.oauthLogin();
               },
               style: ElevatedButton.styleFrom(
                 elevation: 0,

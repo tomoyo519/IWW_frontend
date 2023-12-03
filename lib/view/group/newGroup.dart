@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
-import 'package:iww_frontend/view/modals/todo_info_snanckbar.dart';
+import 'package:iww_frontend/view/modals/custom_snackbar.dart';
 
 import 'package:iww_frontend/view/todo/fields/label_list_modal.dart';
 import 'package:iww_frontend/repository/group.repository.dart';

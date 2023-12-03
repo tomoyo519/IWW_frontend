@@ -3,7 +3,7 @@ import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/view/_navigation/app_page.config.dart';
 import 'package:iww_frontend/view/_navigation/app_page.model.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
-import 'package:iww_frontend/view/modals/todo_info_snanckbar.dart';
+import 'package:iww_frontend/view/modals/custom_snackbar.dart';
 import 'package:lottie/lottie.dart';
 
 // 전체 페이지 내비게이터
@@ -35,18 +35,15 @@ class _MainPageState extends State<MainPage> {
 
     // * ==== Event Listener ==== * //
     EventService.stream.listen(
-      (event) {
-        if (event.type == EventType.show_todo_snackbar) {
-          Future.microtask(
-            () {
-              showCustomSnackBar(
-                context,
-                text: event.message ?? "",
-                icon: Icon(Icons.notifications),
-              );
-            },
-          );
-        }
+      (event) async {
+        String? message = event.message;
+        EventType type = event.type;
+        Future.microtask(() async {
+          type.run(context, message: message);
+          // 빌드 완료 2초 후에 이벤트 UI를 실행합니다.
+          // await Future.delayed(Duration(seconds: 2)).then((value) {
+          // });
+        });
       },
     );
   }
