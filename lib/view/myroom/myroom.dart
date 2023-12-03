@@ -4,7 +4,6 @@ import 'package:iww_frontend/repository/room.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';
-import 'package:iww_frontend/view/_navigation/main_page.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
@@ -93,7 +92,7 @@ class MyRoomComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    LOG.log('############## bottom bar height: ${kBottomNavigationBarHeight}');
+    LOG.log('############## bottom bar height: $kBottomNavigationBarHeight');
 
     return Expanded(
       child: Stack(
@@ -176,7 +175,6 @@ class UnderLayer extends StatelessWidget {
   UnderLayer({Key? key}) : super(key: key);
 
   // myroom: status bar, other's room: chatting
-  // TODO 채팅 구현 후 채팅창 삽입
   @override
   Widget build(BuildContext context) {
     return Container(

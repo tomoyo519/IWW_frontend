@@ -15,6 +15,8 @@ class PetModels {
   // cameraOrbit: "0deg 50deg 0deg",
   // fieldOfView: "120deg",
   // 2 2 0 (좀 작은 버전)
+
+  // NOTE 펫 모델은 모두 여기에서 관리
   static final Map<String, ModelViewer> _pets = {
     '구미호_03': ModelViewer(
       src: 'assets/pets/kitsune.glb',
