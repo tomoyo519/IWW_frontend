@@ -47,9 +47,10 @@ class MyGroup extends StatelessWidget {
         child: Column(
           children: [
             TabBar(
+              indicatorSize: TabBarIndicatorSize.tab,
+              indicatorPadding: EdgeInsets.only(left: 10, right: 10),
               labelColor: Colors.black, // 글자색을 검정색으로 설정
               indicatorColor: Colors.black,
-
               tabs: const <Widget>[
                 Tab(text: "내 그룹"),
                 Tab(text: "그룹 검색하기"),

@@ -35,6 +35,7 @@ class GroupRepository {
     return await RemoteDataSource.get(
             "/group/search/${userId ?? 1}/${catId}/${keyword}")
         .then((res) {
+      LOG.log('thisisres');
       if (res.statusCode == 200) {
         var jsonData = jsonDecode(res.body);
         if (jsonData.isEmpty) {
