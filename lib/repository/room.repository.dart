@@ -34,6 +34,15 @@ class RoomRepository {
     });
   }
 
+  Future<bool> applyChanges(int userId, List<int> items) {
+    return RemoteDataSource.put('/room/$userId', body: {'items': items})
+        .then((response) {
+      LOG.log('[Apply changes status] ${response.body}');
+      return true;
+    });
+
+  }
+
   // 나의의 룸에 아이템 추가하기
   Future<void> addItemToMyRoom(int userId, int itemId) async {
     return await RemoteDataSource.post('/room/$userId/$itemId', body: {})

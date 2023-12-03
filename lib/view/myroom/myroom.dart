@@ -76,6 +76,7 @@ class MyRoomPage extends StatelessWidget {
             left: 0,
             right: 0,
             child: AnimatedContainer(
+                width: double.infinity,
                 height: myRoomState.growth,
                 duration: Duration(milliseconds: 500),
                 curve: Curves.easeInOut,
