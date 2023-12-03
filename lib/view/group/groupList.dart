@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/group/group.model.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
-import 'package:iww_frontend/utils/login_wrapper.dart';
 import 'package:iww_frontend/view/group/groupDetail.dart';
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
@@ -52,6 +51,7 @@ class _GroupListState extends State<GroupList> {
     final viewModel = context.watch<MyGroupViewModel>();
     final myGroups = viewModel.groups;
     LOG.log('GroupList build() called');
+
     return Column(children: [
       viewModel.waiting
           ? Expanded(
@@ -72,12 +72,14 @@ class _GroupListState extends State<GroupList> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => LoginWrapper(
-                                      child: MultiProvider(
+                                  builder: (_) => MultiProvider(
+                                    // ==== 종속성 주입 ==== //
                                     providers: [
                                       ChangeNotifierProvider.value(
-                                        value: context.read<MyGroupViewModel>(),
-                                      ),
+                                          value: context.read<UserInfo>()),
+                                      ChangeNotifierProvider.value(
+                                          value:
+                                              context.read<MyGroupViewModel>()),
                                       ChangeNotifierProvider(
                                         create: (_) => GroupDetailModel(
                                           Provider.of<GroupRepository>(context,
@@ -88,7 +90,7 @@ class _GroupListState extends State<GroupList> {
                                     child: GroupDetail(
                                       group: myGroups[i],
                                     ),
-                                  )),
+                                  ),
                                 ),
                               );
                             },
