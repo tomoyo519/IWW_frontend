@@ -56,11 +56,9 @@ class MyPage extends StatelessWidget {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(
                                     25), // border-radius 설정
-                                border: Border.all(
-                                    color: Colors.black), // 테두리 색상 설정
                               ),
                               child: TextButton(
-                                child: Text(" 프로필 관리"),
+                                child: Text("프로필 관리"),
                                 onPressed: () {
                                   Navigator.of(context).push(
                                     PageRouteBuilder(
@@ -68,7 +66,8 @@ class MyPage extends StatelessWidget {
                                           milliseconds: 100), // 0.5초로 설정
                                       pageBuilder: (context, animation,
                                               secondaryAnimation) =>
-                                          MyInfoEdit(),
+                                          MyInfoEdit(
+                                              userName: userInfo.userName),
                                       transitionsBuilder: (context, animation,
                                           secondaryAnimation, child) {
                                         var begin = Offset(1.0, 0.0);
@@ -84,6 +83,9 @@ class MyPage extends StatelessWidget {
                                     ),
                                   );
                                 },
+                                style: TextButton.styleFrom(
+                                  padding: EdgeInsets.all(0), // 내부 패딩을 0으로 설정
+                                ),
                               ),
                             )
                           ],
@@ -101,8 +103,8 @@ class MyPage extends StatelessWidget {
                 children: [
                   Column(
                     children: [
-                      Lottie.asset("assets/money.json",
-                          animate: true, width: 50, height: 50),
+                      Lottie.asset("assets/money4.json",
+                          animate: true, repeat: false, width: 50, height: 50),
                       Text("보유 캐시"),
                       Text(userInfo.userHp.toString() + '원')
                     ],
@@ -110,7 +112,7 @@ class MyPage extends StatelessWidget {
                   Column(
                     children: [
                       Lottie.asset("assets/star.json",
-                          animate: true, width: 50, height: 50),
+                          animate: true, repeat: false, width: 50, height: 50),
                       Text("경험치"),
                       Text(userInfo.userHp.toString() + 'P')
                     ],
