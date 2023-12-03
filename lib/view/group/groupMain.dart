@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+
 import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
+
 import 'package:iww_frontend/view/group/groupList.dart';
 import 'package:iww_frontend/view/group/groupSearch.dart';
 import 'package:iww_frontend/view/group/newGroup.dart';
@@ -39,11 +41,6 @@ class MyGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<ChangeNotifierProvider> newGroupProviders = [
-      ChangeNotifierProvider.value(value: context.read<UserInfo>()),
-      ChangeNotifierProvider.value(value: context.read<MyGroupViewModel>()),
-    ];
-
     return DefaultTabController(
       initialIndex: 0,
       length: 2,
@@ -52,13 +49,9 @@ class MyGroup extends StatelessWidget {
         child: Column(
           children: [
             TabBar(
-              indicatorSize: TabBarIndicatorSize.tab,
-              indicatorPadding: EdgeInsets.only(left: 10, right: 10),
-              labelColor: Colors.black, // 글자색을 검정색으로 설정
-              indicatorColor: Colors.black,
               tabs: const <Widget>[
-                Tab(text: "내 그룹"),
-                Tab(text: "그룹 검색하기"),
+                Tab(icon: Icon(Icons.groups_outlined)),
+                Tab(icon: Icon(Icons.manage_search_outlined)),
               ],
             ),
             Expanded(
@@ -79,7 +72,7 @@ class MyGroup extends StatelessWidget {
                       GroupList(),
                       // ==== Group Create Floating Button ==== //
                       Positioned(
-                        right: 10,
+                        right: 20,
                         bottom: 15,
                         child: IconButton(
                           onPressed: () async {
@@ -87,11 +80,50 @@ class MyGroup extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (c) => MultiProvider(
-                                  providers: newGroupProviders,
+                                  providers: [
+                                    ChangeNotifierProvider.value(
+                                        value: context.read<UserInfo>()),
+                                    ChangeNotifierProvider(
+                                      create: (_) => GroupDetailModel(
+                                          Provider.of<GroupRepository>(context,
+                                              listen: false)),
+                                    ),
+                                    ChangeNotifierProvider.value(
+                                        value:
+                                            context.read<MyGroupViewModel>()),
+                                    // ChangeNotifierProvider.value(
+                                    //     value: context.read<UserInfo>())
+                                  ],
                                   child: NewGroup(),
                                 ),
+
+                                // MultiProvider(
+                                //   providers: [
+                                //     // Provider(
+                                //     //   create: (context) =>
+                                //     //       Provider.of<UserInfo>(context,
+                                //     //           listen: false),
+                                //     // ),
+                                //     // ChangeNotifierProvider(
+                                //     //   create: (context) =>
+                                //     //       Provider.of<MyGroupViewModel>(
+                                //     //           context,
+                                //     //           listen: false),
+                                //     // ),
+                                //     ChangeNotifierProvider.value(
+                                //       value: context.read<MyGroupViewModel>(),
+                                //     )
+                                //   ],
+                                //   child: LoginWrapper(child: NewGroup()),
                               ),
                             );
+                            // if (context.mounted &&
+                            //     result != null &&
+                            //     result == true) {
+                            //   await context
+                            //       .read<MyGroupViewModel>()
+                            //       .fetchMyGroupList();
+                            // }
                           },
                           style: IconButton.styleFrom(
                             elevation: 1,

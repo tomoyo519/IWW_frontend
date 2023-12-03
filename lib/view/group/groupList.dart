@@ -50,12 +50,7 @@ class _GroupListState extends State<GroupList> {
   Widget build(BuildContext context) {
     final viewModel = context.watch<MyGroupViewModel>();
     final myGroups = viewModel.groups;
-<<<<<<< HEAD
-    LOG.log('${viewModel.waiting}');
-=======
-    LOG.log('GroupList build() called');
 
->>>>>>> 7de28876d6a1ffec61916e16f690567c427d2443
     return Column(children: [
       viewModel.waiting
           ? Expanded(

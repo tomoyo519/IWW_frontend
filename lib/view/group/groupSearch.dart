@@ -133,25 +133,25 @@ class _GroupSearchState extends State<GroupSearch> {
                       return TextButton(
                           onPressed: () {
                             Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => LoginWrapper(
-                                    child: MultiProvider(
-                                  providers: [
-                                    ChangeNotifierProvider(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => MultiProvider(
+                                    providers: [
+                                      ChangeNotifierProvider(
                                         create: (_) => GroupDetailModel(
                                             Provider.of<GroupRepository>(
                                                 context,
-                                                listen: false))),
-                                    ChangeNotifierProvider.value(
-                                        value: context.read<MyGroupViewModel>())
-                                  ],
-                                  child: GroupDetail(
-                                    group: groupList![i],
+                                                listen: false)),
+                                      ),
+                                      ChangeNotifierProvider.value(
+                                          value:
+                                              context.read<MyGroupViewModel>())
+                                    ],
+                                    child: GroupDetail(
+                                      group: groupList![i],
+                                    ),
                                   ),
-                                )),
-                              ),
-                            );
+                                ));
                           },
                           child: Container(
                             alignment: Alignment.center,

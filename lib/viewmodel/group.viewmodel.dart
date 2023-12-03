@@ -28,7 +28,7 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
   List<Routine> get groupRoutine => _groupRoutine;
 
   set groupDesc(String val) {
-    _groupData['grp_decs'] = val;
+    _groupData['grp_desc'] = val;
     notifyListeners();
   }
 
@@ -72,7 +72,7 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
     } catch (err) {
       groups = [];
       LOG.log('error: $err');
-      waiting = false;
+      // waiting = false–;
       // notifyListeners();
     } finally {
       notifyListeners();

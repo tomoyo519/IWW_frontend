@@ -27,32 +27,6 @@ class _NewGroupState extends State<NewGroup> {
   String groupDesc = '';
   late GlobalKey<FormState> _formKey;
 
-  List<Map<String, dynamic>> routine = [
-    {
-      "rout_name": "",
-      "rout_desc": "",
-      "rout_repeat": 1111111,
-      "rout_srt": "",
-      "rout_end": ""
-    }
-  ];
-
-  setGroupName(String name) {
-    setState(() {
-      groupName = name;
-    });
-  }
-
-  setCategoryName(String catName) {
-    setState(() => categoryName = catName);
-  }
-
-  setGroupDesc(String desc) {
-    setState(() {
-      groupDesc = desc;
-    });
-  }
-
   @override
   void initState() {
     // TODO: implement initState
@@ -60,17 +34,8 @@ class _NewGroupState extends State<NewGroup> {
     _formKey = GlobalKey<FormState>();
   }
 
-  // void _updateRoutine(BuildContext context) {
-  //   final viewmodel = context.read<EditorModalViewModel>();
-
-  //   LOG.log("Not implemented. ${viewmodel.hour}");
-  //   Navigator.pop(context);
-  // }
-
   _createGroup(BuildContext context) async {
     //새로운 그룹 만들기;
-    // final myGroupViewModel =
-    //     Provider.of<MyGroupViewModel>(context, listen: false);
 
     final viewModel = context.read<MyGroupViewModel>();
     LOG.log('myGroupViewModel.groupData: ${viewModel.groups}');
@@ -78,6 +43,7 @@ class _NewGroupState extends State<NewGroup> {
     // TODO - userId 넣기
     await viewModel.createGroup().then(
       (res) async {
+        LOG.log('thisisres: $res');
         if (res == true) {
           await viewModel.fetchMyGroupList();
           if (context.mounted) {
@@ -119,7 +85,7 @@ class _NewGroupState extends State<NewGroup> {
   void _showTodoEditor(BuildContext context, Routine? routine) {
     final groupRepository =
         Provider.of<GroupRepository>(context, listen: false);
-    final userInfo = Provider.of<UserInfo>(context, listen: false);
+    UserInfo userInfo = Provider.of<UserInfo>(context, listen: false);
     Todo? todo = routine?.generateTodo(userInfo.userId);
     MyGroupViewModel groupmodel = context.read<MyGroupViewModel>();
 
@@ -156,135 +122,288 @@ class _NewGroupState extends State<NewGroup> {
     UserInfo user = Provider.of<UserInfo>(context, listen: false);
 
     final MyGroupViewModel viewModel = context.watch<MyGroupViewModel>();
-    LOG.log('${viewModel.groups}');
-    return Scaffold(
-        appBar: MyAppBar(),
-        body: Container(
-            margin: EdgeInsets.all(10),
-            padding: EdgeInsets.all(10),
-            child: Column(children: [
-              TextField(
-                onChanged: (value) {
-                  viewModel.groupName = value;
-                },
-                decoration: InputDecoration(
-                  hintText: "그룹명을 작성해주세요.",
-                ),
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.end,
+    return WillPopScope(
+        onWillPop: () async {
+          // 뒤로 가기 버튼을 눌렀을 때 동작을 여기에 코딩합니다.
+          // 예를 들면 다이얼로그를 띄우거나 특정 함수를 실행하면 됩니다.
+
+          // 이 함수는 Future<bool>를 반환해야 하며,
+          // true를 반환하면 화면이 pop 됩니다.
+          // false를 반환하면 화면이 pop 되지 않습니다.
+          viewModel.groupRoutine = [];
+
+          return Future.value(true);
+        },
+        child: Scaffold(
+          appBar: MyAppBar(),
+          body: Container(
+            padding: EdgeInsets.all(20),
+            child: SingleChildScrollView(
+              child: Column(
                 children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      showModalBottomSheet(
-                          context: context,
-                          builder: (c) {
-                            return LabelListModal(
-                              content: "label",
-                              setLabel: (newLabel) {
-                                Provider.of<MyGroupViewModel>(context,
-                                        listen: false)
-                                    .groupCat = (newLabel);
-                              },
-                            );
-                          });
-                    },
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20.0),
                     child: Container(
-                      width: MediaQuery.of(context).size.width * 0.15,
-                      alignment: Alignment.center,
-                      child: Text((viewModel.groupData['cat_id'] != null)
-                          ? LabelListModal
-                              .labels[(viewModel.groupData['cat_id'])]
-                          : LabelListModal.labels[0]),
+                      width: double.infinity,
+                      child: Text(
+                        "그룹을 만들어주세요!",
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10.0),
+                    child: Container(
+                      width: double.infinity,
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            "그룹 이름",
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            "*",
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  TextField(
+                    onChanged: (value) {
+                      viewModel.groupName = value;
+                    },
+                    decoration: InputDecoration(
+                      hintText: "예) 1만보 걷기",
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                      contentPadding: EdgeInsets.all(8.0),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          child: Row(
+                            children: <Widget>[
+                              Text(
+                                "카테고리 선택",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                "*",
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            showModalBottomSheet(
+                                context: context,
+                                builder: (c) {
+                                  return LabelListModal(
+                                    content: "label",
+                                    setLabel: (newLabel) {
+                                      Provider.of<MyGroupViewModel>(context,
+                                              listen: false)
+                                          .groupCat = (newLabel);
+                                    },
+                                  );
+                                });
+                          },
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.15,
+                            alignment: Alignment.center,
+                            child: Text((viewModel.groupData['cat_id'] != null)
+                                ? LabelListModal
+                                    .labels[(viewModel.groupData['cat_id'])]
+                                : LabelListModal.labels[0]),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10, bottom: 10.0),
+                    child: Container(
+                      width: double.infinity,
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            "그룹 세부 정보",
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            "*",
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  TextField(
+                    onChanged: (value) {
+                      viewModel.groupName = value;
+                    },
+                    maxLines: 3,
+                    decoration: InputDecoration(
+                      hintText: "예) 오늘 날짜와 걸음 가 가적힌 만보기 캡쳐 화면 업로드",
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                      contentPadding: EdgeInsets.all(8.0),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20.0, bottom: 10.0),
+                    child: Container(
+                      width: double.infinity,
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            "기본 루틴",
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            "*",
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  if (viewModel.groupRoutine.isNotEmpty) ...[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        width: double.infinity,
+                        child: Expanded(
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: viewModel.groupRoutine.length,
+                            itemBuilder: (c, i) {
+                              return GestureDetector(
+                                onLongPress: () {
+                                  _showTodoEditor(
+                                      context, viewModel.groupRoutine[i]);
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                          color: Colors.black26, width: 1)),
+                                  alignment: Alignment.center,
+                                  margin: EdgeInsets.all(10),
+                                  padding: EdgeInsets.all(10),
+                                  child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Checkbox(
+                                          onChanged: null,
+                                          value: false,
+                                        ),
+                                        Text(
+                                            viewModel.groupRoutine[i].routName),
+                                        Icon(Icons.groups_outlined)
+                                      ]),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      child: TextButton(
+                        child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              border:
+                                  Border.all(color: Colors.black26, width: 1)),
+                          alignment: Alignment.center,
+                          margin: EdgeInsets.all(10),
+                          padding: EdgeInsets.all(10),
+                          child: Row(children: const [
+                            Icon(Icons.add_outlined),
+                            Text('그룹 루틴 추가 하기')
+                          ]),
+                        ),
+                        onPressed: () {
+                          _showTodoEditor(context, null);
+                        },
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.7,
+                    height: 40,
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                          backgroundColor: Color(0xFF3A00E5),
+                          shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)))),
+                      onPressed: () {
+                        _createGroup(context);
+                        print('새로운 그룹 만들기');
+                      },
+                      child: Text("새로운 그룹 만들기",
+                          style: TextStyle(color: Colors.white)),
+                    ),
+                  )
                 ],
               ),
-              TextField(
-                onChanged: (value) {
-                  viewModel.groupDesc = value;
-                },
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(vertical: 60),
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black, width: 1)),
-                ),
-              ),
-              Text("기본 루틴"),
-              Divider(color: Colors.grey, thickness: 1, indent: 10),
-              if (viewModel.groupRoutine.isNotEmpty) ...[
-                Expanded(
-                  child: ListView.builder(
-                      itemCount: viewModel.groupRoutine.length,
-                      itemBuilder: (c, i) {
-                        return GestureDetector(
-                          onLongPress: () {
-                            _showTodoEditor(context, viewModel.groupRoutine[i]);
-                          },
-
-                          // ==== Group Routine ==== //
-                          child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                    color: Colors.black26, width: 1)),
-                            alignment: Alignment.center,
-                            margin: EdgeInsets.all(10),
-                            padding: EdgeInsets.all(10),
-                            child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Checkbox(
-                                    onChanged: null,
-                                    value: false,
-                                  ),
-                                  Text(viewModel.groupRoutine[i].routName),
-                                  Icon(Icons.groups_outlined)
-                                ]),
-                          ),
-                        );
-                      }),
-                ),
-              ],
-              Container(
-                  child: TextButton(
-                      child: Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border:
-                                Border.all(color: Colors.black26, width: 1)),
-                        alignment: Alignment.center,
-                        margin: EdgeInsets.all(10),
-                        padding: EdgeInsets.all(10),
-                        child: Row(children: const [
-                          Icon(Icons.add_outlined),
-                          Text('그룹 루틴 추가 하기')
-                        ]),
-                      ),
-                      onPressed: () {
-                        _showTodoEditor(context, null);
-                      })),
-              Spacer(),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.7,
-                height: 40,
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                      backgroundColor: Color(0xFF3A00E5),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10)))),
-                  onPressed: () {
-                    _createGroup(context);
-                    print('새로운 그룹 만들기');
-                    // var result = http.post(Uri.parse(""))
-                  },
-                  child:
-                      Text("새로운 그룹 만들기", style: TextStyle(color: Colors.white)),
-                ),
-              )
-            ])));
+            ),
+          ),
+        ));
   }
 }
