@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
-import 'package:iww_frontend/utils/login_wrapper.dart';
 import 'package:iww_frontend/view/group/groupList.dart';
 import 'package:iww_frontend/view/group/groupSearch.dart';
 import 'package:iww_frontend/view/group/newGroup.dart';
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 
 // ==== 종속성 주입을 위한 페이지 위젯 ==== //
@@ -39,6 +39,11 @@ class MyGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<ChangeNotifierProvider> newGroupProviders = [
+      ChangeNotifierProvider.value(value: context.read<UserInfo>()),
+      ChangeNotifierProvider.value(value: context.read<MyGroupViewModel>()),
+    ];
+
     return DefaultTabController(
       initialIndex: 0,
       length: 2,
@@ -47,9 +52,12 @@ class MyGroup extends StatelessWidget {
         child: Column(
           children: [
             TabBar(
+              labelColor: Colors.black, // 글자색을 검정색으로 설정
+              indicatorColor: Colors.black,
+
               tabs: const <Widget>[
-                Tab(icon: Icon(Icons.groups_outlined)),
-                Tab(icon: Icon(Icons.manage_search_outlined)),
+                Tab(text: "내 그룹"),
+                Tab(text: "그룹 검색하기"),
               ],
             ),
             Expanded(
@@ -77,40 +85,12 @@ class MyGroup extends StatelessWidget {
                             await Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (c) => LoginWrapper(
-                                        child: ChangeNotifierProvider.value(
-                                            value: context
-                                                .read<MyGroupViewModel>(),
-                                            child: NewGroup()),
-                                      )
-
-                                  // MultiProvider(
-                                  //   providers: [
-                                  //     // Provider(
-                                  //     //   create: (context) =>
-                                  //     //       Provider.of<UserInfo>(context,
-                                  //     //           listen: false),
-                                  //     // ),
-                                  //     // ChangeNotifierProvider(
-                                  //     //   create: (context) =>
-                                  //     //       Provider.of<MyGroupViewModel>(
-                                  //     //           context,
-                                  //     //           listen: false),
-                                  //     // ),
-                                  //     ChangeNotifierProvider.value(
-                                  //       value: context.read<MyGroupViewModel>(),
-                                  //     )
-                                  //   ],
-                                  //   child: LoginWrapper(child: NewGroup()),
-                                  ),
+                                builder: (c) => MultiProvider(
+                                  providers: newGroupProviders,
+                                  child: NewGroup(),
+                                ),
+                              ),
                             );
-                            // if (context.mounted &&
-                            //     result != null &&
-                            //     result == true) {
-                            //   await context
-                            //       .read<MyGroupViewModel>()
-                            //       .fetchMyGroupList();
-                            // }
                           },
                           style: IconButton.styleFrom(
                             elevation: 1,
