@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/view/friends/friendMain.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';
 import 'package:iww_frontend/view/myroom/myroom.dart';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
@@ -259,7 +260,15 @@ class BottomButtons extends StatelessWidget {
       if (roomState.isMyRoom()) {
         return ElevatedButton(
             onPressed: () {
-              Navigator.pushNamed(context, '/friends');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (c) => ChangeNotifierProvider.value(
+                    value: context.read<UserInfo>(),
+                    child: MyFriend(),
+                  ),
+                ),
+              );
             },
             child: Text('친구목록'));
       } else {

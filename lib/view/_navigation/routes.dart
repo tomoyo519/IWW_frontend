@@ -32,8 +32,11 @@ final Map<String, WidgetBuilder> ROUTE_TABLE = {
   '/group': (context) => MyGroupPage(),
   '/mypage': (context) => MyPage(),
 
-  '/friends': (context) => MyFriend(),
   '/shop': (context) => ShopPage(),
+  '/friends': (context) => ChangeNotifierProvider.value(
+        value: context.read<UserInfo>(),
+        child: MyFriend(),
+      ),
   '/notification': (context) => ChangeNotifierProvider.value(
         value: context.read<UserInfo>(),
         child: MyNotification(),

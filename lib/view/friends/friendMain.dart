@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/view/friends/friendList.dart';
+import 'package:iww_frontend/view/friends/friend_list.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'friendRank.dart';
