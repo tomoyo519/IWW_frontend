@@ -3,7 +3,9 @@ import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/repository/friend.repository.dart';
 
 class FriendList extends StatefulWidget {
-  const FriendList({super.key});
+  final int userId;
+
+  const FriendList({Key? key, required this.userId}) : super(key: key);
 
   @override
   State<FriendList> createState() => _FriendListState();
@@ -11,11 +13,13 @@ class FriendList extends StatefulWidget {
 
 class _FriendListState extends State<FriendList> {
   List<UserModel> friends = [];
+  late int _userId = -1; // 나의 id
   final FriendRepository friendRepository = FriendRepository();
 
   @override
   void initState() {
     super.initState();
+    _userId = widget.userId;
     fetchFriend();
   }
 
