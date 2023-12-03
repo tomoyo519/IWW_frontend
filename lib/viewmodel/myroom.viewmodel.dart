@@ -27,22 +27,36 @@ class MyRoomViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> addItemToMyRoom(int itemId, itemType) async {
-    if (roomObjects.map((e) => e.itemType).contains(itemType)) {
-      LOG.log('펫과 배경화면은 하나만 있어요');
-
-      
-      return false;
-    }
-    
-    await _roomRepository.addItemToMyRoom(_userId, itemId);
-    fetchMyRoom();
-    return true;
+  // 현재 viewModel의 roomObject를 DB에 저장
+  Future<void> applyChanges() async {
+    _roomRepository.applyChanges(
+        _userId, roomObjects.map((e) => e.id).toList());
+    notifyListeners();
   }
 
-  void removeItemFromMyRoom(int itemId) async {
-    await _roomRepository.removeItemFromMyRoom(_userId, itemId);
-    fetchMyRoom();
+  // 선택한 아이템을 myroom에 넣거나 빼는 함수
+  void toggleItem(Item target) {
+    for (Item now in roomObjects) {
+      if (now.id == target.id) {
+        roomObjects.remove(now);
+        notifyListeners();
+        return;
+      }
+
+      // 펫(type: 1)과 배경화면(type: 4)은 하나만 있어요
+      if (now.itemType == target.itemType &&
+          (target.itemType == 1 || target.itemType == 4)) {
+        LOG.log("펫과 배경화면은 하나만 있어요");
+        roomObjects.remove(now);
+        roomObjects.add(target);
+        notifyListeners();
+        return;
+      }
+    }
+    
+    // 중복되는 경우가 하나도 없을경우 -> 아이템 삽입
+    roomObjects.add(target);
+    notifyListeners();
   }
 
   set roomOwner(int userId) {
@@ -105,5 +119,5 @@ class MyRoomViewModel with ChangeNotifier {
     }
     // default pet
     return PetModels.getPetWidget(petName);
-  } 
+  }
 }

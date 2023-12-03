@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
 import 'package:iww_frontend/utils/logger.dart';
-import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 
 class RoomRepository {
   // 특정 유저의 룸 정보 가져오기
