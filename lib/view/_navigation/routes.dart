@@ -12,11 +12,11 @@ import 'package:iww_frontend/view/mypage/myPage.dart';
 import 'package:iww_frontend/view/myroom/myroom.dart';
 import 'package:iww_frontend/view/notification/notification.dart';
 import 'package:iww_frontend/view/friends/friendMain.dart';
-import 'package:iww_frontend/view/signup/add_friends.dart';
 import 'package:iww_frontend/view/signup/landing.dart';
 import 'package:iww_frontend/view/signup/signup.dart';
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/view/shop/shop_page.dart';
 
@@ -33,12 +33,9 @@ final Map<String, WidgetBuilder> ROUTE_TABLE = {
   '/mypage': (context) => MyPage(),
 
   '/shop': (context) => ShopPage(),
+  '/notification': (context) => MyNotification(),
   '/friends': (context) => ChangeNotifierProvider.value(
         value: context.read<UserInfo>(),
         child: MyFriend(),
-      ),
-  '/notification': (context) => ChangeNotifierProvider.value(
-        value: context.read<UserInfo>(),
-        child: MyNotification(),
       ),
 };

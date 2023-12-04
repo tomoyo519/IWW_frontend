@@ -6,15 +6,17 @@ import 'package:provider/provider.dart';
 
 // 단일 페이지 정보
 class AppPage<T> {
-  final String route;
+  final int idx;
   final String label;
   final IconData icon;
+  final String? route;
   final ActionPage? float;
   final List<ActionPage>? appbar;
   final T Function(BuildContext context) builder;
 
   AppPage({
-    required this.route,
+    required this.idx,
+    this.route,
     required this.label,
     required this.icon,
     required this.builder,
