@@ -66,7 +66,15 @@ class _MainPageState extends State<MainPage> {
       ),
       // * ======= BODY ======= * //
       // 종속성 주입 부분
-      body: curr.builder(context),
+      body: Padding(
+        padding: EdgeInsets.symmetric(
+          vertical: 10,
+        ),
+        child: Builder(
+          // 빌더 함수 콜
+          builder: (context) => curr.builder(context),
+        ),
+      ),
       bottomNavigationBar: nav.isBottomSheetPage
           ? BottomNavigationBar(
               currentIndex: nav.current.idx.index,

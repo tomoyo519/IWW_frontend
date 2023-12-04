@@ -1,21 +1,11 @@
-import 'dart:async';
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
-import 'package:http/src/response.dart';
-import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/auth/auth_status.dart';
 import 'package:iww_frontend/providers.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
-import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
-import 'package:iww_frontend/view/_navigation/routes.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/view/_common/loading.dart';
 import 'package:iww_frontend/view/_navigation/main_page.dart';
-import 'package:iww_frontend/view/_navigation/transition.dart';
-import 'package:iww_frontend/view/notification/notification.dart';
 import 'package:iww_frontend/view/signup/landing.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -101,8 +91,8 @@ class RenderPage extends StatelessWidget {
         : authService.status != AuthStatus.initialized
             ? LandingPage()
             : MultiProvider(
-                // 인증된 사용자의 경우 아래와 같은 정보 주입
                 providers: [
+                  // 인증된 사용자의 경우 아래와 같은 정보 주입
                   ChangeNotifierProvider.value(
                     value: context.read<AppNavigator>(),
                   ),
