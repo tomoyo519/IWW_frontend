@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
 import 'package:iww_frontend/utils/logger.dart';
-import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 
 class RoomRepository {
   // 특정 유저의 룸 정보 가져오기
@@ -32,6 +31,15 @@ class RoomRepository {
 
       return items;
     });
+  }
+
+  Future<bool> applyChanges(int userId, List<int> items) {
+    return RemoteDataSource.put('/room/$userId', body: {'items': items})
+        .then((response) {
+      LOG.log('[Apply changes status] ${response.body}');
+      return true;
+    });
+
   }
 
   // 나의의 룸에 아이템 추가하기

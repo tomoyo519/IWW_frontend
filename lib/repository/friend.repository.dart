@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/model/friend/friend.model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FriendRepository {
@@ -53,8 +55,26 @@ class FriendRepository {
     ),
   ];
 
-  Future<List<UserModel>> getFriends() async {
-    return dummy;
+  Future<List<FriendInfo>> getFriends(int userId) async {
+    List<FriendInfo> friends = [];
+
+    await RemoteDataSource.get("/friend/$userId").then((response) {
+      LOG.log("Get friends: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        Map<String, dynamic> data = jsonDecode(response.body);
+        List<dynamic> resultList = data["result"];
+
+        // user_id, user_name, total_exp, pet_name 네 개의 필드 수신
+        friends =
+            resultList.map((dynamic item) => FriendInfo.fromJson(item)).toList();
+
+        LOG.log('친구 숫자!: ${friends.length}, total: ${data['total']}');
+      }
+    }).catchError((onError) {
+      LOG.log("getFriends 에러발생!! $onError");
+    });
+
+    return friends;
   }
 
   // 친구 생성

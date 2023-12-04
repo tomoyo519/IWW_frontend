@@ -1,92 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/repository/comment.repository.dart';
-import 'package:iww_frontend/repository/room.repository.dart';
-import 'package:iww_frontend/service/auth.service.dart';
+import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/view/friends/friendMain.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';
+import 'package:iww_frontend/view/myroom/myroom.dart';
+import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
-import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
-import 'package:iww_frontend/view/inventory/inventory.dart';
-import 'package:iww_frontend/view/myroom/myroom_component.dart';
 
-class MyRoom extends StatelessWidget {
-  const MyRoom({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    // 의존성
-    final userId = context.read<UserInfo>().userId;
-    final roomRepository = Provider.of<RoomRepository>(context, listen: false);
-    final commentRepository =
-        Provider.of<CommentRepository>(context, listen: false);
-
-    return MultiProvider(providers: [
-      ChangeNotifierProvider<CommentsProvider>(
-          create: (_) => CommentsProvider(
-                userId.toString(),
-                userId.toString(),
-                commentRepository,
-              )),
-      ChangeNotifierProvider<MyRoomViewModel>(
-          create: (_) => MyRoomViewModel(userId, roomRepository)),
-      ChangeNotifierProvider(create: (_) => MyRoomState()),
-    ], child: MyRoomPage());
-  }
-}
-
-// 인벤토리 뷰 토글을 위한 상태관리
-class MyRoomState extends ChangeNotifier {
-  double _growth = 0.0;
-  final maxGrowth = 350.0;
-
-  get growth => _growth;
-
-  void toggleGrowth() {
-    _growth = (growth == 0.0) ? maxGrowth : 0.0;
-    notifyListeners();
-  }
-}
-
-// 마이룸 기본 페이지
-class MyRoomPage extends StatelessWidget {
-  const MyRoomPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    var myRoomState = context.watch<MyRoomState>();
-
-    return Center(
-      child: Stack(fit: StackFit.expand, children: [
-        // 마이룸 화면 구성
-        Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: AnimatedContainer(
-                width: double.infinity,
-                height: screenHeight - myRoomState.growth,
-                color: Colors.blue,
-                duration: Duration(milliseconds: 500),
-                curve: Curves.easeInOut,
-                child: MyRoomComponent())),
-        // 하단 인벤토리 뷰
-        Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: AnimatedContainer(
-                width: double.infinity,
-                height: myRoomState.growth,
-                duration: Duration(milliseconds: 500),
-                curve: Curves.easeInOut,
-                child: InventoryView()))
-      ]),
-    );
-  }
-}
-
-/*
+// 마이홈 주요 구성 (펫, 배경, 하단 버튼)
 class MyRoomComponent extends StatelessWidget {
   const MyRoomComponent({
     super.key,
@@ -94,7 +17,7 @@ class MyRoomComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    LOG.log('############## bottom bar height: ${kBottomNavigationBarHeight}');
+    LOG.log('############## bottom bar height: $kBottomNavigationBarHeight');
 
     return Expanded(
       child: Stack(
@@ -124,6 +47,7 @@ class MyRoomComponent extends StatelessWidget {
   }
 }
 
+// 방 렌더링
 class RenderMyRoom extends StatelessWidget {
   const RenderMyRoom({super.key});
 
@@ -172,11 +96,11 @@ class RenderMyRoom extends StatelessWidget {
   }
 }
 
+// status bar or chatting(빈칸)
 class UnderLayer extends StatelessWidget {
   UnderLayer({Key? key}) : super(key: key);
 
   // myroom: status bar, other's room: chatting
-  // TODO 채팅 구현 후 채팅창 삽입
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -310,14 +234,45 @@ class BottomButtons extends StatelessWidget {
     // NOTE 여기서 비동기 연산 수행
     final commentsProvider = context.read<CommentsProvider>();
     // final inventoryState = context.read<InventoryState>();
-    final myRoomState = context.watch<MyRoomState>();
+    final myRoomState = context.read<MyRoomState>();
     var roomState = context.watch<MyRoomViewModel>();
+    final user = Provider.of<UserInfo>(context, listen: false);
 
-    ElevatedButton buildFriendButton() {
+    // 인벤토리 <-> 마이홈 버튼
+    ElevatedButton buildInventoryButton() {
       if (roomState.isMyRoom()) {
         return ElevatedButton(
             onPressed: () {
-              Navigator.pushNamed(context, '/friends');
+              myRoomState.toggleGrowth();
+            },
+            child: Text('인벤토리'));
+      } else {
+        return ElevatedButton(
+            onPressed: () {
+              roomState.roomOwner = user.userId;
+            },
+            child: Text('마이홈'));
+      }
+    }
+
+    // 친구목록 <-> 친구추가 버튼
+    ElevatedButton buildFriendButton() {
+      if (roomState.isMyRoom()) {
+        return ElevatedButton(
+            onPressed: () async {
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (c) => ChangeNotifierProvider.value(
+                    value: context.read<UserInfo>(),
+                    child: MyFriend(),
+                  ),
+                ),
+              );
+              
+              if (result != null) {
+                roomState.roomOwner = result as int;
+              }
             },
             child: Text('친구목록'));
       } else {
@@ -337,31 +292,20 @@ class BottomButtons extends StatelessWidget {
         children: [
           ElevatedButton(
               onPressed: () async {
-                commentsProvider.changeOwner(roomState.roomOwner);
+                String? roomOwenerId = commentsProvider.roomOwnerId;
 
                 if (context.mounted) {
-                  showCommentsBottomSheet(context, commentsProvider);
+                  showCommentsBottomSheet(
+                    context,
+                    commentsProvider,
+                    user.userId,
+                    roomOwenerId,
+                  );
                 }
               },
               child: Text('방명록')),
           SizedBox(width: 20),
-          ElevatedButton(
-              onPressed: () {
-                // Navigator.pushNamed(context, '/inventory');
-                myRoomState.toggleGrowth();
-              },
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                (Set<MaterialState> states) {
-                  // 눌렸을 때의 상태인 경우 색상 변경
-                  if (states.contains(MaterialState.pressed)) {
-                    return Colors.deepOrange; // 눌렸을 때의 색상
-                  }
-                  // 기본 색상
-                  return Colors.white;
-                },
-              )),
-              child: Text('인벤토리')),
+          buildInventoryButton(),
           SizedBox(width: 20),
           buildFriendButton(),
         ],
@@ -369,4 +313,48 @@ class BottomButtons extends StatelessWidget {
     );
   }
 }
-*/
+
+//  // bottom buttons
+//   layers.children.add(Positioned(
+//     bottom: 0,
+//     child: Row(
+//       mainAxisSize: MainAxisSize.min,
+//       mainAxisAlignment: MainAxisAlignment.center,
+//       crossAxisAlignment: CrossAxisAlignment.end,
+//       children: [
+//         ElevatedButton(
+//             onPressed: () async {
+//               String? roomOwenerId = commentsProvider.roomOwnerId;
+
+//               final currentUser = await authService.getCurrentUser();
+//               // 로그인 유저 없으면 6
+//               var userId = (currentUser != null)
+//                   ? currentUser.user_id.toString()
+//                   : '6';
+
+//               if (context.mounted) {
+//                 showCommentsBottomSheet(
+//                   context,
+//                   commentsProvider,
+//                   userId,
+//                   roomOwenerId,
+//                 );
+//               }
+//             },
+//             child: Text('방명록')),
+//         SizedBox(width: 20),
+//         ElevatedButton(
+//             onPressed: () {
+//               Navigator.pushNamed(context, '/inventory');
+//             },
+//             child: Text('인벤토리')),
+//         SizedBox(width: 20),
+//         ElevatedButton(
+//             onPressed: () {
+//               Navigator.pushNamedAndRemoveUntil(
+//                 context, '/friends', (Route<dynamic> route) => false);
+//             },
+//             child: Text('친구목록')),
+//       ],
+//     ),
+//   ));
