@@ -27,7 +27,7 @@ class ToDoList extends StatelessWidget {
     // 데이터 가져오기
     final viewModel = context.watch<TodoViewModel>();
     final groupTodos = viewModel.groupTodos;
-    final todos = viewModel.todos;
+    final normalTodos = viewModel.normalTodos;
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -76,7 +76,7 @@ class ToDoList extends StatelessWidget {
                           ),
                         ),
                       ),
-                      for (var todo in todos)
+                      for (var todo in normalTodos)
                         GestureDetector(
                           onTap: () => _showTodoEditor(context, todo),
                           onLongPress: () =>
@@ -113,17 +113,21 @@ class ToDoList extends StatelessWidget {
     // * ===== UI UPDATED ===== * //
 
     // 리워드 계산
-    TodoUpdateDto? result = await todomodel.checkTodo(todo.todoId, value);
+    // TodoCheckDto? result = await todomodel.checkTodo(todo.todoId, value);
 
     // expect data와 현재 상태를 비교하고 필요시 새로 fetch합니다.
-    if (result == null || // 응답이 없음
-            result.todoDone != value || // 투두 체크 실패
-            result.userCash != usermodel.userCash // 유저 보상 오류
-        ) {
-      usermodel.waiting = true;
-      usermodel.fetchUser();
-      // todomodel.fetchTodos();
-    }
+    // if (result == null || // 응답이 없음
+    //         result.todoDone != value || // 투두 체크 실패
+    //         result.userCash != usermodel.userCash // 유저 보상 오류
+    //     ) {
+    //   LOG.log("Failed to update properly. Fetch data...");
+    //   LOG.log("Expected {todo_done: $value, user_cash: ${usermodel.userCash}}");
+    //   LOG.log(
+    //       "Current {todo_done: ${result!.todoDone}, user_cash: ${result.userCash}}");
+    //   usermodel.waiting = true;
+    //   usermodel.fetchUser();
+    //   todomodel.fetchTodos();
+    // }
   }
 
   // todo delete modal onclick callback

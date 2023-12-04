@@ -5,19 +5,22 @@ import 'package:iww_frontend/style/button.type.dart';
 
 class MyButton extends StatelessWidget {
   final String text;
-  MyButtonType? type;
   bool? full;
+  MyButtonType? type;
+  bool? enabled;
   void Function(BuildContext context) onpressed;
 
   MyButton({
     super.key,
     required this.text,
     required this.onpressed,
+    this.enabled,
     this.type,
     this.full,
   }) {
     type = type ?? MyButtonType.primary;
     full = full ?? false;
+    enabled = enabled ?? true;
   }
 
   @override
@@ -29,7 +32,7 @@ class MyButton extends StatelessWidget {
     return SizedBox(
       width: full == true ? screen.width : null,
       child: ElevatedButton(
-        onPressed: () => onpressed(context),
+        onPressed: enabled == false ? null : () => onpressed(context),
         style: ElevatedButton.styleFrom(
             backgroundColor: bgColor,
             padding: EdgeInsets.symmetric(

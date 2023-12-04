@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:iww_frontend/datasource/localStorage.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
+import 'package:iww_frontend/model/auth/login_result.dart';
+import 'package:iww_frontend/model/item/item.model.dart';
 import 'package:iww_frontend/model/user/get-user-by-contact.dto.dart';
 import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/utils/logger.dart';
@@ -16,18 +18,16 @@ class UserRepository {
   /// ================== ///
 
   // 현재 로그인한 유저 생성
-  Future<UserModel?> createUser(
-    String userName,
-    String userTel,
-    String userKakaoId,
-  ) async {
+  Future<SignUpResult?> createUser(String userName, String userTel,
+      String userKakaoId, String petName) async {
     // 서버로 유저 정보 전송
     Response response = await RemoteDataSource.post(
-      "/auth/singup",
+      "/auth/signup",
       body: {
         "user_name": userName,
         "user_tel": userTel,
-        "user_kakao_id": userKakaoId
+        "user_kakao_id": userKakaoId,
+        "user_pet_name": petName,
       },
     );
 
@@ -36,14 +36,16 @@ class UserRepository {
     }
 
     var jsonBody = jsonDecode(response.body)['result'];
-    UserModel user = UserModel.fromJson(jsonBody['user']);
+
+    Item pet = Item.fromJson(jsonBody['user_pet']);
     String token = jsonBody['token'];
+    UserModel user = UserModel.fromJson(jsonBody['user']);
 
     // 로그인 정보를 로컬에 저장
     await LocalStorage.saveKey('jwt', token);
-    await LocalStorage.saveKey("user_info", jsonBody['user']);
+    await LocalStorage.saveKey("user_info", jsonEncode(user));
 
-    return user;
+    return SignUpResult(user: user, pet: pet);
   }
 
   // 유저 프로필 이미지 서버로 전송
@@ -57,6 +59,23 @@ class UserRepository {
       file: image,
       filename: '$userId.jpg',
     ).then((response) => response.statusCode == 201);
+  }
+
+  // 유저 이름 유니크 테스트
+  Future<bool?> isUserNameUnique(String name) async {
+    Response response = await RemoteDataSource.post(
+      "/auth/valid",
+      body: {
+        "user_name": name,
+      },
+    );
+
+    LOG.log(response.body);
+    if (response.statusCode == 201) {
+      var jsonData = jsonDecode(response.body);
+      return jsonData['result'] as bool;
+    }
+    return null;
   }
 
   /// ================== ///

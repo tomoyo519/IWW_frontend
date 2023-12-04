@@ -90,7 +90,7 @@ class RemoteDataSource {
         : body is Map
             ? json.encode(body)
             : body.toString();
-
+    LOG.log("[POST] ${server + url} $bodyString");
     return await http.post(
       Uri.parse(server + url),
       headers: headers,
@@ -106,7 +106,7 @@ class RemoteDataSource {
   }) async {
     // 기본 헤더 추가
     headers = (headers != null) ? {...headers, ...baseHeaders} : baseHeaders;
-    LOG.log("send get ${server + url}");
+    LOG.log("[GET] ${server + url}");
     return await http.get(Uri.parse(server + url), headers: headers);
   }
 
@@ -120,7 +120,13 @@ class RemoteDataSource {
     // 기본 헤더 추가
     headers = (headers != null) ? {...headers, ...baseHeaders} : baseHeaders;
     // Json string으로 변환하여 요청
-    String bodyString = body is Map ? json.encode(body) : body.toString();
+    String? bodyString = body == null
+        ? null
+        : body is Map
+            ? json.encode(body)
+            : body.toString();
+
+    LOG.log("[PUT] ${server + url} $bodyString");
     return await http.put(
       Uri.parse(server + url),
       headers: headers,
@@ -139,7 +145,13 @@ class RemoteDataSource {
     // 기본 헤더 추가
     headers = (headers != null) ? {...headers, ...baseHeaders} : baseHeaders;
     // Json string으로 변환하여 요청
-    String bodyString = body is Map ? json.encode(body) : body.toString();
+    String? bodyString = body == null
+        ? null
+        : body is Map
+            ? json.encode(body)
+            : body.toString();
+
+    LOG.log("[PATCH] ${server + url} $bodyString");
     return await http.patch(
       Uri.parse(server + url),
       headers: headers,
@@ -158,9 +170,16 @@ class RemoteDataSource {
     // 기본 헤더 추가
     headers = (headers != null) ? {...headers, ...baseHeaders} : baseHeaders;
     // Json string으로 변환하여 요청
-    // String bodyString = body is Map ? json.encode(body) : body.toString();
+    // Json string으로 변환하여 요청
+    String? bodyString = body == null
+        ? null
+        : body is Map
+            ? json.encode(body)
+            : body.toString();
+
+    LOG.log("[DELETE] ${server + url} $bodyString");
     return await http.delete(Uri.parse(server + url),
-        headers: headers, encoding: encoding);
+        headers: headers, body: body, encoding: encoding);
   }
 
   // 테스트용

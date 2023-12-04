@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/view/mypage/myInfoEdit.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -181,7 +182,12 @@ class MyPage extends StatelessWidget {
                       padding: const EdgeInsets.only(right: 10.0),
                       child: Icon(Icons.logout_outlined),
                     ),
-                    Text("로그아웃하기")
+                    TextButton(
+                      onPressed: () async {
+                        await context.read<AuthService>().logout();
+                      },
+                      child: Text("로그아웃하기"),
+                    )
                   ],
                 ),
               ),

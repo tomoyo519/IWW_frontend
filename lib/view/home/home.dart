@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
-import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/home/home_profile.dart';
 import 'package:iww_frontend/view/modals/custom_snackbar.dart';

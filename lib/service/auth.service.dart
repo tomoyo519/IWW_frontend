@@ -6,6 +6,7 @@ import 'package:http/http.dart';
 import 'package:iww_frontend/datasource/localStorage.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/main.dart';
+import 'package:iww_frontend/model/auth/auth_status.dart';
 import 'package:iww_frontend/model/auth/login_result.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
 import 'package:iww_frontend/model/todo/todo_today_count.dart';
@@ -30,9 +31,6 @@ class AuthService extends ChangeNotifier {
   Item? _mainPet;
   Item? get mainPet => _mainPet;
 
-  TodoTodayCount? _todayCount;
-  TodoTodayCount? get todayCount => _todayCount;
-
   String? _kakaoId;
   String? get kakaoId => _kakaoId;
 
@@ -53,13 +51,35 @@ class AuthService extends ChangeNotifier {
   StreamSubscription? _sub;
   StreamSubscription? get stream => _sub;
 
-  // =============== //
-  //      SignUp     //
-  // =============== //
+  // * ======================= * //
+  // *                         * //
+  // *       User Singup       * //
+  // *                         * //
+  // * ======================= * //
 
-  Future<UserModel?> signup(String name, String tel) async {
-    if (_kakaoId == null) return null;
-    return await userRepository.createUser(name, tel, _kakaoId!);
+  Future<void> signup(String name, String tel, String petName) async {
+    waiting = true;
+
+    SignUpResult? result =
+        await userRepository.createUser(name, tel, _kakaoId!, petName);
+
+    if (result == null) {
+      LOG.log("Failed to signup.");
+      status = AuthStatus.failed;
+      waiting = false;
+      return;
+    }
+
+    // 상태 저장
+    _user = result.user;
+    _mainPet = result.pet;
+
+    status = AuthStatus.initialized;
+    waiting = false;
+  }
+
+  Future<bool?> isNameUnique(String name) async {
+    return await userRepository.isUserNameUnique(name);
   }
 
   // * ======================= * //
@@ -68,8 +88,11 @@ class AuthService extends ChangeNotifier {
   // *                         * //
   // * ======================= * //
 
-  //** Oauth Login **//
-  void oauthLogin() {
+  ///** 카카오 인증 기반 로그인을 시작합니다.
+  /// signup: false이면 access_denied를 failed 상태로 처리 [default true]
+  /// prompt: true이면 로그인 여부에 관계없이 로그인 페이지로 이동
+  /// */
+  void oauthLogin({bool? prompt, bool? signup}) {
     LOG.log("Start to listen app link");
     _sub = linkStream.listen(
       (String? link) async {
@@ -77,8 +100,10 @@ class AuthService extends ChangeNotifier {
           LOG.log("App link received");
 
           ///** 앱 초기화 수행
-          await _authorize(link);
-          await _initialize();
+          await _authorize(link, signup: signup);
+          if (status == AuthStatus.success) {
+            await _initialize();
+          }
           waiting = false;
           _sub?.cancel();
         } else {
@@ -94,7 +119,7 @@ class AuthService extends ChangeNotifier {
       },
     );
 
-    _kakaoLogin(); // 카카오 로그인
+    _kakaoLogin(prompt: prompt); // 카카오 로그인
   }
 
   //** Test Login **//
@@ -117,20 +142,17 @@ class AuthService extends ChangeNotifier {
       itemType: 0,
     );
 
-    _todayCount = TodoTodayCount(
-      todoTotal: 10,
-      todoDone: 0,
-    );
-
     RemoteDataSource.setAuthHeader("Bearer ${Secrets.JWT_TOKEN}");
     EventService.setUserId(29);
 
-    // await _initialize();
+    await _initialize();
     status = AuthStatus.initialized;
     waiting = false;
   }
 
-  //** Local Login **//
+  ///** 로컬에 저장된 토큰 기반 로그인을 시작합니다.
+  ///
+  /// */
   Future<void> localLogin() async {
     // 로컬스토리지에서 유저 정보 꺼내기
     var jsonUserInfo = await LocalStorage.readKey("user_info");
@@ -150,11 +172,16 @@ class AuthService extends ChangeNotifier {
     RemoteDataSource.setAuthHeader("Bearer $token");
   }
 
-  // 카카오 인증 시작
-  Future<void> _kakaoLogin() async {
+  ///** 카카오 인증을 시작합니다.
+  /// prompt: true이면 기존 로그인 여부에 관계없이
+  /// 로그인 페이지로 이동합니다.
+  /// */
+  Future<void> _kakaoLogin({bool? prompt}) async {
+    List<Prompt> prompts = prompt == true ? [Prompt.login] : [];
     await AuthCodeClient.instance
         .authorize(
       clientId: Secrets.KAKAO_REST_API_KEY,
+      prompts: prompts,
       // TODO: Fix to REMOTE_SERVER_URL
       redirectUri: '${Secrets.TEST_SERVER_URL}/auth',
     )
@@ -165,16 +192,21 @@ class AuthService extends ChangeNotifier {
   }
 
   // 서비스 서버로부터 응답을 받아 인증 정보를 처리합니다.
-  Future<void> _authorize(String link) async {
+  Future<void> _authorize(String link, {bool? signup}) async {
     Map<String, String> params = Uri.parse(link).queryParameters;
     String token = params['token']!;
     String kakaoId = params['kakao_id']!;
+
+    bool signupOption = signup ?? true;
 
     // 회원가입이 필요한 경우
     if (token == 'access_denied') {
       _kakaoId = kakaoId;
       LOG.log("User need to signup");
-      status = AuthStatus.permission;
+
+      // signup 옵션이 켜진 경우는 회원가입 화면으로 이동
+      status = signupOption == true ? AuthStatus.permission : AuthStatus.failed;
+      return;
     }
 
     // 토큰과 함꼐 서버로 유저 정보 요청
@@ -214,6 +246,17 @@ class AuthService extends ChangeNotifier {
 
   // * ======================= * //
   // *                         * //
+  // *       User Logout       * //
+  // *                         * //
+  // * ======================= * //
+  Future<void> logout() async {
+    await LocalStorage.clearKey();
+    status = AuthStatus.failed;
+    waiting = false;
+  }
+
+  // * ======================= * //
+  // *                         * //
   // *     Initialize User     * //
   // *                         * //
   // * ======================= * //
@@ -238,18 +281,8 @@ class AuthService extends ChangeNotifier {
         if (response.statusCode == 201) {
           var jsonBody = jsonDecode(response.body);
           LOG.log("Initialize todo: $jsonBody");
-        } else {
-          LOG.log("Error: ${response.body}");
-          status = AuthStatus.failed;
-        }
-      },
-    );
 
-    await RemoteDataSource.get('/todo/today/count').then(
-      (response) {
-        if (response.statusCode == 200) {
-          var jsonBody = jsonDecode(response.body);
-          _todayCount = TodoTodayCount.fromJson(jsonBody['result']);
+          // TODO: 여기서 받아온 정보로 재초기화.
         } else {
           LOG.log("Error: ${response.body}");
           status = AuthStatus.failed;
@@ -260,15 +293,17 @@ class AuthService extends ChangeNotifier {
 
   // 할일 및 펫 정보 가져와서 초기 세팅
   Future<void> _initializeItems() async {
-    await RemoteDataSource.get("/item-inventory/${_user!.user_id}/pet")
-        .then((response) {
-      if (response.statusCode == 200) {
-        var jsonBody = jsonDecode(response.body);
-        _mainPet = Item.fromJson(jsonBody['result']);
-      } else {
-        LOG.log("Error: ${response.body}");
-        status = AuthStatus.failed;
-      }
-    });
+    await RemoteDataSource.get("/item-inventory/${_user!.user_id}/pet").then(
+      (response) {
+        if (response.statusCode == 200) {
+          var jsonBody = jsonDecode(response.body);
+          _mainPet = Item.fromJson(jsonBody['result']);
+        } else {
+          LOG.log("Error: ${response.body}");
+          status = AuthStatus.failed;
+          _mainPet = Item(id: 54, name: "기본펫", itemType: 1);
+        }
+      },
+    );
   }
 }

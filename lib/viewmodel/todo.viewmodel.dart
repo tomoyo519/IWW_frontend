@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/retry.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/model/todo/todo_update.dto.dart';
@@ -41,6 +42,7 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   // ===== Status Getters ===== //
   List<Todo> get todos => _todos;
   List<Todo> get groupTodos => _groupTodos;
+  List<Todo> get normalTodos => _normalTodos;
   bool get waiting => _waiting;
 
   int get total => _todayTotal;
@@ -79,6 +81,8 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
     // 카운트
     _todayDone = data.where((todo) => todo.todoDone == true).length;
     _todayTotal = data.length;
+
+    LOG.log("Fetched data group todo ${data.length}");
     waiting = false;
   }
 
@@ -117,14 +121,19 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
     }
   }
 
-  Future<TodoUpdateDto?> checkTodo(int todoId, bool value,
-      {int? userId, String? path}) async {
+  Future<bool?> checkTodo(
+    int todoId,
+    bool value, {
+    int? userId,
+    String? path,
+  }) async {
     if (userId == null || path == null) {
-      return await _todoRepository.checkNormalTodo(todoId.toString(), value);
+      // return await _todoRepository.checkNormalTodo(todoId.toString(), value);
+      return false;
     }
 
-    // return await _todoRepository.checkGroupTodo(
-    //     userId.toString(), todoId.toString(), value, path);
+    return await _todoRepository.checkGroupTodo(
+        userId.toString(), todoId.toString(), value, path);
   }
 
   // 할일 완료하고 목록 업데이트
