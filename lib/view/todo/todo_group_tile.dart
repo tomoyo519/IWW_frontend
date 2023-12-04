@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
+import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/modals/custom_fullscreen_modal.dart';
 import 'package:iww_frontend/view/modals/todo_first_done.dart';
@@ -257,8 +258,27 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                       path: pickedFile.path,
                     );
 
-                    if (result != null && context.mounted) {
-                      // _handleTodoCashReward(context: context, value: true);
+                    LOG.log("사진인증 ${result}");
+                    // if (result != null && context.mounted) {
+                    //   _handleTodoCashReward(context: context, value: true);
+                    //   var data = {
+                    //     'userId': widget.todo.userId,
+                    //     'todoId': widget.todo.todoId,
+                    //     'photoUrl': pickedFile.path,
+                    //   };
+
+                    //   EventService.sendEvent('confirmRequest', data);
+
+                    //   Navigator.pop(context);
+                    // }
+                    var data = {
+                      'userId': widget.todo.userId,
+                      'todoId': widget.todo.todoId,
+                      'photoUrl': pickedFile.path,
+                    };
+                    EventService.sendEvent('confirmRequest', data);
+                    
+                    if (context.mounted) {
                       Navigator.pop(context);
                     }
                   },

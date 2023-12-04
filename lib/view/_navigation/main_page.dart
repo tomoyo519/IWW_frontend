@@ -102,4 +102,8 @@ class _MainPageState extends State<MainPage> {
           selectedItemColor: Colors.orange),
     );
   }
+
+  void _handleNotificationSelection(String payload) {
+    // 예: payload에 따라 특정 모달 띄우기 또는 특정 페이지로 리디렉트
+  }
 }

@@ -4,6 +4,7 @@ import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/model/item/item.model.dart';
 
 class Inventory extends StatelessWidget {
   const Inventory({super.key});
@@ -52,59 +53,68 @@ class InventoryView extends StatelessWidget {
     LOG.log('인벤토리 왔니?');
 
     return Container(
+      height: double.infinity,
       decoration: BoxDecoration(
         image: DecorationImage(
           image: AssetImage("assets/bg/bg17.png"),
           fit: BoxFit.cover,
         ),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Expanded(
-            child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3),
-                itemCount: myRoomViewModel.inventory.length,
-                itemBuilder: (context, idx) {
-                  return GestureDetector(
-                    onTap: () async {
-                      var itemId = myRoomViewModel.inventory[idx].id;
-                      var itemType = myRoomViewModel.inventory[idx].itemType;
-                      if (myRoomViewModel.roomObjects
-                          .map((e) => e.id)
-                          .contains(itemId)) {
-                        myRoomViewModel.removeItemFromMyRoom(itemId);
-                      } else {
-                        bool result = await myRoomViewModel.addItemToMyRoom(
-                            itemId, itemType);
-                        if (!result) {
-                          // ignore: use_build_context_synchronously
-                          onePetOneBgAlert(context);
-                        }
-                      }
-
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(2.0),
-                      color: myRoomViewModel.roomObjects
-                              .map((e) => e.id)
-                              .contains(myRoomViewModel.inventory[idx].id)
-                          ? Colors.deepOrange
-                          : Colors.white,
-                      child: Card(
-                          child: Column(
-                        children: [
-                          Text(myRoomViewModel.inventory[idx].name),
-                          Image.asset(
-                            'assets/thumbnail/${myRoomViewModel.inventory[idx].path!.split('.')[0]}.png',
-                            fit: BoxFit.cover,
-                            height: 80,
-                          )
-                        ],
-                      )),
-                    ),
-                  );
-                })),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3),
+                  itemCount: myRoomViewModel.inventory.length,
+                  itemBuilder: (context, idx) {
+                    return GestureDetector(
+                      onTap: () async {
+                        // 아이템 터치 -> 선택 or 선택 해제
+                        Item i = myRoomViewModel.inventory[idx];
+                        myRoomViewModel.toggleItem(i);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(2.0),
+                        color: myRoomViewModel.roomObjects
+                                .map((e) => e.id)
+                                .contains(myRoomViewModel.inventory[idx].id)
+                            ? Colors.deepOrange
+                            : Colors.white,
+                        child: Card(
+                            child: Column(
+                          children: [
+                            Text(myRoomViewModel.inventory[idx].name),
+                            Image.asset(
+                              'assets/thumbnail/${myRoomViewModel.inventory[idx].path!.split('.')[0]}.png',
+                              fit: BoxFit.cover,
+                              height: 80,
+                            )
+                          ],
+                        )),
+                      ),
+                    );
+                  }),
+            ),
+          ),
+          Container(
+            height: 40,
+            color: Colors.transparent,
+            child: ElevatedButton(
+              onPressed: () {
+                  myRoomViewModel.applyChanges();
+              },
+              child: Text('적용하기'),
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          )
+        ],
       ),
     );
   }

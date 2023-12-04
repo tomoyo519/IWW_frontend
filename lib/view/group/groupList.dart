@@ -50,7 +50,6 @@ class _GroupListState extends State<GroupList> {
   Widget build(BuildContext context) {
     final viewModel = context.watch<MyGroupViewModel>();
     final myGroups = viewModel.groups;
-    LOG.log('GroupList build() called');
 
     return Column(children: [
       viewModel.waiting
@@ -67,6 +66,19 @@ class _GroupListState extends State<GroupList> {
                   child: ListView.builder(
                       itemCount: myGroups.length,
                       itemBuilder: (c, i) {
+                        LOG.log('mygroups:::::::::::::${myGroups[i]}');
+                        // Color bgColor;
+                        // switch (myGroups[i].catName) {
+                        //   case '코딩':
+                        //     bgColor = Colors.red;
+                        //     break;
+                        //   case '학업':
+                        //     bgColor = Colors.green;
+                        //     break;
+                        //   default:
+                        //     bgColor = Colors.white;
+                        //     break;
+                        // }
                         return TextButton(
                             onPressed: () {
                               Navigator.push(
@@ -97,48 +109,96 @@ class _GroupListState extends State<GroupList> {
                             child: Container(
                               alignment: Alignment.center,
                               margin: EdgeInsets.all(5),
-                              padding: EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                      color: Colors.black26, width: 1)),
+                              padding: EdgeInsets.all(5),
+                              // decoration: BoxDecoration(
+                              // color: bgColor,
+                              // borderRadius: BorderRadius.circular(12),
+                              // border: Border.all(
+                              //     color: Colors.black26, width: 1)),
                               child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start, //
-                                    children: [
-                                      Text(
-                                        myGroups[i].grpName,
-                                        textAlign: TextAlign.left,
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w800),
-                                      ),
-                                      Text(
-                                        myGroups[i].grpDesc ?? "그룹에 대한 설명입니다.",
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                      Text(
-                                        ' ${myGroups[i].catName}',
-                                        style: TextStyle(fontSize: 13),
-                                      ),
-                                    ],
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                        10), // 원하는 border-radius 값으로 변경
+                                    child: Image.asset(
+                                      'assets/profile.png',
+                                      width: 65,
+                                      height: 65,
+                                    ),
                                   ),
-                                  Text('멤버 ${myGroups[i].memCnt}명',
-                                      style: TextStyle(fontSize: 13))
+                                  SizedBox(
+                                      width:
+                                          10), // 필요에 따라 이미지와 텍스트 사이의 간격을 조절하세요
+                                  Expanded(
+                                    child: Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 10.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            myGroups[i].grpName,
+                                            textAlign: TextAlign.left,
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w800),
+                                          ),
+                                          Text(
+                                            myGroups[i].grpDesc ??
+                                                "그룹에 대한 설명입니다.",
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                          Row(
+                                            children: [
+                                              Container(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 6,
+                                                    vertical:
+                                                        2), // Container 위젯의 padding 속성 사용
+                                                alignment: Alignment
+                                                    .center, // Container 위젯의 alignment 속성 사용
+                                                decoration: BoxDecoration(
+                                                  color: Colors.orange,
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
+                                                ),
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(5.0),
+                                                  child: Text(
+                                                    '${myGroups[i].catName}',
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Text(' 멤버 ${myGroups[i].memCnt}명',
+                                                  style:
+                                                      TextStyle(fontSize: 13))
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
                             ));
                       }),
                 )
-              : Text("텅"),
+              : Lottie.asset('assets/empty.json',
+                  repeat: true,
+                  animate: true,
+                  height: MediaQuery.of(context).size.height * 0.3),
     ]);
   }
 }

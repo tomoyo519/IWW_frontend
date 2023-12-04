@@ -53,9 +53,7 @@ class _GroupDetailState extends State<GroupDetail> {
 
     if (result.statusCode == 200) {
       setState(() {
-        // Group, Routine Type 맞춰서 수정
         List<dynamic> jsonRoutList = resultJson["result"]["rout_detail"];
-        LOG.log('jsonResult: $jsonRoutList');
         groupRoutine = jsonRoutList
             .map((e) => Routine.fromGroupDetailJson(e, widget.group.groupId))
             .toList();
@@ -65,7 +63,8 @@ class _GroupDetailState extends State<GroupDetail> {
       });
 
       for (var i = 0; i < groupMems.length; i++) {
-        if (groupMems[i]["user_id"] == 1) {
+        final userId = context.read<UserInfo>().userId;
+        if (groupMems[i]["user_id"] == userId) {
           setState(() {
             myGroup = true;
           });
@@ -79,13 +78,13 @@ class _GroupDetailState extends State<GroupDetail> {
   }
 
   joinGroup(grp_id) async {
-    // TODO - user_id 수정하기.
+    final userId = context.read<UserInfo>().userId;
     var data = jsonEncode({
-      "user_id": 1,
+      "user_id": userId,
       "grp_id": grp_id,
     });
 
-    await RemoteDataSource.post("/group/$grp_id/join/1", body: data)
+    await RemoteDataSource.post("/group/$grp_id/join/${userId}", body: data)
         .then((res) async {
       if (res.statusCode == 201) {
         final viewModel = context.read<MyGroupViewModel>();
@@ -102,12 +101,13 @@ class _GroupDetailState extends State<GroupDetail> {
   exitGroup(grp_id) async {
     //탈퇴하기;
     // TODO - user_id 수정하기.
-
+    final userId = context.read<UserInfo>().userId;
     var data = jsonEncode({
-      "user_id": 1,
+      "user_id": userId,
       "grp_id": grp_id,
     });
-    await RemoteDataSource.delete("/group/$grp_id/left/${1}", body: data).then(
+    await RemoteDataSource.delete("/group/$grp_id/left/${userId}", body: data)
+        .then(
       (result) async {
         LOG.log("${result.body}, ${result.statusCode}");
         if (result.statusCode == 200) {
@@ -189,6 +189,7 @@ class _GroupDetailState extends State<GroupDetail> {
     });
 
     // ignore: use_build_context_synchronously
+    // 클릭시, 그룹 구성원의 사진 인증 보여주는 기능
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -234,7 +235,10 @@ class _GroupDetailState extends State<GroupDetail> {
                         },
                       ),
                     ))
-                  : Text("텅"),
+                  : Lottie.asset('assets/empty.json',
+                      repeat: true,
+                      animate: true,
+                      height: MediaQuery.of(context).size.height * 0.3),
             ],
           ),
         );
@@ -248,50 +252,135 @@ class _GroupDetailState extends State<GroupDetail> {
         ? Scaffold(
             appBar: MyAppBar(),
             body: Container(
-                margin: EdgeInsets.all(10),
-                child: Column(children: [
-                  Text(
-                    widget.group.grpName,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                // padding: EdgeInsets.all(20),
+                child: SingleChildScrollView(
+              child: Column(children: [
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Container(
+                    width: double.infinity,
+                    child: Text(
+                      widget.group.grpName,
+                      textAlign: TextAlign.left,
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                    ),
                   ),
-                  Divider(color: Colors.grey, thickness: 1, indent: 10),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {},
-                        child: Container(
-                            width: MediaQuery.of(context).size.width * 0.15,
+                ),
+                // Divider(color: Colors.grey, thickness: 1, indent: 10),
+
+                Padding(
+                  padding: const EdgeInsets.only(left: 20.0, right: 20),
+                  child: Container(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          child: Row(
+                            children: <Widget>[
+                              Text(
+                                "카테고리 ",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            // 스타일 설정 추가
+                            backgroundColor: Colors.orange, // 버튼 배경색을 오렌지색으로 설정
+                          ),
+                          onPressed: () {},
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.1,
                             alignment: Alignment.center,
-                            // TODO - 수정되어야 함.
-                            child: Text(widget.group.catName ?? "카테고리")),
-                      ),
-                    ],
+                            child: Text(
+                              widget.group.catName ?? "카테고리 미확인",
+                              style: TextStyle(
+                                  color: Colors.white), // 글자색을 흰색으로 설정
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  TextField(
+                ),
+
+                // Row(
+                //   crossAxisAlignment: CrossAxisAlignment.center,
+                //   mainAxisAlignment: MainAxisAlignment.end,
+                //   children: [
+                //     ElevatedButton(
+                //       onPressed: () {},
+                //       child: Container(
+                //           width: MediaQuery.of(context).size.width * 0.15,
+                //           alignment: Alignment.center,
+                //           // TODO - 수정되어야 함.
+                //           child: Text(widget.group.catName ?? "카테고리")),
+                //     ),
+                //   ],
+                // ),
+
+                Padding(
+                  padding:
+                      const EdgeInsets.only(left: 20.0, right: 20, top: 20),
+                  child: Container(
+                    width: double.infinity,
+                    child: Row(
+                      children: <Widget>[
+                        Text(
+                          "그룹 세부 정보",
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: TextField(
                     readOnly: true,
                     controller: _controller,
                     decoration: InputDecoration(
                       hintText: "우리 그룹에 대한 설명이에요",
-                      contentPadding: EdgeInsets.symmetric(vertical: 30),
+                      contentPadding: EdgeInsets.all(10),
                       border: OutlineInputBorder(
                           borderSide:
                               BorderSide(color: Colors.black, width: 1)),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
+                ),
+
+                Divider(
+                  thickness: 10,
+                  height: 30,
+                ),
+
+                Padding(
+                    padding: const EdgeInsets.all(20.0),
                     child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "기본 루틴",
-                          style: TextStyle(fontSize: 16),
-                        )),
-                  ),
-                  Divider(color: Colors.grey, thickness: 1, indent: 10),
-                  Expanded(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "기본 루틴",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    )),
+
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Expanded(
                     child: ListView.builder(
+                        shrinkWrap: true,
                         itemCount: groupRoutine.length,
                         itemBuilder: (c, i) {
                           return groupRoutine.isNotEmpty
@@ -329,20 +418,52 @@ class _GroupDetailState extends State<GroupDetail> {
                               : Text("조회된 그룹이 없습니다.");
                         }),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "참가자",
-                          style: TextStyle(fontSize: 16),
-                        )),
+                ),
+
+                Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                              "참가자",
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          // 스타일 설정 추가
+                          backgroundColor: Colors.orange, // 버튼 배경색을 오렌지색으로 설정
+                        ),
+                        onPressed: () {},
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 0.1,
+                          alignment: Alignment.center,
+                          child: Text(
+                            widget.group.memCnt.toString() + '명',
+                            style:
+                                TextStyle(color: Colors.white), // 글자색을 흰색으로 설정
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  Divider(color: Colors.grey, thickness: 1, indent: 10),
-                  Expanded(
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Expanded(
                     child: Container(
-                      height: 200,
                       child: GridView.builder(
+                        shrinkWrap: true,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                             childAspectRatio: 2 / 1, crossAxisCount: 3),
                         itemCount: groupMems.isEmpty ? 0 : groupMems.length,
@@ -373,9 +494,11 @@ class _GroupDetailState extends State<GroupDetail> {
                       ),
                     ),
                   ),
-                  if (!myGroup) ...[
-                    Divider(color: Colors.grey, thickness: 1, indent: 10),
-                    SizedBox(
+                ),
+                if (!myGroup) ...[
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
                       width: MediaQuery.of(context).size.width * 0.7,
                       height: 40,
                       child: TextButton(
@@ -390,11 +513,14 @@ class _GroupDetailState extends State<GroupDetail> {
                         child:
                             Text("참가하기", style: TextStyle(color: Colors.white)),
                       ),
-                    )
-                  ],
-                  if (myGroup) ...[
-                    Divider(color: Colors.grey, thickness: 1, indent: 10),
-                    SizedBox(
+                    ),
+                  )
+                ],
+                if (myGroup) ...[
+                  Divider(color: Colors.grey, thickness: 1, indent: 10),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
                       width: MediaQuery.of(context).size.width * 0.7,
                       height: 40,
                       child: TextButton(
@@ -409,9 +535,11 @@ class _GroupDetailState extends State<GroupDetail> {
                         child:
                             Text("탈퇴하기", style: TextStyle(color: Colors.white)),
                       ),
-                    )
-                  ]
-                ])))
+                    ),
+                  )
+                ]
+              ]),
+            )))
         : Lottie.asset('assets/spinner.json',
             repeat: true,
             animate: true,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
+import 'package:lottie/lottie.dart';
 
 class ShowItem extends StatelessWidget {
   ShowItem({super.key, this.allpets, this.purchase});
@@ -112,7 +113,10 @@ class ShowItem extends StatelessWidget {
                           )),
                     );
                   })
-              : Text("텅")),
+              : Lottie.asset('assets/empty.json',
+                  repeat: true,
+                  animate: true,
+                  height: MediaQuery.of(context).size.height * 0.3)),
     );
   }
 }

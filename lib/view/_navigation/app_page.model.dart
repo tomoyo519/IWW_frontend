@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/view/_navigation/routes.dart';
+import 'package:iww_frontend/view/notification/notification.dart';
+import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
+import 'package:provider/provider.dart';
 
 // 단일 페이지 정보
 class AppPage<T> {
@@ -37,7 +40,16 @@ class ActionPage {
     return IconButton(
       onPressed: () {
         if (ROUTE_TABLE.keys.contains(route)) {
-          Navigator.pushNamed(context, route);
+          // WidgetBuilder builder = ROUTE_TABLE[route]!;
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ChangeNotifierProvider.value(
+                value: context.read<UserInfo>(),
+                child: MyNotification(),
+              ),
+            ),
+          );
         }
       },
       icon: Icon(icon),

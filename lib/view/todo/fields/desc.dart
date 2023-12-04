@@ -5,56 +5,39 @@ import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
 import 'package:provider/provider.dart';
 
-class TodoDescField extends StatelessWidget {
-  const TodoDescField({super.key});
+class TodoDescField extends StatefulWidget {
+  TodoDescField({super.key});
 
-  _onTap(BuildContext context) {
+  @override
+  State<TodoDescField> createState() => _TodoDescFieldState();
+}
+
+class _TodoDescFieldState extends State<TodoDescField> {
+  bool isClicked = false;
+
+  @override
+  Widget build(BuildContext context) {
     final viewModel = Provider.of<EditorModalViewModel>(
       context,
       listen: false,
     );
-    showModalBottomSheet(
-      context: context,
-      builder: (bottomSheetContext) {
-        return SizedBox(
-          height: MediaQuery.of(context).size.height / 2,
-          child: Column(
-            children: [
-              BottomSheetModalHeader(
-                title: "설명 추가",
-              ),
-              TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text("완료")),
-              TextFormField(
-                initialValue: viewModel.todoData['todo_desc'] ?? "",
-                onChanged: (value) => viewModel.todoDesc = value,
-                maxLines: null,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                    color: Colors.black,
-                    width: 1,
-                  )),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => _onTap(context),
-      child: TodoFormFieldLayout(
-        icon: Icons.sticky_note_2_outlined,
-        child: Text("작업 설명 추가"),
-      ),
-    );
+        onTap: () => setState(() {
+              isClicked = true;
+            }),
+        child: TodoFormFieldLayout(
+          icon: Icons.sticky_note_2_outlined,
+          child: TextField(
+            onChanged: (value) => viewModel.todoDesc = value,
+            decoration: InputDecoration(
+              hintText: "예) 1만보 걷기",
+              hintStyle: TextStyle(fontSize: 15.0), // 글자 크기를 18.0으로 설정
+              fillColor: Colors.grey[200],
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide.none,
+              ),
+            ),
+          ),
+        ));
   }
 }
