@@ -156,7 +156,7 @@ class AuthService extends ChangeNotifier {
         .authorize(
       clientId: Secrets.KAKAO_REST_API_KEY,
       // TODO: Fix to REMOTE_SERVER_URL
-      redirectUri: '${Secrets.TEST_SERVER_URL}/auth',
+      redirectUri: '${Secrets.REMOTE_SERVER_URL}/auth',
     )
         .onError((error, stackTrace) {
       status = AuthStatus.failed;
