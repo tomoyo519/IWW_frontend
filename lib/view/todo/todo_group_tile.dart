@@ -277,7 +277,7 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                       'photoUrl': pickedFile.path,
                     };
                     EventService.sendEvent('confirmRequest', data);
-                    
+
                     if (context.mounted) {
                       Navigator.pop(context);
                     }

@@ -10,9 +10,8 @@ class TodoRepository {
   /// ================== ///
   ///         Get        ///
   /// ================== ///
-  Future<List<Todo>> getTodos(int? userId) async {
-    return await RemoteDataSource.get("/todo/user/${userId ?? 1}")
-        .then((response) {
+  Future<List<Todo>> getTodos(int userId) async {
+    return await RemoteDataSource.get("/todo/user/$userId").then((response) {
       if (response.statusCode == 200) {
         List<dynamic> jsonData = jsonDecode(response.body);
 
@@ -26,10 +25,12 @@ class TodoRepository {
         DateTime yesterday = DateTime.now().subtract(Duration(days: 1));
         data = data
             .where((element) =>
-                DateTime.parse(
-                  element.todoDate,
-                ).isAfter(yesterday) ||
-                element.todoDone == false)
+                element.userId == userId &&
+                element.todoDeleted == false &&
+                (DateTime.parse(
+                      element.todoDate,
+                    ).isAfter(yesterday) ||
+                    element.todoDone == false))
             .toList();
 
         // 정렬해서 넘김
@@ -40,52 +41,65 @@ class TodoRepository {
     });
   }
 
+  Future<Todo?> getTodoDetail(int todoId) async {
+    return await RemoteDataSource.get('/todo/$todoId').then((response) {
+      if (response.statusCode == 200) {
+        var jsonBody = jsonDecode(response.body);
+        return Todo.fromJson(jsonBody['result']);
+      }
+      return null;
+    });
+  }
+
   /// ================== ///
   ///       Create       ///
   /// ================== ///
-  Future<bool> createTodo(Map<String, dynamic> data) async {
+  Future<Todo?> createTodo(Map<String, dynamic> data) async {
     var json = jsonEncode(data);
     return await RemoteDataSource.post(
       "/todo",
       body: json,
     ).then((response) {
       if (response.statusCode == 201) {
+        var jsonBody = jsonDecode(response.body);
+
         LOG.log("Todo created: ${response.statusCode}, ${response.body}");
-        return true;
+        return Todo.fromJson(jsonBody);
       }
-      return false;
+      return null;
     });
   }
 
   /// ================== ///
   ///       Update       ///
   /// ================== ///
-  Future<bool> updateTodo(String id, Map<String, dynamic> data) async {
+  Future<Todo?> updateTodo(String id, Map<String, dynamic> data) async {
     var json = jsonEncode(data);
     return await RemoteDataSource.put(
       "/todo/$id",
       body: json,
     ).then((response) {
-      LOG.log("Update Todo: ${response.statusCode}, ${response.body}");
       if (response.statusCode == 200) {
-        return true;
+        LOG.log("Update Todo: ${response.statusCode}, ${response.body}");
+        var jsonBody = jsonDecode(response.body);
+        return Todo.fromJson(jsonBody);
       }
-      return false;
+      return null;
     });
   }
 
   /// ================== ///
   ///       Patch        ///
   /// ================== ///
-  Future<TodoUpdateDto?> checkNormalTodo(String id, bool checked) async {
+  Future<TodoCheckDto?> checkNormalTodo(String id, bool checked) async {
     return await RemoteDataSource.patch(
       "/todo/$id",
       body: {"todo_done": checked},
     ).then((response) {
+      LOG.log("${response.statusCode}, ${response.body}");
       if (response.statusCode == 200) {
-        // String jsonBody = jsonDecode(response.body);
-
-        return TodoUpdateDto.fromJson(response.body);
+        var jsonBody = jsonDecode(response.body);
+        return TodoCheckDto.fromJson(jsonBody['result']);
       }
       return null;
     });
@@ -127,7 +141,7 @@ class TodoRepository {
     return await RemoteDataSource.delete(
       "/todo/$id",
     ).then((response) {
-      LOG.log("Delete Todo: ${response.statusCode}, ${response.body}");
+      LOG.log("Delete Todo: ${response.statusCode}");
       if (response.statusCode == 200) {
         return true;
       }

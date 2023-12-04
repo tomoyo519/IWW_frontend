@@ -1,12 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/datasource/localStorage.dart';
+import 'package:iww_frontend/model/auth/auth_status.dart';
 import 'package:iww_frontend/model/auth/login_result.dart';
-import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/providers.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
-import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/view/_navigation/routes.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/view/_common/loading.dart';
@@ -15,7 +13,6 @@ import 'package:iww_frontend/view/_navigation/transition.dart';
 import 'package:iww_frontend/view/notification/notification.dart';
 import 'package:iww_frontend/view/signup/landing.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
-import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_template.dart';
@@ -50,17 +47,19 @@ void main() async {
   // *                         * //
   // * ======================= * //
 
-  // 1. 카카오 로그인 로직
-  // authService.oauthLogin();
+  // 1. 로컬 로그인
+  await authService.localLogin();
 
-  // 2. 로컬 로그인 로직 [미사용]
-  // 카카오 로그인으로 연결하기 위해 스토리지에 저장된 정보 삭제
-  // LocalStorage.clearKey().then((value) async {
-  //   await authService.localLogin();
-  // });
+  if (authService.status == AuthStatus.failed) {
+    // 2. 카카오로 로그인 시도
+    authService.oauthLogin(signup: false);
+  }
 
   // 3. 테스트유저 접속
-  authService.testLogin();
+  // authService.testLogin();
+
+  // authService.status = AuthStatus.permission;
+  // authService.waiting = false;
 
   runApp(
     MultiProvider(
@@ -91,7 +90,9 @@ void main() async {
           // */
           onGenerateRoute: (settings) {
             if (settings.name == '/notification') {
-              return RightPopupTransition.builder(child: MyNotification());
+              return RightPopupTransition.builder(
+                child: MyNotification(),
+              );
             }
             return null;
           },
@@ -122,7 +123,6 @@ class RenderPage extends StatelessWidget {
                     create: (context) => UserInfo(
                       authService.user!,
                       authService.mainPet!,
-                      authService.todayCount!,
                       Provider.of<UserRepository>(context, listen: false),
                     ),
                   ),

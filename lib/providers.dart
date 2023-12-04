@@ -16,7 +16,6 @@ List<Provider> getRepositories() {
     Provider<FriendRepository>(create: (_) => FriendRepository()),
     Provider<RoomRepository>(create: (_) => RoomRepository()),
     Provider<CommentRepository>(create: (_) => CommentRepository()),
-    Provider<KaKaoLogin>(create: (_) => KaKaoLogin()),
     Provider<GroupRepository>(create: (_) => GroupRepository())
   ];
 }
