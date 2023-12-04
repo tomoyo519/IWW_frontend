@@ -1,5 +1,4 @@
 // ignore_for_file: constant_identifier_names
-
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -65,7 +64,7 @@ class EventService {
   EventService.initialize() {
     print(_userId);
     socket =
-        IO.io('${Secrets.TEST_SERVER_URL}?user_id=$_userId', <String, dynamic>{
+        IO.io('${Secrets.REMOTE_SERVER_URL}?user_id=$_userId', <String, dynamic>{
       'transports': ['websocket'],
       'query': {'user_id': _userId.toString()},
     });
