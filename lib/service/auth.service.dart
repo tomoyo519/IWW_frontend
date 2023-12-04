@@ -197,7 +197,6 @@ class AuthService extends ChangeNotifier {
         .authorize(
       clientId: Secrets.KAKAO_REST_API_KEY,
       prompts: prompts,
-      // TODO: Fix to REMOTE_SERVER_URL
       redirectUri: '${Secrets.REMOTE_SERVER_URL}/auth',
     )
         .onError((error, stackTrace) {
@@ -206,6 +205,7 @@ class AuthService extends ChangeNotifier {
     });
   }
 
+  // 서비스 서버로부터 응답을 받아 인증 정보를 처리합니다.
   // 서비스 서버로부터 응답을 받아 인증 정보를 처리합니다.
   Future<void> _authorize(String link, {bool? signup}) async {
     Map<String, String> params = Uri.parse(link).queryParameters;
@@ -235,23 +235,12 @@ class AuthService extends ChangeNotifier {
       status = AuthStatus.failed;
     }
 
-    // 토큰과 유저 정보 로컬스토리지에 저장 후
+    // 토큰 로컬스토리지에 저장 후
     await LocalStorage.saveKey("jwt", token);
-    await LocalStorage.saveKey(
-      "user_info",
-      jsonEncode(body['result']),
-    );
 
-    String? userInfoStr = await LocalStorage.readKey('user_info');
-    if (userInfoStr == null) {
-      LOG.log("이런 예외는 생각지도 못했어요.. $userInfoStr");
-      LocalStorage.clearKey();
-      status = AuthStatus.failed;
-      return;
-    }
+    _user = UserModel.fromJson(body['result']['user']);
+    _mainPet = Item.fromJson(body['result']['user_pet']);
 
-    // 상태로 가져오기
-    _user = UserModel.fromJson(jsonDecode(userInfoStr));
     // 이벤트 서비스 초기화
     EventService.setUserId(_user!.user_id);
 
