@@ -254,10 +254,12 @@ class _GroupSearchState extends State<GroupSearch> {
                               ));
                         }),
                   )
-                : Lottie.asset('assets/empty.json',
-                    repeat: true,
-                    animate: true,
-                    height: MediaQuery.of(context).size.height * 0.3),
+                : Expanded(
+                    child: Lottie.asset('assets/empty.json',
+                        repeat: true,
+                        animate: true,
+                        height: MediaQuery.of(context).size.height * 0.3),
+                  ),
       ]),
     );
   }

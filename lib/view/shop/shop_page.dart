@@ -4,6 +4,8 @@ import 'package:iww_frontend/repository/shop.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:lottie/lottie.dart';
 import 'package:iww_frontend/view/shop/layout/show_item.dart';
+import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class ShopPage extends StatelessWidget {
   const ShopPage({super.key});
@@ -52,9 +54,10 @@ class _ShopItems extends State<ShopItems> {
   }
 
   fetchFriend() async {
-    List<ShopInfo> fetchPets = await shopRepository.getPets();
-    List<ShopInfo> fetchFuns = await shopRepository.getFuns();
-    List<ShopInfo> fetchEmoj = await shopRepository.getEmoj();
+    final userId = context.read<UserInfo>().userId;
+    List<ShopInfo> fetchPets = await shopRepository.getPets(userId);
+    List<ShopInfo> fetchFuns = await shopRepository.getFuns(userId);
+    List<ShopInfo> fetchEmoj = await shopRepository.getEmoj(userId);
     LOG.log('fetchPets: $fetchPets');
     if (mounted) {
       // 안하면 중간에 앱 멈추는 현상 발견
@@ -69,7 +72,6 @@ class _ShopItems extends State<ShopItems> {
 
   @override
   Widget build(BuildContext context) {
-    // return Text("HELLO");
     return DefaultTabController(
       length: 3, // 탭의 수
       child: Column(

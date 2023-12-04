@@ -197,10 +197,12 @@ class _GroupListState extends State<GroupList> {
                             ));
                       }),
                 )
-              : Lottie.asset('assets/empty.json',
-                  repeat: true,
-                  animate: true,
-                  height: MediaQuery.of(context).size.height * 0.3),
+              : Expanded(
+                  child: Lottie.asset('assets/empty.json',
+                      repeat: true,
+                      animate: true,
+                      height: MediaQuery.of(context).size.height * 0.3),
+                )
     ]);
   }
 }
