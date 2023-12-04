@@ -18,6 +18,6 @@ class Comment {
   }) {
     //FIXME - 이미지 경로 수정, 주의!!!! 없는 이미지 요청하면 서버가 터집니다.
     // userImage = '${Secrets.REMOTE_SERVER_URL}/image/$authorId.jpg';
-    userImage = 'assets/profile.jpg';
+    userImage = 'assets/profile.png';
   }
 }

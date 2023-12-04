@@ -1,62 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/comment.repository.dart';
-import 'package:iww_frontend/repository/room.repository.dart';
-import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:iww_frontend/model/comment/comment.model.dart';
-import 'package:iww_frontend/service/auth.service.dart';
 
 // 방명록 상태관리
 class CommentsProvider with ChangeNotifier {
-  final AuthService _authService;
-  final RoomRepository _roomRepository;
+  final String _userId;
+  String _ownerId;
   final CommentRepository _commentRepository;
-
+  List<Comment> comments = [];
   // 방을 클릭할때마다 유지되는 상태
-  final _roomOwnerId = "1";
-  String get roomOwnerId => _roomOwnerId;
 
   CommentsProvider(
-    this._authService,
-    this._roomRepository,
+    this._userId,
+    this._ownerId,
     this._commentRepository,
   );
 
-  List<Comment> comments = [];
-
   // 댓글 데이터 불러오기
-  Future<void> fetchComment(String ownerId) async {
-    comments = await _commentRepository.fetchComments(ownerId);
+  Future<void> fetchComment() async {
+    comments = await _commentRepository.fetchComments(_ownerId);
     notifyListeners(); // 상태 변경 알림
   }
 
   // 댓글 생성
-  Future<bool> addComment(
-      String ownerId, String authorId, String content) async {
-    return await _commentRepository.addComment(ownerId, authorId, content);
+  Future<bool> addComment(String content) async {
+    return await _commentRepository.addComment(_ownerId, _userId, content);
   }
 
   // 댓글 수정
-  Future<bool> updateComment(
-      String ownerId, String authorId, String content) async {
-    return await _commentRepository.updateComment(ownerId, authorId, content);
+  Future<bool> updateComment(String comId, String content) async {
+    return await _commentRepository.updateComment(_ownerId, comId, content);
   }
 
   // 댓글 삭제
-  Future<bool> deleteComment(String ownerId, String comId) async {
-    return await _commentRepository.deleteComment(ownerId, comId);
+  Future<bool> deleteComment(String comId) async {
+    return await _commentRepository.deleteComment(_ownerId, comId);
   }
 
   // 현재 유저 정보 반환
   // Future<int?> getUserId() async {
   //   return await _authService._getCurrentUser().then((user) => user?.user_id);
   // }
+  void changeOwner(String ownerId) {
+    _ownerId = ownerId;
+  }
 }
 
 // 방명록 bottom sheet 트리거
 void showCommentsBottomSheet(BuildContext context,
-    CommentsProvider commentsProvider, userId, ownerId) async {
+    CommentsProvider commentsProvider) async {
   // 댓글 데이터 가져오기
-  await commentsProvider.fetchComment(ownerId);
+  await commentsProvider.fetchComment();
 
   if (context.mounted) {
     showModalBottomSheet(
@@ -65,8 +59,6 @@ void showCommentsBottomSheet(BuildContext context,
         builder: (BuildContext context) {
           return CommentsBottomSheet(
             commentsProvider: commentsProvider,
-            userId: userId.toString(),
-            ownerId: ownerId.toString(),
           );
         });
   }
@@ -75,18 +67,16 @@ void showCommentsBottomSheet(BuildContext context,
 // 방명록 bottom sheet 뷰
 class CommentsBottomSheet extends StatelessWidget {
   final CommentsProvider commentsProvider;
-  final String ownerId;
-  final String userId;
 
   const CommentsBottomSheet({
     Key? key,
     required this.commentsProvider,
-    required this.ownerId,
-    required this.userId,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    String ownerId = commentsProvider._ownerId;
+    String userId = commentsProvider._userId;
     bool isOwner = ownerId == userId;
     final comments = commentsProvider.comments;
 
@@ -153,10 +143,9 @@ class CommentsBottomSheet extends StatelessWidget {
           bool confirm =
               await _showConfirmationDialog(context, comment, commentsProvider);
           if (confirm) {
-            bool success =
-                await commentsProvider.deleteComment(ownerId, comment.comId);
+            bool success = await commentsProvider.deleteComment(comment.comId);
             if (success) {
-              commentsProvider.fetchComment(ownerId);
+              commentsProvider.fetchComment();
             }
             return success;
           }
@@ -258,10 +247,10 @@ class CommentsBottomSheet extends StatelessWidget {
               onPressed: controller.text != comment.content
                   ? () async {
                       bool success = await commentsProvider.updateComment(
-                          ownerId, comment.comId, controller.text);
+                          comment.comId, controller.text);
                       if (success) {
                         // 댓글 새로고침
-                        commentsProvider.fetchComment(ownerId);
+                        commentsProvider.fetchComment();
                       }
                       if (context.mounted) {
                         Navigator.of(context).pop();
@@ -303,14 +292,11 @@ class CommentInputField extends StatelessWidget {
             icon: Icon(Icons.send),
             onPressed: () async {
               if (controller.text.isNotEmpty) {
-                String ownerID = ownerId; // 방명록 주인의 ID
-                String currentUserID = authorId; // 현재 사용자 ID
-
-                bool success = await commentsProvider.addComment(
-                    ownerID, currentUserID, controller.text);
+                bool success =
+                    await commentsProvider.addComment(controller.text);
                 if (success) {
                   // 댓글 새로고침
-                  commentsProvider.fetchComment(ownerId);
+                  commentsProvider.fetchComment();
                 }
                 controller.clear();
               }
