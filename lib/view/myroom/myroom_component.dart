@@ -249,7 +249,7 @@ class BottomButtons extends StatelessWidget {
       } else {
         return ElevatedButton(
             onPressed: () {
-              // Navigator.pushNamed(context, '/inventory');
+              roomState.roomOwner = user.userId;
             },
             child: Text('마이홈'));
       }
