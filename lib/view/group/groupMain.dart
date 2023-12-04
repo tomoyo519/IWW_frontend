@@ -17,6 +17,7 @@ class MyGroupPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // UserInfo _userInfo = Provider.of<UserInfo>(context, listen: false);
+    var userInfo = context.read<UserInfo>();
     final groupRepository = Provider.of<GroupRepository>(
       context,
       listen: false,
@@ -24,7 +25,7 @@ class MyGroupPage extends StatelessWidget {
     // final _authService = Provider.of<AuthService>(context, listen: false);
 
     return ChangeNotifierProvider(
-      create: (context) => MyGroupViewModel(groupRepository),
+      create: (context) => MyGroupViewModel(groupRepository, userInfo.userId),
       child: MyGroup(groupRepository: groupRepository),
     );
   }
@@ -41,6 +42,7 @@ class MyGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var userInfo = context.read<UserInfo>();
     return DefaultTabController(
       initialIndex: 0,
       length: 2,
@@ -68,9 +70,8 @@ class MyGroup extends StatelessWidget {
                         value: context.read<MyGroupViewModel>(),
                       ),
                       ChangeNotifierProvider(
-                        create: (context) => GroupDetailModel(
-                          groupRepository,
-                        ),
+                        create: (context) =>
+                            GroupDetailModel(groupRepository, userInfo.userId),
                       ),
                     ],
                     child: Stack(children: [
@@ -81,6 +82,7 @@ class MyGroup extends StatelessWidget {
                         bottom: 15,
                         child: IconButton(
                           onPressed: () async {
+                            var userInfo = context.read<UserInfo>();
                             await Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -91,7 +93,8 @@ class MyGroup extends StatelessWidget {
                                     ChangeNotifierProvider(
                                       create: (_) => GroupDetailModel(
                                           Provider.of<GroupRepository>(context,
-                                              listen: false)),
+                                              listen: false),
+                                          userInfo.userId),
                                     ),
                                     ChangeNotifierProvider.value(
                                         value:

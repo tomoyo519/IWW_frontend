@@ -43,19 +43,19 @@ class _GroupSearchState extends State<GroupSearch> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getList();
   }
 
   List<ChangeNotifierProvider> _groupDetailProviders(BuildContext context) {
+    var userInfo = context.read<UserInfo>();
     return [
       ChangeNotifierProvider.value(value: context.read<UserInfo>()),
       ChangeNotifierProvider.value(value: context.read<MyGroupViewModel>()),
       ChangeNotifierProvider(
         create: (_) => GroupDetailModel(
-          Provider.of<GroupRepository>(context, listen: false),
-        ),
+            Provider.of<GroupRepository>(context, listen: false),
+            userInfo.userId),
       )
     ];
   }
@@ -139,6 +139,7 @@ class _GroupSearchState extends State<GroupSearch> {
                         itemBuilder: (c, i) {
                           return TextButton(
                               onPressed: () {
+                                var userInfo = context.read<UserInfo>();
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -148,7 +149,8 @@ class _GroupSearchState extends State<GroupSearch> {
                                             create: (_) => GroupDetailModel(
                                                 Provider.of<GroupRepository>(
                                                     context,
-                                                    listen: false)),
+                                                    listen: false),
+                                                userInfo.userId),
                                           ),
                                           ChangeNotifierProvider.value(
                                               value: context

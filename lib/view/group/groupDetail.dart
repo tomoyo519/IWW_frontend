@@ -88,7 +88,7 @@ class _GroupDetailState extends State<GroupDetail> {
         .then((res) async {
       if (res.statusCode == 201) {
         final viewModel = context.read<MyGroupViewModel>();
-        await viewModel.fetchMyGroupList();
+        await viewModel.fetchMyGroupList(userId);
         if (context.mounted) {
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: const Text("그룹 가입이 완료 되었어요!")));
@@ -99,8 +99,6 @@ class _GroupDetailState extends State<GroupDetail> {
   }
 
   exitGroup(grp_id) async {
-    //탈퇴하기;
-    // TODO - user_id 수정하기.
     final userId = context.read<UserInfo>().userId;
     var data = jsonEncode({
       "user_id": userId,
@@ -112,7 +110,7 @@ class _GroupDetailState extends State<GroupDetail> {
         LOG.log("${result.body}, ${result.statusCode}");
         if (result.statusCode == 200) {
           final viewModel = context.read<MyGroupViewModel>();
-          await viewModel.fetchMyGroupList();
+          await viewModel.fetchMyGroupList(userId);
           if (context.mounted) {
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: const Text("그룹 탈퇴가 완료 되었어요!")));
@@ -187,9 +185,8 @@ class _GroupDetailState extends State<GroupDetail> {
       }
       LOG.log('thisisroutineImgs: ${routineImgs}');
     });
-
-    // ignore: use_build_context_synchronously
     // 클릭시, 그룹 구성원의 사진 인증 보여주는 기능
+    // ignore: use_build_context_synchronously
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -199,7 +196,6 @@ class _GroupDetailState extends State<GroupDetail> {
           height: MediaQuery.of(context).size.height * 0.8,
           width: MediaQuery.of(context).size.width,
           child: Column(
-            // TODO - 사진추가, 빈값일 경우 텅 보여주기
             children: [
               routineImgs!.isNotEmpty
                   ? Container(

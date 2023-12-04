@@ -81,6 +81,7 @@ class _GroupListState extends State<GroupList> {
                         // }
                         return TextButton(
                             onPressed: () {
+                              var userInfo = context.read<UserInfo>();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -94,9 +95,10 @@ class _GroupListState extends State<GroupList> {
                                               context.read<MyGroupViewModel>()),
                                       ChangeNotifierProvider(
                                         create: (_) => GroupDetailModel(
-                                          Provider.of<GroupRepository>(context,
-                                              listen: false),
-                                        ),
+                                            Provider.of<GroupRepository>(
+                                                context,
+                                                listen: false),
+                                            userInfo.userId),
                                       )
                                     ],
                                     child: GroupDetail(

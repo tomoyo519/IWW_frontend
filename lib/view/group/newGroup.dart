@@ -29,7 +29,6 @@ class _NewGroupState extends State<NewGroup> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _formKey = GlobalKey<FormState>();
   }
@@ -39,13 +38,11 @@ class _NewGroupState extends State<NewGroup> {
 
     final viewModel = context.read<MyGroupViewModel>();
     LOG.log('myGroupViewModel.groupData: ${viewModel.groups}');
-    // LOG.log('groupName:$groupName');
-    // TODO - userId 넣기
-    await viewModel.createGroup().then(
+    final userInfo = context.read<UserInfo>();
+    await viewModel.createGroup(userInfo.userId).then(
       (res) async {
-        LOG.log('thisisres: $res');
         if (res == true) {
-          await viewModel.fetchMyGroupList();
+          await viewModel.fetchMyGroupList(userInfo.userId);
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(

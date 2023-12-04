@@ -84,7 +84,6 @@ class _ShopItems extends State<ShopItems> {
               Tab(text: "이모티콘"),
             ],
           ),
-          // TODO - 재사용성 확인하기
           !isLoading
               ? Expanded(
                   child: TabBarView(
