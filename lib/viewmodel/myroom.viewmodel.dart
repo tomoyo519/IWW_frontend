@@ -59,6 +59,8 @@ class MyRoomViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  get getRoomOwner => _roomOwner;
+
   set roomOwner(int userId) {
     _roomOwner = userId;
     fetchMyRoom();

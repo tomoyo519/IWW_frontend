@@ -292,15 +292,10 @@ class BottomButtons extends StatelessWidget {
         children: [
           ElevatedButton(
               onPressed: () async {
-                String? roomOwenerId = commentsProvider.roomOwnerId;
+                commentsProvider.changeOwner(roomState.getRoomOwner.toString());
 
                 if (context.mounted) {
-                  showCommentsBottomSheet(
-                    context,
-                    commentsProvider,
-                    user.userId,
-                    roomOwenerId,
-                  );
+                  showCommentsBottomSheet(context, commentsProvider);
                 }
               },
               child: Text('방명록')),
