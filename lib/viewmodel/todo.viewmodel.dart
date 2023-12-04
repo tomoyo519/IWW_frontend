@@ -10,7 +10,6 @@ import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
-import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 
 // 전체 투두리스트 상태를 관리
 class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
@@ -28,41 +27,55 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
     super.dispose();
   }
 
-  // ===== Status ===== //
-
+  // ****************************** //
+  // *        View States         * //
+  // ****************************** //
   List<Todo> _todos = [];
-  List<Todo> _normalTodos = [];
-  List<Todo> _groupTodos = [];
-  bool _waiting = true;
-  bool _isDisposed = false;
-
-  int _todayDone = 0;
-  int _todayTotal = 0;
-
-  // ===== Status Getters ===== //
   List<Todo> get todos => _todos;
-  List<Todo> get groupTodos => _groupTodos;
+
+  List<Todo> _normalTodos = [];
   List<Todo> get normalTodos => _normalTodos;
+
+  List<Todo> _groupTodos = [];
+  List<Todo> get groupTodos => _groupTodos;
+
+  bool _waiting = true;
   bool get waiting => _waiting;
-
-  int get total => _todayTotal;
-  int get check => _todayDone;
-
-  // 오늘 기준으로 완료된 할일 개수를 리턴
-  int getTodaysChecked(DateTime now) {
-    final today = DateFormat('yyyy-MM-dd').format(now);
-    return _todos
-        .where((e) => e.todoDate == today && e.todoDone == true)
-        .length;
-  }
-
-  // ===== Status Setters ===== //
   set waiting(bool val) {
     _waiting = val;
     if (!_isDisposed) {
       notifyListeners();
     }
   }
+
+  String _selectedDate = '';
+  String get selectedDate => _selectedDate;
+  void setSelectedDate(String newDate) {
+    _selectedDate = newDate;
+    notifyListeners();
+  }
+
+  var _selectedLabel = 0;
+  int get selectedLabel => _selectedLabel;
+  void setSelectedLabel(int labelNo) {
+    _selectedLabel = labelNo;
+    notifyListeners();
+  }
+
+  TimeOfDay _selectedAlarmTime = TimeOfDay.now();
+  TimeOfDay get selectedAlarmTime => _selectedAlarmTime;
+  void setSelectedAlarmTime(dynamic alarmTime) {
+    _selectedAlarmTime = alarmTime;
+    notifyListeners();
+  }
+
+  int _todayDone = 0;
+  int get check => _todayDone;
+
+  int _todayTotal = 0;
+  int get total => _todayTotal;
+
+  bool _isDisposed = false;
 
   // ****************************** //
   // *         Fetch Data         * //
@@ -87,19 +100,47 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   }
 
   // ****************************** //
+  // *        Create Data         * //
+  // ****************************** //
+  @override
+  Future<bool> createTodo(Map<String, dynamic> data) async {
+    Todo? todo = await _todoRepository.createTodo(data);
+    bool result = false;
+
+    if (todo != null) {
+      _normalTodos.add(todo);
+      result = true;
+      waiting = false;
+
+      EventService.publish(
+        Event(
+          type: EventType.show_todo_snackbar,
+          message: "새로운 할일이에요!",
+        ),
+      );
+    }
+    waiting = false;
+    return result;
+  }
+
+  // ****************************** //
   // *        Delete Data         * //
   // ****************************** //
 
-  // 할일 삭제하고 목록 업데이트
   Future<bool> deleteTodo(int todoId) async {
-    // waiting = true;
+    _todos = _todos.where((todo) => todo.todoId != todoId).toList();
+    waiting = false; // 상태부터 변경합니다
+
     return await _todoRepository.deleteTodo(todoId.toString()).then((value) {
       if (value == true) {
-        _todos = _todos.where((todo) => todo.todoId != todoId).toList();
-        waiting = false;
+        EventService.publish(
+          Event(
+            type: EventType.show_todo_snackbar,
+            message: "할일을 삭제했어요!",
+          ),
+        );
         return true;
       }
-      waiting = false;
       return false;
     });
   }
@@ -108,6 +149,7 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   // *        Update Data         * //
   // ****************************** //
 
+  // 할일 상태를 완료됨으로 변경합니다.
   void checkTodoState(Todo todo, bool value, int? userId, String? path) {
     int idx = _todos.indexWhere((e) => e.todoId == todo.todoId);
     if (idx == -1) {
@@ -121,145 +163,41 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
     }
   }
 
+  // 개인 투두에 대한 완료 처리
+  Future<TodoCheckDto?> checkNormalTodo(int todoId, bool value) async {
+    String todoIdStr = todoId.toString();
+    return await _todoRepository.checkNormalTodo(todoIdStr, value);
+  }
+
   Future<bool?> checkTodo(
     int todoId,
     bool value, {
     int? userId,
     String? path,
   }) async {
-    if (userId == null || path == null) {
-      // return await _todoRepository.checkNormalTodo(todoId.toString(), value);
-      return false;
-    }
-
     return await _todoRepository.checkGroupTodo(
-        userId.toString(), todoId.toString(), value, path);
-  }
-
-  // 할일 완료하고 목록 업데이트
-  // 전체 투두 비율을 계산해서 리워드 이벤트 트리거
-  // Future<bool> checkTodo(
-  //   Todo todo,
-  //   bool value, {
-  //   int? userId,
-  //   String? path,
-  // }) async {
-  //   // 1. 만약 이미지 경로가 없으면 일반 할일 체크로 처리합니다.
-  //   if (userId == null || path == null) {
-
-  //      .then((value) {
-  //       if(value ==)
-  //      })
-  //     // UserInfo로 리워드 갱신 이벤트 발행
-  //     // EventService.publish(
-  //     //   Event(
-  //     //     type: EventType.reward_status,
-  //     //     message: jsonEncode({
-  //     //       "user_cash": cash,
-  //     //       "pet_exp": petExp,
-  //     //     }),
-  //     //   ),
-  //     // );
-
-  //     // 만약 서버에서 온 응답과 다르다면 force fetch
-  //     // String todoId = todo.todoId.toString();
-  //     // TodoUpdateDto? dto = await _todoRepository.checkNormalTodo(todoId, value);
-  //     // if (dto == null) {
-  //     //   _todos[idx].todoDone = !value;
-  //     //   // User에 fetch data 요청
-  //     //   return false;
-  //     // }
-
-  //     // // Todo nTodo = dto.todo;
-  //     // UserModel nUser = dto.user;
-
-  //     // if(nUser.user_cash)
-  //   }
-
-  //   // FIXME: 이미지 경로가 있으면 그룹 할일 체크로 처리합니다.
-  //   return false;
-  //   // var todoId = todo.todoId.toString();
-  // return await _todoRepository
-  //     .checkGroupTodo(userId.toString(), todoId, value, path)
-  //     .then((result) => _updateTodoStatus(result, todo, value));
-  // }
-
-  // // 할일 리스트에서 상태 갱신
-  // Future<bool> _updateTodoStatus(
-  //   TodoUpdateDto? result,
-  //   Todo todo,
-  //   bool value,
-  // ) async {
-  //   if (result == null) {
-  //     LOG.log("Failed to update todo status.");
-  //     waiting = false;
-  //     return false;
-  //   }
-
-  //   int idx = _todos.indexWhere((e) => e.todoId == todo.todoId);
-  //   if (idx == -1) {
-  //     LOG.log("Failed to find todo by id in todos list");
-  //     waiting = false;
-  //     return false;
-  //   }
-
-  //   // todo update 결과를 user model로 전송
-  //   // user info 상태를 fetch 하도록 알림
-  //   // EventService.publish(
-  //   //   Event(
-  //   //     type: EventType.status,
-  //   //     message: jsonEncode(result),
-  //   //   ),
-  //   // );
-
-  //   _todos[idx].todoDone = value;
-  //   waiting = false;
-  //   return idx != -1;
-  // }
-
-  // === Calendar Status === //
-  String _selectedDate = '';
-  var _selectedLabel = 0;
-  TimeOfDay _selectedAlarmTime = TimeOfDay.now();
-  String get selectedDate => _selectedDate;
-  int get selectedLabel => _selectedLabel;
-  TimeOfDay get selectedAlarmTime => _selectedAlarmTime;
-
-  void setSelectedDate(String newDate) {
-    _selectedDate = newDate;
-    notifyListeners();
-  }
-
-  void setSelectedLabel(int labelNo) {
-    _selectedLabel = labelNo;
-    notifyListeners();
-  }
-
-  void setSelectedAlarmTime(dynamic alarmTime) {
-    _selectedAlarmTime = alarmTime;
-    notifyListeners();
-  }
-
-  @override
-  Future<bool> createTodo(Map<String, dynamic> data) async {
-    waiting = true;
-    bool result = await _todoRepository.createTodo(data);
-    fetchTodos();
-    return result;
+        userId.toString(), todoId.toString(), value, path!);
   }
 
   @override
   Future<bool> updateTodo(String id, Map<String, dynamic> data) async {
     waiting = true;
     return await _todoRepository.updateTodo(id, data).then(
-      (value) {
-        if (value == true) {
+      (updated) {
+        if (updated != null) {
           int idx = _todos.indexWhere((todo) => todo.todoId.toString() == id);
-          _todos[idx] = Todo.fromJson(data);
-          fetchTodos();
+          _todos[idx] = updated;
+          waiting = false;
+
+          EventService.publish(
+            Event(
+              type: EventType.show_todo_snackbar,
+              message: "할일을 수정했어요!",
+            ),
+          );
           return true;
         }
-        fetchTodos();
+        waiting = false;
         return false;
       },
     );

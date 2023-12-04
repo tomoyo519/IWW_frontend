@@ -61,9 +61,12 @@ class EditorModalViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // 할일 저장
+  // ****************************** //
+  // *        Create Data         * //
+  // ****************************** //
+  // 상위 ViewModel (TodoViewModel & GroupViewModel)
+  // createTodo 함수를 부릅니다
   Future<bool> createTodo() async {
-    LOG.log("todo_editor.viewmodel.dart createTodo 실행");
     String timeString =
         '${hour.toString().padLeft(2, '0')}:${min.toString().padLeft(2, '0')}:00';
 
@@ -74,7 +77,11 @@ class EditorModalViewModel extends ChangeNotifier {
     return await parent.createTodo(todoData);
   }
 
-  // 할일 수정
+  // ****************************** //
+  // *        Create Data         * //
+  // ****************************** //
+  // 상위 ViewModel (TodoViewModel & GroupViewModel)
+  // updateTodo 함수를 부릅니다
   Future<bool> updateTodo() async {
     var id = todoData["todo_id"];
 

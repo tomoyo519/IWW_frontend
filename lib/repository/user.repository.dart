@@ -43,7 +43,7 @@ class UserRepository {
 
     // 로그인 정보를 로컬에 저장
     await LocalStorage.saveKey('jwt', token);
-    await LocalStorage.saveKey("user_info", jsonEncode(user));
+    // await LocalStorage.saveKey("user_info", jsonEncode(user));
 
     return SignUpResult(user: user, pet: pet);
   }
@@ -86,7 +86,7 @@ class UserRepository {
     return await RemoteDataSource.get("/user").then((response) {
       if (response.statusCode == 200) {
         Map<String, dynamic> body = json.decode(response.body);
-        return UserModel.fromJson(body['result']);
+        return UserModel.fromJson(body['result']['user']);
       } else {
         // 해당 유저가 없거나 예외 반환한 경우
         return null;

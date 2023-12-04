@@ -44,6 +44,4 @@ class UserModel {
       last_login: data['last_login'],
     );
   }
-
-  // void initTodoFields(int todo_t)
 }

@@ -113,18 +113,8 @@ class MyTodo extends StatelessWidget {
             title: "할일 추가",
             formKey: _formKey,
             onSave: (context) async {
-              if (await _createTodo(context) == true) {
-                LOG.log("할일 추가 완료");
-                if (context.mounted) {
-                  showCustomSnackBar(
-                    context,
-                    text: "할일이 추가되었어요!",
-                    icon: Icon(Icons.check),
-                  );
-                }
-              } else {
-                LOG.log("뭔가이상..");
-              }
+              Navigator.pop(context);
+              await _createTodo(context);
             },
             onCancel: (context) => Navigator.pop(context),
           ),
@@ -135,10 +125,7 @@ class MyTodo extends StatelessWidget {
 
   // ==== 할일 신규 생성 ==== //
   Future<bool> _createTodo(BuildContext context) async {
-    Navigator.pop(context);
-
     final editormodel = context.read<EditorModalViewModel>();
-    LOG.log("home.dart _createTodo 실행");
     return await editormodel.createTodo().then((result) {
       if (result == true && context.mounted) {
         return true;

@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:intl/intl.dart';
 import 'package:iww_frontend/datasource/localStorage.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/main.dart';
@@ -38,6 +39,11 @@ class AuthService extends ChangeNotifier {
   AuthStatus get status => _status;
   set status(AuthStatus val) {
     _status = val;
+    // 로그인 로그
+    if (val == AuthStatus.initialized) {
+      String now = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+      LOG.log('[$now] ${_user!.user_id} logged in.');
+    }
     notifyListeners();
   }
 
@@ -154,22 +160,30 @@ class AuthService extends ChangeNotifier {
   ///
   /// */
   Future<void> localLogin() async {
-    // 로컬스토리지에서 유저 정보 꺼내기
-    var jsonUserInfo = await LocalStorage.readKey("user_info");
+    waiting = true;
 
-    if (jsonUserInfo == null) {
-      LOG.log("Failed to login in local.");
+    // 로컬에 저장된 토큰 확인
+    var token = await LocalStorage.readKey('jwt');
+    if (token == null) {
+      status = AuthStatus.failed;
       return;
     }
 
-    // 유저 정보로 가져오기
-    Map<String, dynamic> userInfo = json.decode(jsonUserInfo);
-    LOG.log("Local login success! ${userInfo['user_name']}");
-    _user = UserModel.fromJson(userInfo);
-
-    // 토큰 세팅하기
-    var token = await LocalStorage.readKey('jwt');
     RemoteDataSource.setAuthHeader("Bearer $token");
+
+    var response = await RemoteDataSource.get('/user');
+    if (response.statusCode == 200) {
+      var jsonBody = jsonDecode(response.body);
+      _user = UserModel.fromJson(jsonBody['result']['user']);
+      _mainPet = Item.fromJson(jsonBody['result']['user_pet']);
+
+      status = AuthStatus.initialized;
+    } else {
+      // Unauthorized
+      status = AuthStatus.failed;
+    }
+
+    waiting = false;
   }
 
   ///** 카카오 인증을 시작합니다.
@@ -183,7 +197,7 @@ class AuthService extends ChangeNotifier {
       clientId: Secrets.KAKAO_REST_API_KEY,
       prompts: prompts,
       // TODO: Fix to REMOTE_SERVER_URL
-      redirectUri: '${Secrets.TEST_SERVER_URL}/auth',
+      redirectUri: '${Secrets.REMOTE_SERVER_URL}/auth',
     )
         .onError((error, stackTrace) {
       status = AuthStatus.failed;

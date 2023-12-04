@@ -47,14 +47,13 @@ void main() async {
   // *                         * //
   // * ======================= * //
 
-  // 1. 카카오 로그인 로직
-  authService.oauthLogin(signup: false);
+  // 1. 로컬 로그인
+  await authService.localLogin();
 
-  // 2. 로컬 로그인 로직 [미사용]
-  // 카카오 로그인으로 연결하기 위해 스토리지에 저장된 정보 삭제
-  // LocalStorage.clearKey().then((value) async {
-  //   await authService.localLogin();
-  // });
+  if (authService.status == AuthStatus.failed) {
+    // 2. 카카오로 로그인 시도
+    authService.oauthLogin(signup: false);
+  }
 
   // 3. 테스트유저 접속
   // authService.testLogin();

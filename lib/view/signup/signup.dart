@@ -1,17 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/main.dart';
-import 'package:iww_frontend/model/auth/login_result.dart';
 import 'package:iww_frontend/service/auth.service.dart';
-import 'package:iww_frontend/style/button.dart';
-import 'package:iww_frontend/style/button.type.dart';
-import 'package:iww_frontend/style/textfield.dart';
-import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
 import 'package:iww_frontend/view/signup/subpages/name.dart';
 import 'package:iww_frontend/view/signup/subpages/pet.dart';
 import 'package:iww_frontend/view/signup/subpages/tel.dart';
 import 'package:iww_frontend/viewmodel/signup.viewmodel.dart';
-import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 class SignUpPage extends StatelessWidget {
