@@ -59,17 +59,27 @@ class ShowItem extends StatelessWidget {
                               children: <Widget>[
                                 Expanded(
                                   flex: 7,
-                                  child: Image.asset(
-                                    'assets/thumbnail/' +
-                                        allpets?[idx].item_path,
-                                    fit: BoxFit.cover,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(10),
+                                      topRight: Radius.circular(10),
+                                    ), // 오
+                                    child: Container(
+                                      width: double.infinity, // 추가
+                                      height: double.infinity, // 추가
+                                      child: Image.asset(
+                                        'assets/thumbnail/' +
+                                            allpets?[idx].item_path,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
                                   ),
                                 ),
                                 Expanded(
                                   flex: 3,
                                   child: Container(
                                       decoration: BoxDecoration(
-                                        color: Colors.grey, // 배경색
+                                        color: Colors.grey[400], // 배경색
                                         borderRadius: BorderRadius.only(
                                           bottomLeft:
                                               Radius.circular(10), // 왼쪽 아래 모서리
