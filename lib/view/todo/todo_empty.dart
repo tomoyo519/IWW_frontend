@@ -18,8 +18,8 @@ class TodoListEmpty extends StatelessWidget {
           Expanded(
             flex: 2,
             child: Lottie.asset(
-              "assets/star.json",
-              animate: false,
+              "assets/empty.json",
+              animate: true,
             ),
           ),
           Expanded(

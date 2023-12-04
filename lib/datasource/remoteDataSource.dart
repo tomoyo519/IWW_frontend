@@ -182,7 +182,7 @@ class RemoteDataSource {
   }
 
   // 테스트용
-  Future<http.Response> test() {
+  static Future<http.Response> test() {
     return http.get(
       Uri.parse(server),
       headers: baseHeaders,

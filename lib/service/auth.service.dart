@@ -167,6 +167,7 @@ class AuthService extends ChangeNotifier {
     var token = await LocalStorage.readKey('jwt');
     if (token == null) {
       status = AuthStatus.failed;
+      waiting = false;
       return;
     }
 
@@ -253,6 +254,7 @@ class AuthService extends ChangeNotifier {
   // *       User Logout       * //
   // *                         * //
   // * ======================= * //
+
   Future<void> logout() async {
     await LocalStorage.clearKey();
     status = AuthStatus.failed;
