@@ -124,6 +124,7 @@ class AuthService extends ChangeNotifier {
 
     RemoteDataSource.setAuthHeader("Bearer ${Secrets.JWT_TOKEN}");
     EventService.setUserId(29);
+    EventService.initialize();
 
     // await _initialize();
     status = AuthStatus.initialized;

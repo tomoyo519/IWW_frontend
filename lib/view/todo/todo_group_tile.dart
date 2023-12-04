@@ -258,16 +258,27 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                       path: pickedFile.path,
                     );
 
-                    if (result != null && context.mounted) {
-                      // _handleTodoCashReward(context: context, value: true);
-                      var data = {
-                        'userId': widget.todo.userId,
-                        'todoId': widget.todo.todoId,
-                        'photoUrl': pickedFile.path,
-                      };
+                    LOG.log("사진인증 ${result}");
+                    // if (result != null && context.mounted) {
+                    //   _handleTodoCashReward(context: context, value: true);
+                    //   var data = {
+                    //     'userId': widget.todo.userId,
+                    //     'todoId': widget.todo.todoId,
+                    //     'photoUrl': pickedFile.path,
+                    //   };
 
-                      EventService().sendEvent('confirmRequest', data);
-                      
+                    //   EventService.sendEvent('confirmRequest', data);
+
+                    //   Navigator.pop(context);
+                    // }
+                    var data = {
+                      'userId': widget.todo.userId,
+                      'todoId': widget.todo.todoId,
+                      'photoUrl': pickedFile.path,
+                    };
+                    EventService.sendEvent('confirmRequest', data);
+                    
+                    if (context.mounted) {
                       Navigator.pop(context);
                     }
                   },

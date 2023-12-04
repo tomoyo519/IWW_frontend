@@ -56,38 +56,24 @@ extension EventTypeExtension on EventType {
 // * 모달을 띄우는 뷰는 main_page.dart
 // */
 class EventService {
-  static final EventService _instance = EventService._internal();
+  static final EventService _instance = EventService.initialize();
   static final _streamController = StreamController<Event>.broadcast();
-  static int? _userId;
-  late IO.Socket socket;
-  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  static String? _userId;
+  static late IO.Socket socket;
+  static late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
-  EventService._internal();
-  static Stream<Event> get stream => _streamController.stream;
-
-  // 이벤트 발행
-  static void publish(Event event) {
-    LOG.log("Event received: ${event.type}");
-    _streamController.add(event);
-  }
-
-  // 해제
-  static void dispose() {
-    _streamController.close();
-  }
-
-  // AuthService login 완료 후 초기화
-  static void setUserId(int userId) {
-    _userId = userId;
-  }
-
-  EventService() {
-    socket = IO.io('${Secrets.TEST_SERVER_URL}', <String, dynamic>{
+  EventService.initialize() {
+    print(_userId);
+    socket =
+        IO.io('${Secrets.TEST_SERVER_URL}?user_id=$_userId', <String, dynamic>{
       'transports': ['websocket'],
-      'query': {'user_id': _userId},
+      'query': {'user_id': _userId.toString()},
     });
 
     // 서버로부터 이벤트 수신 시 처리 로직
+    socket.on('connect', (_) {
+      print('Succesfully connected to the Server');
+    });
     socket.on('friendRequest', (data) {
       _handleFriendRequest(data);
     });
@@ -106,12 +92,29 @@ class EventService {
 
     _initNotifications();
   }
+  static Stream<Event> get stream => _streamController.stream;
 
-  void sendEvent(String eventName, dynamic data) {
+  // 이벤트 발행
+  static void publish(Event event) {
+    LOG.log("Event received: ${event.type}");
+    _streamController.add(event);
+  }
+
+  // 해제
+  static void dispose() {
+    _streamController.close();
+  }
+
+  // AuthService login 완료 후 초기화
+  static void setUserId(int userId) {
+    _userId = userId.toString();
+  }
+
+  static void sendEvent(String eventName, dynamic data) {
     socket.emit(eventName, data);
   }
 
-  void _initNotifications() {
+  static void _initNotifications() {
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     var initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -245,7 +248,7 @@ class EventService {
     );
   }
 
-  Future _onSelectNotification(String? payload) async {
+  static Future _onSelectNotification(String? payload) async {
     if (payload != null) {
       // 알림 선택 시 로직
       // 예: payload에 따라 특정 모달 띄우기 또는 페이지로 리디렉트

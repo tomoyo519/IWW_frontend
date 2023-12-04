@@ -113,17 +113,17 @@ class ToDoList extends StatelessWidget {
     // * ===== UI UPDATED ===== * //
 
     // 리워드 계산
-    TodoUpdateDto? result = await todomodel.checkTodo(todo.todoId, value);
+    // TodoUpdateDto? result = await todomodel.checkTodo(todo.todoId, value);
 
-    // expect data와 현재 상태를 비교하고 필요시 새로 fetch합니다.
-    if (result == null || // 응답이 없음
-            result.todoDone != value || // 투두 체크 실패
-            result.userCash != usermodel.userCash // 유저 보상 오류
-        ) {
-      usermodel.waiting = true;
-      usermodel.fetchUser();
-      // todomodel.fetchTodos();
-    }
+    // // expect data와 현재 상태를 비교하고 필요시 새로 fetch합니다.
+    // if (result == null || // 응답이 없음
+    //         result.todoDone != value || // 투두 체크 실패
+    //         result.userCash != usermodel.userCash // 유저 보상 오류
+    //     ) {
+    //   usermodel.waiting = true;
+    //   usermodel.fetchUser();
+    //   // todomodel.fetchTodos();
+    // }
   }
 
   // todo delete modal onclick callback

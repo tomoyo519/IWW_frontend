@@ -66,7 +66,7 @@ void showCommentsBottomSheet(BuildContext context,
           return CommentsBottomSheet(
             commentsProvider: commentsProvider,
             userId: userId.toString(),
-            ownerId: ownerId,
+            ownerId: ownerId.toString(),
           );
         });
   }

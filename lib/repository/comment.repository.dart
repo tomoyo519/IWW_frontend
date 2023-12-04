@@ -14,7 +14,7 @@ class CommentRepository {
 
   Future<List<Comment>> fetchComments(String ownerId) async {
     // return dummy
-    final url = '${Secrets.REMOTE_SERVER_URL}/guestbook/$ownerId/comment';
+    final url = '${Secrets.TEST_SERVER_URL}/guestbook/$ownerId/comment';
     try {
       final response = await http.get(Uri.parse(url));
 
@@ -41,7 +41,7 @@ class CommentRepository {
 
   Future<bool> addComment(
       String ownerId, String authorId, String content) async {
-    final url = '${Secrets.REMOTE_SERVER_URL}/guestbook/$ownerId/comment';
+    final url = '${Secrets.TEST_SERVER_URL}/guestbook/$ownerId/comment';
     try {
       final response = await http.post(
         Uri.parse(url),
@@ -65,7 +65,7 @@ class CommentRepository {
   Future<bool> updateComment(
       String ownerId, String comId, String content) async {
     final url =
-        '${Secrets.REMOTE_SERVER_URL}/guestbook/$ownerId/comment/$comId'; // 백엔드 URL
+        '${Secrets.TEST_SERVER_URL}/guestbook/$ownerId/comment/$comId'; // 백엔드 URL
 
     try {
       final response = await http.put(
@@ -93,7 +93,7 @@ class CommentRepository {
 
   Future<bool> deleteComment(String ownerId, String comId) async {
     final url =
-        '${Secrets.REMOTE_SERVER_URL}/guestbook/$ownerId/comment/$comId'; // 백엔드 URL
+        '${Secrets.TEST_SERVER_URL}/guestbook/$ownerId/comment/$comId'; // 백엔드 URL
 
     try {
       final response = await http.patch(
