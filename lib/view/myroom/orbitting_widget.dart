@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/view/myroom/mypet.dart';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -47,7 +48,6 @@ class _OrbitingWidgetState extends State<OrbitingWidget>
 
   @override
   Widget build(BuildContext context) {
-    var roomState = context.watch<MyRoomViewModel>();
     LOG.log('##################: $_left, $_top');
 
     return Positioned(
@@ -56,7 +56,7 @@ class _OrbitingWidgetState extends State<OrbitingWidget>
       child: SizedBox(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
-        child: roomState.getPetWidget(),
+        child: MyPet(newSrc: '구미호_01'),
       ),
     );
   }
