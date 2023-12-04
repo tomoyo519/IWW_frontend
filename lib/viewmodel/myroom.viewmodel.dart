@@ -2,19 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/room.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/model/pet/pet_models.dart';
-import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
 
 class MyRoomViewModel with ChangeNotifier {
+// NOTE DB상의 펫 itemType은 1
+  final itemTypeOfPet = 1;
+  final itemTypeOfFurniture = 2;
+  final itemTypeOfPetMotion = 3;
+  final itemTypeOfBackground = 4;
+
   final RoomRepository _roomRepository;
   final int _userId; // 로그인한 사용자의 id
   List<Item> inventory = []; // 사용자의 인벤토리
   int _roomOwner; // 현재 있는 방의 주인 (기본값은 로그인한 사용자의 id)
   List<Item> roomObjects = []; // 현재 방에 존재하는 오브젝트 리스트
+  String petName = '구미호_02';
 
   MyRoomViewModel(this._userId, this._roomRepository) : _roomOwner = _userId {
     fetchInventory();
     fetchMyRoom();
+    petName = findPetName();
   }
 
   void fetchMyRoom() async {
@@ -45,7 +52,8 @@ class MyRoomViewModel with ChangeNotifier {
 
       // 펫(type: 1)과 배경화면(type: 4)은 하나만 있어요
       if (now.itemType == target.itemType &&
-          (target.itemType == 1 || target.itemType == 4)) {
+          (target.itemType == itemTypeOfPet ||
+              target.itemType == itemTypeOfBackground)) {
         LOG.log("펫과 배경화면은 하나만 있어요");
         roomObjects.remove(now);
         roomObjects.add(target);
@@ -75,7 +83,7 @@ class MyRoomViewModel with ChangeNotifier {
   /// 4. background
   AssetImage getBackgroundImage() {
     for (var element in roomObjects) {
-      if (element.itemType == 4) {
+      if (element.itemType == itemTypeOfBackground) {
         return AssetImage('assets/bg/${element.path}');
       }
     }
@@ -111,15 +119,14 @@ class MyRoomViewModel with ChangeNotifier {
     );
   }
 
-  ModelViewer getPetWidget() {
-    String petName = '';
-    for (var element in roomObjects) {
-      if (element.itemType == 1) {
-        petName = element.name.split('.')[0];
-        break;
+  String findPetName() {
+    for (Item element in roomObjects) {
+      if (element.itemType == itemTypeOfPet) {
+        return element.name;
       }
     }
+
     // default pet
-    return PetModels.getPetWidget(petName);
-  }
+    return '구미호_02';
+  } 
 }

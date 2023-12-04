@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/friends/friendMain.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';
+import 'package:iww_frontend/view/myroom/mypet.dart';
 import 'package:iww_frontend/view/myroom/myroom.dart';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
@@ -53,6 +54,8 @@ class RenderMyRoom extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    LOG.log('############## RenderMyRoom 시작 !!!!!!!!!!!!!!!!!!!!!!');
+
     var roomState = context.watch<MyRoomViewModel>();
 
     // Naviator를 통해서 argument를 전달할 경우 받는 방법
@@ -77,7 +80,7 @@ class RenderMyRoom extends StatelessWidget {
       ),
       SizedBox(
         height: MediaQuery.of(context).size.height,
-        child: roomState.getPetWidget(),
+        child: MyPet(newSrc: roomState.findPetName()),
       ),
     ]);
 
