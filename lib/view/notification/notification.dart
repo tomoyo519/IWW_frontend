@@ -50,7 +50,7 @@ class _MyNotificationState extends State<MyNotification> {
                 padding: EdgeInsets.symmetric(horizontal: 8.0),
                 child: CircleAvatar(
                   radius: 20,
-                  backgroundImage: AssetImage('assets/profile.jpg'),
+                  backgroundImage: AssetImage('assets/profile.png'),
                   // backgroundImage: NetworkImage(
                   //     '${Secrets.REMOTE_SERVER_URL}/image/${noti.senderId}.jpg'),
                   // onBackgroundImageError: (exception, stackTrace) {},

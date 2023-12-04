@@ -117,14 +117,15 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
     }
   }
 
-  Future<TodoUpdateDto?> checkTodo(int todoId, bool value,
+  Future<bool?> checkTodo(int todoId, bool value,
       {int? userId, String? path}) async {
     if (userId == null || path == null) {
-      return await _todoRepository.checkNormalTodo(todoId.toString(), value);
+      // return await _todoRepository.checkNormalTodo(todoId.toString(), value);
+      return false;
     }
 
-    // return await _todoRepository.checkGroupTodo(
-    //     userId.toString(), todoId.toString(), value, path);
+    return await _todoRepository.checkGroupTodo(
+        userId.toString(), todoId.toString(), value, path);
   }
 
   // 할일 완료하고 목록 업데이트
