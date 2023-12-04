@@ -12,7 +12,6 @@ class RoomRepository {
       List<Item> items = (parsedJson['result'] as List<dynamic>)
           .map((item) => Item.fromJson(item))
           .toList();
-      LOG.log('[Room status]: ${response.body}');
 
       return items;
     });
@@ -27,7 +26,10 @@ class RoomRepository {
       List<Item> items = (parsedJson['result'] as List<dynamic>)
           .map((item) => Item.fromJson(item))
           .toList();
-      LOG.log('[Inventory status] ${response.body}');
+      
+      for (var element in items) {
+        LOG.log('[Inventory item]: ${element.name}, ${element.itemType}}');
+      }
 
       return items;
     });

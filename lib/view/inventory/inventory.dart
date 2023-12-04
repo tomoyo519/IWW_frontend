@@ -50,7 +50,6 @@ class InventoryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var myRoomViewModel = context.watch<MyRoomViewModel>();
-    LOG.log('인벤토리 왔니?');
 
     return Container(
       height: double.infinity,
