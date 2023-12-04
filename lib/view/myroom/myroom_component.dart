@@ -259,8 +259,8 @@ class BottomButtons extends StatelessWidget {
     ElevatedButton buildFriendButton() {
       if (roomState.isMyRoom()) {
         return ElevatedButton(
-            onPressed: () {
-              Navigator.push(
+            onPressed: () async {
+              final result = await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (c) => ChangeNotifierProvider.value(
@@ -269,6 +269,10 @@ class BottomButtons extends StatelessWidget {
                   ),
                 ),
               );
+              
+              if (result != null) {
+                roomState.roomOwner = result as int;
+              }
             },
             child: Text('친구목록'));
       } else {

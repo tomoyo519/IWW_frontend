@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/friend/friend.model.dart';
 import 'package:iww_frontend/repository/friend.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class FriendList extends StatefulWidget {
   final int userId;
@@ -47,16 +49,7 @@ class _FriendListState extends State<FriendList> {
             return Card(
               child: InkWell(
                 onTap: () {
-                  if (index == 0) {
-                    // 1위에 해당하는 아이템을 클릭했을 때
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      "/myroom",
-                      arguments:
-                          user.userId, // TODO friendId를 넘겨줘야 함. 0일때는 나의 방
-                      (route) => false,
-                    );
-                  }
+                  Navigator.pop(context, user.userId);
                 },
                 child: ListTile(
                   leading: CircleAvatar(
