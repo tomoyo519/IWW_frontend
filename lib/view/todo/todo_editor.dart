@@ -30,61 +30,63 @@ class EditorModal extends StatelessWidget {
   Widget build(BuildContext context) {
     // 키보드에 따른 높이 조정 키보드가 열려 있는지 확인
     final bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom != 0;
-
-    return FractionallySizedBox(
-      heightFactor: isKeyboardOpen ? 1.0 : 0.58,
-      child: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Column(
-          children: [
-            BottomSheetModalHeader(
-              title: title,
-              onSave: onSave,
-              onCancel: onCancel,
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 10,
+    final screenHeight = MediaQuery.of(context).size.height;
+    return SafeArea(
+      child: FractionallySizedBox(
+        heightFactor: isKeyboardOpen ? 1 : 0.6,
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Column(
+            children: [
+              BottomSheetModalHeader(
+                title: title,
+                onSave: onSave,
+                onCancel: onCancel,
+              ),
+              Flexible(
+                child: SingleChildScrollView(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
                     ),
-                    child: Form(
-                      key: formKey,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        // 할일 제목 입력 필드
-                        children: [
-                          TodoNameField(),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                              // horizontal: 10,
-                              vertical: 15,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 10,
+                      ),
+                      child: Form(
+                        key: formKey,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          // 할일 제목 입력 필드
+                          children: [
+                            TodoNameField(),
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                // horizontal: 10,
+                                vertical: 15,
+                              ),
+                              child: Column(
+                                children: [
+                                  // 할일 상세내용 입력 필드
+                                  TodoDateField(),
+                                  if (title != "루틴 추가") TodoLabelField(),
+                                  TodoTimeField(),
+                                  TodoRoutineField(),
+                                  TodoDescField(),
+                                ],
+                              ),
                             ),
-                            child: Column(
-                              children: [
-                                // 할일 상세내용 입력 필드
-                                TodoDateField(),
-                                if (title != "루틴 추가") TodoLabelField(),
-                                TodoTimeField(),
-                                TodoRoutineField(),
-                                TodoDescField(),
-                              ],
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );

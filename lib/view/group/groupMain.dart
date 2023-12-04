@@ -49,9 +49,14 @@ class MyGroup extends StatelessWidget {
         child: Column(
           children: [
             TabBar(
+              indicatorColor: Colors.black,
+              indicatorPadding: EdgeInsets.only(left: 8.0, right: 8.0),
+              indicatorSize: TabBarIndicatorSize.tab,
               tabs: const <Widget>[
-                Tab(icon: Icon(Icons.groups_outlined)),
-                Tab(icon: Icon(Icons.manage_search_outlined)),
+                Tab(
+                  text: "내 그룹",
+                ),
+                Tab(text: "그룹 찾기"),
               ],
             ),
             Expanded(
