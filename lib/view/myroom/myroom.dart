@@ -18,7 +18,6 @@ class MyRoom extends StatelessWidget {
   Widget build(BuildContext context) {
     // 의존성
     final userId = context.read<UserInfo>().userId;
-    final authService = Provider.of<AuthService>(context, listen: false);
     final roomRepository = Provider.of<RoomRepository>(context, listen: false);
     final commentRepository =
         Provider.of<CommentRepository>(context, listen: false);
@@ -26,8 +25,8 @@ class MyRoom extends StatelessWidget {
     return MultiProvider(providers: [
       ChangeNotifierProvider<CommentsProvider>(
           create: (_) => CommentsProvider(
-                authService,
-                roomRepository,
+                userId.toString(),
+                userId.toString(),
                 commentRepository,
               )),
       ChangeNotifierProvider<MyRoomViewModel>(
@@ -154,8 +153,7 @@ class RenderMyRoom extends StatelessWidget {
         height: MediaQuery.of(context).size.height,
         child: roomState.getPetWidget(),
       ),
-    ]
-    );
+    ]);
 
     // 유저의 펫 정보 불러오기
 
@@ -312,7 +310,6 @@ class BottomButtons extends StatelessWidget {
     // final inventoryState = context.read<InventoryState>();
     final myRoomState = context.watch<MyRoomState>();
     var roomState = context.watch<MyRoomViewModel>();
-    final user = Provider.of<UserInfo>(context, listen: false);
 
     ElevatedButton buildFriendButton() {
       if (roomState.isMyRoom()) {
@@ -338,15 +335,10 @@ class BottomButtons extends StatelessWidget {
         children: [
           ElevatedButton(
               onPressed: () async {
-                String? roomOwenerId = commentsProvider.roomOwnerId;
+                commentsProvider.changeOwner(roomState.roomOwner);
 
                 if (context.mounted) {
-                  showCommentsBottomSheet(
-                    context,
-                    commentsProvider,
-                    user.userId,
-                    roomOwenerId,
-                  );
+                  showCommentsBottomSheet(context, commentsProvider);
                 }
               },
               child: Text('방명록')),
