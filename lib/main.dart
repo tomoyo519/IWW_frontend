@@ -9,7 +9,7 @@ import 'package:iww_frontend/model/auth/auth_status.dart';
 import 'package:iww_frontend/providers.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
-import 'package:iww_frontend/view/_navigation/app_page.config.dart';
+import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/_navigation/routes.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/view/_common/loading.dart';
@@ -79,19 +79,7 @@ void main() async {
             useMaterial3: true,
             fontFamily: 'Pretendard',
           ),
-
           home: RenderPage(),
-          //** Navigator에 푸시될 때 트랜지션
-          // /notification:  Right Popup
-          // */
-          // onGenerateRoute: (settings) {
-          //   if (settings.name == '/notification') {
-          //     return RightPopupTransition.builder(
-          //       child: MyNotification(),
-          //     );
-          //   }
-          //   return null;
-          // },
         ),
       ),
     ),

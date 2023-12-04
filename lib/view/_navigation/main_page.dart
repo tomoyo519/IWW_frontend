@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/service/event.service.dart';
-import 'package:iww_frontend/view/_navigation/app_page.config.dart';
+import 'package:iww_frontend/view/_navigation/extension/app_page.ext.dart';
+import 'package:iww_frontend/view/_navigation/extension/app_route.ext.dart';
+import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/_navigation/app_page.model.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
 import 'package:provider/provider.dart';
@@ -67,8 +69,8 @@ class _MainPageState extends State<MainPage> {
       body: curr.builder(context),
       bottomNavigationBar: nav.isBottomSheetPage
           ? BottomNavigationBar(
-              currentIndex: nav.current.idx,
-              onTap: (idx) => nav.navigate(idx),
+              currentIndex: nav.current.idx.index,
+              onTap: (idx) => nav.navigate(idx.route),
               items: bottoms
                   .map((page) => BottomNavigationBarItem(
                         icon: Icon(page.icon),
