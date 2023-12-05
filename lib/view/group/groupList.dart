@@ -66,7 +66,6 @@ class _GroupListState extends State<GroupList> {
                   child: ListView.builder(
                       itemCount: myGroups.length,
                       itemBuilder: (c, i) {
-                        LOG.log('mygroups:::::::::::::${myGroups[i]}');
                         // Color bgColor;
                         // switch (myGroups[i].catName) {
                         //   case '코딩':
@@ -79,6 +78,88 @@ class _GroupListState extends State<GroupList> {
                         //     bgColor = Colors.white;
                         //     break;
                         // }
+
+                        String picturePath = 'assets/category/기타.png';
+                        switch (myGroups[i].catName) {
+                          case "전체":
+                            picturePath = 'assets/category/기타.png';
+                            break;
+
+                          case "요가":
+                            picturePath = 'assets/category/요가.png';
+                            break;
+
+                          case "공부":
+                            picturePath = 'assets/category/공부.png';
+                            break;
+
+                          case "운동":
+                            picturePath = 'assets/category/운동.png';
+                            break;
+
+                          case "코딩":
+                            picturePath = 'assets/category/코딩.png';
+                            break;
+
+                          case "게임":
+                            picturePath = 'assets/category/게임.png';
+                            break;
+
+                          case "명상":
+                            picturePath = 'assets/category/명상.png';
+                            break;
+
+                          case "모임":
+                            picturePath = 'assets/category/모임.png';
+                            break;
+
+                          case "학업":
+                            picturePath = 'assets/category/학업.png';
+                            break;
+
+                          case "자유시간":
+                            picturePath = 'assets/category/자유시간.png';
+                            break;
+
+                          case "자기관리":
+                            picturePath = 'assets/category/자기관리.png';
+                            break;
+
+                          case "독서":
+                            picturePath = 'assets/category/독서.png';
+                            break;
+
+                          case "여행":
+                            picturePath = 'assets/category/여행.png';
+                            break;
+
+                          case "유튜브":
+                            picturePath = 'assets/category/유튜브.png';
+                            break;
+
+                          case "약속":
+                            picturePath = 'assets/category/약속.png';
+                            break;
+
+                          case "산책":
+                            picturePath = 'assets/category/산책.png';
+                            break;
+
+                          case "집안일":
+                            picturePath = 'assets/category/집안일.png';
+                            break;
+
+                          case "취미":
+                            picturePath = 'assets/category/취미.png';
+                            break;
+
+                          case "기타":
+                            picturePath = 'assets/category/기타.png';
+                            break;
+                          default:
+                            picturePath = 'assets/category/기타.png';
+                            break;
+                        }
                         return TextButton(
                             onPressed: () {
                               var userInfo = context.read<UserInfo>();
@@ -125,7 +206,7 @@ class _GroupListState extends State<GroupList> {
                                     borderRadius: BorderRadius.circular(
                                         10), // 원하는 border-radius 값으로 변경
                                     child: Image.asset(
-                                      'assets/profile.png',
+                                      picturePath,
                                       width: 65,
                                       height: 65,
                                     ),
