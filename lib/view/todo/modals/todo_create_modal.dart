@@ -3,30 +3,29 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:iww_frontend/main.dart';
+import 'package:iww_frontend/utils/extension/timeofday.ext.dart';
 import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/todo_modal.viewmodel.dart';
 import 'package:provider/provider.dart';
 
 enum TodoModalMode { normal, group }
 
-class TodoCreateModal extends StatelessWidget {
+class TodoCreateModal<T extends ChangeNotifier> extends StatelessWidget {
   final String? title;
   final FocusNode focusNode;
-  final TextEditingController controller;
   final double keyboardHeight;
 
   TodoCreateModal({
     super.key,
     this.title,
-    required this.controller,
     required this.focusNode,
     required this.keyboardHeight,
   });
 
   @override
   Widget build(BuildContext context) {
-    final viewmodel = context.watch<TodoModalViewModel>();
+    final model = context.watch<TodoModalViewModel<T>>();
     final screen = MediaQuery.of(context).size;
 
     return WillPopScope(
@@ -61,14 +60,14 @@ class TodoCreateModal extends StatelessWidget {
                     children: <Widget>[
                       TextField(
                         onChanged: (value) {
-                          viewmodel.name = value;
+                          model.name = value;
                         },
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                         ),
                         focusNode: focusNode,
-                        controller: controller,
+                        controller: model.nameControl,
                         autofocus: true,
                         decoration: InputDecoration(
                           hintText: "할일을 입력하세요",
@@ -81,8 +80,9 @@ class TodoCreateModal extends StatelessWidget {
                         ),
                       ),
                       TextField(
+                        controller: model.descControl,
                         onChanged: (value) {
-                          viewmodel.desc = value;
+                          model.desc = value;
                         },
                         style: TextStyle(
                           fontSize: 14,
@@ -108,16 +108,16 @@ class TodoCreateModal extends StatelessWidget {
                         child: ListView(
                           scrollDirection: Axis.horizontal,
                           children: <Widget>[
-                            for (var field in viewmodel.fields)
+                            for (var field in model.fields)
                               Padding(
                                 padding: const EdgeInsets.only(right: 10),
                                 child: _ButtonField(
                                   onPressed: () {
-                                    if (viewmodel.option < 0) {
-                                      viewmodel.option = field.idx;
+                                    if (model.option < 0) {
+                                      model.option = field.idx;
                                     } else {
                                       // toggle
-                                      viewmodel.option = -1;
+                                      model.option = -1;
                                     }
                                   },
                                   text: getFieldData(field.idx, context) ??
@@ -128,8 +128,8 @@ class TodoCreateModal extends StatelessWidget {
                           ],
                         ),
                       ),
-                      if (viewmodel.option >= 0) ...[
-                        options[viewmodel.option](context),
+                      if (model.option >= 0) ...[
+                        options[model.option](context),
                       ],
                       DecoratedBox(
                         decoration: BoxDecoration(
@@ -152,22 +152,20 @@ class TodoCreateModal extends StatelessWidget {
                             ),
                             IconButton(
                               style: IconButton.styleFrom(
-                                  backgroundColor: viewmodel.isValid
+                                  backgroundColor: model.isValid
                                       ? Colors.orange
                                       : Colors.grey),
-                              onPressed: viewmodel.isValid
+                              onPressed: model.isValid
                                   // * ===== 버튼을 눌러 create
                                   ? () async {
-                                      await viewmodel
-                                          .onSave(context)
-                                          .then((value) {
+                                      await model.onSave(context).then((value) {
                                         Navigator.pop(context);
                                       });
                                     }
                                   : null,
                               icon: Icon(
                                 Icons.send,
-                                color: viewmodel.isValid
+                                color: model.isValid
                                     ? Colors.white
                                     : Colors.black45,
                               ),
@@ -200,20 +198,21 @@ class TodoCreateModal extends StatelessWidget {
   final double BORDER_RADIUS = 8;
 
   String? getFieldData(int idx, BuildContext context) {
-    final viewmodel = context.read<TodoModalViewModel>();
+    final viewmodel = context.read<TodoModalViewModel<T>>();
     switch (idx) {
       case 0:
         return viewmodel.labelStr;
       case 1:
-        return DateFormat('a hh시 mm분', 'ko_KO').format(viewmodel.strtime);
+        TimeOfDay currtime = viewmodel.todoSrt ?? TimeOfDay.now();
+        return currtime.toViewString();
       default:
         return "";
     }
   }
 
   List<WidgetBuilder> options = [
-    (context) => _LabelPicker(),
-    (context) => _TimePicker(),
+    (context) => _LabelPicker<T>(),
+    (context) => _TimePicker<T>(),
   ];
 }
 
@@ -223,13 +222,13 @@ class TodoCreateModal extends StatelessWidget {
 // *                         * //
 // * ======================= * //
 
-class _TimePicker extends StatelessWidget {
+class _TimePicker<T extends ChangeNotifier> extends StatelessWidget {
   _TimePicker();
 
   @override
   Widget build(BuildContext context) {
     final screen = MediaQuery.of(context).size;
-    final viewmodel = context.read<TodoModalViewModel>();
+    final viewmodel = context.read<TodoModalViewModel<T>>();
 
     return SizedBox(
       width: screen.width,
@@ -238,19 +237,22 @@ class _TimePicker extends StatelessWidget {
         mode: CupertinoDatePickerMode.time,
         initialDateTime: DateTime.now(),
         onDateTimeChanged: (value) {
-          viewmodel.strtime = value;
+          viewmodel.todoSrt = TimeOfDay(
+            hour: value.hour,
+            minute: value.minute,
+          );
         },
       ),
     );
   }
 }
 
-class _LabelPicker extends StatelessWidget {
+class _LabelPicker<T extends ChangeNotifier> extends StatelessWidget {
   _LabelPicker();
 
   @override
   Widget build(BuildContext context) {
-    final viewmodel = context.read<TodoModalViewModel>();
+    final viewmodel = context.read<TodoModalViewModel<T>>();
     final screen = MediaQuery.of(context).size;
     final currLabel = viewmodel.label;
 

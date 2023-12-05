@@ -173,9 +173,6 @@ class AuthService extends ChangeNotifier {
 
     RemoteDataSource.setAuthHeader("Bearer $token");
 
-    // LOG.log(
-    //     '[Header]: ${RemoteDataSource.baseHeaders['Authorization']?.substring(0, 30)}..');
-
     var response = await RemoteDataSource.get('/user');
     if (response.statusCode == 200) {
       // 유저 정보 초기화

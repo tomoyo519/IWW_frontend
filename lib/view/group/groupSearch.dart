@@ -33,7 +33,7 @@ class _GroupSearchState extends State<GroupSearch> {
         Provider.of<GroupRepository>(context, listen: false);
 
     var tempList = await groupRepository.getAllGroupList(
-        userInfo.userId ?? 1, labelNum + 1, keyword);
+        userInfo.userId, labelNum + 1, keyword);
     LOG.log('thisistmepLIst:$tempList');
     setState(() {
       groupList = tempList;

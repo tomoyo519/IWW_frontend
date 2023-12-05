@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -7,12 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
-import 'package:iww_frontend/view/modals/custom_fullscreen_modal.dart';
-import 'package:iww_frontend/view/modals/todo_first_done.dart';
-import 'package:iww_frontend/view/modals/custom_snackbar.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
-import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
-import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 class GroupTodoTile extends StatefulWidget {

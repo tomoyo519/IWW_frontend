@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/utils/extension/event.ext.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/modals/login_achieve_modal.dart';
 import 'package:iww_frontend/view/modals/pet_evolve_modal.dart';

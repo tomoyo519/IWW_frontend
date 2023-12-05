@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
@@ -10,8 +11,8 @@ import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
 
 // 전체 투두리스트 상태를 관리
 class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
-  final TodoRepository _todoRepository;
   final int _userId;
+  final TodoRepository _todoRepository;
 
   // 생성자
   TodoViewModel(this._todoRepository, this._userId) {
@@ -62,6 +63,7 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   // ****************************** //
   // *         Fetch Data         * //
   // ****************************** //
+
   Future<void> fetchTodos() async {
     waiting = true;
 
@@ -80,6 +82,7 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   // ****************************** //
   // *        Create Data         * //
   // ****************************** //
+
   @override
   Future<bool> createTodo(Map<String, dynamic> data) async {
     Todo? todo = await _todoRepository.createTodo(data);
@@ -149,17 +152,6 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
     return await _todoRepository.checkNormalTodo(todoIdStr, value);
   }
 
-  // Future<bool?> checkTodo(int todoId, bool value,
-  //     {int? userId, String? path}) async {
-  //   if (userId == null || path == null) {
-  //     // return await _todoRepository.checkNormalTodo(todoId.toString(), value);
-  //     return false;
-  //   }
-
-  //   return await _todoRepository.checkGroupTodo(
-  //       userId.toString(), todoId.toString(), value, path);
-  // }
-
   Future<bool?> checkTodo(
     int todoId,
     bool value, {
@@ -171,27 +163,18 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   }
 
   @override
-  Future<bool> updateTodo(String id, Map<String, dynamic> data) async {
-    waiting = true;
-    return await _todoRepository.updateTodo(id, data).then(
-      (updated) {
-        if (updated != null) {
-          int idx = _todos.indexWhere((todo) => todo.todoId.toString() == id);
-          _todos[idx] = updated;
-          waiting = false;
+  Future<bool> updateTodo(String userId, Map<String, dynamic> data) async {
+    int todoId = data['todo_id'];
+    Todo? updated = await _todoRepository.updateTodo(userId, data);
+    if (updated != null) {
+      int idx = _todos.indexWhere((t) => t.todoId == todoId);
+      LOG.log(jsonEncode(data));
+      LOG.log(jsonEncode(updated.toMap()));
+      _todos[idx] = updated;
+    }
 
-          EventService.publish(
-            Event(
-              type: EventType.show_todo_snackbar,
-              message: "할일을 수정했어요!",
-            ),
-          );
-          return true;
-        }
-        waiting = false;
-        return false;
-      },
-    );
+    waiting = false;
+    return true;
   }
 
   String getToday() {
