@@ -45,9 +45,10 @@ class _NewGroupState extends State<NewGroup> {
     //   );
     //   return null;
     // }
-    if (
-        // _formKey.currentState?.validate() == true &&
-        viewModel.groupRoutine.isNotEmpty) {
+    if (viewModel.groupRoutine.isNotEmpty &&
+        viewModel.groupName != "" &&
+        viewModel.groupDesc != "" &&
+        viewModel.groupCat != 0) {
       final userInfo = context.read<UserInfo>();
       await viewModel.createGroup(userInfo.userId).then(
         (res) async {
@@ -72,6 +73,7 @@ class _NewGroupState extends State<NewGroup> {
   }
 
   void onCancel(BuildContext context) {
+    LOG.log('뒤로가기 버튼이세요?');
     Navigator.pop(context);
   }
 
@@ -83,6 +85,7 @@ class _NewGroupState extends State<NewGroup> {
     LOG.log("message $result");
     if (context.mounted && result == true) {
       // groupmodel.createTodo(data);
+      FocusScope.of(context).unfocus();
       Navigator.pop(context);
       showCustomSnackBar(
         context,
@@ -138,6 +141,8 @@ class _NewGroupState extends State<NewGroup> {
           // 이 함수는 Future<bool>를 반환해야 하며,
           // true를 반환하면 화면이 pop 됩니다.
           // false를 반환하면 화면이 pop 되지 않습니다.
+          viewModel.groupCat = 0;
+
           viewModel.groupRoutine = [];
 
           return Future.value(true);
@@ -199,7 +204,7 @@ class _NewGroupState extends State<NewGroup> {
                     },
                     decoration: InputDecoration(
                       hintText: "예) 1만보 걷기",
-                      hintStyle: TextStyle(fontSize: 13),
+                      // hintStyle: TextStyle(fontSize: 13),
                       filled: true,
                       fillColor: Colors.grey[200],
                       contentPadding: EdgeInsets.all(8.0),
@@ -301,7 +306,7 @@ class _NewGroupState extends State<NewGroup> {
                     maxLines: 3,
                     decoration: InputDecoration(
                       hintText: "예) 오늘 날짜와 걸음 수가 적힌 만보기 캡쳐 화면 업로드",
-                      hintStyle: TextStyle(fontSize: 13),
+                      // hintStyle: TextStyle(fontSize: 13),
                       filled: true,
                       fillColor: Colors.grey[200],
                       contentPadding: EdgeInsets.all(8.0),
@@ -382,29 +387,31 @@ class _NewGroupState extends State<NewGroup> {
                       ),
                     ),
                   ],
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      child: TextButton(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              border:
-                                  Border.all(color: Colors.black26, width: 1)),
-                          alignment: Alignment.center,
-                          margin: EdgeInsets.all(10),
-                          padding: EdgeInsets.all(10),
-                          child: Row(children: const [
-                            Icon(Icons.add_outlined),
-                            Text('그룹 루틴 추가 하기')
-                          ]),
+                  if (viewModel.groupRoutine.length < 3) ...[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        child: TextButton(
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                    color: Colors.black26, width: 1)),
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.all(10),
+                            padding: EdgeInsets.all(10),
+                            child: Row(children: const [
+                              Icon(Icons.add_outlined),
+                              Text('그룹 루틴 추가 하기')
+                            ]),
+                          ),
+                          onPressed: () {
+                            _showTodoEditor(context, null);
+                          },
                         ),
-                        onPressed: () {
-                          _showTodoEditor(context, null);
-                        },
                       ),
                     ),
-                  ),
+                  ],
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.7,
                     height: 40,

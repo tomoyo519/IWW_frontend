@@ -24,6 +24,9 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
   // 폼 상태 관리
   Map<String, dynamic> _groupData = {};
   Map<String, dynamic> get groupData => _groupData;
+  String get groupName => _groupData['grp_name'];
+  String get groupDesc => _groupData['grp_desc'];
+  int get groupCat => _groupData['cat_id'];
 
   List<Routine> _groupRoutine = [];
   List<Routine> get groupRoutine => _groupRoutine;
@@ -88,10 +91,15 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
       //   groups.add()
       // }
       //  ();
+      groupRoutine = [];
+      groupCat = 0;
       return true;
     } catch (err) {
       LOG.log('err:$err');
       return false;
+    } finally {
+      groupRoutine = [];
+      groupCat = 0;
     }
   }
 
