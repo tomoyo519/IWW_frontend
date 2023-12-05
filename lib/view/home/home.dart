@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
+import 'package:iww_frontend/style/button.dart';
+import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/home/home_profile.dart';
+import 'package:iww_frontend/view/modals/todo_editor.dart';
+import 'package:iww_frontend/view/todo/modals/todo_create_modal.dart';
 import 'package:iww_frontend/view/todo/todo_editor.dart';
 import 'package:iww_frontend/view/todo/todo_list.dart';
 import 'package:iww_frontend/view/todo/todo_progress.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/todo_modal.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -74,7 +79,7 @@ class MyTodo extends StatelessWidget {
             right: 0,
             bottom: 15,
             child: IconButton(
-              onPressed: () => _showTodoEditor(context),
+              onPressed: () => showTodoCreateModal(context),
               style: IconButton.styleFrom(
                 elevation: 1,
                 backgroundColor: Colors.orange,
@@ -92,49 +97,49 @@ class MyTodo extends StatelessWidget {
     );
   }
 
-  // TextEditingController _controller =
-  // 클릭하면 할일 추가 모달 띄우기
-  Future<void> _showTodoEditor(BuildContext context) async {
-    final userInfo = context.read<UserInfo>();
-    final todoviewmodel = context.read<TodoViewModel>();
-    TextEditingController controller = TextEditingController();
-    FocusNode focusNode = FocusNode();
+  // // TextEditingController _controller =
+  // // 클릭하면 할일 추가 모달 띄우기
+  // Future<void> _showTodoEditor(BuildContext context) async {
+  //   final userInfo = context.read<UserInfo>();
+  //   final todoviewmodel = context.read<TodoViewModel>();
+  //   TextEditingController controller = TextEditingController();
+  //   FocusNode focusNode = FocusNode();
 
-    return showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (bottomSheetContext) {
-        return ChangeNotifierProvider(
-          create: (_) => EditorModalViewModel(
-            user: userInfo,
-            parent: todoviewmodel,
-          ),
-          child: EditorModal(
-            init: null,
-            title: "할일 추가",
-            onSave: (context) async {
-              Navigator.pop(context);
-              await _createTodo(context);
-            },
-            onCancel: (context) => Navigator.pop(context),
-            focusNode: focusNode,
-            controller: controller,
-          ),
-        );
-      },
-    );
-  }
+  //   return showModalBottomSheet(
+  //     context: context,
+  //     isScrollControlled: true,
+  //     builder: (bottomSheetContext) {
+  //       return ChangeNotifierProvider(
+  //         create: (_) => EditorModalViewModel(
+  //           user: userInfo,
+  //           parent: todoviewmodel,
+  //         ),
+  //         child: EditorModal(
+  //           init: null,
+  //           title: "할일 추가",
+  //           onSave: (context) async {
+  //             Navigator.pop(context);
+  //             await _createTodo(context);
+  //           },
+  //           onCancel: (context) => Navigator.pop(context),
+  //           focusNode: focusNode,
+  //           controller: controller,
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
-  // ==== 할일 신규 생성 ==== //
-  Future<bool> _createTodo(BuildContext context) async {
-    final editormodel = context.read<EditorModalViewModel>();
-    return await editormodel.createTodo().then((result) {
-      if (result == true && context.mounted) {
-        return true;
-      }
-      return false;
-    }).onError((error, stackTrace) {
-      return false;
-    });
-  }
+  // // ==== 할일 신규 생성 ==== //
+  // Future<bool> _createTodo(BuildContext context) async {
+  //   final editormodel = context.read<EditorModalViewModel>();
+  //   return await editormodel.createTodo().then((result) {
+  //     if (result == true && context.mounted) {
+  //       return true;
+  //     }
+  //     return false;
+  //   }).onError((error, stackTrace) {
+  //     return false;
+  //   });
+  // }
 }

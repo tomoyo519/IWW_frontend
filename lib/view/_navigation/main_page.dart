@@ -50,6 +50,7 @@ class _MainPageState extends State<MainPage> {
     final AppPage curr = nav.current;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       // * ======= APPBAR ======= * //
       appBar: MyAppBar(
         leading: nav.pushback,

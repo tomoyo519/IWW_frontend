@@ -1,10 +1,14 @@
 // ignore_for_file: non_constant_identifier_names
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:iww_frontend/main.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/todo_modal.viewmodel.dart';
 import 'package:provider/provider.dart';
+
+enum TodoModalMode { normal, group }
 
 class TodoCreateModal extends StatelessWidget {
   final String? title;
@@ -48,74 +52,131 @@ class TodoCreateModal extends StatelessWidget {
                     topRight: Radius.circular(BORDER_RADIUS),
                   ),
                 ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    TextField(
-                      onChanged: (value) {
-                        viewmodel.name = value;
-                      },
-                      focusNode: focusNode,
-                      controller: controller,
-                      autofocus: true,
-                      decoration: InputDecoration(
-                        hintText: "할일",
-                        border: _getBorder(),
-                        enabledBorder: _getBorder(),
-                        focusedBorder: _getBorder(),
-                      ),
-                    ),
-                    TextField(
-                      onChanged: (value) {
-                        viewmodel.desc = value;
-                      },
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w400,
-                      ),
-                      maxLines: null,
-                      decoration: InputDecoration(
-                        hintText: "설명을 입력하세요..",
-                        border: _getBorder(),
-                        enabledBorder: _getBorder(),
-                        focusedBorder: _getBorder(),
-                        contentPadding: EdgeInsets.symmetric(
-                          // vertical: 5,
-                          horizontal: 10,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 15,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      TextField(
+                        onChanged: (value) {
+                          viewmodel.name = value;
+                        },
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        focusNode: focusNode,
+                        controller: controller,
+                        autofocus: true,
+                        decoration: InputDecoration(
+                          hintText: "할일을 입력하세요",
+                          // border: _getBorder(),
+                          enabledBorder: _getBorder(),
+                          focusedBorder: _getBorder(),
+                          contentPadding: EdgeInsets.only(
+                            top: 20,
+                          ),
                         ),
                       ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.all(10),
-                      width: double.infinity,
-                      height: 70,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: <Widget>[
-                          for (var field in viewmodel.fields)
-                            Padding(
-                              padding: const EdgeInsets.only(right: 10),
-                              child: _ButtonField(
-                                onPressed: () {
-                                  if (viewmodel.option < 0) {
-                                    viewmodel.option = field.idx;
-                                  } else {
-                                    // toggle
-                                    viewmodel.option = -1;
-                                  }
-                                },
-                                text: getFieldData(field.idx, context) ??
-                                    field.label,
-                                icon: field.icon,
+                      TextField(
+                        onChanged: (value) {
+                          viewmodel.desc = value;
+                        },
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        maxLines: null,
+                        decoration: InputDecoration(
+                          hintText: "설명",
+                          border: _getBorder(),
+                          enabledBorder: _getBorder(),
+                          focusedBorder: _getBorder(),
+                          contentPadding: EdgeInsets.only(
+                            bottom: 5,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(
+                          bottom: 10,
+                        ),
+                        width: double.infinity,
+                        height: 50,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: <Widget>[
+                            for (var field in viewmodel.fields)
+                              Padding(
+                                padding: const EdgeInsets.only(right: 10),
+                                child: _ButtonField(
+                                  onPressed: () {
+                                    if (viewmodel.option < 0) {
+                                      viewmodel.option = field.idx;
+                                    } else {
+                                      // toggle
+                                      viewmodel.option = -1;
+                                    }
+                                  },
+                                  text: getFieldData(field.idx, context) ??
+                                      field.label,
+                                  icon: field.icon,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      if (viewmodel.option >= 0) ...[
+                        options[viewmodel.option](context),
+                      ],
+                      DecoratedBox(
+                        decoration: BoxDecoration(
+                          border: Border(
+                            top: BorderSide(color: Colors.black12, width: 0.5),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              DateFormat('M월 d일 E요일', 'ko_KR').format(
+                                DateTime.now(),
+                              ),
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.black45,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
-                        ],
-                      ),
-                    ),
-                    if (viewmodel.option >= 0) ...[
-                      options[viewmodel.option](context),
-                    ]
-                  ],
+                            IconButton(
+                              style: IconButton.styleFrom(
+                                  backgroundColor: viewmodel.isValid
+                                      ? Colors.orange
+                                      : Colors.grey),
+                              onPressed: viewmodel.isValid
+                                  // * ===== 버튼을 눌러 create
+                                  ? () async {
+                                      await viewmodel
+                                          .onSave(context)
+                                          .then((value) {
+                                        Navigator.pop(context);
+                                      });
+                                    }
+                                  : null,
+                              icon: Icon(
+                                Icons.send,
+                                color: viewmodel.isValid
+                                    ? Colors.white
+                                    : Colors.black45,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -144,7 +205,9 @@ class TodoCreateModal extends StatelessWidget {
       case 0:
         return viewmodel.labelStr;
       case 1:
-        return viewmodel.strtime;
+        return DateFormat('a hh시 mm분', 'ko_KO').format(viewmodel.strtime);
+      default:
+        return "";
     }
   }
 
@@ -163,112 +226,78 @@ class TodoCreateModal extends StatelessWidget {
 class _TimePicker extends StatelessWidget {
   _TimePicker();
 
-  List<int> HOURS = [for (int i = 1; i <= 12; i++) i];
-  List<int> MINS = [for (int i = 0; i <= 60; i += 15) i];
-
   @override
   Widget build(BuildContext context) {
-    return VerticalTimePicker();
-  }
-}
-
-class _LabelPicker extends StatelessWidget {
-  const _LabelPicker();
-
-  @override
-  Widget build(BuildContext context) {
+    final screen = MediaQuery.of(context).size;
     final viewmodel = context.read<TodoModalViewModel>();
-    return Wrap(
-      children: [
-        for (int idx = 0; idx < viewmodel.LABELS.length; idx++)
-          TextButton(
-            onPressed: () => viewmodel.label = idx,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(viewmodel.LABELS[idx]),
-            ),
-          )
-      ],
+
+    return SizedBox(
+      width: screen.width,
+      height: screen.height * 0.2,
+      child: CupertinoDatePicker(
+        mode: CupertinoDatePickerMode.time,
+        initialDateTime: DateTime.now(),
+        onDateTimeChanged: (value) {
+          viewmodel.strtime = value;
+        },
+      ),
     );
   }
 }
 
-class VerticalTimePicker extends StatefulWidget {
-  @override
-  _VerticalTimePickerState createState() => _VerticalTimePickerState();
-}
-
-class _VerticalTimePickerState extends State<VerticalTimePicker> {
-  List<String> ampm = ['오전', '오후'];
-  int _type = 0;
-  int _hour = 0;
-  int _minute = 0;
-
-  void _updateTime(DragUpdateDetails details) {
-    setState(() {
-      _minute += details.delta.dy.round();
-      if (_minute < 0) {
-        _hour--;
-        _minute = 59;
-      } else if (_minute > 59) {
-        _hour++;
-        _minute = 0;
-      }
-
-      if (_hour < 0) {
-        _hour = 23;
-      } else if (_hour > 23) {
-        _hour = 0;
-      }
-    });
-  }
-
-  void _updateHour(DragUpdateDetails details) {
-    setState(() {
-      _hour += details.delta.dy.round();
-      if (_hour < 0) {
-        _hour = 23;
-      } else if (_hour > 23) {
-        _hour = 0;
-      }
-    });
-  }
+class _LabelPicker extends StatelessWidget {
+  _LabelPicker();
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        GestureDetector(
-          onVerticalDragUpdate: _updateTime,
-          child: Expanded(
-            child: Center(
-              child: Text('오전'),
-            ),
-          ),
+    final viewmodel = context.read<TodoModalViewModel>();
+    final screen = MediaQuery.of(context).size;
+    final currLabel = viewmodel.label;
+
+    return SizedBox(
+      width: double.infinity,
+      height: screen.height * 0.2,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Wrap(
+          children: [
+            for (int idx = 0; idx < viewmodel.LABELS.length; idx++)
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    // * ====== 선택된 라벨의 색 설정
+                    // TODO: Type으로 빼기
+                    backgroundColor:
+                        (currLabel == idx) ? Colors.orange : Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      side: BorderSide(
+                        color: Colors.grey,
+                        width: (currLabel == idx) ? 0 : 0.5,
+                      ),
+                    ),
+                  ),
+                  // * ====== 클릭하면 상태변경
+                  onPressed: () => viewmodel.label = idx,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10,
+                    ),
+                    child: Text(
+                      viewmodel.LABELS[idx],
+                      style: TextStyle(
+                        // * ====== 선택된 라벨의 색 설정
+                        color:
+                            (currLabel == idx) ? Colors.white : Colors.black54,
+                      ),
+                    ),
+                  ),
+                ),
+              )
+          ],
         ),
-        GestureDetector(
-          onVerticalDragUpdate: _updateHour,
-          child: Expanded(
-            flex: 33,
-            child: Center(
-              child: Text('$_hour'),
-            ),
-          ),
-        ),
-        GestureDetector(
-          onVerticalDragUpdate: _updateTime,
-          child: Expanded(
-            flex: 33,
-            child: Center(
-              child: Text('$_minute'),
-            ),
-          ),
-        )
-      ],
+      ),
     );
   }
 }
@@ -304,7 +333,7 @@ class _ButtonField extends StatelessWidget {
               width: 0.5,
             )),
         padding: EdgeInsets.symmetric(
-          horizontal: 15,
+          horizontal: 10,
         ),
       ),
       child: Row(

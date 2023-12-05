@@ -20,71 +20,15 @@ import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_template.dart';
 
-class MyTestPage extends StatelessWidget {
-  const MyTestPage({super.key});
-
-  ///** 투두 생성 모달을 보여주는 메소드
-  /// BaseTodoViewModel을 구현하는 클래스가
-  /// context 안에 존재하는 경우 사용 가능
-  /// */
-  void showTodoCreateModal(BuildContext context) {
-    FocusNode focusNode = FocusNode();
-    TextEditingController controller = TextEditingController();
-    TodoModalViewModel viewmodel = TodoModalViewModel(todo: null);
-
-    showModalBottomSheet(
-      isScrollControlled: true,
-      context: context,
-      builder: (c) {
-        double keyboardHeight = MediaQuery.of(c).viewInsets.bottom;
-
-        return ChangeNotifierProvider<TodoModalViewModel>(
-          create: (_) => TodoModalViewModel(),
-          child: TodoCreateModal(
-            controller: controller,
-            focusNode: focusNode,
-            keyboardHeight: keyboardHeight,
-          ),
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text("버튼을 눌러보세요"),
-            MyButton(
-              text: "push!",
-              onpressed: (_) => showTodoCreateModal(context),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 void main() async {
-  // runApp(
-  //   /// 화면 테스트용
-  //   MaterialApp(
-  //     debugShowCheckedModeBanner: false,
-  //     theme: ThemeData(
-  //       useMaterial3: true,
-  //       fontFamily: 'Pretendard',
-  //     ),
-  //     home: MyTestPage(),
-  //   ),
-  // );
+  // * ======================= * //
+  // *                         * //
+  // *     Initialize App      * //
+  // *                         * //
+  // * ======================= * //
 
   // 웹 환경에서 카카오 로그인을 정상적으로 완료하려면 runApp() 호출 전 아래 메서드 호출 필요
   WidgetsFlutterBinding.ensureInitialized();
@@ -97,6 +41,9 @@ void main() async {
 
   // navigation status 초기화
   AppNavigator navigator = AppNavigator();
+
+  // Date formatter 초기화
+  await initializeDateFormatting('ko_KO', null);
 
   // 인증에 필요한 리포지토리 및 서비스 초기화
   UserRepository userRepository = UserRepository();

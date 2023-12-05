@@ -45,11 +45,17 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
     }
   }
 
-  int _todayDone = 0;
-  int get todayDone => _todayDone;
+  int get todayDone {
+    return _todos.where((todo) {
+      return todo.isDone && todo.todoDate == getToday();
+    }).length;
+  }
 
-  int _todayTotal = 0;
-  int get todayTotal => _todayTotal;
+  int get todayTotal {
+    return _todos.where((todo) {
+      return todo.todoDate == getToday();
+    }).length;
+  }
 
   bool _isDisposed = false;
 
@@ -67,10 +73,6 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
     _normalTodos = data.where((todo) => todo.grpId == null).toList();
     _groupTodos = data.where((todo) => todo.grpId != null).toList();
 
-    // 카운트
-    _todayDone = data.where((todo) => todo.todoDone == true).length;
-    _todayTotal = data.length;
-
     LOG.log("Fetched data group todo ${data.length}");
     waiting = false;
   }
@@ -85,7 +87,6 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
 
     if (todo != null) {
       _normalTodos.add(todo);
-      _todayTotal++;
       result = true;
       waiting = false;
 
@@ -100,23 +101,12 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
     return result;
   }
 
-  String getToday() {
-    return DateFormat('yyyy-MM-dd').format(DateTime.now());
-  }
-
   // ****************************** //
   // *        Delete Data         * //
   // ****************************** //
 
   Future<bool> deleteTodo(Todo delTodo) async {
     _todos = _todos.where((todo) => todo.todoId != delTodo.todoId).toList();
-    if (delTodo.todoDate == getToday()) {
-      _todayTotal--;
-      if (delTodo.todoDone == true) {
-        _todayDone--;
-      }
-    }
-
     waiting = false; // 상태부터 변경합니다
 
     return await _todoRepository
@@ -149,7 +139,6 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
     } else {
       // 개인 투두인 경우
       _todos[idx].todoDone = value;
-      _todayDone += value ? 1 : 0;
       waiting = false;
     }
   }
@@ -203,5 +192,9 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
         return false;
       },
     );
+  }
+
+  String getToday() {
+    return DateFormat('yyyy-MM-dd').format(DateTime.now());
   }
 }
