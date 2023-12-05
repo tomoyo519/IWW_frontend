@@ -39,7 +39,7 @@ class _MyInfoEditState extends State<MyInfoEdit> {
 
   @override
   Widget build(BuildContext context) {
-    final userInfo = context.read<UserInfo>();
+    final userInfo = context.watch<UserInfo>();
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -52,14 +52,14 @@ class _MyInfoEditState extends State<MyInfoEdit> {
               "편집 완료",
               style: TextStyle(color: Colors.black), // 여기서 색상을 직접 지정
             ),
-            onPressed: () {
+            onPressed: () async {
               final userInfo = context.read<UserInfo>();
-              var result = userInfo.reNameUser(myname, userInfo);
-              LOG.log('$result');
-              if (result == true) {
+              var result = await userInfo.reNameUser(myname, userInfo);
+              LOG.log(emoji: 2, '$result');
+              if (result == true && context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: const Text("이름 변경이 완료 되었어요!")));
-                Navigator.pop(context);
+                Navigator.pop(context, true); // true 이름이 변경됨
               }
             },
           )

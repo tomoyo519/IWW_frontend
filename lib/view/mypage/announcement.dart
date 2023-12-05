@@ -26,10 +26,17 @@ class _AnnouncementState extends State<Announcement> {
 
   setAnnounce() {
     var result = RemoteDataSource.get('/announcement').then((res) {
+      LOG.log(res.body.toString());
       if (res.statusCode == 200) {
-        setState(() {
-          announces = jsonDecode(res.body);
-        });
+        var json = jsonDecode(res.body);
+        if (json["result"] != null && json["result"].isNotEmpty) {
+          List<Announce> announces = (json["result"] as List)
+              .map((item) => Announce.fromJson(item))
+              .toList();
+          setState(() {
+            announces = announces;
+          });
+        }
       }
     }).catchError((err) {
       LOG.log(err);
@@ -50,50 +57,47 @@ class _AnnouncementState extends State<Announcement> {
             child: Column(
               children: [
                 Expanded(
-                  child: ListView.builder(itemBuilder: (c, i) {
-                    return Row(
-                      children: [
-                        Column(
-                          children: [
-                            announces.isEmpty
-                                ? Expanded(
-                                    child: Lottie.asset('assets/empty.json',
-                                        repeat: true,
-                                        animate: true,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.3))
-                                : Expanded(
-                                    child: ListView.builder(
-                                        itemCount: announces.length,
-                                        itemBuilder: (c, i) {
-                                          DateTime iso8601String =
-                                              announces[i].regAt;
-                                          String formattedString =
-                                              "${iso8601String.year}년 ${iso8601String.month}월 ${iso8601String.day}일 ${iso8601String.hour}시 ${iso8601String.minute}분";
-                                          Row(
-                                            children: [
-                                              Column(
-                                                children: [
-                                                  Text(announces[i]
-                                                      .title
-                                                      .toString()),
-                                                  Text(formattedString
-                                                      .toString())
-                                                ],
-                                              )
-                                            ],
-                                          );
-                                        })),
-                            IconButton(
-                                onPressed: () {},
-                                icon: Icon(Icons.arrow_forward_ios_outlined))
-                          ],
-                        )
-                      ],
-                    );
-                  }),
-                )
+                    child: Row(
+                  children: [
+                    announces.isEmpty
+                        ? Expanded(
+                            child: Lottie.asset('assets/empty.json',
+                                repeat: true,
+                                animate: true,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.3))
+                        : Column(
+                            children: [
+                              Expanded(
+                                  child: ListView.builder(
+                                      itemCount: announces.length,
+                                      itemBuilder: (c, i) {
+                                        DateTime iso8601String =
+                                            announces[i].regAt;
+                                        String formattedString =
+                                            "${iso8601String.year}년 ${iso8601String.month}월 ${iso8601String.day}일 ${iso8601String.hour}시 ${iso8601String.minute}분";
+                                        Row(
+                                          children: [
+                                            Column(
+                                              children: [
+                                                Text(announces[i]
+                                                    .title
+                                                    .toString()),
+                                                Text(formattedString.toString())
+                                              ],
+                                            )
+                                          ],
+                                        );
+                                      })),
+                              IconButton(
+                                  onPressed: () {
+                                    // TODO - 세부사항
+                                  },
+                                  icon: Icon(Icons.arrow_forward_ios_outlined))
+                            ],
+                          )
+                  ],
+                )),
               ],
             )));
   }
