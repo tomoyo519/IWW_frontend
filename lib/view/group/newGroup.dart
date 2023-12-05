@@ -45,7 +45,8 @@ class _NewGroupState extends State<NewGroup> {
     //   );
     //   return null;
     // }
-    if (_formKey.currentState?.validate() == true &&
+    if (
+        // _formKey.currentState?.validate() == true &&
         viewModel.groupRoutine.isNotEmpty) {
       final userInfo = context.read<UserInfo>();
       await viewModel.createGroup(userInfo.userId).then(
@@ -296,7 +297,7 @@ class _NewGroupState extends State<NewGroup> {
                       return null;
                     },
                     onChanged: (value) {
-                      viewModel.groupName = value;
+                      viewModel.groupDesc = value;
                     },
                     maxLines: 3,
                     decoration: InputDecoration(
