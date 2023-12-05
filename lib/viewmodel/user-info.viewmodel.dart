@@ -104,7 +104,7 @@ class UserInfo extends ChangeNotifier {
     }
 
     LOG.log('User cash: ${fetched.user.user_cash}');
-    _setStateFromModels(_user, _mainPet);
+    _setStateFromModels(fetched.user, fetched.pet);
     if (prevPetState.id != fetched.pet.id) {
       // 진화함!
       EventService.publish(

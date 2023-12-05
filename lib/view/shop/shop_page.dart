@@ -44,10 +44,11 @@ class _ShopItems extends State<ShopItems> {
     final userInfo = context.read<UserInfo>();
     var result = await shopRepository.purchaseItem(idx, userInfo.userId);
     if (result == true) {
+      await fetchFriend();
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: const Text("아이템 구매가 완료 되었어요!")));
       Navigator.pop(context);
-      userInfo.fetchUser();
+      await userInfo.fetchUser();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: const Text("보유한 캐시가 부족해요. 할일을 더 수행해볼까요?")));
