@@ -48,7 +48,7 @@ class UserInfo extends ChangeNotifier {
   // === Getters === //
   UserModel get userModel => _user;
   int get userId => _user.user_id;
-  String get userName => _user.user_name;
+  String get userName => _userName;
   String get userTel => _userTel;
 
   int get petId => _petId;
@@ -65,7 +65,7 @@ class UserInfo extends ChangeNotifier {
     notifyListeners();
   }
 
-  set userName(String name) {
+  set setUserName(String name) {
     _userName = name;
     notifyListeners();
   }
@@ -93,33 +93,35 @@ class UserInfo extends ChangeNotifier {
       return;
     }
 
+    LOG.log(emoji: 2, '${fetched.user_name}');
+
     _setStateFromModels(fetched, _mainPet);
   }
 
-  Future<bool> reNameUser(myname, userInfo) async {
-    var userInfo;
-
+  Future<bool?> reNameUser(myname, userInfo) async {
     try {
       var json = {
         "user_name": myname,
         "user_tel": userInfo._userTel,
         "user_kakao_id": userInfo.userModel.user_kakao_id
       };
-      LOG.log('$json');
-      var result = RemoteDataSource.put('/user/${userInfo.userId}',
+
+      return await RemoteDataSource.put('/user/${userInfo.userId}',
               body: jsonEncode(json))
           .then((res) {
-        LOG.log('${res.statusCode}');
         if (res.statusCode == 200) {
-          userName = myname;
+          LOG.log(res.statusCode.toString());
+          setUserName = myname;
+          LOG.log(userName);
+          // notifyListeners();
           return true;
         }
-        ;
       });
     } catch (e) {
+      LOG.log(e.toString());
+      // notifyListeners();
       return false;
     }
-    return false;
   }
 
   void setStateFromTodo(bool isDone, bool isGroup, int todayDone) {
@@ -159,5 +161,6 @@ class UserInfo extends ChangeNotifier {
     _petId = 1;
     _petExp = 180;
     _petName = "왕귀여워";
+    notifyListeners();
   }
 }
