@@ -16,12 +16,10 @@ class MyRoomViewModel with ChangeNotifier {
   List<Item> inventory = []; // 사용자의 인벤토리
   int _roomOwner; // 현재 있는 방의 주인 (기본값은 로그인한 사용자의 id)
   List<Item> roomObjects = []; // 현재 방에 존재하는 오브젝트 리스트
-  String petName = '구미호_02';
 
   MyRoomViewModel(this._userId, this._roomRepository, this._roomOwner) {
-    fetchInventory();
     fetchMyRoom();
-    petName = findPetName();
+    fetchInventory();
   }
 
   void fetchMyRoom() async {
@@ -31,14 +29,12 @@ class MyRoomViewModel with ChangeNotifier {
 
   void fetchInventory() async {
     inventory = await _roomRepository.getItemsOfInventory(_userId);
-    notifyListeners();
   }
 
   // 현재 viewModel의 roomObject를 DB에 저장
   Future<void> applyChanges() async {
     _roomRepository.applyChanges(
         _userId, roomObjects.map((e) => e.id).toList());
-    notifyListeners();
   }
 
   // 선택한 아이템을 myroom에 넣거나 빼는 함수
@@ -72,6 +68,7 @@ class MyRoomViewModel with ChangeNotifier {
   set roomOwner(int userId) {
     _roomOwner = userId;
     fetchMyRoom();
+    notifyListeners();
   }
 
   bool isMyRoom() => _userId == _roomOwner;

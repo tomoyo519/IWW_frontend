@@ -10,7 +10,6 @@ import 'package:lottie/lottie.dart';
 import 'package:iww_frontend/view/todo/fields/label_list_modal.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/model/group/group.model.dart';
-import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 
 class GroupSearch extends StatefulWidget {
   const GroupSearch({super.key});
@@ -27,11 +26,13 @@ class _GroupSearchState extends State<GroupSearch> {
   bool isLoading = true;
 
   getList() async {
+    LOG.log('왜되됫던ㄱ-[ 아ㅣㄴ되냐고 시부레]');
     final userInfo = context.read<UserInfo>();
     // final viewModel = context.watch<MyGroupViewModel>();
     final groupRepository =
         Provider.of<GroupRepository>(context, listen: false);
-
+    LOG.log(
+        'userid, ${userInfo.userId} ,labelNum: ${labelNum}, keyword: ${keyword}');
     var tempList = await groupRepository.getAllGroupList(
         userInfo.userId ?? 1, labelNum, keyword);
     LOG.log('thisistmepLIst:$tempList');
@@ -141,27 +142,54 @@ class _GroupSearchState extends State<GroupSearch> {
                           return TextButton(
                               onPressed: () {
                                 var userInfo = context.read<UserInfo>();
+
                                 Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => MultiProvider(
-                                        providers: [
-                                          ChangeNotifierProvider(
-                                            create: (_) => GroupDetailModel(
-                                                Provider.of<GroupRepository>(
-                                                    context,
-                                                    listen: false),
-                                                userInfo.userId),
-                                          ),
-                                          ChangeNotifierProvider.value(
-                                              value: context
-                                                  .read<MyGroupViewModel>())
-                                        ],
-                                        child: GroupDetail(
-                                          group: groupList![i],
-                                        ),
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => MultiProvider(
+                                      // ==== 종속성 주입 ==== //
+                                      providers: [
+                                        ChangeNotifierProvider.value(
+                                            value: context.read<UserInfo>()),
+                                        ChangeNotifierProvider.value(
+                                            value: context
+                                                .read<MyGroupViewModel>()),
+                                        ChangeNotifierProvider(
+                                          create: (_) => GroupDetailModel(
+                                              Provider.of<GroupRepository>(
+                                                  context,
+                                                  listen: false),
+                                              userInfo.userId),
+                                        )
+                                      ],
+                                      child: GroupDetail(
+                                        group: groupList![i],
                                       ),
-                                    ));
+                                    ),
+                                  ),
+                                );
+
+                                // Navigator.push(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //       builder: (_) => MultiProvider(
+                                //         providers: [
+                                //           ChangeNotifierProvider(
+                                //             create: (_) => GroupDetailModel(
+                                //                 Provider.of<GroupRepository>(
+                                //                     context,
+                                //                     listen: false),
+                                //                 userInfo.userId),
+                                //           ),
+                                //           ChangeNotifierProvider.value(
+                                //               value: context
+                                //                   .read<MyGroupViewModel>())
+                                //         ],
+                                //         child: GroupDetail(
+                                //           group: groupList![i],
+                                //         ),
+                                //       ),
+                                //     ));
                               },
                               child: Container(
                                 alignment: Alignment.center,
