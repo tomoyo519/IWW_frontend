@@ -18,6 +18,7 @@ class MyRoomViewModel with ChangeNotifier {
   List<Item> roomObjects = []; // 현재 방에 존재하는 오브젝트 리스트
 
   MyRoomViewModel(this._userId, this._roomRepository, this._roomOwner) {
+    fetchMyRoom();
     fetchInventory();
   }
 
