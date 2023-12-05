@@ -295,7 +295,7 @@ class _GroupDetailState extends State<GroupDetail> {
                           ),
                           onPressed: () {},
                           child: Container(
-                            width: MediaQuery.of(context).size.width * 0.1,
+                            width: MediaQuery.of(context).size.width * 0.15,
                             alignment: Alignment.center,
                             child: Text(
                               widget.group.catName ?? "카테고리 미확인",
@@ -445,7 +445,7 @@ class _GroupDetailState extends State<GroupDetail> {
                         ),
                         onPressed: () {},
                         child: Container(
-                          width: MediaQuery.of(context).size.width * 0.1,
+                          width: MediaQuery.of(context).size.width * 0.15,
                           alignment: Alignment.center,
                           child: Text(
                             widget.group.memCnt.toString() + '명',
