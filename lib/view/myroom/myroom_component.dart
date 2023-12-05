@@ -59,11 +59,11 @@ class RenderMyRoom extends StatelessWidget {
     var roomState = context.watch<MyRoomViewModel>();
 
     // Naviator를 통해서 argument를 전달할 경우 받는 방법
-    try {
-      roomState.roomOwner = ModalRoute.of(context)!.settings.arguments as int;
-    } catch (e) {
-      print("[log/myroom]: $e");
-    }
+    // try {
+    //   roomState.roomOwner = ModalRoute.of(context)!.settings.arguments as int;
+    // } catch (e) {
+    //   print("[log/myroom]: $e");
+    // }
 
     // 1/3 step: 배경 지정
     return Stack(alignment: Alignment.center, children: [

@@ -274,7 +274,6 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                     var data = {
                       'userId': widget.todo.userId,
                       'todoId': widget.todo.todoId,
-                      'photoUrl': pickedFile.path,
                     };
                     EventService.sendEvent('confirmRequest', data);
 

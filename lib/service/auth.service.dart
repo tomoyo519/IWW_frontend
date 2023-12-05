@@ -179,11 +179,14 @@ class AuthService extends ChangeNotifier {
       _user = UserModel.fromJson(jsonBody['result']['user']);
       _mainPet = Item.fromJson(jsonBody['result']['user_pet']);
 
+      EventService.setUserId(_user!.user_id);
+      EventService.initialize();
       status = AuthStatus.initialized;
     } else {
       // Unauthorized
       status = AuthStatus.failed;
     }
+
 
     waiting = false;
   }
@@ -225,7 +228,7 @@ class AuthService extends ChangeNotifier {
       return;
     }
 
-    // 토큰과 함꼐 서버로 유저 정보 요청
+    // 토큰과 함께 서버로 유저 정보 요청
     RemoteDataSource.setAuthHeader("Bearer $token");
     Response response = await RemoteDataSource.get("/user");
 
@@ -244,6 +247,7 @@ class AuthService extends ChangeNotifier {
 
     // 이벤트 서비스 초기화
     EventService.setUserId(_user!.user_id);
+    EventService.initialize();
 
     status = AuthStatus.success;
     LOG.log("User authorization success: ${user!.user_id}");
