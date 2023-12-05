@@ -4,13 +4,13 @@ class Group {
   String? grpDesc;
   int? catId;
   String? catName;
-  String ownerName;
+  String? ownerName;
   String memCnt;
 
   Group({
     required this.groupId,
     required this.grpName,
-    required this.ownerName,
+    this.ownerName,
     required this.memCnt,
     this.grpDesc,
     this.catName,

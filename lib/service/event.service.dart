@@ -3,12 +3,16 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/view/_navigation/app_navigator.dart';
+import 'package:iww_frontend/view/_navigation/enum/app_route.dart';
 import 'package:iww_frontend/view/modals/login_achieve_modal.dart';
+import 'package:iww_frontend/view/modals/todo_confirm_modal.dart';
 import 'package:iww_frontend/view/modals/pet_evolve_modal.dart';
 import 'package:iww_frontend/view/modals/todo_first_done.dart';
 import 'package:iww_frontend/view/modals/custom_snackbar.dart';
 import 'package:lottie/lottie.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
+import 'package:provider/provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -27,11 +31,18 @@ enum EventType {
   show_todo_snackbar,
   show_first_todo_modal,
   show_login_achieve,
+  friendRequest,
+  friendResponse,
+  confirmRequest,
+  confirmResponse,
+  newComment,
   show_pet_evolve,
 }
 
 extension EventTypeExtension on EventType {
   void run(BuildContext context, {String? message}) async {
+    AppNavigator nav = Provider.of<AppNavigator>(context, listen: false);
+
     switch (this) {
       case EventType.show_first_todo_modal:
         showTodoFirstDoneModal(context);
@@ -48,6 +59,21 @@ extension EventTypeExtension on EventType {
         break;
       case EventType.show_pet_evolve:
         showPetEvolveModal(context);
+        break;
+      case EventType.friendRequest:
+      case EventType.friendResponse:
+      case EventType.confirmRequest:
+        if (message != null) {
+          var data = jsonDecode(message);
+          int ownerId = data['senderId'];
+          nav.navigate(AppRoute.room, argument: ownerId.toString());
+        }
+        break;
+      case EventType.confirmResponse:
+        showTodoConfirmModal(context, message);
+        break;
+      case EventType.newComment:
+        nav.navigate(AppRoute.room);
         break;
       default:
         break;
@@ -96,6 +122,7 @@ class EventService {
 
     _initNotifications();
   }
+
   static Stream<Event> get stream => _streamController.stream;
 
   // 이벤트 발행
@@ -128,8 +155,43 @@ class EventService {
 
     flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
-      onSelectNotification: _onSelectNotification,
+      onSelectNotification: (String? payload) {
+        if (payload != null) {
+          // payload를 Event 객체로 변환
+          Event event = _convertPayloadToEvent(payload);
+          _streamController.add(event); // Event 객체를 스트림에 추가
+        }
+      },
     );
+  }
+
+  // payload를 Event 객체로 변환하는 함수
+  static Event _convertPayloadToEvent(String payload) {
+    // payload를 파싱하여 Event 객체 생성
+    // 예: JSON 형식의 문자열을 파싱하여 Event 필드를 채움
+    Map<String, dynamic> data = jsonDecode(payload);
+    EventType type;
+    String message = payload;
+    switch (data['type']) {
+      case 'friendRequest':
+        type = EventType.friendRequest;
+        break;
+      case 'friendResponse':
+        type = EventType.friendResponse;
+        break;
+      case 'confirmRequest':
+        type = EventType.confirmRequest;
+        break;
+      case 'confirmResponse':
+        type = EventType.confirmResponse;
+        break;
+      case 'newComment':
+        type = EventType.newComment;
+        break;
+      default:
+        type = EventType.newComment;
+    }
+    return Event(type: type, message: message);
   }
 
   Future _handleFriendRequest(dynamic data) async {
@@ -188,10 +250,13 @@ class EventService {
     var generalDetails =
         NotificationDetails(android: androidDetails, iOS: iOSDetails);
 
-    String payload = json.encode({
+    String payload = jsonEncode({
       'type': 'confirmRequest',
       'senderId': data['senderId'],
-      'photoUrl': data['photoUrl'],
+      'sednerName': data['senderName'],
+      'todoId': data['todoId'],
+      'todoName': data['todoName'],
+      'todoImg': data['todoImg'],
       'message': data['message']
     });
 
@@ -252,33 +317,35 @@ class EventService {
     );
   }
 
-  static Future _onSelectNotification(String? payload) async {
-    if (payload != null) {
-      // 알림 선택 시 로직
-      // 예: payload에 따라 특정 모달 띄우기 또는 페이지로 리디렉트
-      Map<String, dynamic> payloadData = json.decode(payload);
+  // static Future _onSelectNotification(
+  //     String? payload, BuildContext context) async {
+  //   if (payload != null) {
+  //     // 알림 선택 시 로직
+  //     // 예: payload에 따라 특정 모달 띄우기 또는 페이지로 리디렉트
+  //     Map<String, dynamic> payloadData = json.decode(payload);
 
-      // 파싱된 데이터에서 정보 추출
-      var type = payloadData['type'];
-      var senderId = payloadData['senderId'];
-      var receiverId = payloadData['receiverId'];
-      var message = payloadData['message'];
+  //     // 파싱된 데이터에서 정보 추출
+  //     var type = payloadData['type'];
+  //     var senderId = payloadData['senderId'];
 
-      // 알림 유형에 따라 적절한 처리 수행
-      switch (type) {
-        case 'friendRequest':
-          // friendRequest에 대한 처리
-          break;
-        // 다른 알림 유형에 대한 처리 ...
-        case 'friendResponse':
-          break;
-        case 'confirmRequest':
-          break;
-        case 'confirmResponse':
-          break;
-        case 'newComment':
-          break;
-      }
-    }
-  }
+  //     // AppNavigator 인스턴스 접근
+  //     AppNavigator nav = Provider.of<AppNavigator>(context, listen: false);
+
+  //     // 알림 유형에 따라 적절한 처리 수행
+  //     switch (type) {
+  //       case 'friendRequest':
+  //       case 'friendResponse':
+  //       case 'confirmResponse':
+  //         // MyRoom 페이지로 이동
+  //         nav.navigate(AppRoute.room); // AppRoute.room은 MyRoom 페이지를 가리키는 예시입니다.
+  //         break;
+  //       case 'confirmRequest':
+  //         _showConfirmRequestModal(context, senderId, payloadData);
+  //         break;
+  //       case 'newComment':
+  //         _navigateToMyRoomAndShowComments(context, senderId);
+  //         break;
+  //     }
+  //   }
+  // }
 }

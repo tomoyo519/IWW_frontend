@@ -1,10 +1,15 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/notification.repository.dart';
-import 'package:iww_frontend/secrets/secrets.dart';
-import 'package:iww_frontend/view/_common/appbar.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/model/notification/notification.model.dart'
     as model;
+import 'package:iww_frontend/view/_navigation/app_navigator.dart';
+import 'package:iww_frontend/view/_navigation/enum/app_route.dart';
+import 'package:iww_frontend/view/modals/todo_confirm_modal.dart';
+import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
+import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 
 class MyNotification extends StatefulWidget {
   const MyNotification({super.key});
@@ -21,13 +26,14 @@ class _MyNotificationState extends State<MyNotification> {
   @override
   void initState() {
     super.initState();
-    fetchNoti();
+    fetchNoti(context);
   }
 
-  Future<void> fetchNoti() async {
+  Future<void> fetchNoti(BuildContext context) async {
+    final UserInfo user = Provider.of<UserInfo>(context, listen: false);
     try {
       List<model.Notification>? fetchedNoti =
-          await notificationRepository.getNoti(1);
+          await notificationRepository.getNoti(user.userId);
       setState(() {
         notifications = fetchedNoti;
       });
@@ -40,38 +46,45 @@ class _MyNotificationState extends State<MyNotification> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: MyAppBar(),
-        body: ListView.builder(
-          itemCount: notifications.length,
-          itemBuilder: (context, index) {
-            var noti = notifications[index];
-            return ListTile(
-              leading: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8.0),
-                child: CircleAvatar(
-                  radius: 20,
-                  backgroundImage: AssetImage('assets/profile.png'),
-                  // backgroundImage: NetworkImage(
-                  //     '${Secrets.REMOTE_SERVER_URL}/image/${noti.senderId}.jpg'),
-                  // onBackgroundImageError: (exception, stackTrace) {},
-                  // child: Image.network(
-                  //   '${Secrets.REMOTE_SERVER_URL}/image/${noti.senderId}.jpg',
-                  //   fit: BoxFit.cover,
-                  //   errorBuilder: (context, error, stackTrace) {
-                  //     return CircleAvatar(
-                  //       radius: 20,
-                  //       backgroundImage: AssetImage('assets/profile.jpg'),
-                  //     );
-                  //   },
-                  // ),
-                ),
-              ),
-              title: Text(buildNotiMessage(noti)),
-              trailing: buildTrailWidget(noti),
-              onTap: () => navigateToSender(noti),
-            );
-          },
-        ));
+      body: notifications.isNotEmpty
+          ? ListView.builder(
+              itemCount: notifications.length,
+              itemBuilder: (context, index) {
+                var noti = notifications[index];
+                return ListTile(
+                  leading: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8.0),
+                    child: CircleAvatar(
+                      radius: 20,
+                      backgroundImage: AssetImage('assets/profile.png'),
+                      // backgroundImage: NetworkImage(
+                      //     '${Secrets.REMOTE_SERVER_URL}/image/${noti.senderId}.jpg'),
+                      // onBackgroundImageError: (exception, stackTrace) {},
+                      // child: Image.network(
+                      //   '${Secrets.REMOTE_SERVER_URL}/image/${noti.senderId}.jpg',
+                      //   fit: BoxFit.cover,
+                      //   errorBuilder: (context, error, stackTrace) {
+                      //     return CircleAvatar(
+                      //       radius: 20,
+                      //       backgroundImage: AssetImage('assets/profile.jpg'),
+                      //     );
+                      //   },
+                      // ),
+                    ),
+                  ),
+                  title: Text(buildNotiMessage(noti)),
+                  trailing: buildTrailWidget(noti),
+                  onTap: () => navigateToSender(noti),
+                );
+              },
+            )
+          : Center(
+              child: Lottie.asset('assets/empty.json',
+                  repeat: true,
+                  animate: true,
+                  height: MediaQuery.of(context).size.height * 0.3),
+            ),
+    );
   }
 
   String buildNotiMessage(model.Notification noti) {
@@ -101,26 +114,34 @@ class _MyNotificationState extends State<MyNotification> {
   }
 
   Widget? buildTrailWidget(model.Notification noti) {
-    if (noti.notiType == 0 && noti.reqType == 0) {
+    if (noti.notiType == 0 && noti.reqType == '0') {
       return Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           ElevatedButton(
               onPressed: () async {
-                noti.reqType = 1;
-                await notificationRepository.updateNoti(
-                    noti.notiId, noti.toJson());
-                fetchNoti();
+                Map<String, dynamic> data = {
+                  "noti_id": noti.notiId,
+                  "req_type": '1',
+                };
+                await notificationRepository.updateNoti(noti.notiId, data);
+                if (mounted) {
+                  fetchNoti(context);
+                }
               },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
               child: Text('수락')),
           SizedBox(width: 8),
           ElevatedButton(
             onPressed: () async {
-              noti.reqType = 2;
-              await notificationRepository.updateNoti(
-                  noti.notiId, noti.toJson());
-              fetchNoti();
+              Map<String, dynamic> data = {
+                "noti_id": noti.notiId,
+                "req_type": '2',
+              };
+              await notificationRepository.updateNoti(noti.notiId, data);
+              if (mounted) {
+                fetchNoti(context);
+              }
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             child: Text('거절'),
@@ -138,20 +159,28 @@ class _MyNotificationState extends State<MyNotification> {
   }
 
   void navigateToSender(model.Notification noti) {
+    AppNavigator nav = Provider.of<AppNavigator>(context, listen: false);
+    int senderId = int.parse(noti.senderId);
+    String message = jsonEncode({
+      "senderId": senderId,
+      "senderName": noti.senderName,
+      "todoId": noti.subId,
+      "todoName": noti.todoTitle,
+      "photoUrl": noti.reqType
+    });
     switch (noti.notiType) {
       case 0:
-        Navigator.pushNamed(context, "/myroom", arguments: 2);
-        break;
       case 1:
-        Navigator.pushNamed(context, "/myroom", arguments: 2);
+      case 3:
+        nav.navigate(AppRoute.room, argument: senderId.toString());
         break;
       case 2:
-        break;
-      case 3:
-        // TODO - 해당 todo의 인증샷에 대한 modal 창으로 redirect
+        // 해당 todo의 인증샷에 대한 modal 창으로 redirect
+        showTodoConfirmModal(context, message);
         break;
       case 4:
         // TODO - 내 방명록의 해당 댓글 위치로 redirect
+        nav.navigate(AppRoute.room);
         break;
     }
   }

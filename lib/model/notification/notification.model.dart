@@ -9,7 +9,7 @@ class Notification {
   int notiType;
   int? subId;
   String? todoTitle;
-  int reqType;
+  String? reqType;
 
   Notification({
     required this.notiId,

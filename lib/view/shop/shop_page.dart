@@ -41,12 +41,13 @@ class _ShopItems extends State<ShopItems> {
   }
 
   void purchase(idx) async {
-    final userId = context.read<UserInfo>().userId;
-    var result = await shopRepository.purchaseItem(idx, userId);
+    final userInfo = context.read<UserInfo>();
+    var result = await shopRepository.purchaseItem(idx, userInfo.userId);
     if (result == true) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: const Text("아이템 구매가 완료 되었어요!")));
       Navigator.pop(context);
+      userInfo.fetchUser();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: const Text("보유한 캐시가 부족해요. 할일을 더 수행해볼까요?")));
@@ -91,12 +92,33 @@ class _ShopItems extends State<ShopItems> {
               ? Expanded(
                   child: TabBarView(
                     children: <Widget>[
-                      ShowItem(allpets: allpets, purchase: purchase),
-                      ShowItem(allpets: allfuns, purchase: purchase),
-                      ShowItem(
-                        allpets: allemot,
-                        purchase: purchase,
-                      )
+                      if (allpets!.isEmpty) ...[
+                        Lottie.asset('assets/empty.json',
+                            repeat: true,
+                            animate: true,
+                            height: MediaQuery.of(context).size.height * 0.3),
+                      ],
+                      if (allpets!.isNotEmpty) ...[
+                        ShowItem(allpets: allpets, purchase: purchase),
+                      ],
+                      if (allfuns!.isEmpty) ...[
+                        Lottie.asset('assets/empty.json',
+                            repeat: true,
+                            animate: true,
+                            height: MediaQuery.of(context).size.height * 0.3),
+                      ],
+                      if (allfuns!.isNotEmpty) ...[
+                        ShowItem(allpets: allfuns, purchase: purchase),
+                      ],
+                      if (allemot!.isNotEmpty) ...[
+                        ShowItem(allpets: allemot, purchase: purchase),
+                      ],
+                      if (allemot!.isEmpty) ...[
+                        Lottie.asset('assets/empty.json',
+                            repeat: true,
+                            animate: true,
+                            height: MediaQuery.of(context).size.height * 0.3),
+                      ]
                     ],
                   ),
                 )

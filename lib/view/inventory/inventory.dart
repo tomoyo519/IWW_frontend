@@ -16,7 +16,7 @@ class Inventory extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-            create: (_) => MyRoomViewModel(userInfo.userId, RoomRepository())),
+            create: (_) => MyRoomViewModel(userInfo.userId, RoomRepository(), userInfo.userId)),
       ],
       child: InventoryView(),
     );
