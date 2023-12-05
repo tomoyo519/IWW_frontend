@@ -47,7 +47,7 @@ class Notification {
       subId: body['sub_id'],
       notiType: body['noti_type'],
       reqType: body['req_type'],
-      todoTitle: body['todo_title'],
+      todoTitle: body['todo_name'],
     );
   }
 }
