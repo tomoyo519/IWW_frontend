@@ -76,7 +76,6 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
   Future<bool?> createGroup(userId) async {
     try {
       groupData["user_id"] = userId;
-      groupData["cat_id"] = groupData["cat_id"];
 
       Map<String, dynamic> json = {
         "grpInfo": (groupData),
