@@ -41,7 +41,8 @@ class _ShopItems extends State<ShopItems> {
   }
 
   void purchase(idx) async {
-    var result = await shopRepository.purchaseItem(idx);
+    final userId = context.read<UserInfo>().userId;
+    var result = await shopRepository.purchaseItem(idx, userId);
     if (result == true) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: const Text("아이템 구매가 완료 되었어요!")));
