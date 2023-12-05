@@ -18,14 +18,14 @@ class MyRoomComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    LOG.log('############## bottom bar height: $kBottomNavigationBarHeight');
-
     return Expanded(
       child: Stack(
         fit: StackFit.expand,
         children: [
           // 방 렌더링
           RenderMyRoom(),
+          // 펫 렌더링
+          MyPet(newSrc: context.watch<MyRoomViewModel>().findPetName()),
           // 상단 상태바
           Positioned(
               left: 0,
@@ -78,7 +78,7 @@ class RenderMyRoom extends StatelessWidget {
         ),
         child: roomState.renderRoomObjects(context),
       ),
-      MyPet(newSrc: roomState.findPetName()),
+      
     ]);
 
     // 유저의 펫 정보 불러오기
