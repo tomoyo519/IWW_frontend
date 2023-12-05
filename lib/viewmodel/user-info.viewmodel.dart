@@ -1,6 +1,7 @@
 import 'dart:convert';
-
+import 'package:iww_frontend/utils/logger.dart';
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/auth/login_result.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
 import 'package:iww_frontend/model/todo/todo_today_count.dart';
@@ -66,6 +67,11 @@ class UserInfo extends ChangeNotifier {
     notifyListeners();
   }
 
+  set userName(String name) {
+    _userName = name;
+    notifyListeners();
+  }
+
   set userHp(int hp) {
     _userHp = hp;
     notifyListeners();
@@ -107,6 +113,32 @@ class UserInfo extends ChangeNotifier {
         ),
       );
     }
+  }
+
+  Future<bool> reNameUser(myname, userInfo) async {
+    var userInfo;
+
+    try {
+      var json = {
+        "user_name": myname,
+        "user_tel": userInfo._userTel,
+        "user_kakao_id": userInfo.userModel.user_kakao_id
+      };
+      LOG.log('$json');
+      var result = RemoteDataSource.put('/user/${userInfo.userId}',
+              body: jsonEncode(json))
+          .then((res) {
+        LOG.log('${res.statusCode}');
+        if (res.statusCode == 200) {
+          userName = myname;
+          return true;
+        }
+        ;
+      });
+    } catch (e) {
+      return false;
+    }
+    return false;
   }
 
   void setStateFromTodo(bool isDone, bool isGroup, int todayDone) {

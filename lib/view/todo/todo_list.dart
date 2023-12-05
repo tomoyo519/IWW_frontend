@@ -139,7 +139,6 @@ class ToDoList extends StatelessWidget {
     Navigator.pop(context);
 
     final viewModel = context.read<TodoViewModel>();
-
     await viewModel.deleteTodo(todo);
   }
 
