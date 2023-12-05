@@ -79,85 +79,85 @@ class _GroupListState extends State<GroupList> {
                         //     break;
                         // }
 
-                        String picturePath = 'assets/category/기타.png';
+                        String picturePath = 'assets/category/etc.jpg';
                         switch (myGroups[i].catName) {
                           case "전체":
-                            picturePath = 'assets/category/기타.png';
+                            picturePath = 'assets/category/etc.jpg';
                             break;
 
                           case "요가":
-                            picturePath = 'assets/category/요가.png';
+                            picturePath = 'assets/category/yoga.jpg';
                             break;
 
                           case "공부":
-                            picturePath = 'assets/category/공부.png';
+                            picturePath = 'assets/category/study.jpg';
                             break;
 
                           case "운동":
-                            picturePath = 'assets/category/운동.png';
+                            picturePath = 'assets/category/exercise.jpg';
                             break;
 
                           case "코딩":
-                            picturePath = 'assets/category/코딩.png';
+                            picturePath = 'assets/category/coding.jpg';
                             break;
 
                           case "게임":
-                            picturePath = 'assets/category/게임.png';
+                            picturePath = 'assets/category/game.jpg';
                             break;
 
                           case "명상":
-                            picturePath = 'assets/category/명상.png';
+                            picturePath = 'assets/category/meditation.jpg';
                             break;
 
                           case "모임":
-                            picturePath = 'assets/category/모임.png';
+                            picturePath = 'assets/category/group.jpg';
                             break;
 
                           case "학업":
-                            picturePath = 'assets/category/학업.png';
+                            picturePath = 'assets/category/academy.jpg';
                             break;
 
                           case "자유시간":
-                            picturePath = 'assets/category/자유시간.png';
+                            picturePath = 'assets/category/freetime.jpg';
                             break;
 
                           case "자기관리":
-                            picturePath = 'assets/category/자기관리.png';
+                            picturePath = 'assets/category/selfcontrol.jpg';
                             break;
 
                           case "독서":
-                            picturePath = 'assets/category/독서.png';
+                            picturePath = 'assets/category/reading.jpg';
                             break;
 
                           case "여행":
-                            picturePath = 'assets/category/여행.png';
+                            picturePath = 'assets/category/travel.jpg';
                             break;
 
                           case "유튜브":
-                            picturePath = 'assets/category/유튜브.png';
+                            picturePath = 'assets/category/youtube.jpg';
                             break;
 
                           case "약속":
-                            picturePath = 'assets/category/약속.png';
+                            picturePath = 'assets/category/appointment.jpg';
                             break;
 
                           case "산책":
-                            picturePath = 'assets/category/산책.png';
+                            picturePath = 'assets/category/walking.jpg';
                             break;
 
                           case "집안일":
-                            picturePath = 'assets/category/집안일.png';
+                            picturePath = 'assets/category/housework.jpg';
                             break;
 
                           case "취미":
-                            picturePath = 'assets/category/취미.png';
+                            picturePath = 'assets/category/hobby.jpg';
                             break;
 
                           case "기타":
-                            picturePath = 'assets/category/기타.png';
+                            picturePath = 'assets/category/etc.jpg';
                             break;
                           default:
-                            picturePath = 'assets/category/기타.png';
+                            picturePath = 'assets/category/etc.jpg';
                             break;
                         }
                         return TextButton(
@@ -204,11 +204,13 @@ class _GroupListState extends State<GroupList> {
                                 children: [
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(
-                                        10), // 원하는 border-radius 값으로 변경
+                                        20), // 원하는 border-radius 값으로 변경
                                     child: Image.asset(
                                       picturePath,
-                                      width: 65,
-                                      height: 65,
+                                      fit: BoxFit
+                                          .cover, // 이미지의 비율을 유지하면서 가능한 한 많은 공간을 차지하도록 합니다.
+                                      width: 85,
+                                      height: 85,
                                     ),
                                   ),
                                   SizedBox(
