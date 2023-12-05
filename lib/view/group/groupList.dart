@@ -66,19 +66,6 @@ class _GroupListState extends State<GroupList> {
                   child: ListView.builder(
                       itemCount: myGroups.length,
                       itemBuilder: (c, i) {
-                        // Color bgColor;
-                        // switch (myGroups[i].catName) {
-                        //   case '코딩':
-                        //     bgColor = Colors.red;
-                        //     break;
-                        //   case '학업':
-                        //     bgColor = Colors.green;
-                        //     break;
-                        //   default:
-                        //     bgColor = Colors.white;
-                        //     break;
-                        // }
-
                         String picturePath = 'assets/category/etc.jpg';
                         switch (myGroups[i].catName) {
                           case "전체":

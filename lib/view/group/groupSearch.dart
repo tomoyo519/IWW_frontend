@@ -137,8 +137,89 @@ class _GroupSearchState extends State<GroupSearch> {
             : groupList != null && groupList!.isNotEmpty
                 ? Expanded(
                     child: ListView.builder(
-                        itemCount: groupList?.length,
+                        itemCount: groupList!.length,
                         itemBuilder: (c, i) {
+                          String picturePath = 'assets/category/etc.jpg';
+                          switch (groupList![i].catName) {
+                            case "전체":
+                              picturePath = 'assets/category/etc.jpg';
+                              break;
+
+                            case "요가":
+                              picturePath = 'assets/category/yoga.jpg';
+                              break;
+
+                            case "공부":
+                              picturePath = 'assets/category/study.jpg';
+                              break;
+
+                            case "운동":
+                              picturePath = 'assets/category/exercise.jpg';
+                              break;
+
+                            case "코딩":
+                              picturePath = 'assets/category/coding.jpg';
+                              break;
+
+                            case "게임":
+                              picturePath = 'assets/category/game.jpg';
+                              break;
+
+                            case "명상":
+                              picturePath = 'assets/category/meditation.jpg';
+                              break;
+
+                            case "모임":
+                              picturePath = 'assets/category/group.jpg';
+                              break;
+
+                            case "학업":
+                              picturePath = 'assets/category/academy.jpg';
+                              break;
+
+                            case "자유시간":
+                              picturePath = 'assets/category/freetime.jpg';
+                              break;
+
+                            case "자기관리":
+                              picturePath = 'assets/category/selfcontrol.jpg';
+                              break;
+
+                            case "독서":
+                              picturePath = 'assets/category/reading.jpg';
+                              break;
+
+                            case "여행":
+                              picturePath = 'assets/category/travel.jpg';
+                              break;
+
+                            case "유튜브":
+                              picturePath = 'assets/category/youtube.jpg';
+                              break;
+
+                            case "약속":
+                              picturePath = 'assets/category/appointment.jpg';
+                              break;
+
+                            case "산책":
+                              picturePath = 'assets/category/walking.jpg';
+                              break;
+
+                            case "집안일":
+                              picturePath = 'assets/category/housework.jpg';
+                              break;
+
+                            case "취미":
+                              picturePath = 'assets/category/hobby.jpg';
+                              break;
+
+                            case "기타":
+                              picturePath = 'assets/category/etc.jpg';
+                              break;
+                            default:
+                              picturePath = 'assets/category/etc.jpg';
+                              break;
+                          }
                           return TextButton(
                               onPressed: () {
                                 var userInfo = context.read<UserInfo>();
@@ -169,28 +250,6 @@ class _GroupSearchState extends State<GroupSearch> {
                                     ),
                                   ),
                                 );
-
-                                // Navigator.push(
-                                //     context,
-                                //     MaterialPageRoute(
-                                //       builder: (_) => MultiProvider(
-                                //         providers: [
-                                //           ChangeNotifierProvider(
-                                //             create: (_) => GroupDetailModel(
-                                //                 Provider.of<GroupRepository>(
-                                //                     context,
-                                //                     listen: false),
-                                //                 userInfo.userId),
-                                //           ),
-                                //           ChangeNotifierProvider.value(
-                                //               value: context
-                                //                   .read<MyGroupViewModel>())
-                                //         ],
-                                //         child: GroupDetail(
-                                //           group: groupList![i],
-                                //         ),
-                                //       ),
-                                //     ));
                               },
                               child: Container(
                                 alignment: Alignment.center,
@@ -205,11 +264,13 @@ class _GroupSearchState extends State<GroupSearch> {
                                   children: [
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(
-                                          10), // 원하는 border-radius 값으로 변경
+                                          20), // 원하는 border-radius 값으로 변경
                                       child: Image.asset(
-                                        'assets/profile.png',
-                                        width: 65,
-                                        height: 65,
+                                        picturePath,
+                                        fit: BoxFit
+                                            .cover, // 이미지의 비율을 유지하면서 가능한 한 많은 공간을 차지하도록 합니다.
+                                        width: 85,
+                                        height: 85,
                                       ),
                                     ),
                                     SizedBox(
