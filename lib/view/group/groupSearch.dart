@@ -163,6 +163,7 @@ class _GroupSearchState extends State<GroupSearch> {
                                         )
                                       ],
                                       child: GroupDetail(
+                                        getList: getList,
                                         group: groupList![i],
                                       ),
                                     ),

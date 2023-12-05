@@ -32,7 +32,8 @@ final List<String> labels = [
 
 class GroupDetail extends StatefulWidget {
   final Group group;
-  GroupDetail({required this.group, super.key});
+  final getList;
+  GroupDetail({required this.getList, required this.group, super.key});
 
   @override
   State<GroupDetail> createState() => _GroupDetailState();
@@ -90,6 +91,7 @@ class _GroupDetailState extends State<GroupDetail> {
         final viewModel = context.read<MyGroupViewModel>();
         await viewModel.fetchMyGroupList(userId);
         if (context.mounted) {
+          await widget.getList();
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: const Text("그룹 가입이 완료 되었어요!")));
           Navigator.pop(context);
@@ -112,6 +114,7 @@ class _GroupDetailState extends State<GroupDetail> {
           final viewModel = context.read<MyGroupViewModel>();
           await viewModel.fetchMyGroupList(userId);
           if (context.mounted) {
+            await widget.getList();
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: const Text("그룹 탈퇴가 완료 되었어요!")));
             Navigator.pop(context);
