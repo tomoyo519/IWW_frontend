@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:iww_frontend/utils/logger.dart';
+
 class Group {
   int groupId;
   String grpName;
@@ -18,6 +22,7 @@ class Group {
   });
 
   factory Group.fromJson(Map<String, dynamic> body) {
+    LOG.log(jsonEncode(body));
     return Group(
       groupId: body['grp_id'],
       grpName: body['grp_name'],

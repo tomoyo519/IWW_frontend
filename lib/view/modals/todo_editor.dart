@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/view/todo/modals/todo_create_modal.dart';
-import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/todo_modal.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -9,11 +9,13 @@ import 'package:provider/provider.dart';
 /// BaseTodoViewModel을 구현하는 클래스가
 /// context 안에 존재하는 경우 사용 가능
 /// */
-void showTodoCreateModal(BuildContext context) {
+void showTodoEditModal<T extends ChangeNotifier>(
+  BuildContext context, {
+  Todo? todo,
+}) {
   FocusNode focusNode = FocusNode();
-  TextEditingController controller = TextEditingController();
   UserInfo userInfo = context.read<UserInfo>();
-  TodoViewModel viewmodel = context.read<TodoViewModel>();
+  T viewmodel = context.read<T>();
 
   showModalBottomSheet(
     isScrollControlled: true,
@@ -24,15 +26,15 @@ void showTodoCreateModal(BuildContext context) {
       return MultiProvider(
         providers: [
           ChangeNotifierProvider.value(value: userInfo),
-          ChangeNotifierProvider.value(value: viewmodel),
+          ChangeNotifierProvider<T>.value(value: viewmodel),
           ChangeNotifierProvider(
-              create: (_) => TodoModalViewModel(
+              create: (_) => TodoModalViewModel<T>(
                     mode: TodoModalMode.normal,
+                    todo: todo,
                   ))
         ],
-        child: TodoCreateModal(
+        child: TodoCreateModal<T>(
           focusNode: focusNode,
-          controller: controller,
           keyboardHeight: keyboardHeight,
         ),
       );

@@ -105,31 +105,19 @@ class TodoRepository {
     });
   }
 
-  // 그룹 할일 체크
-  Future<bool> checkGroupTodo(
-      String userId, String id, bool checked, String path) async {
-    return await RemoteDataSource.patch(
-      "/todo/$id",
-      body: {"todo_done": checked},
-    ).then((response) async {
-      if (response.statusCode == 200) {
-        if (path.isNotEmpty) {
-          // TODO - 사진 전송 연결
-          var image = File(path);
-          return await RemoteDataSource.patchFormData(
-                  "/group/$id/user/$userId/image", 'file',
-                  file: image, filename: path)
-              .then((res) {
-            if (res.statusCode == 200) {
-              var jsonData = jsonDecode(response.body);
-              return true;
-            }
-            return false;
-          }).catchError((err) {
-            return false;
-          });
-        }
+  // 그룹 할일 인증
+  Future<bool> checkGroupTodo(int userId, int todoId, String path) async {
+    var image = File(path);
+    return await RemoteDataSource.patchFormData(
+            "/group/$todoId/user/$userId/image", 'file',
+            file: image, filename: path)
+        .then((res) {
+      if (res.statusCode == 200) {
+        return true;
       }
+      return false;
+    }).catchError((err) {
+      LOG.log('Error sending image');
       return false;
     });
   }
