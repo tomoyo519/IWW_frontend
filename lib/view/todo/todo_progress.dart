@@ -11,12 +11,13 @@ class TodoProgress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screen = MediaQuery.of(context).size;
     DateTime today = DateTime.now().add(Duration(hours: 9));
-    final viewmodel = context.watch<TodoViewModel>();
-    final usermodel = context.watch<UserInfo>();
+    final model = context.watch<TodoViewModel>();
+    final userinfo = context.watch<UserInfo>();
 
     final cash = NumberFormat('#,##0').format(
-      usermodel.userCash,
+      userinfo.userCash,
     );
 
     return Container(
@@ -28,7 +29,7 @@ class TodoProgress extends StatelessWidget {
             color: Colors.grey.withOpacity(0.2),
             spreadRadius: 0,
             blurRadius: 5,
-            offset: Offset(0, 3), // changes position of shadow
+            offset: Offset(0, 3),
           ),
         ],
       ),
@@ -45,7 +46,7 @@ class TodoProgress extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                "${viewmodel.todayDone}/${viewmodel.todayTotal}",
+                "${model.todayDone}/${model.todayTotal}",
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
               ),
               SizedBox(
@@ -60,33 +61,23 @@ class TodoProgress extends StatelessWidget {
               CashBadge(cash: cash)
             ],
           ),
-          Row(
-            children: [
-              viewmodel.todayTotal != 0
-                  ? Expanded(
-                      flex: viewmodel.todayDone,
-                      child: SizedBox(
-                        height: 5,
-                        child: DecoratedBox(
-                            decoration: BoxDecoration(
-                          color: Colors.orange,
-                        )),
-                      ),
-                    )
-                  : SizedBox.shrink(),
-              Expanded(
-                flex: (viewmodel.todayDone + viewmodel.todayTotal),
-                child: SizedBox(
-                  height: 5,
-                  child: DecoratedBox(
-                      decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(100),
-                  )),
-                ),
-              ),
-            ],
-          )
+          Expanded(
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                Column(
+                  children: [
+                    SizedBox(
+                      // width: ,
+                      child: Lottie.asset('assets/star.json'),
+                    ),
+                    Text("오늘 완료"),
+                    Text("45"),
+                  ],
+                )
+              ],
+            ),
+          ),
         ],
       ),
     );

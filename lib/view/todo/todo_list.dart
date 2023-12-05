@@ -114,6 +114,7 @@ class ToDoList extends StatelessWidget {
 
     // 리워드 계산
     TodoCheckDto? result = await todomodel.checkNormalTodo(todo.todoId, value);
+
     if (result != null) {
       // 상태 셋
       usermodel.userCash = result.userCash;

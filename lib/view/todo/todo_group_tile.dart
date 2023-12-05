@@ -68,11 +68,6 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         color: Colors.orange.shade100,
-        // gradient: LinearGradient(
-        //   begin: Alignment.topLeft,
-        //   end: Alignment.bottomRight,
-        //   colors: GroupTodoTile.gradients[0],
-        // ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -89,8 +84,8 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                       ? TextDecoration.lineThrough // 완료된 경우
                       : TextDecoration.none, // 아직 미완
                   color: todoState == GroupTodoState.approved
-                      ? Colors.black87
-                      : Colors.black45,
+                      ? Colors.black45
+                      : Colors.black87,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -127,7 +122,9 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
             ),
 
             // * ===== 버튼 클릭시 투두 체크 ===== * //
-            onPressed: () => _onGrpTodoCheck(context, widget.todo),
+            onPressed: todoState == GroupTodoState.done
+                ? () => _onGrpTodoCheck(context, widget.todo)
+                : null,
             child: Ink(
               decoration: BoxDecoration(
                 gradient: LinearGradient(

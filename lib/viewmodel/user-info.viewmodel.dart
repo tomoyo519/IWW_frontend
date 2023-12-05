@@ -34,7 +34,6 @@ class UserInfo extends ChangeNotifier {
         ),
       );
     }
-    // _listenEvents();
   }
 
   // === Status === //
@@ -50,7 +49,7 @@ class UserInfo extends ChangeNotifier {
   // === Getters === //
   UserModel get userModel => _user;
   int get userId => _user.user_id;
-  String get userName => _user.user_name;
+  String get userName => _userName;
   String get userTel => _userTel;
 
   int get userCash => _userCash;
@@ -104,7 +103,7 @@ class UserInfo extends ChangeNotifier {
     }
 
     LOG.log('User cash: ${fetched.user.user_cash}');
-    _setStateFromModels(_user, _mainPet);
+    _setStateFromModels(fetched.user, fetched.pet);
     if (prevPetState.id != fetched.pet.id) {
       // 진화함!
       EventService.publish(
@@ -115,6 +114,7 @@ class UserInfo extends ChangeNotifier {
     }
   }
 
+  // TODO type 달기
   Future<bool> reNameUser(myname, userInfo) async {
     var userInfo;
 
@@ -133,7 +133,6 @@ class UserInfo extends ChangeNotifier {
           userName = myname;
           return true;
         }
-        ;
       });
     } catch (e) {
       return false;
