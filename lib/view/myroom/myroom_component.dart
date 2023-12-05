@@ -18,14 +18,14 @@ class MyRoomComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    LOG.log('############## bottom bar height: $kBottomNavigationBarHeight');
-
     return Expanded(
       child: Stack(
         fit: StackFit.expand,
         children: [
           // 방 렌더링
           RenderMyRoom(),
+          // 펫 렌더링
+          MyPet(newSrc: context.watch<MyRoomViewModel>().findPetName()),
           // 상단 상태바
           Positioned(
               left: 0,
@@ -59,11 +59,11 @@ class RenderMyRoom extends StatelessWidget {
     var roomState = context.watch<MyRoomViewModel>();
 
     // Naviator를 통해서 argument를 전달할 경우 받는 방법
-    try {
-      roomState.roomOwner = ModalRoute.of(context)!.settings.arguments as int;
-    } catch (e) {
-      print("[log/myroom]: $e");
-    }
+    // try {
+    //   roomState.roomOwner = ModalRoute.of(context)!.settings.arguments as int;
+    // } catch (e) {
+    //   print("[log/myroom]: $e");
+    // }
 
     // 1/3 step: 배경 지정
     return Stack(alignment: Alignment.center, children: [
@@ -78,7 +78,7 @@ class RenderMyRoom extends StatelessWidget {
         ),
         child: roomState.renderRoomObjects(context),
       ),
-      MyPet(newSrc: roomState.findPetName()),
+      
     ]);
 
     // 유저의 펫 정보 불러오기
