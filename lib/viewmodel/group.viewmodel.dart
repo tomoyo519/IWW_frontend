@@ -7,17 +7,18 @@ import 'package:iww_frontend/model/group/group.model.dart';
 import 'package:iww_frontend/model/group/groupDetail.model.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
+import 'package:iww_frontend/model/user/user.model.dart';
 
 // 그룹 리스트 화면의 상태를 관리
 class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
   final GroupRepository _groupRepository;
   // final UserInfo? _userInfo;
-
+  final int _user;
   MyGroupViewModel(
     this._groupRepository,
-    // this._userInfo,
+    this._user,
   ) {
-    fetchMyGroupList();
+    fetchMyGroupList(this._user);
   }
 
   // 폼 상태 관리
@@ -55,15 +56,9 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
     notifyListeners();
   }
 
-  Future<void> fetchMyGroupList() async {
-    // waiting = true;
-    // TODO - userId 변경하기
-    LOG.log('fetchMygroupList 실행');
+  Future<void> fetchMyGroupList(userId) async {
     try {
-      // int userId = _userInfo.user_id;
-      // TODO - userId 안들어옴;
-      List<Group>? data = await _groupRepository.getMyGroupList(1);
-      // 이름으로 정렬하여 넘겨봅시다
+      List<Group>? data = await _groupRepository.getMyGroupList(userId);
       data?.sort((a, b) => a.grpName.compareTo(b.grpName));
       groups = data ?? [];
 
@@ -72,17 +67,15 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
     } catch (err) {
       groups = [];
       LOG.log('error: $err');
-      // waiting = false–;
-      // notifyListeners();
     } finally {
       notifyListeners();
       waiting = false;
     }
   }
 
-  Future<bool?> createGroup() async {
+  Future<bool?> createGroup(userId) async {
     try {
-      groupData["user_id"] = 1;
+      groupData["user_id"] = userId;
       groupData["cat_id"] = groupData["cat_id"];
 
       Map<String, dynamic> json = {
@@ -136,9 +129,9 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
 
 class GroupDetailModel extends ChangeNotifier {
   final GroupRepository _groupRepository;
-
-  GroupDetailModel(this._groupRepository) {
-    fetchMyGroupList();
+  final int _userId;
+  GroupDetailModel(this._groupRepository, this._userId) {
+    fetchMyGroupList(_userId);
   }
 
   GroupDetail? groupDetail;
@@ -153,12 +146,12 @@ class GroupDetailModel extends ChangeNotifier {
     super.dispose();
   }
 
-  Future<void> fetchMyGroupList() async {
+  Future<void> fetchMyGroupList(userId) async {
     try {
       groupDetail =
-          (await _groupRepository.getGroupDetail(1) ?? []) as GroupDetail?;
-      routeDetail = (await _groupRepository.getRouteDetail(1) ?? []);
-      grpMems = (await _groupRepository.getMember(1) ?? []);
+          (await _groupRepository.getGroupDetail(userId) ?? []) as GroupDetail?;
+      routeDetail = (await _groupRepository.getRouteDetail(userId) ?? []);
+      grpMems = (await _groupRepository.getMember(userId) ?? []);
 
       waiting = false;
 
