@@ -9,7 +9,7 @@ class TodoListEmpty extends StatelessWidget {
   Widget build(BuildContext context) {
     Size screen = MediaQuery.of(context).size;
     return SizedBox(
-      width: screen.width * 0.5,
+      width: screen.width * 0.8,
       height: double.infinity,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -33,7 +33,7 @@ class TodoListEmpty extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Text("+를 탭하여 할 일을 추가하세요.")
+                Text("+를 탭하여 할 일을 추가해볼까요?")
               ],
             ),
           )

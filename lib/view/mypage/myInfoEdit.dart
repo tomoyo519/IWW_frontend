@@ -1,5 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:iww_frontend/datasource/remoteDataSource.dart';
+import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
+import 'package:provider/provider.dart';
+import 'package:iww_frontend/utils/logger.dart';
 
 class MyInfoEdit extends StatefulWidget {
   final String userName; // userName을 받아올 변수를 선언합니다.
@@ -25,7 +31,6 @@ class _MyInfoEditState extends State<MyInfoEdit> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     setState(() {
       myname = widget.userName;
@@ -34,6 +39,7 @@ class _MyInfoEditState extends State<MyInfoEdit> {
 
   @override
   Widget build(BuildContext context) {
+    final userInfo = context.read<UserInfo>();
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -46,7 +52,16 @@ class _MyInfoEditState extends State<MyInfoEdit> {
               "편집 완료",
               style: TextStyle(color: Colors.black), // 여기서 색상을 직접 지정
             ),
-            onPressed: () {},
+            onPressed: () {
+              final userInfo = context.read<UserInfo>();
+              var result = userInfo.reNameUser(myname, userInfo);
+              LOG.log('$result');
+              if (result == true) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: const Text("이름 변경이 완료 되었어요!")));
+                Navigator.pop(context);
+              }
+            },
           )
         ],
       ),

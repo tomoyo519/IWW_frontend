@@ -53,10 +53,7 @@ class ShopRepository {
     }
   };
 
-  Future<List<ShopInfo>> getPets() async {
-    int? userId = await _getUser();
-    // TODO - userId 어케써ㅜ
-    LOG.log('userId: ${userId}');
+  Future<List<ShopInfo>> getPets(userId) async {
     return await RemoteDataSource.get('/item-shop/${userId ?? 1}').then((res) {
       if (res.statusCode == 200) {
         var jsonData = jsonDecode(res.body);
@@ -75,10 +72,7 @@ class ShopRepository {
   }
 
 // background
-  Future<List<ShopInfo>> getFuns() async {
-    int? userId = await _getUser();
-    // TODO - userId 어케써ㅜ
-    LOG.log('userId: ${userId}');
+  Future<List<ShopInfo>> getFuns(userId) async {
     return await RemoteDataSource.get('/item-shop/${userId ?? 1}').then((res) {
       if (res.statusCode == 200) {
         var jsonData = jsonDecode(res.body);
@@ -99,10 +93,7 @@ class ShopRepository {
   }
 
 // motion
-  Future<List<ShopInfo>> getEmoj() async {
-    int? userId = await _getUser();
-    // TODO - userId 어케써ㅜ
-    LOG.log('userId: ${userId}');
+  Future<List<ShopInfo>> getEmoj(userId) async {
     return await RemoteDataSource.get('/item-shop/${userId ?? 1}').then((res) {
       if (res.statusCode == 200) {
         var jsonData = jsonDecode(res.body);
