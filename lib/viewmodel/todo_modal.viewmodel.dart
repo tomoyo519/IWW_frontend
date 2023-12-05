@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
+import 'package:iww_frontend/utils/categories.dart';
 import 'package:iww_frontend/utils/extension/string.ext.dart';
 import 'package:iww_frontend/utils/extension/timeofday.ext.dart';
 import 'package:iww_frontend/view/todo/modals/todo_create_modal.dart';
@@ -21,7 +22,7 @@ class TodoModalViewModel<T extends ChangeNotifier> extends ChangeNotifier {
     if (todo != null) {
       // 기존 투두를 수정하는 경우
       _todoName = todo!.todoName;
-      _todoLabel = todo!.todoLabel;
+      _todoCate = todo!.todoLabel;
       _todoDesc = todo!.todoDesc;
       _todoDone = todo!.todoDone;
 
@@ -33,7 +34,7 @@ class TodoModalViewModel<T extends ChangeNotifier> extends ChangeNotifier {
       _descControl.text = _todoDesc!;
     } else {
       // 새로운 투두를 생성하는 경우
-      _todoLabel = 0;
+      _todoCate = 0;
       _todoSrt = TimeOfDay.now();
       _todoDate = DateTime.now();
     }
@@ -56,7 +57,7 @@ class TodoModalViewModel<T extends ChangeNotifier> extends ChangeNotifier {
       'user_id': userId,
       "todo_name": _todoName,
       "todo_desc": _todoDesc,
-      "todo_label": _todoLabel,
+      "todo_label": _todoCate,
       "todo_done": _todoDone,
       "todo_start": _todoSrt.toDataString(),
       "todo_end": _todoEnd.toDataString(),
@@ -87,16 +88,16 @@ class TodoModalViewModel<T extends ChangeNotifier> extends ChangeNotifier {
     notifyListeners();
   }
 
-  // 3. 할일 라벨
-  int? _todoLabel;
-  int? get label => _todoLabel;
-  set label(int? val) {
-    _todoLabel = val;
+  // 3. 할일 카테고리
+  int? _todoCate;
+  int? get cate => _todoCate;
+  set cate(int? val) {
+    _todoCate = val;
     notifyListeners();
   }
 
-  String get labelStr {
-    return (_todoLabel != null) ? LABELS[_todoLabel!] : LABELS[0];
+  String get catName {
+    return (_todoCate != null) ? cats[_todoCate!].name : cats[0].name;
   }
 
   // 4. 할일 완료여부
@@ -129,7 +130,7 @@ class TodoModalViewModel<T extends ChangeNotifier> extends ChangeNotifier {
 
   // * === check all fields exist === * //
   bool get isValid {
-    return (_todoName != null && _todoName!.isNotEmpty) && (_todoLabel != null);
+    return (_todoName != null && _todoName!.isNotEmpty) && (_todoCate != null);
   }
 
   // * === text controllers === * //
@@ -160,33 +161,8 @@ class TodoModalViewModel<T extends ChangeNotifier> extends ChangeNotifier {
     ),
   ];
 
-  final List<String> LABELS = [
-    "전체",
-    "공부",
-    "운동",
-    "코딩",
-    "게임",
-    "명상",
-    "모임",
-    "학업",
-    "자유시간",
-    "자기관리",
-    "독서",
-    "여행",
-    "유튜브",
-    "약속",
-    "산책",
-    "집안일",
-    "취미",
-    "기타",
-  ];
-
-  static final List<String> _routines = [
-    '매일',
-    '평일',
-    '주말',
-    '매주',
-  ];
+  // * ==== common ==== * //
+  List<Category> cats = Categories.categories;
 }
 
 class ButtonFieldData {

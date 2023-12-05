@@ -201,7 +201,7 @@ class TodoCreateModal<T extends ChangeNotifier> extends StatelessWidget {
     final viewmodel = context.read<TodoModalViewModel<T>>();
     switch (idx) {
       case 0:
-        return viewmodel.labelStr;
+        return viewmodel.catName;
       case 1:
         TimeOfDay currtime = viewmodel.todoSrt ?? TimeOfDay.now();
         return currtime.toViewString();
@@ -254,7 +254,7 @@ class _LabelPicker<T extends ChangeNotifier> extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewmodel = context.read<TodoModalViewModel<T>>();
     final screen = MediaQuery.of(context).size;
-    final currLabel = viewmodel.label;
+    final currLabel = viewmodel.cate;
 
     return SizedBox(
       width: double.infinity,
@@ -263,7 +263,7 @@ class _LabelPicker<T extends ChangeNotifier> extends StatelessWidget {
         scrollDirection: Axis.vertical,
         child: Wrap(
           children: [
-            for (int idx = 0; idx < viewmodel.LABELS.length; idx++)
+            for (int idx = 0; idx < viewmodel.cats.length; idx++)
               Padding(
                 padding: const EdgeInsets.only(right: 10),
                 child: TextButton(
@@ -281,13 +281,13 @@ class _LabelPicker<T extends ChangeNotifier> extends StatelessWidget {
                     ),
                   ),
                   // * ====== 클릭하면 상태변경
-                  onPressed: () => viewmodel.label = idx,
+                  onPressed: () => viewmodel.cate = idx,
                   child: Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: 10,
                     ),
                     child: Text(
-                      viewmodel.LABELS[idx],
+                      viewmodel.cats[idx].name,
                       style: TextStyle(
                         // * ====== 선택된 라벨의 색 설정
                         color:

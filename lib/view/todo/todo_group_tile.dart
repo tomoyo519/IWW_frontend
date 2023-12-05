@@ -9,6 +9,12 @@ import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:provider/provider.dart';
 
+enum GroupTodoState {
+  approved,
+  done,
+  undone,
+}
+
 class GroupTodoTile extends StatefulWidget {
   final Todo todo;
   final TodoViewModel viewModel;
@@ -32,23 +38,22 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
 
   final _picker = ImagePicker();
   final scroll = ScrollController();
-  // final _formKey = GlobalKey<FormState>();
 
-  int todoState = 0;
+  late GroupTodoState todoState;
 
   @override
   void initState() {
     super.initState();
-    // 그룹 투두의 상태를 초기화합니다
-    if (!widget.todo.todoDone) {
-      // State is undone.
-      todoState = 0;
-    } else if (widget.todo.todoImg == null) {
-      // State is pending.
-      todoState = 1;
+    // 그룹 투두의 상태 초기화
+    if (widget.todo.todoDone) {
+      // 1. 다른 사용자에 의해 승인되었습니다.
+      todoState = GroupTodoState.approved;
+    } else if (widget.todo.todoImg != null) {
+      // 2. 인증 사진이 첨부되어 승인 대기중입니다.
+      todoState = GroupTodoState.done;
     } else {
-      // State is done.
-      todoState = 2;
+      // 3. 아직 인증이 완료되지 않았습니다.
+      todoState = GroupTodoState.undone;
     }
   }
 
@@ -61,9 +66,6 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
         vertical: 10,
       ),
       decoration: BoxDecoration(
-        // boxShadow: BoxShadow(
-
-        // ),
         borderRadius: BorderRadius.circular(10),
         color: Colors.orange.shade100,
         // gradient: LinearGradient(
@@ -83,10 +85,12 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                 widget.todo.todoName,
                 style: TextStyle(
                   fontSize: 16,
-                  decoration: todoState == 2
+                  decoration: todoState == GroupTodoState.approved
                       ? TextDecoration.lineThrough // 완료된 경우
                       : TextDecoration.none, // 아직 미완
-                  color: todoState == 0 ? Colors.black87 : Colors.black45,
+                  color: todoState == GroupTodoState.approved
+                      ? Colors.black87
+                      : Colors.black45,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -123,10 +127,7 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
             ),
 
             // * ===== 버튼 클릭시 투두 체크 ===== * //
-            onPressed: () => _onGrpTodoCheck(
-              context,
-              widget.todo,
-            ),
+            onPressed: () => _onGrpTodoCheck(context, widget.todo),
             child: Ink(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -144,9 +145,9 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                 alignment: Alignment.center,
                 child: Text(
                   // * ==== 투두 상태 ==== * //
-                  todoState == 0
+                  todoState == GroupTodoState.undone
                       ? "인증하기"
-                      : todoState == 1
+                      : todoState == GroupTodoState.done
                           ? "인증 대기중"
                           : "✔ 인증 완료",
                   style: TextStyle(
@@ -169,47 +170,44 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
   // *                            * //
   // ****************************** //
 
-  Future<void> _onGrpTodoCheck(
-    BuildContext context,
-    Todo todo,
-  ) async {
-    // 이미 체크 완료 되어있는 todo 의 체크를 해제하는 경우.
-    if (todo.todoDone && todo.grpId != null) {
-      if (mounted) {
-        showCustomAlertDialog(
-          context: context,
-          content: Text("완료처리가 되어있는 할일이에요.\n할일 체크를 해제하시겠어요?"),
-          actions: [
-            Row(
-              children: [
-                TextButton(
-                  child: Text('할일 체크를 해제할래요.'),
-                  onPressed: () async {
-                    final viewModel = context.read<TodoViewModel>();
-                    final result = await viewModel.checkTodo(
-                        widget.todo.todoId, false,
-                        userId: widget.todo.userId, path: "");
-                    if (context.mounted) {
-                      Navigator.pop(context);
-                      if (result == true) {
-                        // _handleTodoCashReward(
-                        //     context: context, value: false);
-                      }
-                    }
-                  },
-                ),
-                TextButton(
-                  child: Text('취소'),
-                  onPressed: () async {
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-            )
-          ],
-        );
-      }
-    }
+  Future<void> _onGrpTodoCheck(BuildContext context, Todo todo) async {
+    // // 이미 체크 완료 되어있는 todo 의 체크를 해제하는 경우.
+    // if (todo.todoDone && todo.grpId != null) {
+    //   if (mounted) {
+    //     showCustomAlertDialog(
+    //       context: context,
+    //       content: Text("완료처리가 되어있는 할일이에요.\n할일 체크를 해제하시겠어요?"),
+    //       actions: [
+    //         Row(
+    //           children: [
+    //             TextButton(
+    //               child: Text('할일 체크를 해제할래요.'),
+    //               onPressed: () async {
+    //                 final viewModel = context.read<TodoViewModel>();
+    //                 final result = await viewModel.checkGroupTodo(
+    //                     widget.todo.todoId, false,
+    //                     userId: widget.todo.userId, path: "");
+    //                 if (context.mounted) {
+    //                   Navigator.pop(context);
+    //                   if (result == true) {
+    //                     // _handleTodoCashReward(
+    //                     //     context: context, value: false);
+    //                   }
+    //                 }
+    //               },
+    //             ),
+    //             TextButton(
+    //               child: Text('취소'),
+    //               onPressed: () async {
+    //                 Navigator.pop(context);
+    //               },
+    //             ),
+    //           ],
+    //         )
+    //       ],
+    //     );
+    //   }
+    // }
 
     // 체크가 되어있지 않은 todo를 사진전송 하고 완료 처리 하는 경우,
     final pickedFile = await _picker
@@ -220,7 +218,6 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
       return null;
     });
 
-    LOG.log(pickedFile.toString());
     if (pickedFile != null) {
       setState(() {
         _imageFile = File(pickedFile.path);
@@ -245,14 +242,12 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                   onPressed: () async {
                     // * ==== 버튼 눌렀을때의 로직 ==== * //
                     final viewModel = context.read<TodoViewModel>();
-                    final result = await viewModel.checkTodo(
-                      widget.todo.todoId,
-                      true,
-                      userId: widget.todo.userId,
-                      path: pickedFile.path,
-                    );
+                    final result = await viewModel.checkGroupTodo(
+                        widget.todo.todoId,
+                        widget.todo.userId,
+                        pickedFile.path);
 
-                    LOG.log("사진인증 ${result}");
+                    LOG.log("사진인증 $result");
                     // if (result != null && context.mounted) {
                     //   _handleTodoCashReward(context: context, value: true);
                     //   var data = {

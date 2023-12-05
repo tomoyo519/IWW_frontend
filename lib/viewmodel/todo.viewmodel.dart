@@ -12,10 +12,10 @@ import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
 // 전체 투두리스트 상태를 관리
 class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   final int _userId;
-  final TodoRepository _todoRepository;
+  final TodoRepository _repository;
 
   // 생성자
-  TodoViewModel(this._todoRepository, this._userId) {
+  TodoViewModel(this._repository, this._userId) {
     fetchTodos();
   }
 
@@ -68,7 +68,7 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
     waiting = true;
 
     // 상태 업데이트
-    var data = await _todoRepository.getTodos(_userId);
+    var data = await _repository.getTodos(_userId);
 
     // 분리해서 가져오기
     _todos = data;
@@ -85,7 +85,7 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
 
   @override
   Future<bool> createTodo(Map<String, dynamic> data) async {
-    Todo? todo = await _todoRepository.createTodo(data);
+    Todo? todo = await _repository.createTodo(data);
     bool result = false;
 
     if (todo != null) {
@@ -112,7 +112,7 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
     _todos = _todos.where((todo) => todo.todoId != delTodo.todoId).toList();
     waiting = false; // 상태부터 변경합니다
 
-    return await _todoRepository
+    return await _repository
         .deleteTodo(delTodo.todoId.toString())
         .then((value) {
       if (value == true) {
@@ -149,23 +149,17 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   // 개인 투두에 대한 완료 처리
   Future<TodoCheckDto?> checkNormalTodo(int todoId, bool value) async {
     String todoIdStr = todoId.toString();
-    return await _todoRepository.checkNormalTodo(todoIdStr, value);
+    return await _repository.checkNormalTodo(todoIdStr, value);
   }
 
-  Future<bool?> checkTodo(
-    int todoId,
-    bool value, {
-    int? userId,
-    String? path,
-  }) async {
-    return await _todoRepository.checkGroupTodo(
-        userId.toString(), todoId.toString(), value, path!);
+  Future<bool?> checkGroupTodo(int todoId, int userId, String path) async {
+    return await _repository.checkGroupTodo(userId, todoId, path);
   }
 
   @override
   Future<bool> updateTodo(String userId, Map<String, dynamic> data) async {
     int todoId = data['todo_id'];
-    Todo? updated = await _todoRepository.updateTodo(userId, data);
+    Todo? updated = await _repository.updateTodo(userId, data);
     if (updated != null) {
       int idx = _todos.indexWhere((t) => t.todoId == todoId);
       LOG.log(jsonEncode(data));

@@ -9,7 +9,7 @@ import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
-import 'package:iww_frontend/utils/reward_service.dart';
+import 'package:iww_frontend/service/reward.service.dart';
 
 class UserInfo extends ChangeNotifier {
   final UserModel _user;
