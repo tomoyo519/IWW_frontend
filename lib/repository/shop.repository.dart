@@ -112,8 +112,7 @@ class ShopRepository {
     // return Future.value(dummy["result"]?["pet"] ?? []);
   }
 
-  Future<bool> purchaseItem(itemId) async {
-    int? userId = await _getUser();
+  Future<bool> purchaseItem(itemId, userId) async {
     var json = jsonEncode({"user_id": userId ?? 1, "item_id": itemId});
     return await RemoteDataSource.post('/item-shop/${userId ?? 1}/${itemId}',
             body: json)
