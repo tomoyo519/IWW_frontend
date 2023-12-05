@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
-import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/home/home_profile.dart';
-import 'package:iww_frontend/view/modals/custom_snackbar.dart';
 import 'package:iww_frontend/view/todo/todo_editor.dart';
 import 'package:iww_frontend/view/todo/todo_list.dart';
 import 'package:iww_frontend/view/todo/todo_progress.dart';
@@ -94,10 +92,13 @@ class MyTodo extends StatelessWidget {
     );
   }
 
+  // TextEditingController _controller =
   // 클릭하면 할일 추가 모달 띄우기
   Future<void> _showTodoEditor(BuildContext context) async {
-    final userInfo = Provider.of<UserInfo>(context, listen: false);
+    final userInfo = context.read<UserInfo>();
     final todoviewmodel = context.read<TodoViewModel>();
+    TextEditingController controller = TextEditingController();
+    FocusNode focusNode = FocusNode();
 
     return showModalBottomSheet(
       context: context,
@@ -111,12 +112,13 @@ class MyTodo extends StatelessWidget {
           child: EditorModal(
             init: null,
             title: "할일 추가",
-            formKey: _formKey,
             onSave: (context) async {
               Navigator.pop(context);
               await _createTodo(context);
             },
             onCancel: (context) => Navigator.pop(context),
+            focusNode: focusNode,
+            controller: controller,
           ),
         );
       },

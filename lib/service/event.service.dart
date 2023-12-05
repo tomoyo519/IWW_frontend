@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/modals/login_achieve_modal.dart';
+import 'package:iww_frontend/view/modals/pet_evolve_modal.dart';
 import 'package:iww_frontend/view/modals/todo_first_done.dart';
 import 'package:iww_frontend/view/modals/custom_snackbar.dart';
 import 'package:lottie/lottie.dart';
@@ -26,6 +27,7 @@ enum EventType {
   show_todo_snackbar,
   show_first_todo_modal,
   show_login_achieve,
+  show_pet_evolve,
 }
 
 extension EventTypeExtension on EventType {
@@ -42,7 +44,10 @@ extension EventTypeExtension on EventType {
         );
         break;
       case EventType.show_login_achieve:
-        showLoginAchieveModal(context);
+        showLoginAchieveModal(context, message!);
+        break;
+      case EventType.show_pet_evolve:
+        showPetEvolveModal(context);
         break;
       default:
         break;
@@ -63,8 +68,8 @@ class EventService {
 
   EventService.initialize() {
     print(_userId);
-    socket =
-        IO.io('${Secrets.REMOTE_SERVER_URL}?user_id=$_userId', <String, dynamic>{
+    socket = IO
+        .io('${Secrets.REMOTE_SERVER_URL}?user_id=$_userId', <String, dynamic>{
       'transports': ['websocket'],
       'query': {'user_id': _userId.toString()},
     });

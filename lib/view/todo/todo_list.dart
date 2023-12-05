@@ -1,11 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/model/todo/todo_update.dto.dart';
-import 'package:iww_frontend/model/user/user.model.dart';
-import 'package:iww_frontend/repository/todo.repository.dart';
-import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_common/spinner.dart';
 import 'package:iww_frontend/view/todo/todo_empty.dart';
@@ -110,12 +106,18 @@ class ToDoList extends StatelessWidget {
     int userId = usermodel.userId;
 
     todomodel.checkTodoState(todo, value, userId, null);
-    usermodel.setStateFromTodo(value, false, todomodel.check);
+    usermodel.setStateFromTodo(value, false, todomodel.todayDone);
 
     // * ===== ! UI UPDATED ! ===== * //
 
     // 리워드 계산
     TodoCheckDto? result = await todomodel.checkNormalTodo(todo.todoId, value);
+    if (result != null) {
+      // 상태 셋
+      usermodel.userCash = result.userCash;
+      usermodel.itemId = result.itemId ?? usermodel.itemId;
+      usermodel.petExp = result.petExp ?? usermodel.petExp;
+    }
 
     // expect data와 현재 상태를 비교하고 필요시 새로 fetch합니다.
     if (result == null || // 응답이 없음
@@ -126,8 +128,8 @@ class ToDoList extends StatelessWidget {
       LOG.log("Expected {done: $value, cash: ${usermodel.userCash}}");
       LOG.log("Current {done: ${result!.todoDone}, cash: ${result.userCash}}");
 
-      usermodel.fetchUser();
-      todomodel.fetchTodos();
+      await usermodel.fetchUser();
+      await todomodel.fetchTodos();
       usermodel.waiting = false;
     }
   }
@@ -206,7 +208,6 @@ class ToDoList extends StatelessWidget {
           child: EditorModal(
             init: todo,
             title: "할일 수정",
-            formKey: _formKey,
             onSave: (context) => _updateTodo(context),
             onCancel: (context) => Navigator.pop(context),
           ),

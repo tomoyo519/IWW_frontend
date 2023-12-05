@@ -66,7 +66,7 @@ class AuthService extends ChangeNotifier {
   Future<void> signup(String name, String tel, String petName) async {
     waiting = true;
 
-    SignUpResult? result =
+    GetUserResult? result =
         await userRepository.createUser(name, tel, _kakaoId!, petName);
 
     if (result == null) {
@@ -131,7 +131,7 @@ class AuthService extends ChangeNotifier {
   //** Test Login **//
   Future<void> testLogin() async {
     _user = UserModel(
-      user_id: 29,
+      user_id: 1,
       user_name: "이소정",
       user_tel: "01071632489",
       user_kakao_id: "3164637603",
@@ -152,7 +152,7 @@ class AuthService extends ChangeNotifier {
     EventService.setUserId(29);
     EventService.initialize();
 
-    await _initialize();
+    // await _initialize();
     status = AuthStatus.initialized;
     waiting = false;
   }

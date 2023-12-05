@@ -3,15 +3,19 @@ import 'package:iww_frontend/view/modals/custom_fullscreen_modal.dart';
 import 'package:lottie/lottie.dart';
 
 // static method
-Future<void> showLoginAchieveModal(BuildContext context) {
+Future<void> showLoginAchieveModal(BuildContext context, String message) {
   return showCustomFullScreenModal(
     context,
-    LoginAchieveModal(),
+    LoginAchieveModal(message: message),
   );
 }
 
 class LoginAchieveModal extends StatelessWidget {
-  const LoginAchieveModal({super.key});
+  final String message;
+  const LoginAchieveModal({
+    super.key,
+    required this.message,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +29,7 @@ class LoginAchieveModal extends StatelessWidget {
             child: Lottie.asset("assets/star.json", animate: true),
           ),
           Text(
-            "로그인 100회 달성!",
+            message,
             style: TextStyle(
                 color: Colors.orange,
                 fontSize: 19,

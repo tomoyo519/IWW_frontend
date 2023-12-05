@@ -102,7 +102,6 @@ class _NewGroupState extends State<NewGroup> {
           child: EditorModal(
             init: todo,
             title: "루틴 추가",
-            formKey: _formKey,
             onSave: (context) => _onSave(context),
             onCancel: (context) => Navigator.pop(context),
           ),

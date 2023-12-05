@@ -5,6 +5,9 @@ class MyTextField extends StatelessWidget {
   final String? label;
   final EdgeInsets? padding;
   final TextAlign? textAlign;
+  final bool? autofocus;
+  final FocusNode? focusNode;
+  final TextEditingController? controller;
 
   const MyTextField({
     super.key,
@@ -12,6 +15,9 @@ class MyTextField extends StatelessWidget {
     this.label,
     this.padding,
     this.textAlign,
+    this.autofocus,
+    this.focusNode,
+    this.controller,
   });
 
   @override
@@ -28,20 +34,25 @@ class MyTextField extends StatelessWidget {
 
     return TextField(
       textAlign: textAlign ?? TextAlign.start,
+      // 텍스트 스타일
+      style: TextStyle(
+        fontSize: 16,
+      ),
+      // 박스 데코레이션
       decoration: InputDecoration(
-        contentPadding: padding,
+        filled: true,
+        fillColor: fillColor,
+        focusColor: fillColor,
         hintText: label ?? '',
         border: defaultBorder,
         enabledBorder: defaultBorder,
         focusedBorder: defaultBorder,
-        focusColor: fillColor,
-        fillColor: fillColor,
-        filled: true,
-      ),
-      style: TextStyle(
-        fontSize: 16,
+        contentPadding: padding,
       ),
       onChanged: onchange,
+      controller: controller,
+      focusNode: focusNode,
+      autofocus: autofocus ?? false,
     );
   }
 }

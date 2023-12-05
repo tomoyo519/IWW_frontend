@@ -1,18 +1,91 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/auth/auth_status.dart';
+import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/providers.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
+import 'package:iww_frontend/style/button.dart';
+import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/view/_common/bottom_sheet_header.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/view/_common/loading.dart';
 import 'package:iww_frontend/view/_navigation/main_page.dart';
 import 'package:iww_frontend/view/signup/landing.dart';
+import 'package:iww_frontend/view/todo/modals/todo_create_modal.dart';
+import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/todo_modal.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_template.dart';
 
+class MyTestPage extends StatelessWidget {
+  const MyTestPage({super.key});
+
+  ///** 투두 생성 모달을 보여주는 메소드
+  /// BaseTodoViewModel을 구현하는 클래스가
+  /// context 안에 존재하는 경우 사용 가능
+  /// */
+  void showTodoCreateModal(BuildContext context) {
+    FocusNode focusNode = FocusNode();
+    TextEditingController controller = TextEditingController();
+    TodoModalViewModel viewmodel = TodoModalViewModel(todo: null);
+
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (c) {
+        double keyboardHeight = MediaQuery.of(c).viewInsets.bottom;
+
+        return ChangeNotifierProvider<TodoModalViewModel>(
+          create: (_) => TodoModalViewModel(),
+          child: TodoCreateModal(
+            controller: controller,
+            focusNode: focusNode,
+            keyboardHeight: keyboardHeight,
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text("버튼을 눌러보세요"),
+            MyButton(
+              text: "push!",
+              onpressed: (_) => showTodoCreateModal(context),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 void main() async {
+  // runApp(
+  //   /// 화면 테스트용
+  //   MaterialApp(
+  //     debugShowCheckedModeBanner: false,
+  //     theme: ThemeData(
+  //       useMaterial3: true,
+  //       fontFamily: 'Pretendard',
+  //     ),
+  //     home: MyTestPage(),
+  //   ),
+  // );
+
   // 웹 환경에서 카카오 로그인을 정상적으로 완료하려면 runApp() 호출 전 아래 메서드 호출 필요
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -43,8 +116,7 @@ void main() async {
 
   // 3. 테스트유저 접속
   // authService.testLogin();
-
-  // authService.status = AuthStatus.permission;
+  // authService.status = AuthStatus.initialized;
   // authService.waiting = false;
 
   runApp(

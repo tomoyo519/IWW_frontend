@@ -2,24 +2,6 @@ import "dart:convert";
 import "package:http/http.dart" as http;
 import "package:intl/intl.dart";
 
-// TodoNameField(),
-// Padding(
-//   padding: EdgeInsets.symmetric(
-//     // horizontal: 10,
-//     vertical: 15,
-//   ),
-//   child: Column(
-//     children: [
-//       // 할일 상세내용 입력 필드
-//       TodoDateField(),
-//       TodoLabelField(),
-//       TodoTimeField(),
-//       TodoRoutineField(),
-//       TodoDescField(),
-//     ],
-//   ),
-// ),
-
 class Todo {
   int todoId;
   int userId;
