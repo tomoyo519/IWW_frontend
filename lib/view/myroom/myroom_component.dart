@@ -38,7 +38,7 @@ class MyRoomComponent extends StatelessWidget {
             left: 0,
             right: 0,
             bottom: kBottomNavigationBarHeight +
-                MediaQuery.of(context).size.height * 0.12,
+                MediaQuery.of(context).size.height * 0.14,
             height: 50,
             child: BottomButtons(),
           ),
@@ -78,10 +78,7 @@ class RenderMyRoom extends StatelessWidget {
         ),
         child: roomState.renderRoomObjects(context),
       ),
-      SizedBox(
-        height: MediaQuery.of(context).size.height,
-        child: MyPet(newSrc: roomState.findPetName()),
-      ),
+      MyPet(newSrc: roomState.findPetName()),
     ]);
 
     // 유저의 펫 정보 불러오기
@@ -153,6 +150,8 @@ class _StatusBarState extends State<StatusBar> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    var userInfo = context.watch<UserInfo>();
+
     return Container(
       padding: const EdgeInsets.all(30.0),
       child: Container(
@@ -173,7 +172,7 @@ class _StatusBarState extends State<StatusBar> with TickerProviderStateMixin {
                   child: Text(
                     'HP',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 16,
                       color: Colors.white,
                     ),
                     textAlign: TextAlign.left,
@@ -183,7 +182,7 @@ class _StatusBarState extends State<StatusBar> with TickerProviderStateMixin {
                 Flexible(
                   flex: 8,
                   child: LinearProgressIndicator(
-                    value: _hp,
+                    value: userInfo.userHp / 100,
                     minHeight: 14,
                     valueColor: AlwaysStoppedAnimation<Color>(
                         const Color.fromARGB(255, 239, 118, 110)),
@@ -201,7 +200,7 @@ class _StatusBarState extends State<StatusBar> with TickerProviderStateMixin {
                   child: Text(
                     'EXP',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 16,
                       color: Colors.white,
                     ),
                     textAlign: TextAlign.left,
@@ -211,7 +210,7 @@ class _StatusBarState extends State<StatusBar> with TickerProviderStateMixin {
                 Flexible(
                   flex: 6,
                   child: LinearProgressIndicator(
-                    value: _exp,
+                    value: userInfo.petExp / 100,
                     minHeight: 14,
                     valueColor: AlwaysStoppedAnimation<Color>(
                         Color.fromARGB(255, 155, 239, 110)),

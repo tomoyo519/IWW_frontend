@@ -6,11 +6,9 @@ import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/datasource/localStorage.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
-import 'package:iww_frontend/main.dart';
 import 'package:iww_frontend/model/auth/auth_status.dart';
 import 'package:iww_frontend/model/auth/login_result.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
-import 'package:iww_frontend/model/todo/todo_today_count.dart';
 import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
@@ -66,7 +64,7 @@ class AuthService extends ChangeNotifier {
   Future<void> signup(String name, String tel, String petName) async {
     waiting = true;
 
-    SignUpResult? result =
+    GetUserResult? result =
         await userRepository.createUser(name, tel, _kakaoId!, petName);
 
     if (result == null) {
@@ -131,7 +129,7 @@ class AuthService extends ChangeNotifier {
   //** Test Login **//
   Future<void> testLogin() async {
     _user = UserModel(
-      user_id: 29,
+      user_id: 1,
       user_name: "이소정",
       user_tel: "01071632489",
       user_kakao_id: "3164637603",
@@ -152,7 +150,7 @@ class AuthService extends ChangeNotifier {
     EventService.setUserId(29);
     EventService.initialize();
 
-    await _initialize();
+    // await _initialize();
     status = AuthStatus.initialized;
     waiting = false;
   }
@@ -173,14 +171,20 @@ class AuthService extends ChangeNotifier {
 
     RemoteDataSource.setAuthHeader("Bearer $token");
 
+    // LOG.log(
+    //     '[Header]: ${RemoteDataSource.baseHeaders['Authorization']?.substring(0, 30)}..');
+
     var response = await RemoteDataSource.get('/user');
     if (response.statusCode == 200) {
+      // 유저 정보 초기화
       var jsonBody = jsonDecode(response.body);
       _user = UserModel.fromJson(jsonBody['result']['user']);
       _mainPet = Item.fromJson(jsonBody['result']['user_pet']);
 
+      // 이벤트 서비스 초기화
       EventService.setUserId(_user!.user_id);
       EventService.initialize();
+
       status = AuthStatus.initialized;
     } else {
       // Unauthorized
@@ -197,16 +201,17 @@ class AuthService extends ChangeNotifier {
   /// */
   Future<void> _kakaoLogin({bool? prompt}) async {
     List<Prompt> prompts = prompt == true ? [Prompt.login] : [];
-    await AuthCodeClient.instance
-        .authorize(
-      clientId: Secrets.KAKAO_REST_API_KEY,
-      prompts: prompts,
-      redirectUri: '${Secrets.REMOTE_SERVER_URL}/auth',
-    )
-        .onError((error, stackTrace) {
+    try {
+      await AuthCodeClient.instance.authorize(
+        clientId: Secrets.KAKAO_REST_API_KEY,
+        prompts: prompts,
+        redirectUri: '${Secrets.REMOTE_SERVER_URL}/auth',
+      );
+    } catch (error) {
+      LOG.log('Auth error $error');
       status = AuthStatus.failed;
-      return 'error';
-    });
+      return;
+    }
   }
 
   // 서비스 서버로부터 응답을 받아 인증 정보를 처리합니다.

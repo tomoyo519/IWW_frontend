@@ -5,14 +5,14 @@ import 'package:provider/provider.dart';
 
 // 할일 제목 필드
 class TodoNameField extends StatelessWidget {
-  const TodoNameField({
-    super.key,
-    // required this.todo,
-    // required this.viewModel,
-  });
+  TextEditingController? controller;
+  FocusNode? focusNode;
 
-  // final Todo todo;
-  // final TodoEditorViewModel viewModel;
+  TodoNameField({
+    super.key,
+    this.controller,
+    this.focusNode,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,12 +39,16 @@ class TodoNameField extends StatelessWidget {
             vertical: 5,
             horizontal: 15,
           )),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return '수정할 할일 제목을 입력해 주세요!';
-        }
-        return null;
-      },
+      // autofocus: true,
+      // focusNode: focusNode,
+      // controller: controller,
+      // focusNode: ,
+      // validator: (value) {
+      //   if (value == null || value.isEmpty) {
+      //     return '수정할 할일 제목을 입력해 주세요!';
+      //   }
+      //   return null;
+      // },
     );
   }
 }

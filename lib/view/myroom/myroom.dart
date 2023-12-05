@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/comment.repository.dart';
 import 'package:iww_frontend/repository/room.repository.dart';
 import 'package:iww_frontend/service/auth.service.dart';
+import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -19,6 +20,8 @@ class MyRoom extends StatelessWidget {
     final roomRepository = Provider.of<RoomRepository>(context, listen: false);
     final commentRepository =
         Provider.of<CommentRepository>(context, listen: false);
+    final nav = context.read<AppNavigator>();
+    int roomOwner = nav.arg != null ? int.parse(nav.arg!) : userId;
 
     return MultiProvider(providers: [
       ChangeNotifierProvider<CommentsProvider>(
@@ -28,7 +31,7 @@ class MyRoom extends StatelessWidget {
                 commentRepository,
               )),
       ChangeNotifierProvider<MyRoomViewModel>(
-          create: (_) => MyRoomViewModel(userId, roomRepository)),
+          create: (_) => MyRoomViewModel(userId, roomRepository, roomOwner)),
       ChangeNotifierProvider(create: (_) => MyRoomState()),
     ], child: MyRoomPage());
   }

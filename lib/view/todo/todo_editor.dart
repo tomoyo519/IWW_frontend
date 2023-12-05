@@ -13,29 +13,32 @@ import 'package:iww_frontend/view/todo/fields/time.dart';
 class EditorModal extends StatelessWidget {
   final String title;
   final Todo? init;
-  final GlobalKey<FormState> formKey;
   final Function(BuildContext) onSave;
   final Function(BuildContext) onCancel;
+  TextEditingController? controller;
+  FocusNode? focusNode;
 
-  const EditorModal({
+  EditorModal({
     Key? key,
     required this.init,
     required this.title,
-    required this.formKey,
     required this.onSave,
     required this.onCancel,
+    this.controller,
+    this.focusNode,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     // 키보드에 따른 높이 조정 키보드가 열려 있는지 확인
     final bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom != 0;
-    final screenHeight = MediaQuery.of(context).size.height;
+
     return SafeArea(
       child: FractionallySizedBox(
         heightFactor: isKeyboardOpen ? 1 : 0.6,
         child: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
+          // onTap: () => FocusScope.of(context).unfocus(),
+          onTap: () => (),
           child: Column(
             children: [
               BottomSheetModalHeader(
@@ -54,37 +57,37 @@ class EditorModal extends StatelessWidget {
                         horizontal: 10,
                         vertical: 10,
                       ),
-                      child: Form(
-                        key: formKey,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          // 할일 제목 입력 필드
-                          children: [
-                            TodoNameField(),
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                // horizontal: 10,
-                                vertical: 15,
-                              ),
-                              child: Column(
-                                children: [
-                                  // 할일 상세내용 입력 필드
-                                  TodoDateField(),
-                                  if (title != "루틴 추가") TodoLabelField(),
-                                  TodoTimeField(),
-                                  TodoRoutineField(),
-                                  TodoDescField(),
-                                ],
-                              ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        // 할일 제목 입력 필드
+                        children: [
+                          TodoNameField(
+                            focusNode: focusNode,
+                            controller: controller,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              // horizontal: 10,
+                              vertical: 15,
                             ),
-                          ],
-                        ),
+                            child: Column(
+                              children: [
+                                // 할일 상세내용 입력 필드
+                                // TodoDateField(),
+                                if (title != "루틴 추가") TodoLabelField(),
+                                TodoTimeField(),
+                                TodoRoutineField(),
+                                TodoDescField(),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),

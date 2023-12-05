@@ -1,7 +1,6 @@
 // 투두 에디팅 화면의 상태를 관리
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
-import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 
@@ -17,7 +16,7 @@ class EditorModalViewModel extends ChangeNotifier {
   }) : _todoData = of?.toMap() ?? <String, dynamic>{};
 
   // 폼 상태 관리
-  Map<String, dynamic> _todoData;
+  final Map<String, dynamic> _todoData;
   Map<String, dynamic> get todoData => _todoData;
 
   // Start Time
@@ -60,6 +59,26 @@ class EditorModalViewModel extends ChangeNotifier {
     _todoRoutine = val;
     notifyListeners();
   }
+
+  // ****************************** //
+  // *        Validate Data       * //
+  // ****************************** //
+
+  // 'todo_id': todoId,
+  //     'user_id': userId,
+  //     'todo_name': todoName, //
+  //     'todo_desc': todoDesc, //
+  //     'todo_label': todoLabel, //
+  //     'todo_date': todoDate, //
+  //     'todo_done': todoDone, //
+  //     'todo_start': todoStart,
+  //     'todo_end': todoEnd,
+  //     'todo_img': todoImg,
+  //     'grp_id': grpId,
+  //     'todo_deleted': todoDeleted,
+  // bool validate() {
+  // return _todoData['todo_name']
+  // }
 
   // ****************************** //
   // *        Create Data         * //

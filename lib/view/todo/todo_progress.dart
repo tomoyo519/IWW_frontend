@@ -45,7 +45,7 @@ class TodoProgress extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                "${viewmodel.check}/${viewmodel.total}",
+                "${viewmodel.todayDone}/${viewmodel.todayTotal}",
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
               ),
               SizedBox(
@@ -62,9 +62,9 @@ class TodoProgress extends StatelessWidget {
           ),
           Row(
             children: [
-              viewmodel.total != 0
+              viewmodel.todayTotal != 0
                   ? Expanded(
-                      flex: viewmodel.check,
+                      flex: viewmodel.todayDone,
                       child: SizedBox(
                         height: 5,
                         child: DecoratedBox(
@@ -75,7 +75,7 @@ class TodoProgress extends StatelessWidget {
                     )
                   : SizedBox.shrink(),
               Expanded(
-                flex: (viewmodel.check + viewmodel.total),
+                flex: (viewmodel.todayDone + viewmodel.todayTotal),
                 child: SizedBox(
                   height: 5,
                   child: DecoratedBox(

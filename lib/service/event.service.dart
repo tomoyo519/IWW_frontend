@@ -7,6 +7,7 @@ import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/_navigation/enum/app_route.dart';
 import 'package:iww_frontend/view/modals/login_achieve_modal.dart';
 import 'package:iww_frontend/view/modals/todo_confirm_modal.dart';
+import 'package:iww_frontend/view/modals/pet_evolve_modal.dart';
 import 'package:iww_frontend/view/modals/todo_first_done.dart';
 import 'package:iww_frontend/view/modals/custom_snackbar.dart';
 import 'package:lottie/lottie.dart';
@@ -35,6 +36,7 @@ enum EventType {
   confirmRequest,
   confirmResponse,
   newComment,
+  show_pet_evolve,
 }
 
 extension EventTypeExtension on EventType {
@@ -53,17 +55,25 @@ extension EventTypeExtension on EventType {
         );
         break;
       case EventType.show_login_achieve:
-        showLoginAchieveModal(context);
+        showLoginAchieveModal(context, message!);
+        break;
+      case EventType.show_pet_evolve:
+        showPetEvolveModal(context);
         break;
       case EventType.friendRequest:
       case EventType.friendResponse:
       case EventType.confirmRequest:
-        nav.navigate(AppRoute.room);
+        if (message != null) {
+          var data = jsonDecode(message);
+          int ownerId = data['senderId'];
+          nav.navigate(AppRoute.room, argument: ownerId.toString());
+        }
         break;
       case EventType.confirmResponse:
         showTodoConfirmModal(context, message);
         break;
       case EventType.newComment:
+        nav.navigate(AppRoute.room);
         break;
       default:
         break;

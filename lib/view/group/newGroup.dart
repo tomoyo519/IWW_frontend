@@ -29,7 +29,6 @@ class _NewGroupState extends State<NewGroup> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _formKey = GlobalKey<FormState>();
   }
@@ -38,25 +37,38 @@ class _NewGroupState extends State<NewGroup> {
     //새로운 그룹 만들기;
 
     final viewModel = context.read<MyGroupViewModel>();
-    LOG.log('myGroupViewModel.groupData: ${viewModel.groups}');
-    // LOG.log('groupName:$groupName');
-    // TODO - userId 넣기
-    await viewModel.createGroup().then(
-      (res) async {
-        LOG.log('thisisres: $res');
-        if (res == true) {
-          await viewModel.fetchMyGroupList();
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: const Text('그룹 생성이 완료 되었어요!'),
-              ),
-            );
-            Navigator.pop(context, true);
+    // if (viewModel.groupRoutine.isEmpty) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(
+    //       content: const Text('그룹 루틴 생성 후 그룹 생성이 가능합니다.'),
+    //     ),
+    //   );
+    //   return null;
+    // }
+    if (
+        // _formKey.currentState?.validate() == true &&
+        viewModel.groupRoutine.isNotEmpty) {
+      final userInfo = context.read<UserInfo>();
+      await viewModel.createGroup(userInfo.userId).then(
+        (res) async {
+          if (res == true) {
+            await viewModel.fetchMyGroupList(userInfo.userId);
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: const Text('그룹 생성이 완료 되었어요!'),
+                ),
+              );
+              Navigator.pop(context, true);
+            }
           }
-        }
-      },
-    );
+        },
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('모든 필드 추가 후 그룹 생성이 가능합니다.')),
+      );
+    }
   }
 
   void onCancel(BuildContext context) {
@@ -102,7 +114,6 @@ class _NewGroupState extends State<NewGroup> {
           child: EditorModal(
             init: todo,
             title: "루틴 추가",
-            formKey: _formKey,
             onSave: (context) => _onSave(context),
             onCancel: (context) => Navigator.pop(context),
           ),
@@ -118,9 +129,6 @@ class _NewGroupState extends State<NewGroup> {
   Widget build(BuildContext context) {
     final groupRepository =
         Provider.of<GroupRepository>(context, listen: false);
-
-    UserInfo user = Provider.of<UserInfo>(context, listen: false);
-
     final MyGroupViewModel viewModel = context.watch<MyGroupViewModel>();
     return WillPopScope(
         onWillPop: () async {
@@ -179,12 +187,19 @@ class _NewGroupState extends State<NewGroup> {
                       ),
                     ),
                   ),
-                  TextField(
+                  TextFormField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return '그룹 이름을 입력해주세요';
+                      }
+                      return null;
+                    },
                     onChanged: (value) {
                       viewModel.groupName = value;
                     },
                     decoration: InputDecoration(
                       hintText: "예) 1만보 걷기",
+                      hintStyle: TextStyle(fontSize: 13),
                       filled: true,
                       fillColor: Colors.grey[200],
                       contentPadding: EdgeInsets.all(8.0),
@@ -273,13 +288,20 @@ class _NewGroupState extends State<NewGroup> {
                       ),
                     ),
                   ),
-                  TextField(
+                  TextFormField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return '그룹 세부 정보를 입력해주세요';
+                      }
+                      return null;
+                    },
                     onChanged: (value) {
-                      viewModel.groupName = value;
+                      viewModel.groupDesc = value;
                     },
                     maxLines: 3,
                     decoration: InputDecoration(
-                      hintText: "예) 오늘 날짜와 걸음 가 가적힌 만보기 캡쳐 화면 업로드",
+                      hintText: "예) 오늘 날짜와 걸음 수가 적힌 만보기 캡쳐 화면 업로드",
+                      hintStyle: TextStyle(fontSize: 13),
                       filled: true,
                       fillColor: Colors.grey[200],
                       contentPadding: EdgeInsets.all(8.0),

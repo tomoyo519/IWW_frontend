@@ -4,6 +4,8 @@ import 'package:iww_frontend/repository/notification.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/model/notification/notification.model.dart'
     as model;
+import 'package:iww_frontend/view/_navigation/app_navigator.dart';
+import 'package:iww_frontend/view/_navigation/enum/app_route.dart';
 import 'package:iww_frontend/view/modals/todo_confirm_modal.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:lottie/lottie.dart';
@@ -119,11 +121,10 @@ class _MyNotificationState extends State<MyNotification> {
           ElevatedButton(
               onPressed: () async {
                 Map<String, dynamic> data = {
-                  "noti_id" : noti.notiId,
-                  "req_type" : '1',
+                  "noti_id": noti.notiId,
+                  "req_type": '1',
                 };
-                await notificationRepository.updateNoti(
-                    noti.notiId, data);
+                await notificationRepository.updateNoti(noti.notiId, data);
                 if (mounted) {
                   fetchNoti(context);
                 }
@@ -134,11 +135,10 @@ class _MyNotificationState extends State<MyNotification> {
           ElevatedButton(
             onPressed: () async {
               Map<String, dynamic> data = {
-                "noti_id" : noti.notiId,
-                "req_type" : '2',
+                "noti_id": noti.notiId,
+                "req_type": '2',
               };
-              await notificationRepository.updateNoti(
-                  noti.notiId, data);
+              await notificationRepository.updateNoti(noti.notiId, data);
               if (mounted) {
                 fetchNoti(context);
               }
@@ -159,6 +159,7 @@ class _MyNotificationState extends State<MyNotification> {
   }
 
   void navigateToSender(model.Notification noti) {
+    AppNavigator nav = Provider.of<AppNavigator>(context, listen: false);
     int senderId = int.parse(noti.senderId);
     String message = jsonEncode({
       "senderId": senderId,
@@ -169,20 +170,17 @@ class _MyNotificationState extends State<MyNotification> {
     });
     switch (noti.notiType) {
       case 0:
-        Navigator.pushNamed(context, "/myroom", arguments: senderId);
-        break;
       case 1:
-        Navigator.pushNamed(context, "/myroom", arguments: senderId);
+      case 3:
+        nav.navigate(AppRoute.room, argument: senderId.toString());
         break;
       case 2:
-        // TODO - 해당 todo의 인증샷에 대한 modal 창으로 redirect
+        // 해당 todo의 인증샷에 대한 modal 창으로 redirect
         showTodoConfirmModal(context, message);
-        break;
-      case 3:
-        Navigator.pushNamed(context, "/myroom", arguments: senderId);
         break;
       case 4:
         // TODO - 내 방명록의 해당 댓글 위치로 redirect
+        nav.navigate(AppRoute.room);
         break;
     }
   }

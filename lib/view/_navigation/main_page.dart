@@ -50,6 +50,7 @@ class _MainPageState extends State<MainPage> {
     final AppPage curr = nav.current;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       // * ======= APPBAR ======= * //
       appBar: MyAppBar(
         leading: nav.pushback,
@@ -78,7 +79,9 @@ class _MainPageState extends State<MainPage> {
       bottomNavigationBar: nav.isBottomSheetPage
           ? BottomNavigationBar(
               currentIndex: nav.current.idx.index,
-              onTap: (idx) => nav.navigate(idx.route),
+              onTap: (idx) {
+                nav.navigate(idx.route);
+              },
               items: bottoms
                   .map((page) => BottomNavigationBarItem(
                         icon: Icon(page.icon),
