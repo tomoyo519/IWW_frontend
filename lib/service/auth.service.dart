@@ -6,11 +6,9 @@ import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/datasource/localStorage.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
-import 'package:iww_frontend/main.dart';
 import 'package:iww_frontend/model/auth/auth_status.dart';
 import 'package:iww_frontend/model/auth/login_result.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
-import 'package:iww_frontend/model/todo/todo_today_count.dart';
 import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
@@ -193,6 +191,7 @@ class AuthService extends ChangeNotifier {
       status = AuthStatus.failed;
     }
 
+
     waiting = false;
   }
 
@@ -234,7 +233,7 @@ class AuthService extends ChangeNotifier {
       return;
     }
 
-    // 토큰과 함꼐 서버로 유저 정보 요청
+    // 토큰과 함께 서버로 유저 정보 요청
     RemoteDataSource.setAuthHeader("Bearer $token");
     Response response = await RemoteDataSource.get("/user");
 

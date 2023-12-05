@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/comment.repository.dart';
 import 'package:iww_frontend/model/comment/comment.model.dart';
+import 'package:lottie/lottie.dart';
 
 // 방명록 상태관리
 class CommentsProvider with ChangeNotifier {
@@ -83,6 +84,16 @@ class CommentsBottomSheet extends StatelessWidget {
     return DraggableScrollableSheet(
       expand: false,
       builder: (BuildContext context, ScrollController scrollController) {
+        if (comments.isEmpty) {
+          return Center(
+            child: Lottie.asset(
+              'assets/empty.json',
+              repeat: true,
+              animate: true,
+              height: MediaQuery.of(context).size.height * 0.3,
+            ),
+          );
+        }
         return ClipRRect(
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(25.0),
@@ -226,6 +237,12 @@ class CommentsBottomSheet extends StatelessWidget {
       CommentsProvider commentsProvider) {
     TextEditingController controller =
         TextEditingController(text: comment.content);
+    ValueNotifier<bool> isButtonEnabled = ValueNotifier(false);
+
+    // TextEditingController의 리스너 추가
+    controller.addListener(() {
+      isButtonEnabled.value = controller.text != comment.content;
+    });
 
     showDialog(
       context: context,
@@ -243,26 +260,34 @@ class CommentsBottomSheet extends StatelessWidget {
                 Navigator.of(context).pop();
               },
             ),
-            TextButton(
-              onPressed: controller.text != comment.content
-                  ? () async {
-                      bool success = await commentsProvider.updateComment(
-                          comment.comId, controller.text);
-                      if (success) {
-                        // 댓글 새로고침
-                        commentsProvider.fetchComment();
-                      }
-                      if (context.mounted) {
-                        Navigator.of(context).pop();
-                      }
-                    }
-                  : null,
-              child: Text('수정'),
+            ValueListenableBuilder<bool>(
+              valueListenable: isButtonEnabled,
+              builder: (context, value, child) {
+                return TextButton(
+                  onPressed: value
+                      ? () async {
+                          bool success = await commentsProvider.updateComment(
+                              comment.comId, controller.text);
+                          if (success) {
+                            // 댓글 새로고침
+                            commentsProvider.fetchComment();
+                          }
+                          if (context.mounted) {
+                            Navigator.of(context).pop();
+                          }
+                        }
+                      : null,
+                  child: Text('수정'),
+                );
+              },
             ),
           ],
         );
       },
-    );
+    ).then((_) {
+      // 리소스 정리
+      isButtonEnabled.dispose();
+    });
   }
 }
 

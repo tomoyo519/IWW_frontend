@@ -148,4 +148,19 @@ class TodoRepository {
       return false;
     });
   }
+
+  /// ================== ///
+  ///       Confirm      ///
+  /// ================== ///
+  Future<bool> confirmGroupTodo(String id) async {
+    return await RemoteDataSource.patch(
+      "/group/user/$id/approve",
+    ).then((response) {
+      LOG.log("confirmGroupTodo: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        return true;
+      }
+      return false;
+    });
+  }
 }
