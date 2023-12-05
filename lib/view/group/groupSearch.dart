@@ -33,7 +33,7 @@ class _GroupSearchState extends State<GroupSearch> {
         Provider.of<GroupRepository>(context, listen: false);
 
     var tempList = await groupRepository.getAllGroupList(
-        userInfo.userId ?? 1, labelNum + 1, keyword);
+        userInfo.userId ?? 1, labelNum, keyword);
     LOG.log('thisistmepLIst:$tempList');
     setState(() {
       groupList = tempList;
@@ -62,6 +62,7 @@ class _GroupSearchState extends State<GroupSearch> {
 
   @override
   Widget build(BuildContext context) {
+    LOG.log(labelNum.toString());
     return Container(
       child: Column(children: [
         Container(

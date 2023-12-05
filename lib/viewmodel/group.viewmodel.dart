@@ -76,14 +76,12 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
   Future<bool?> createGroup(userId) async {
     try {
       groupData["user_id"] = userId;
-
       Map<String, dynamic> json = {
         "grpInfo": (groupData),
         "routInfo": (groupRoutine.map((e) => e.toJSON()).toList()),
       };
 
-      LOG.log('json: $json');
-
+      LOG.log('create 할때 정보 json: $json');
       bool rest = (await _groupRepository.createTodo(json));
       LOG.log('rest:$rest');
       // if(rest == true){

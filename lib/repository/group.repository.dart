@@ -111,7 +111,7 @@ class GroupRepository {
   @override
   Future<bool> createTodo(Map<String, dynamic> data) async {
     var json = jsonEncode(data);
-    LOG.log('thisisjson: $json');
+
     return await RemoteDataSource.post("/group", body: json).then((res) {
       LOG.log(res.body);
       if (res.statusCode == 201) {
