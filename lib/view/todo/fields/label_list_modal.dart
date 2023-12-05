@@ -12,10 +12,11 @@ class LabelListModal extends StatelessWidget {
   });
 
   static final List<String> labels = [
-    "전체", //1
-    "공부", //2
-    "운동", //3
-    "코딩", //4
+    "전체",
+    "요가",
+    "공부",
+    "운동",
+    "코딩",
     "게임",
     "명상",
     "모임",
@@ -29,7 +30,7 @@ class LabelListModal extends StatelessWidget {
     "산책",
     "집안일",
     "취미",
-    "기타", // 18
+    "기타",
   ];
 
   static final List<String> routines = [
