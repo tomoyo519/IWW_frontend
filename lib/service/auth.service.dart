@@ -173,11 +173,19 @@ class AuthService extends ChangeNotifier {
 
     RemoteDataSource.setAuthHeader("Bearer $token");
 
+    // LOG.log(
+    //     '[Header]: ${RemoteDataSource.baseHeaders['Authorization']?.substring(0, 30)}..');
+
     var response = await RemoteDataSource.get('/user');
     if (response.statusCode == 200) {
+      // 유저 정보 초기화
       var jsonBody = jsonDecode(response.body);
       _user = UserModel.fromJson(jsonBody['result']['user']);
       _mainPet = Item.fromJson(jsonBody['result']['user_pet']);
+
+      // 이벤트 서비스 초기화
+      EventService.setUserId(_user!.user_id);
+      EventService.initialize();
 
       status = AuthStatus.initialized;
     } else {
@@ -194,16 +202,17 @@ class AuthService extends ChangeNotifier {
   /// */
   Future<void> _kakaoLogin({bool? prompt}) async {
     List<Prompt> prompts = prompt == true ? [Prompt.login] : [];
-    await AuthCodeClient.instance
-        .authorize(
-      clientId: Secrets.KAKAO_REST_API_KEY,
-      prompts: prompts,
-      redirectUri: '${Secrets.REMOTE_SERVER_URL}/auth',
-    )
-        .onError((error, stackTrace) {
+    try {
+      await AuthCodeClient.instance.authorize(
+        clientId: Secrets.KAKAO_REST_API_KEY,
+        prompts: prompts,
+        redirectUri: '${Secrets.REMOTE_SERVER_URL}/auth',
+      );
+    } catch (error) {
+      LOG.log('Auth error $error');
       status = AuthStatus.failed;
-      return 'error';
-    });
+      return;
+    }
   }
 
   // 서비스 서버로부터 응답을 받아 인증 정보를 처리합니다.
@@ -244,6 +253,7 @@ class AuthService extends ChangeNotifier {
 
     // 이벤트 서비스 초기화
     EventService.setUserId(_user!.user_id);
+    EventService.initialize();
 
     status = AuthStatus.success;
     LOG.log("User authorization success: ${user!.user_id}");

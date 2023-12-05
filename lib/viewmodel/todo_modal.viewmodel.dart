@@ -1,26 +1,12 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/main.dart';
-import 'package:iww_frontend/model/auth/auth_status.dart';
+import 'package:intl/intl.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
-import 'package:iww_frontend/providers.dart';
-import 'package:iww_frontend/repository/user.repository.dart';
-import 'package:iww_frontend/style/button.dart';
-import 'package:iww_frontend/utils/logger.dart';
-import 'package:iww_frontend/view/_common/bottom_sheet_header.dart';
-import 'package:iww_frontend/view/_navigation/app_navigator.dart';
-import 'package:iww_frontend/service/auth.service.dart';
-import 'package:iww_frontend/view/_common/loading.dart';
-import 'package:iww_frontend/view/_navigation/main_page.dart';
-import 'package:iww_frontend/view/signup/landing.dart';
-import 'package:iww_frontend/view/todo/modals/todo_create_modal.dart';
 import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
-import 'package:path/path.dart';
 import 'package:provider/provider.dart';
-import 'package:iww_frontend/secrets/secrets.dart';
-import 'package:kakao_flutter_sdk/kakao_flutter_sdk_template.dart';
 
 class TodoModalViewModel extends ChangeNotifier {
   final Todo? todo;
@@ -39,26 +25,30 @@ class TodoModalViewModel extends ChangeNotifier {
     }
   }
 
-  // * === send request via parent === * //
-  Future<bool> create(BuildContext context) async {
+  // * === send request to create === * //
+  Future<bool> createNormal(BuildContext context) async {
     final userId = context.read<UserInfo>().userId;
-    final parent = Provider.of<BaseTodoViewModel>(context, listen: false);
-    final data = _createData();
+    final parent = Provider.of<TodoViewModel>(context, listen: false);
+    final data = _createData(userId);
     return await parent.createTodo(data);
   }
 
+  // * === check all fields exist === * //
+  bool get isValid {
+    return (_todoName != null && _todoName!.isNotEmpty) && (_todoLabel != null);
+  }
+
   // * === pack status as request === * //
-  Map<String, dynamic> _createData() {
+  Map<String, dynamic> _createData(int userId) {
     return {
+      'user_id': userId,
       "todo_name": _todoName,
       "todo_desc": _todoDesc,
       "todo_label": _todoLabel,
-      "todo_date": nowstring,
+      "todo_date": tdystring,
       "todo_done": _todoDone,
-      "todo_start": _todoSrt,
+      "todo_start": _todoSrt ?? nowstring,
       "todo_end": _todoEnd,
-      "grp_id": null,
-      "todo_img": null,
     };
   }
 
@@ -113,7 +103,11 @@ class TodoModalViewModel extends ChangeNotifier {
     TimeOfDay timeOfDay = TimeOfDay.now();
     String hour = timeOfDay.hour.toString().padLeft(2, '0');
     String min = timeOfDay.minute.toString().padLeft(2, '0');
-    return '$hour$min:00';
+    return '$hour:$min:00';
+  }
+
+  String get tdystring {
+    return DateFormat('yyyy-MM-dd').format(DateTime.now());
   }
 
   // * === Visibility === * //
@@ -136,11 +130,6 @@ class TodoModalViewModel extends ChangeNotifier {
       label: "시간",
       icon: Icons.timer_outlined,
     ),
-    ButtonFieldData(
-      idx: 2,
-      label: "반복",
-      icon: Icons.repeat_rounded,
-    )
   ];
   final List<String> LABELS = [
     "전체",

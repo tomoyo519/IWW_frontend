@@ -140,7 +140,7 @@ class ToDoList extends StatelessWidget {
 
     final viewModel = context.read<TodoViewModel>();
 
-    await viewModel.deleteTodo(todo.todoId).then(
+    await viewModel.deleteTodo(todo).then(
       (response) {
         if (context.mounted) {
           Navigator.pop(context);
