@@ -102,6 +102,7 @@ class _GroupListState extends State<GroupList> {
                                       )
                                     ],
                                     child: GroupDetail(
+                                      getList: getList,
                                       group: myGroups[i],
                                     ),
                                   ),
