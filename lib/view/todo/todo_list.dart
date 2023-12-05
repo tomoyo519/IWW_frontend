@@ -140,13 +140,7 @@ class ToDoList extends StatelessWidget {
 
     final viewModel = context.read<TodoViewModel>();
 
-    await viewModel.deleteTodo(todo).then(
-      (response) {
-        if (context.mounted) {
-          Navigator.pop(context);
-        }
-      },
-    );
+    await viewModel.deleteTodo(todo);
   }
 
   // 투두 에디터에서 저장을 누르면 실행되는 함수

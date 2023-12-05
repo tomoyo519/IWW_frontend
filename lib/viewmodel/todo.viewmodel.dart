@@ -101,10 +101,6 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
     return result;
   }
 
-  String getToday() {
-    return DateFormat('yyyy-MM-dd').format(DateTime.now());
-  }
-
   // ****************************** //
   // *        Delete Data         * //
   // ****************************** //
@@ -196,5 +192,9 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
         return false;
       },
     );
+  }
+
+  String getToday() {
+    return DateFormat('yyyy-MM-dd').format(DateTime.now());
   }
 }

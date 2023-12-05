@@ -3,16 +3,18 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
-import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
+import 'package:iww_frontend/view/todo/modals/todo_create_modal.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 
 class TodoModalViewModel extends ChangeNotifier {
   final Todo? todo;
+  final TodoModalMode mode;
 
   TodoModalViewModel({
     this.todo,
+    required this.mode,
   }) {
     // set state
     if (todo != null) {
@@ -26,7 +28,7 @@ class TodoModalViewModel extends ChangeNotifier {
   }
 
   // * === send request to create === * //
-  Future<bool> createNormal(BuildContext context) async {
+  Future<bool> onSave(BuildContext context) async {
     final userId = context.read<UserInfo>().userId;
     final parent = Provider.of<TodoViewModel>(context, listen: false);
     final data = _createData(userId);
@@ -86,9 +88,12 @@ class TodoModalViewModel extends ChangeNotifier {
   }
 
   String? _todoSrt;
-  String? get strtime => _todoSrt;
-  set strtime(String? val) {
-    _todoSrt = val;
+  DateTime get strtime {
+    return _todoSrt == null ? DateTime.now() : DateTime.parse(_todoSrt!);
+  }
+
+  set strtime(DateTime val) {
+    _todoSrt = DateFormat('yyyy-MM-dd').format(val);
     notifyListeners();
   }
 
@@ -99,6 +104,7 @@ class TodoModalViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  // * === default time string === * //
   String get nowstring {
     TimeOfDay timeOfDay = TimeOfDay.now();
     String hour = timeOfDay.hour.toString().padLeft(2, '0');
@@ -131,6 +137,7 @@ class TodoModalViewModel extends ChangeNotifier {
       icon: Icons.timer_outlined,
     ),
   ];
+
   final List<String> LABELS = [
     "전체",
     "공부",

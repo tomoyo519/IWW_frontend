@@ -11,7 +11,6 @@ import 'package:provider/provider.dart';
 enum TodoModalMode { normal, group }
 
 class TodoCreateModal extends StatelessWidget {
-  final TodoModalMode mode;
   final String? title;
   final FocusNode focusNode;
   final TextEditingController controller;
@@ -20,7 +19,6 @@ class TodoCreateModal extends StatelessWidget {
   TodoCreateModal({
     super.key,
     this.title,
-    required this.mode,
     required this.controller,
     required this.focusNode,
     required this.keyboardHeight,
@@ -142,20 +140,36 @@ class TodoCreateModal extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Text(DateFormat('M월 d일 E요일', 'ko_KR')
-                                  .format(DateTime.now())),
+                            Text(
+                              DateFormat('M월 d일 E요일', 'ko_KR').format(
+                                DateTime.now(),
+                              ),
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.black45,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                             IconButton(
+                              style: IconButton.styleFrom(
+                                  backgroundColor: viewmodel.isValid
+                                      ? Colors.orange
+                                      : Colors.grey),
                               onPressed: viewmodel.isValid
-                                  ? () => viewmodel.createNormal(context)
+                                  // * ===== 버튼을 눌러 create
+                                  ? () async {
+                                      await viewmodel
+                                          .onSave(context)
+                                          .then((value) {
+                                        Navigator.pop(context);
+                                      });
+                                    }
                                   : null,
                               icon: Icon(
                                 Icons.send,
                                 color: viewmodel.isValid
-                                    ? Colors.orange
-                                    : Colors.grey,
+                                    ? Colors.white
+                                    : Colors.black45,
                               ),
                             ),
                           ],
@@ -191,7 +205,7 @@ class TodoCreateModal extends StatelessWidget {
       case 0:
         return viewmodel.labelStr;
       case 1:
-        return viewmodel.strtime;
+        return DateFormat('a hh시 mm분', 'ko_KO').format(viewmodel.strtime);
       default:
         return "";
     }
@@ -224,7 +238,7 @@ class _TimePicker extends StatelessWidget {
         mode: CupertinoDatePickerMode.time,
         initialDateTime: DateTime.now(),
         onDateTimeChanged: (value) {
-          viewmodel.strtime = DateFormat('a HH시 mm분', 'ko_KR').format(value);
+          viewmodel.strtime = value;
         },
       ),
     );
@@ -232,34 +246,57 @@ class _TimePicker extends StatelessWidget {
 }
 
 class _LabelPicker extends StatelessWidget {
-  const _LabelPicker();
+  _LabelPicker();
 
   @override
   Widget build(BuildContext context) {
-    final screen = MediaQuery.of(context).size;
     final viewmodel = context.read<TodoModalViewModel>();
+    final screen = MediaQuery.of(context).size;
+    final currLabel = viewmodel.label;
 
     return SizedBox(
       width: double.infinity,
       height: screen.height * 0.2,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: [
-          for (int idx = 0; idx < viewmodel.LABELS.length; idx++)
-            TextButton(
-              style: TextButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
-                  side: BorderSide(
-                    color: Colors.grey,
-                    width: 0.5,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Wrap(
+          children: [
+            for (int idx = 0; idx < viewmodel.LABELS.length; idx++)
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    // * ====== 선택된 라벨의 색 설정
+                    // TODO: Type으로 빼기
+                    backgroundColor:
+                        (currLabel == idx) ? Colors.orange : Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      side: BorderSide(
+                        color: Colors.grey,
+                        width: (currLabel == idx) ? 0 : 0.5,
+                      ),
+                    ),
+                  ),
+                  // * ====== 클릭하면 상태변경
+                  onPressed: () => viewmodel.label = idx,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10,
+                    ),
+                    child: Text(
+                      viewmodel.LABELS[idx],
+                      style: TextStyle(
+                        // * ====== 선택된 라벨의 색 설정
+                        color:
+                            (currLabel == idx) ? Colors.white : Colors.black54,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-              onPressed: () => viewmodel.label = idx,
-              child: Text(viewmodel.LABELS[idx]),
-            )
-        ],
+              )
+          ],
+        ),
       ),
     );
   }
