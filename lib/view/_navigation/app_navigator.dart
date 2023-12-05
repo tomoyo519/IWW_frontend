@@ -31,22 +31,32 @@ class AppNavigator extends ChangeNotifier {
   bool get isBottomSheetPage => _idx < 5;
   int get idx => _idx;
 
-  void navigate(AppRoute route) {
+  String? _argument;
+  String? get arg => _argument;
+  set arg(String? val) {
+    _argument = val;
+    notifyListeners();
+  }
+
+  void navigate(AppRoute route, {String? argument}) {
     _idx = route.index;
     _stack = [];
     _stack.add(route.index);
+    _argument = argument;
     notifyListeners();
   }
 
-  void push(AppRoute route) {
+  void push(AppRoute route, {String? argument}) {
     _idx = route.index;
     _stack.add(route.index);
+    _argument = argument;
     notifyListeners();
   }
 
-  void pop() {
+  void pop({String? argument}) {
     _stack.removeLast();
     _idx = _stack.isEmpty ? 0 : _stack.last;
+    _argument = argument;
     notifyListeners();
   }
 

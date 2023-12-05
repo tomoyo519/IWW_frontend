@@ -2,11 +2,13 @@ import 'dart:convert';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
+import 'package:iww_frontend/model/auth/login_result.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
 import 'package:iww_frontend/model/todo/todo_today_count.dart';
 import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/service/event.service.dart';
+import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/utils/reward_service.dart';
 
 class UserInfo extends ChangeNotifier {
@@ -41,19 +43,19 @@ class UserInfo extends ChangeNotifier {
   late int _userHp;
   late int _userCash;
 
-  late int _petId;
+  late int _itemId;
   late int _petExp;
   late String _petName;
 
   // === Getters === //
   UserModel get userModel => _user;
   int get userId => _user.user_id;
-  String get userName => _userName;
+  String get userName => _user.user_name;
   String get userTel => _userTel;
 
-  int get petId => _petId;
   int get userCash => _userCash;
   int get userHp => _userHp;
+  int get itemId => _itemId;
   int get petExp => _petExp;
   String get mainPetName => _petName;
 
@@ -65,13 +67,18 @@ class UserInfo extends ChangeNotifier {
     notifyListeners();
   }
 
-  set setUserName(String name) {
+  set userName(String name) {
     _userName = name;
     notifyListeners();
   }
 
   set userHp(int hp) {
     _userHp = hp;
+    notifyListeners();
+  }
+
+  set itemId(int val) {
+    _itemId = val;
     notifyListeners();
   }
 
@@ -87,47 +94,57 @@ class UserInfo extends ChangeNotifier {
 
   // ==== CRUD ==== //
   Future<void> fetchUser() async {
-    UserModel? fetched = await _repository.getUser();
+    UserModel prevUserState = _user;
+    Item prevPetState = _mainPet;
+
+    GetUserResult? fetched = await _repository.getUser();
     if (fetched == null) {
       // _authService.user = null; // 인가 정보를 삭제
       return;
     }
 
-    LOG.log(emoji: 2, '${fetched.user_name}');
-
-    _setStateFromModels(fetched, _mainPet);
+    LOG.log('User cash: ${fetched.user.user_cash}');
+    _setStateFromModels(_user, _mainPet);
+    if (prevPetState.id != fetched.pet.id) {
+      // 진화함!
+      EventService.publish(
+        Event(
+          type: EventType.show_pet_evolve,
+        ),
+      );
+    }
   }
 
-  Future<bool?> reNameUser(myname, userInfo) async {
+  Future<bool> reNameUser(myname, userInfo) async {
+    var userInfo;
+
     try {
       var json = {
         "user_name": myname,
         "user_tel": userInfo._userTel,
         "user_kakao_id": userInfo.userModel.user_kakao_id
       };
-
-      return await RemoteDataSource.put('/user/${userInfo.userId}',
+      LOG.log('$json');
+      var result = RemoteDataSource.put('/user/${userInfo.userId}',
               body: jsonEncode(json))
           .then((res) {
+        LOG.log('${res.statusCode}');
         if (res.statusCode == 200) {
-          LOG.log(res.statusCode.toString());
-          setUserName = myname;
-          LOG.log(userName);
-          // notifyListeners();
+          userName = myname;
           return true;
         }
+        ;
       });
     } catch (e) {
-      LOG.log(e.toString());
-      // notifyListeners();
       return false;
     }
+    return false;
   }
 
   void setStateFromTodo(bool isDone, bool isGroup, int todayDone) {
     // 리워드 계산
-    int cash = RewardService.calculateCash(isDone, isGroup, todayDone);
-    int petExp = RewardService.calculatePetExp(isDone, isGroup, todayDone);
+    int cash = RewardService.calculateNormalCash(isDone, todayDone);
+    int petExp = RewardService.calculatePetExp(isDone);
 
     // 상태 변경
     _userCash += cash;
@@ -135,15 +152,10 @@ class UserInfo extends ChangeNotifier {
     notifyListeners();
 
     //상태 변경에 따른 이벤트 트리거 ==== //
-    if (cash == 100) {
+    if (cash == RewardService.FIRST_TODO_REWARD) {
       EventService.publish(Event(
         type: EventType.show_first_todo_modal,
       ));
-    }
-    if (_petExp > 200) {
-      EventService.publish(
-        Event(type: EventType.show_first_todo_modal),
-      );
     }
   }
 
@@ -158,9 +170,10 @@ class UserInfo extends ChangeNotifier {
     _userCash = user.user_cash;
 
     // === Pet === //
-    _petId = 1;
-    _petExp = 180;
-    _petName = "왕귀여워";
+    _itemId = pet.id;
+    _petExp = pet.petExp!;
+    _petName = pet.name;
+
     notifyListeners();
   }
 }

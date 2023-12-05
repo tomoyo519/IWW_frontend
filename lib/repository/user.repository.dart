@@ -18,7 +18,7 @@ class UserRepository {
   /// ================== ///
 
   // 현재 로그인한 유저 생성
-  Future<SignUpResult?> createUser(String userName, String userTel,
+  Future<GetUserResult?> createUser(String userName, String userTel,
       String userKakaoId, String petName) async {
     // 서버로 유저 정보 전송
     Response response = await RemoteDataSource.post(
@@ -45,7 +45,7 @@ class UserRepository {
     await LocalStorage.saveKey('jwt', token);
     // await LocalStorage.saveKey("user_info", jsonEncode(user));
 
-    return SignUpResult(user: user, pet: pet);
+    return GetUserResult(user: user, pet: pet);
   }
 
   // 유저 프로필 이미지 서버로 전송
@@ -82,11 +82,13 @@ class UserRepository {
   ///        Read        ///
   /// ================== ///
 
-  Future<UserModel?> getUser() async {
+  Future<GetUserResult?> getUser() async {
     return await RemoteDataSource.get("/user").then((response) {
       if (response.statusCode == 200) {
-        Map<String, dynamic> body = json.decode(response.body);
-        return UserModel.fromJson(body['result']['user']);
+        var jsonBody = jsonDecode(response.body)['result'];
+        Item pet = Item.fromJson(jsonBody['user_pet']);
+        UserModel user = UserModel.fromJson(jsonBody['user']);
+        return GetUserResult(user: user, pet: pet);
       } else {
         // 해당 유저가 없거나 예외 반환한 경우
         return null;

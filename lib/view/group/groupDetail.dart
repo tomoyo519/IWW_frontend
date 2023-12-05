@@ -161,7 +161,6 @@ class _GroupDetailState extends State<GroupDetail> {
           child: EditorModal(
             init: todo,
             title: "루틴 수정",
-            formKey: _formKey,
             onSave: (context) => _updateRoutine(context),
             onCancel: (context) => Navigator.pop(context),
           ),

@@ -1,18 +1,35 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/auth/auth_status.dart';
+import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/providers.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
+import 'package:iww_frontend/style/button.dart';
+import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/view/_common/bottom_sheet_header.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/view/_common/loading.dart';
 import 'package:iww_frontend/view/_navigation/main_page.dart';
 import 'package:iww_frontend/view/signup/landing.dart';
+import 'package:iww_frontend/view/todo/modals/todo_create_modal.dart';
+import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/todo_modal.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_template.dart';
 
 void main() async {
+  // * ======================= * //
+  // *                         * //
+  // *     Initialize App      * //
+  // *                         * //
+  // * ======================= * //
+
   // 웹 환경에서 카카오 로그인을 정상적으로 완료하려면 runApp() 호출 전 아래 메서드 호출 필요
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -24,6 +41,9 @@ void main() async {
 
   // navigation status 초기화
   AppNavigator navigator = AppNavigator();
+
+  // Date formatter 초기화
+  await initializeDateFormatting('ko_KO', null);
 
   // 인증에 필요한 리포지토리 및 서비스 초기화
   UserRepository userRepository = UserRepository();
@@ -43,8 +63,7 @@ void main() async {
 
   // 3. 테스트유저 접속
   // authService.testLogin();
-
-  // authService.status = AuthStatus.permission;
+  // authService.status = AuthStatus.initialized;
   // authService.waiting = false;
 
   runApp(

@@ -1,11 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/retry.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/model/todo/todo_update.dto.dart';
-import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
@@ -48,32 +45,17 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
     }
   }
 
-  String _selectedDate = '';
-  String get selectedDate => _selectedDate;
-  void setSelectedDate(String newDate) {
-    _selectedDate = newDate;
-    notifyListeners();
+  int get todayDone {
+    return _todos.where((todo) {
+      return todo.isDone && todo.todoDate == getToday();
+    }).length;
   }
 
-  var _selectedLabel = 0;
-  int get selectedLabel => _selectedLabel;
-  void setSelectedLabel(int labelNo) {
-    _selectedLabel = labelNo;
-    notifyListeners();
+  int get todayTotal {
+    return _todos.where((todo) {
+      return todo.todoDate == getToday();
+    }).length;
   }
-
-  TimeOfDay _selectedAlarmTime = TimeOfDay.now();
-  TimeOfDay get selectedAlarmTime => _selectedAlarmTime;
-  void setSelectedAlarmTime(dynamic alarmTime) {
-    _selectedAlarmTime = alarmTime;
-    notifyListeners();
-  }
-
-  int _todayDone = 0;
-  int get check => _todayDone;
-
-  int _todayTotal = 0;
-  int get total => _todayTotal;
 
   bool _isDisposed = false;
 
@@ -90,10 +72,6 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
     _todos = data;
     _normalTodos = data.where((todo) => todo.grpId == null).toList();
     _groupTodos = data.where((todo) => todo.grpId != null).toList();
-
-    // 카운트
-    _todayDone = data.where((todo) => todo.todoDone == true).length;
-    _todayTotal = data.length;
 
     LOG.log("Fetched data group todo ${data.length}");
     waiting = false;
@@ -127,11 +105,13 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   // *        Delete Data         * //
   // ****************************** //
 
-  Future<bool> deleteTodo(int todoId) async {
-    _todos = _todos.where((todo) => todo.todoId != todoId).toList();
+  Future<bool> deleteTodo(Todo delTodo) async {
+    _todos = _todos.where((todo) => todo.todoId != delTodo.todoId).toList();
     waiting = false; // 상태부터 변경합니다
 
-    return await _todoRepository.deleteTodo(todoId.toString()).then((value) {
+    return await _todoRepository
+        .deleteTodo(delTodo.todoId.toString())
+        .then((value) {
       if (value == true) {
         EventService.publish(
           Event(
@@ -212,5 +192,9 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
         return false;
       },
     );
+  }
+
+  String getToday() {
+    return DateFormat('yyyy-MM-dd').format(DateTime.now());
   }
 }

@@ -1,43 +1,41 @@
+// ignore_for_file: constant_identifier_names
+
 class RewardService {
   static final RewardService _instance = RewardService._internal();
   RewardService._internal();
 
-  // 상수 정의
-  static const int _maxDailyTasks = 50;
-  static const int _minGroupTasks = 10;
-  static const int _petExpForGroupDone = 10;
-  static const int _petExpForGroupNotDone = -10;
-  static const int _petExpForSingleDone = 5;
-  static const int _petExpForSingleNotDone = -5;
-  static const int _cashForFirstTask = 100;
-  static const int _cashPenaltyForFirstTaskNotDone = -100;
-  static const int _cashNoChange = 0;
-  static const int _cashPenaltyForManyTasks = -10;
-  static const int _cashForGroupDone = 25;
-  static const int _cashForGroupNotDone = -25;
-  static const int _cashForSingleDone = 10;
-  static const int _cashForSingleNotDone = -10;
+  static const int PET_EXP_REWARD = 10;
+  static const int FIRST_TODO_REWARD = 100;
+  static const int NORAML_TODO_REWARD = 10;
+  static const int GROUP_TODO_REWARD = 25;
+  static const int PET_LEVEL_EXP_LV1 = 1000;
+  static const int PET_LEVEL_EXP_LV2 = 2000;
 
-  // 펫 경험치 계산 메소드
-  static int calculatePetExp(bool isDone, bool isGroup, int todayDone) {
-    if (!isGroup && todayDone >= _maxDailyTasks) {
-      return isDone ? _cashNoChange : _petExpForSingleNotDone;
-    }
-    return isGroup
-        ? (isDone ? _petExpForGroupDone : _petExpForGroupNotDone)
-        : (isDone ? _petExpForSingleDone : _petExpForSingleNotDone);
+  // 펫 경험치 계산
+  static int calculatePetExp(bool isDone) {
+    return PET_EXP_REWARD * (isDone ? 1 : -1);
   }
 
-  // 현금 계산 메소드
-  static int calculateCash(bool isDone, bool isGroup, int todayDone) {
+  // 개인투두 보상 계산
+  static int calculateNormalCash(bool isDone, int todayDone) {
     if ((isDone && todayDone == 0) || (!isDone && todayDone == 1)) {
-      return isDone ? _cashForFirstTask : _cashPenaltyForFirstTaskNotDone;
-    } else if (!isGroup && todayDone >= _minGroupTasks) {
-      return isDone ? _cashNoChange : _cashPenaltyForManyTasks;
+      // 투두를 완료 체크한 경우 (첫 번째 투두 체크 또는 마지막 투두 체크해제)
+      return isDone ? 100 : -100;
+    } else if (isDone && todayDone >= 10) {
+      // 개인 투두 달성 보상은 10개까지 제한
+      return 0;
     }
+    // 기본 캐시 계산
+    return NORAML_TODO_REWARD * (isDone ? 1 : -1);
+  }
 
-    return isGroup
-        ? (isDone ? _cashForGroupDone : _cashForGroupNotDone)
-        : (isDone ? _cashForSingleDone : _cashForSingleNotDone);
+  // 그룹투두 보상 계산
+  static int calculateGroupCash(bool isDone, int todayDone) {
+    if ((isDone && todayDone == 0) || (!isDone && todayDone == 1)) {
+      // 투두를 완료 체크한 경우 (첫 번째 투두 체크 또는 마지막 투두 체크해제)
+      return FIRST_TODO_REWARD * (isDone ? 1 : -1);
+    }
+    // 기본 캐시 계산
+    return GROUP_TODO_REWARD * (isDone ? 1 : -1);
   }
 }
