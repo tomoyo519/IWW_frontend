@@ -16,12 +16,10 @@ class MyRoomViewModel with ChangeNotifier {
   List<Item> inventory = []; // 사용자의 인벤토리
   int _roomOwner; // 현재 있는 방의 주인 (기본값은 로그인한 사용자의 id)
   List<Item> roomObjects = []; // 현재 방에 존재하는 오브젝트 리스트
-  String petName = '구미호_02';
 
   MyRoomViewModel(this._userId, this._roomRepository) : _roomOwner = _userId {
     fetchInventory();
     fetchMyRoom();
-    petName = findPetName();
   }
 
   void fetchMyRoom() async {
