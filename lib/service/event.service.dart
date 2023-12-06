@@ -2,7 +2,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/utils/extension/event.ext.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/_navigation/enum/app_route.dart';
@@ -71,6 +70,7 @@ extension EventTypeExtension on EventType {
         }
         break;
       case EventType.confirmRequest:
+        LOG.log(message!);
         showTodoConfirmModal(context, message);
         break;
       case EventType.newComment:
@@ -159,6 +159,7 @@ class EventService {
       onSelectNotification: (String? payload) {
         if (payload != null) {
           // payload를 Event 객체로 변환
+          LOG.log("onSelect :" + payload);
           Event event = _convertPayloadToEvent(payload);
           _streamController.add(event); // Event 객체를 스트림에 추가
         }
@@ -260,6 +261,8 @@ class EventService {
       'todoImg': data['todoImg'],
       'message': data['message']
     });
+
+    LOG.log(payload);
 
     await flutterLocalNotificationsPlugin.show(
       2,
