@@ -7,4 +7,5 @@ enum AppRoute {
   shop,
   mypage,
   notification,
+  wallet,
 }
