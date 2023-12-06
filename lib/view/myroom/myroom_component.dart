@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/model/item/item.model.dart';
 import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/friends/friendMain.dart';
@@ -26,7 +27,16 @@ class MyRoomComponent extends StatelessWidget {
           // 방 렌더링
           RenderMyRoom(),
           // 펫 렌더링
-          MyPet(newSrc: context.watch<MyRoomViewModel>().findPetName()),
+          Selector<MyRoomViewModel, List<Item>>(
+              selector: (_, myRoomState) => myRoomState.roomObjects,
+              builder: (_, roomObjects, __) {
+                return MyPet(
+                    newSrc: roomObjects
+                        .firstWhere((element) => element.itemType == 1,
+                            orElse: () =>
+                                Item(id: 55, name: '구미호_01', itemType: 1))
+                        .name);
+              }),
           // 상단 상태바
           Positioned(
               left: 0,
