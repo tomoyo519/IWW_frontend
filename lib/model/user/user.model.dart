@@ -44,4 +44,18 @@ class UserModel {
       last_login: data['last_login'],
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      "user_id": user_id,
+      "user_name": user_name,
+      "user_tel": user_tel,
+      "user_kakao_id": user_kakao_id,
+      "user_hp": user_hp,
+      "user_cash": user_cash,
+      "login_cnt": login_cnt,
+      "login_seq": login_seq,
+      "last_login": last_login,
+    };
+  }
 }
