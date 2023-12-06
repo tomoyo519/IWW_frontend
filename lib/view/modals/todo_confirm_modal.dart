@@ -16,7 +16,7 @@ void showTodoConfirmModal(BuildContext context, String? message) {
   String todoImg = data['todoImg'];
   int senderId = data['senderId'];
   String senderName = data['senderName'];
-  int todoId = int.parse(data['todoId']);
+  int todoId = data['todoId'];
   String todoName = data['todoName'];
 
   showDialog(
@@ -62,6 +62,7 @@ void showTodoConfirmModal(BuildContext context, String? message) {
                 var data = {'userId': user.userId, 'todoId': todoId};
                 EventService.sendEvent('confirmResponse', data);
               }
+              Navigator.of(context).pop();
             },
             child: Text('인증 완료'),
           ),
