@@ -66,7 +66,7 @@ class _MainPageState extends State<MainPage> {
     final AppPage curr = nav.current;
     final UserInfo user = context.read<UserInfo>();
 
-    LOG.log('${RemoteDataSource.baseHeaders}');
+    // LOG.log('${RemoteDataSource.baseHeaders}');
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
