@@ -70,7 +70,7 @@ extension EventTypeExtension on EventType {
         }
         break;
       case EventType.confirmRequest:
-        LOG.log(message!);
+        // LOG.log(message!);
         showTodoConfirmModal(context, message);
         break;
       case EventType.newComment:
@@ -159,7 +159,7 @@ class EventService {
       onSelectNotification: (String? payload) {
         if (payload != null) {
           // payload를 Event 객체로 변환
-          LOG.log("onSelect :" + payload);
+          // LOG.log("onSelect :" + payload);
           Event event = _convertPayloadToEvent(payload);
           _streamController.add(event); // Event 객체를 스트림에 추가
         }
@@ -193,7 +193,7 @@ class EventService {
       default:
         type = EventType.newComment;
     }
-    LOG.log("convert payload to event" + message);
+    // LOG.log("convert payload to event" + message);
     return Event(type: type, message: message);
   }
 
@@ -262,8 +262,6 @@ class EventService {
       'todoImg': data['todoImg'],
       'message': data['message']
     });
-
-    LOG.log("event hander payload : " + payload);
 
     await flutterLocalNotificationsPlugin.show(
       2,

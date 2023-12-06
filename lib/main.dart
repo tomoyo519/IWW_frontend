@@ -109,13 +109,10 @@ class RenderPage extends StatelessWidget {
 
     UserInfo? userInfo;
     if (authService.status == AuthStatus.initialized) {
-      LOG.log(emoji: 2, "${authService.user!.user_id}");
-
       UserModel user = authService.user!;
       Item mainPet = authService.mainPet!;
-      UserRepository repository =
-          Provider.of<UserRepository>(context, listen: false);
-      userInfo = UserInfo(user, mainPet, repository);
+      UserRepository repo = Provider.of<UserRepository>(context, listen: false);
+      userInfo = UserInfo(user, mainPet, repo);
     }
 
     return authService.waiting
@@ -131,13 +128,6 @@ class RenderPage extends StatelessWidget {
                   ChangeNotifierProvider.value(
                     value: userInfo!,
                   ),
-                  // ChangeNotifierProvider(
-                  //   create: (context) => UserInfo(
-                  //     authService.user!,
-                  //     authService.mainPet!,
-                  //     Provider.of<UserRepository>(context, listen: false),
-                  //   ),
-                  // ),
                 ],
                 child: MainPage(), // lib/view/main_page.dart
               );

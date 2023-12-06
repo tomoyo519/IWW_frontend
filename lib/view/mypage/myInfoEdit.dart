@@ -55,7 +55,6 @@ class _MyInfoEditState extends State<MyInfoEdit> {
             onPressed: () async {
               final userInfo = context.read<UserInfo>();
               var result = await userInfo.reNameUser(myname, userInfo);
-              LOG.log(emoji: 2, '$result');
               if (result == true && context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: const Text("이름 변경이 완료 되었어요!")));

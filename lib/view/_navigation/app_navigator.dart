@@ -63,7 +63,7 @@ class AppNavigator extends ChangeNotifier {
 
   // * ===== Page Getters ==== * //
   List<AppPage> get ALL_PAGES {
-    return [_todo, _group, _room, _shop, _mypage, _notification];
+    return [_todo, _group, _room, _shop, _mypage, _notification, _wallet];
   }
 
   List<AppPage> get BOTTOM_PAGES {
@@ -71,7 +71,7 @@ class AppNavigator extends ChangeNotifier {
   }
 
   List<AppPage> get APPBAR_PAGES {
-    return [_notification];
+    return [_notification, _wallet];
   }
 
   IconButton? get pushback {
@@ -126,5 +126,13 @@ class AppNavigator extends ChangeNotifier {
     label: "알림 히스토리",
     icon: Icons.notifications,
     builder: (context) => MyNotification(),
+  );
+
+  final AppPage _wallet = AppPage(
+    idx: AppRoute.wallet,
+    label: "지갑",
+    icon: Icons.attach_money_rounded,
+    builder: (context) => Placeholder(),
+    pagetype: 'modal',
   );
 }

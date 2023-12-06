@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:iww_frontend/model/todo/todo_update.dto.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
@@ -21,19 +22,8 @@ class UserInfo extends ChangeNotifier {
     this._mainPet,
     this._repository,
   ) {
-    _setStateFromModels(_user, _mainPet);
-
-    // 초기 로그인 카운트 알림
-    if (_user.login_cnt >= 30) {
-      EventService.publish(
-        Event(
-          type: EventType.show_login_achieve,
-          message: jsonEncode({
-            "title": "로그인 카운트 30회 달성!",
-          }),
-        ),
-      );
-    }
+    // initialize
+    _setUserState(_user, _mainPet);
   }
 
   // === Status === //
@@ -93,25 +83,13 @@ class UserInfo extends ChangeNotifier {
 
   // ==== CRUD ==== //
   Future<void> fetchUser() async {
-    UserModel prevUserState = _user;
-    Item prevPetState = _mainPet;
-
     GetUserResult? fetched = await _repository.getUser();
     if (fetched == null) {
       // _authService.user = null; // 인가 정보를 삭제
       return;
     }
-
-    LOG.log('User cash: ${jsonEncode(fetched.user.toMap())}');
-    _setStateFromModels(fetched.user, fetched.pet);
-    if (prevPetState.id != fetched.pet.id) {
-      // 진화함!
-      EventService.publish(
-        Event(
-          type: EventType.show_pet_evolve,
-        ),
-      );
-    }
+    // 유저의 상태 정보를 세팅하고 notify합니다.
+    _setUserState(fetched.user, fetched.pet);
   }
 
   // TODO type 달기
@@ -140,39 +118,81 @@ class UserInfo extends ChangeNotifier {
     }
   }
 
-  void setStateFromTodo(bool isDone, bool isGroup, int todayDone) {
-    // 리워드 계산
-    int cash = RewardService.calculateNormalCash(isDone, todayDone);
-    int petExp = RewardService.calculatePetExp(isDone);
+  // 개인 할일 체크에 따른 보상 상태 적용하고
+  // 첫 투두인 경우 리워드 관련 모달을 띄웁니다.
+  void handleTodoCheck(TodoCheckDto dto) {
+    int prevUserCash = _userCash;
 
-    // 상태 변경
-    _userCash += cash;
-    _petExp += petExp;
-    notifyListeners();
-
-    //상태 변경에 따른 이벤트 트리거 ==== //
-    if (cash == RewardService.FIRST_TODO_REWARD) {
-      EventService.publish(Event(
-        type: EventType.show_first_todo_modal,
-      ));
+    if (userId == dto.userId) {
+      _userCash = dto.userCash;
+      notifyListeners();
+      onTodoReward(prevUserCash);
     }
   }
 
-  void _setStateFromModels(
-    UserModel user,
-    Item pet,
-  ) {
-    // 사용자가 변경 가능한 필드
-    _userName = user.user_name;
-    _userTel = user.user_tel;
-    _userHp = user.user_hp;
-    _userCash = user.user_cash;
+  // Fetch해온 유저 정보를 상태로 세팅하고
+  // 관련 이벤트를 트리거합니다.
+  void _setUserState(UserModel newUser, Item newPet) {
+    UserModel prevUser = _user;
+    Item prevPet = _mainPet;
 
-    // === Pet === //
-    _itemId = pet.id;
-    _petExp = pet.petExp ?? 0; // FIXME: 펫 타입으로 응답이 올 경우 경험치가 같이 와야함
-    _petName = pet.name;
+    // * Set new user info * //
+    _userName = newUser.user_name;
+    _userTel = newUser.user_tel;
+    _userHp = newUser.user_hp;
+    _userCash = newUser.user_cash;
+
+    // * Set new pet info * //
+    _itemId = newPet.id;
+
+    // FIXME: 펫 타입으로 응답이 올 경우 경험치가 같이 와야함
+    _petExp = newPet.petExp ?? 0;
+    _petName = newPet.name;
+
+    // * Trigger events * //
+    onLoginReward(newUser.login_cnt);
+    onTodoReward(prevUser.user_cash);
+    onEvolution(prevPet.id);
 
     notifyListeners();
+  }
+
+  // 첫 투두 체크 이벤트
+  void onTodoReward(int prevUserCash) {
+    int reward = _userCash - prevUserCash;
+    if (reward == RewardService.FIRST_TODO_REWARD) {
+      EventService.publish(
+        Event(
+          type: EventType.show_first_todo_modal,
+        ),
+      );
+    }
+  }
+
+  // 펫 진화 이벤트
+  void onEvolution(int prevPetId) {
+    if (prevPetId != _mainPet.id) {
+      EventService.publish(
+        Event(
+          type: EventType.show_pet_evolve,
+        ),
+      );
+    }
+  }
+
+  // 로그인 이벤트
+  void onLoginReward(int loginCnt) {
+    int idx = RewardService.LOGIN_REWARD.indexOf(loginCnt);
+    if (idx < 0) return; // 리워드에 해당하는 카운트가 아님
+
+    int reward = RewardService.LOGIN_REWARD[idx];
+    EventService.publish(
+      Event(
+        type: EventType.show_login_achieve,
+        message: jsonEncode({
+          "title": "로그인 카운트 $reward회 달성!",
+        }),
+      ),
+    );
   }
 }

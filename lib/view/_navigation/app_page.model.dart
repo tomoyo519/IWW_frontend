@@ -7,11 +7,13 @@ class AppPage<T> {
   final String label;
   final IconData icon;
   final T Function(BuildContext context) builder;
+  final String type;
 
   AppPage({
     required this.idx,
     required this.label,
     required this.icon,
     required this.builder,
-  });
+    String? pagetype,
+  }) : type = pagetype ?? 'page';
 }
