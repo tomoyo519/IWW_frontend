@@ -158,6 +158,8 @@ class _MyNotificationState extends State<MyNotification> {
             "todoName": noti.todoTitle,
             "photoUrl": noti.reqType
           });
+          LOG.log(message);
+
           showTodoConfirmModal(context, message);
         },
         style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
