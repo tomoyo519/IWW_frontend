@@ -37,6 +37,7 @@ class _MainPageState extends State<MainPage> {
     EventService.stream.listen(
       (event) async {
         String? message = event.message;
+        LOG.log("main_page event listen msg : " +message!);
         EventType type = event.type;
         Future.microtask(() async {
           type.run(context, message: message);
@@ -65,7 +66,7 @@ class _MainPageState extends State<MainPage> {
     final AppPage curr = nav.current;
     final UserInfo user = context.read<UserInfo>();
 
-    LOG.log('${RemoteDataSource.baseHeaders}');
+    // LOG.log('${RemoteDataSource.baseHeaders}');
 
     return Scaffold(
       resizeToAvoidBottomInset: false,

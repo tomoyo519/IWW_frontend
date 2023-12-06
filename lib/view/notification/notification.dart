@@ -154,9 +154,9 @@ class _MyNotificationState extends State<MyNotification> {
           String message = jsonEncode({
             "senderId": int.parse(noti.senderId),
             "senderName": noti.senderName,
-            "todoId": noti.subId,
+            "todoId": int.parse(noti.subId),
             "todoName": noti.todoTitle,
-            "photoUrl": noti.reqType
+            "todoImg": noti.reqType
           });
           LOG.log(message);
 

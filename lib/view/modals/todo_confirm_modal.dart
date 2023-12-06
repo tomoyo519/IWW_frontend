@@ -27,18 +27,18 @@ void showTodoConfirmModal(BuildContext context, String? message) {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // GestureDetector(
-            //   onTap: () {
-            //     // 사진 전체 화면으로 확대
-            //     Navigator.of(context).push(MaterialPageRoute(
-            //       builder: (_) => FullScreenImage('${Secrets.REMOTE_SERVER_URL}' + todoImg),
-            //     ));
-            //   },
-            //   child: Image.network(
-            //       '${Secrets.REMOTE_SERVER_URL}' + todoImg,
-            //       fit: BoxFit.cover),
-            // ),
-            // SizedBox(height: 10),
+            GestureDetector(
+              onTap: () {
+                // 사진 전체 화면으로 확대
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => FullScreenImage('${Secrets.REMOTE_SERVER_URL}/group-image/' + todoImg),
+                ));
+              },
+              child: Image.network(
+                  '${Secrets.REMOTE_SERVER_URL}/group-image/' + todoImg,
+                  fit: BoxFit.cover),
+            ),
+            SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
