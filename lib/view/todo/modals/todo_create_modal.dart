@@ -3,10 +3,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:iww_frontend/utils/extension/int.ext.dart';
 import 'package:iww_frontend/utils/extension/timeofday.ext.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/todo_modal.viewmodel.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
 enum TodoModalMode { normal, group }
@@ -213,6 +215,7 @@ class TodoCreateModal<T extends ChangeNotifier> extends StatelessWidget {
   List<WidgetBuilder> options = [
     (context) => _LabelPicker<T>(),
     (context) => _TimePicker<T>(),
+    (context) => _DayPicker<T>()
   ];
 }
 
@@ -242,6 +245,55 @@ class _TimePicker<T extends ChangeNotifier> extends StatelessWidget {
             minute: value.minute,
           );
         },
+      ),
+    );
+  }
+}
+
+class _DayPicker<T extends ChangeNotifier> extends StatelessWidget {
+  const _DayPicker({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final screen = MediaQuery.of(context).size;
+
+    List<String> week = ['월', '화', '수', '목', '금', '토', '일'];
+
+    DateTime now = DateTime.now();
+    String today = DateFormat('M월 y일 aaa 요일', 'ko_KO').format(now);
+    // String today = DateFormat('M월 d일 E요일', 'ko_KO').format(now);
+    // // 이번 주의 첫째 날(월요일) 계산
+    // int daysToMonday = now.weekday - DateTime.monday;
+    // DateTime monday = now.subtract(Duration(days: daysToMonday));
+
+    return SizedBox(
+      width: double.infinity,
+      height: screen.height * 0.2,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: screen.width * 0.9,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                for (int i = 0; i < 7; i++)
+                  Container(
+                    decoration: BoxDecoration(
+                      color: today == week[i] ? Colors.black12 : Colors.orange,
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                    width: 40,
+                    height: 40,
+                    child: Center(
+                      child: Text(week[i]),
+                    ),
+                  ),
+              ],
+            ),
+          )
+        ],
       ),
     );
   }

@@ -5,6 +5,7 @@ import 'package:iww_frontend/model/auth/auth_status.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/providers.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
+import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/style/button.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_common/bottom_sheet_header.dart';
@@ -84,10 +85,7 @@ void main() async {
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            useMaterial3: true,
-            fontFamily: 'Pretendard',
-          ),
+          theme: getapptheme(),
           home: RenderPage(),
         ),
       ),
