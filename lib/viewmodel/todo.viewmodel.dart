@@ -28,14 +28,22 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   // ****************************** //
   // *        View States         * //
   // ****************************** //
+
+  // 1. 전체 투두
   List<Todo> _todos = [];
   List<Todo> get todos => _todos;
 
+  // 2. 개인 투두
   List<Todo> _normalTodos = [];
   List<Todo> get normalTodos => _normalTodos;
 
+  // 3. 그룹 투두
   List<Todo> _groupTodos = [];
   List<Todo> get groupTodos => _groupTodos;
+
+  // 4. 기한이 지난 개인투두
+  List<Todo> _prevTodos = [];
+  List<Todo> get prevTodos => _prevTodos;
 
   bool _waiting = true;
   bool get waiting => _waiting;
@@ -74,6 +82,9 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
     _todos = data;
     _normalTodos = data.where((todo) => todo.grpId == null).toList();
     _groupTodos = data.where((todo) => todo.grpId != null).toList();
+    _prevTodos = _normalTodos
+        .where((todo) => todo.todoDate.compareTo(getToday()) < 0)
+        .toList();
 
     LOG.log("Fetched data group todo ${data.length}");
     waiting = false;

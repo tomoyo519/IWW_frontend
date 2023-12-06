@@ -4,14 +4,11 @@ import 'package:iww_frontend/style/button.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/home/home_profile.dart';
 import 'package:iww_frontend/view/modals/todo_editor.dart';
-import 'package:iww_frontend/view/todo/modals/todo_create_modal.dart';
-import 'package:iww_frontend/view/todo/todo_editor.dart';
 import 'package:iww_frontend/view/todo/todo_list.dart';
 import 'package:iww_frontend/view/todo/todo_progress.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
-import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
-import 'package:iww_frontend/viewmodel/todo_modal.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
+import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:provider/provider.dart';
 
 // 홈 레이아웃 및 의존성 주입
@@ -44,30 +41,46 @@ class MyTodo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Size screen = MediaQuery.of(context).size;
+
     return Container(
-      width: double.infinity,
-      height: double.infinity,
+      width: screen.width,
+      height: screen.height,
       padding: EdgeInsets.symmetric(
-        horizontal: 20,
+        horizontal: 15,
       ),
       child: Stack(
         children: [
           Column(
             children: [
-              Expanded(
-                flex: 15,
-                child: HomeProfile(
-                  user: user, // 프로필 카드
+              SizedBox(
+                height: screen.height * 0.2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // SizedBox(child: HomeProfile(user: user)),
+                    Expanded(flex: 3, child: TodoProgress()),
+                  ],
                 ),
               ),
+              // Expanded(
+              //   child: Container(
+              //     color: Colors.red,
+              //   ),
+              // )
               Expanded(
-                flex: 10,
-                child: TodoProgress(),
-              ),
-              Expanded(
-                flex: 75,
-                child: ToDoList(),
+                // flex: 1,
+                child: SingleChildScrollView(
+                  child: ToDoList(),
+                ),
               )
+
+              // SizedBox(
+
+              //   child: ModelViewer(
+              //     src: 'assets/pets/kitsune.glb',
+              //   ),
+              // ),
             ],
           ),
           // ==== Floating Button ==== //
