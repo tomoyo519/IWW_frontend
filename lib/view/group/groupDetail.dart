@@ -462,9 +462,10 @@ class _GroupDetailState extends State<GroupDetail> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Expanded(
-                    child: Container(
-                      child: GridView.builder(
+                  child: LayoutBuilder(
+                    builder:
+                        (BuildContext context, BoxConstraints constraints) {
+                      return GridView.builder(
                         shrinkWrap: true,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                             childAspectRatio: 2 / 1, crossAxisCount: 3),
@@ -472,9 +473,11 @@ class _GroupDetailState extends State<GroupDetail> {
                         itemBuilder: (context, index) {
                           return InkWell(
                             onTap: () {
-                              nav.push(AppRoute.room, argument: groupMems[index]["user_id"].toString());
+                              nav.push(AppRoute.room,
+                                  argument:
+                                      groupMems[index]["user_id"].toString());
                             },
-                            child :Column(
+                            child: Column(
                               children: [
                                 Container(
                                     height: 50,
@@ -491,17 +494,19 @@ class _GroupDetailState extends State<GroupDetail> {
                                           MainAxisAlignment.spaceEvenly,
                                       children: [
                                         Icon(Icons.account_circle_rounded),
-                                        Text(groupMems[index]["user_name"] ?? "")
+                                        Text(
+                                            groupMems[index]["user_name"] ?? "")
                                       ],
                                     ))
                               ],
                             ),
                           );
                         },
-                      ),
-                    ),
+                      );
+                    },
                   ),
                 ),
+
                 if (!myGroup) ...[
                   Padding(
                     padding: const EdgeInsets.all(8.0),
