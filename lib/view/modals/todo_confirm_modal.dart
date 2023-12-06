@@ -32,11 +32,11 @@ void showTodoConfirmModal(BuildContext context, String? message) {
               onTap: () {
                 // 사진 전체 화면으로 확대
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => FullScreenImage('${Secrets.REMOTE_SERVER_URL}/group-image' + todoImg),
+                  builder: (_) => FullScreenImage('${Secrets.REMOTE_SERVER_URL}' + todoImg),
                 ));
               },
               child: Image.network(
-                  '${Secrets.REMOTE_SERVER_URL}/group-image' + todoImg,
+                  '${Secrets.REMOTE_SERVER_URL}' + todoImg,
                   fit: BoxFit.cover),
             ),
             SizedBox(height: 10),
