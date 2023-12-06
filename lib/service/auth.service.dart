@@ -141,9 +141,12 @@ class AuthService extends ChangeNotifier {
     );
 
     _mainPet = Item(
-      id: 54,
-      name: "공부미호",
+      id: 55,
+      petExp: 50,
       itemType: 0,
+      name: "구미호_01",
+      path: 'assets/pets/small_fox.glb',
+      petName: '펫의 이름',
     );
 
     RemoteDataSource.setAuthHeader("Bearer ${Secrets.JWT_TOKEN}");
@@ -187,7 +190,6 @@ class AuthService extends ChangeNotifier {
       // Unauthorized
       status = AuthStatus.failed;
     }
-
 
     waiting = false;
   }
