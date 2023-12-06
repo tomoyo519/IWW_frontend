@@ -265,6 +265,9 @@ class AuthService extends ChangeNotifier {
 
   Future<void> logout() async {
     await LocalStorage.clearKey();
+    String? token = await LocalStorage.readKey('jwt');
+
+    LOG.log('[User Logout] token $token');
     status = AuthStatus.failed;
     waiting = false;
   }
