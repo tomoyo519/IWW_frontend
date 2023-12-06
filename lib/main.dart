@@ -2,7 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/auth/auth_status.dart';
+import 'package:iww_frontend/model/item/item.model.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
+import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/providers.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/style/app_theme.dart';
@@ -57,15 +59,16 @@ void main() async {
   // * ======================= * //
 
   // 1. 로컬 로그인
-  await authService.localLogin();
+  // await authService.localLogin();
 
   // 2. 카카오로 로그인 시도
   // authService.oauthLogin(signup: false);
 
   // 3. 테스트유저 접속
-  // authService.testLogin();
-  // authService.status = AuthStatus.initialized;
-  // authService.waiting = false;
+  await authService.testLogin();
+
+  authService.status = AuthStatus.initialized;
+  authService.waiting = false;
 
   runApp(
     MultiProvider(
@@ -103,6 +106,18 @@ class RenderPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AuthService authService = context.watch<AuthService>();
+
+    UserInfo? userInfo;
+    if (authService.status == AuthStatus.initialized) {
+      LOG.log(emoji: 2, "${authService.user!.user_id}");
+
+      UserModel user = authService.user!;
+      Item mainPet = authService.mainPet!;
+      UserRepository repository =
+          Provider.of<UserRepository>(context, listen: false);
+      userInfo = UserInfo(user, mainPet, repository);
+    }
+
     return authService.waiting
         ? LoadingPage()
         : authService.status != AuthStatus.initialized
@@ -113,13 +128,16 @@ class RenderPage extends StatelessWidget {
                   ChangeNotifierProvider.value(
                     value: context.read<AppNavigator>(),
                   ),
-                  ChangeNotifierProvider(
-                    create: (context) => UserInfo(
-                      authService.user!,
-                      authService.mainPet!,
-                      Provider.of<UserRepository>(context, listen: false),
-                    ),
+                  ChangeNotifierProvider.value(
+                    value: userInfo!,
                   ),
+                  // ChangeNotifierProvider(
+                  //   create: (context) => UserInfo(
+                  //     authService.user!,
+                  //     authService.mainPet!,
+                  //     Provider.of<UserRepository>(context, listen: false),
+                  //   ),
+                  // ),
                 ],
                 child: MainPage(), // lib/view/main_page.dart
               );

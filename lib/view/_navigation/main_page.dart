@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/service/event.service.dart';
+import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_navigation/extension/app_page.ext.dart';
 import 'package:iww_frontend/view/_navigation/extension/app_route.ext.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/_navigation/app_page.model.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
+import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -59,6 +62,9 @@ class _MainPageState extends State<MainPage> {
     final List<AppPage> appbars = nav.APPBAR_PAGES;
 
     final AppPage curr = nav.current;
+    final UserInfo user = context.read<UserInfo>();
+
+    LOG.log('${RemoteDataSource.baseHeaders}');
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
