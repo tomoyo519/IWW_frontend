@@ -69,13 +69,16 @@ class MyRoomPage extends StatelessWidget {
             top: 0,
             left: 0,
             right: 0,
-            child: AnimatedContainer(
-                width: double.infinity,
-                height: screenHeight - myRoomState.growth,
-                color: Colors.blue,
-                duration: Duration(milliseconds: 500),
-                curve: Curves.easeInOut,
-                child: MyRoomComponent())),
+            child: AbsorbPointer(
+              absorbing: false,
+              child: AnimatedContainer(
+                  width: double.infinity,
+                  height: screenHeight - myRoomState.growth,
+                  color: Colors.blue,
+                  duration: Duration(milliseconds: 500),
+                  curve: Curves.easeInOut,
+                  child: MyRoomComponent()),
+            )),
         // 하단 인벤토리 뷰
         Positioned(
             bottom: 0,
