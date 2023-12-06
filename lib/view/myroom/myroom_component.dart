@@ -1,8 +1,5 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
-import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/friends/friendMain.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';
@@ -27,15 +24,15 @@ class MyRoomComponent extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           // 펫과 배경 등 구조물은 FutureBuilder를 통해 렌더링
-                  RenderMyRoom(),
-                  // 펫 렌더링
+          RenderMyRoom(),
+          // 펫 렌더링
           Selector<MyRoomViewModel, List<Item>>(
               selector: (_, myRoomViewModel) => myRoomViewModel.roomObjects,
               builder: (_, roomObjects, __) {
                 return MyPet(newSrc: myRoomState.findPetName());
               }),
           // 방 렌더링
-                  
+
           // 상단 상태바
           Positioned(
               left: 0,
@@ -56,7 +53,6 @@ class MyRoomComponent extends StatelessWidget {
       ),
     );
   }
-  
 }
 
 // 방 렌더링
@@ -91,7 +87,6 @@ class RenderMyRoom extends StatelessWidget {
           MediaQuery.of(context).size.height / 6.0,
         ),
       ),
-      
     ]);
 
     // 유저의 펫 정보 불러오기
@@ -155,7 +150,7 @@ class StatusBar extends StatelessWidget {
                   child: Text(
                     '체력:',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 16,
                       color: Colors.white,
                     ),
                     textAlign: TextAlign.left,
@@ -194,7 +189,7 @@ class StatusBar extends StatelessWidget {
                   child: Text(
                     '경험치: ',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 16,
                       color: Colors.white,
                     ),
                     textAlign: TextAlign.left,
@@ -275,7 +270,7 @@ class BottomButtons extends StatelessWidget {
                   ),
                 ),
               );
-              
+
               if (result != null) {
                 roomState.roomOwner = result as int;
               }
