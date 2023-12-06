@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -9,15 +11,16 @@ import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:provider/provider.dart';
 
+// Todo Extension으로 스타일 만들기
 enum GroupTodoState {
-  approved,
-  done,
-  undone,
+  DONE,
+  UNDONE,
+  APPROVED,
 }
 
 class GroupTodoTile extends StatefulWidget {
   final Todo todo;
-  final TodoViewModel viewModel;
+  final TodoViewModel viewmodel;
 
   static final List<List<Color>> gradients = [
     [Color(0xffff0f7b), Color(0xfff89b29)],
@@ -26,7 +29,7 @@ class GroupTodoTile extends StatefulWidget {
   const GroupTodoTile({
     super.key,
     required this.todo,
-    required this.viewModel,
+    required this.viewmodel,
   });
 
   @override
@@ -47,13 +50,13 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
     // 그룹 투두의 상태 초기화
     if (widget.todo.todoDone) {
       // 1. 다른 사용자에 의해 승인되었습니다.
-      todoState = GroupTodoState.approved;
+      todoState = GroupTodoState.APPROVED;
     } else if (widget.todo.todoImg != null) {
       // 2. 인증 사진이 첨부되어 승인 대기중입니다.
-      todoState = GroupTodoState.done;
+      todoState = GroupTodoState.DONE;
     } else {
       // 3. 아직 인증이 완료되지 않았습니다.
-      todoState = GroupTodoState.undone;
+      todoState = GroupTodoState.UNDONE;
     }
   }
 
@@ -80,10 +83,10 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                 widget.todo.todoName,
                 style: TextStyle(
                   fontSize: 16,
-                  decoration: todoState == GroupTodoState.approved
+                  decoration: todoState == GroupTodoState.APPROVED
                       ? TextDecoration.lineThrough // 완료된 경우
                       : TextDecoration.none, // 아직 미완
-                  color: todoState == GroupTodoState.approved
+                  color: todoState == GroupTodoState.APPROVED
                       ? Colors.black45
                       : Colors.black87,
                   fontWeight: FontWeight.w600,
@@ -122,7 +125,7 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
             ),
 
             // * ===== 버튼 클릭시 투두 체크 ===== * //
-            onPressed: todoState == GroupTodoState.done
+            onPressed: todoState == GroupTodoState.UNDONE
                 ? () => _onGrpTodoCheck(context, widget.todo)
                 : null,
             child: Ink(
@@ -142,9 +145,9 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                 alignment: Alignment.center,
                 child: Text(
                   // * ==== 투두 상태 ==== * //
-                  todoState == GroupTodoState.undone
+                  todoState == GroupTodoState.UNDONE
                       ? "인증하기"
-                      : todoState == GroupTodoState.done
+                      : todoState == GroupTodoState.DONE
                           ? "인증 대기중"
                           : "✔ 인증 완료",
                   style: TextStyle(

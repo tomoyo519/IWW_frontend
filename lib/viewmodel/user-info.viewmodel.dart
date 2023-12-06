@@ -116,28 +116,28 @@ class UserInfo extends ChangeNotifier {
 
   // TODO type 달기
   Future<bool> reNameUser(myname, userInfo) async {
-    var userInfo;
-
     try {
       var json = {
         "user_name": myname,
         "user_tel": userInfo._userTel,
         "user_kakao_id": userInfo.userModel.user_kakao_id
       };
-      LOG.log('$json');
-      var result = RemoteDataSource.put('/user/${userInfo.userId}',
+      LOG.log('왜안찍혀????? $json');
+      return await RemoteDataSource.put('/user/${userInfo.userId}',
               body: jsonEncode(json))
           .then((res) {
         LOG.log('${res.statusCode}');
-        if (res.statusCode == 200) {
+        if (res.statusCode == 200 && res != null) {
           userName = myname;
           return true;
+        } else {
+          return false;
         }
       });
     } catch (e) {
+      LOG.log(e.toString());
       return false;
     }
-    return false;
   }
 
   void setStateFromTodo(bool isDone, bool isGroup, int todayDone) {

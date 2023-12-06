@@ -10,13 +10,13 @@ import 'package:provider/provider.dart';
 // TodoList의 개별 타일
 class MyTodoTile extends StatefulWidget {
   final Todo todo;
-  final TodoViewModel viewModel;
+  final TodoViewModel viewmodel;
   final Future<void> Function(BuildContext, Todo, bool) onCheck;
 
   const MyTodoTile({
     super.key,
     required this.todo,
-    required this.viewModel,
+    required this.viewmodel,
     required this.onCheck,
   });
 
@@ -42,7 +42,7 @@ class _MyTodoTileState extends State<MyTodoTile> {
       ),
       margin: EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Color.fromARGB(255, 243, 243, 243),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
@@ -72,15 +72,16 @@ class _MyTodoTileState extends State<MyTodoTile> {
                   widget.todo.todoName,
                   textAlign: TextAlign.start,
                   style: TextStyle(
-                    fontSize: 13,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
                     color: widget.todo.todoDone ? Colors.black26 : Colors.black,
                   ),
                 ),
                 Text(
-                  widget.todo.todoDate,
+                  widget.todo.todoStart,
                   textAlign: TextAlign.start,
                   style: TextStyle(
-                    fontSize: 11,
+                    fontSize: 14,
                     color: widget.todo.todoDone
                         ? Colors.black26
                         : isDelayed

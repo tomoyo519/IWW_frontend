@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/room.repository.dart';
+import 'package:iww_frontend/view/myroom/myroom.dart';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -50,6 +51,7 @@ class InventoryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var myRoomViewModel = context.watch<MyRoomViewModel>();
+    var myRoomState = context.watch<MyRoomState>();
 
     return Container(
       height: double.infinity,
@@ -106,6 +108,7 @@ class InventoryView extends StatelessWidget {
             child: ElevatedButton(
               onPressed: () {
                   myRoomViewModel.applyChanges();
+                myRoomState.toggleGrowth();
               },
               child: Text('적용하기'),
             ),

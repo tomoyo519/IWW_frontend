@@ -7,6 +7,7 @@ import 'package:iww_frontend/utils/extension/string.ext.dart';
 import 'package:iww_frontend/utils/extension/timeofday.ext.dart';
 import 'package:iww_frontend/view/todo/modals/todo_create_modal.dart';
 import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -38,9 +39,18 @@ class TodoModalViewModel<T extends ChangeNotifier> extends ChangeNotifier {
       _todoSrt = TimeOfDay.now();
       _todoDate = DateTime.now();
     }
+
+    // 모달에 보여줄 필드 생성
+    fields.add(cateField);
+    fields.add(timeField);
+
+    if (T is MyGroupViewModel) {
+      fields.add(routField);
+    }
   }
 
-  // * === send request to create/update === * //
+  // * === send request to create/update === * //\
+
   Future<bool> onSave(BuildContext context) async {
     final userId = context.read<UserInfo>().userId;
     final parent = Provider.of<T>(context, listen: false) as BaseTodoViewModel;
@@ -148,18 +158,25 @@ class TodoModalViewModel<T extends ChangeNotifier> extends ChangeNotifier {
   }
 
   // * ==== create button fields ==== * //
-  List<ButtonFieldData> fields = [
-    ButtonFieldData(
-      idx: 0,
-      label: "라벨",
-      icon: Icons.label_important_outline_rounded,
-    ),
-    ButtonFieldData(
-      idx: 1,
-      label: "시간",
-      icon: Icons.timer_outlined,
-    ),
-  ];
+  List<ButtonFieldData> fields = [];
+
+  ButtonFieldData cateField = ButtonFieldData(
+    idx: 0,
+    label: "라벨",
+    icon: Icons.label_important_outline_rounded,
+  );
+
+  ButtonFieldData timeField = ButtonFieldData(
+    idx: 1,
+    label: "시간",
+    icon: Icons.timer_outlined,
+  );
+
+  ButtonFieldData routField = ButtonFieldData(
+    idx: 2,
+    label: "반복",
+    icon: Icons.repeat_rounded,
+  );
 
   // * ==== common ==== * //
   List<Category> cats = Categories.categories;

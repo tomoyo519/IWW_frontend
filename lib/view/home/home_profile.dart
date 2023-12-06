@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:iww_frontend/view/_common/profile_image.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -11,50 +12,35 @@ class HomeProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserInfo>(context);
+    String today = DateFormat('M월 d일 E요일', 'ko_KO').format(DateTime.now());
 
-    return SizedBox(
-      width: double.infinity,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+    return Container(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: 60,
-            height: 60,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(100),
-              child: ProfileImage(
-                width: 70,
-                height: 70,
-                userId: user.userId,
+          RichText(
+            text: TextSpan(
+              style: TextStyle(
+                fontSize: 22,
+                color: Colors.black87,
               ),
-            ),
-          ),
-          SizedBox(
-            width: 15,
-          ),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "안녕하세요 ${user.userName}님 👋",
+                TextSpan(text: today),
+                // TextSpan(
+                //   text: user.userName,
+                //   style: TextStyle(fontWeight: FontWeight.bold),
+                // ),
+                TextSpan(
+                  text: " 오늘의 할일은? 👋",
                   style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Text(
-                  "오늘의 할일은 무엇인가요?",
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.black54,
+                    fontSize: 14,
                   ),
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

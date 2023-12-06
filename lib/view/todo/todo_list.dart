@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
@@ -20,6 +22,33 @@ class ToDoList extends StatelessWidget {
 
   ToDoList({super.key});
 
+  Widget normalTodoBuilder(Todo todo, BuildContext context) {
+    final viewmodel = context.watch<TodoViewModel>();
+
+    return GestureDetector(
+      onTap: () => showTodoEditModal<TodoViewModel>(context, todo: todo),
+      onLongPress: () => _showDeleteModal(context, todo),
+      child: MyTodoTile(
+        todo: todo,
+        viewmodel: viewmodel,
+        onCheck: _onNormalTodoChk,
+      ),
+    );
+  }
+
+  Widget groupTodoBuiler(Todo todo, BuildContext context) {
+    final viewmodel = context.watch<TodoViewModel>();
+
+    return GestureDetector(
+      onTap: () => showTodoEditModal<TodoViewModel>(context, todo: todo),
+      onLongPress: () => _showDeleteModal(context, todo),
+      child: GroupTodoTile(
+        todo: todo,
+        viewmodel: viewmodel,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // 데이터 가져오기
@@ -40,55 +69,22 @@ class ToDoList extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // TODO: 이런식으로 섹션 나누지 말고
-                      // TODO: 그룹 또는 개인투두가 없는 경우 등등을 고려해야함.
-                      // * ==== 그룹투두 ==== * //
-                      if (groupTodos.isNotEmpty) ...[
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                          child: Text(
-                            "Group Todo",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        for (var todo in groupTodos)
-                          GestureDetector(
-                            // onTap: () => _showTodoEditor(context, todo),
-                            // onLongPress: () =>
-                            // _showTodoDeleteModal(context, todo),
-                            child: GroupTodoTile(
-                              todo: todo,
-                              viewModel: viewModel,
-                            ),
-                          ),
-                      ],
-
                       // * ==== 개인투두 ==== * //
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        child: Text(
-                          "Personal Todo",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+
+                      ToggledTodoList(
+                        title: "그룹 인증 할일",
+                        initialToggle: true,
+                        parentCtxt: context,
+                        items: groupTodos,
+                        itemBuilder: normalTodoBuilder,
                       ),
-                      for (var todo in normalTodos)
-                        GestureDetector(
-                          onTap: () => showTodoEditModal<TodoViewModel>(context,
-                              todo: todo),
-                          onLongPress: () =>
-                              _showTodoDeleteModal(context, todo),
-                          child: MyTodoTile(
-                            todo: todo,
-                            viewModel: viewModel,
-                            onCheck: _onNormalTodoChk,
-                          ),
-                        ),
+                      ToggledTodoList(
+                        title: "오늘의 할일",
+                        initialToggle: true,
+                        parentCtxt: context,
+                        items: normalTodos,
+                        itemBuilder: normalTodoBuilder,
+                      ),
                     ],
                   ),
                 ),
@@ -162,7 +158,7 @@ class ToDoList extends StatelessWidget {
   // ****************************** //
 
   // 할일 삭제 모달
-  _showTodoDeleteModal(BuildContext context, Todo todo) {
+  _showDeleteModal(BuildContext context, Todo todo) {
     showCupertinoModalPopup(
       context: context,
       builder: (BuildContext buildContext) => CupertinoActionSheet(
@@ -185,30 +181,117 @@ class ToDoList extends StatelessWidget {
       ),
     );
   }
+}
 
-  // 할일 수정 에디터
-  _showTodoEditor(BuildContext context, Todo todo) {
-    final todoviewmodel = context.read<TodoViewModel>();
-    final userInfo = context.read<UserInfo>();
+class ToggledTodoList extends StatefulWidget {
+  String title;
+  List<Todo> items;
+  bool initialToggle;
+  BuildContext parentCtxt;
+  Widget Function(Todo, BuildContext) itemBuilder;
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (bottomSheetContext) {
-        return ChangeNotifierProvider(
-          create: (_) => EditorModalViewModel(
-            of: todo,
-            user: userInfo,
-            parent: todoviewmodel,
+  ToggledTodoList({
+    super.key,
+    required this.title,
+    required this.items,
+    required this.parentCtxt,
+    required this.itemBuilder,
+    required this.initialToggle,
+  });
+
+  @override
+  State<ToggledTodoList> createState() => _ToggledTodoListState();
+}
+
+class _ToggledTodoListState extends State<ToggledTodoList>
+    with TickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  bool isToggled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    isToggled = widget.initialToggle;
+
+    _controller = AnimationController(
+      duration: Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _animation = Tween<double>(begin: 0, end: 0.5) // 0.5는 180도 회전을 의미
+        .animate(_controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _toggle() {
+    setState(() {
+      isToggled = !isToggled; // 토글 상태 전환
+    });
+
+    if (_controller.isDismissed) {
+      _controller.forward();
+    } else {
+      _controller.reverse();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Size screen = MediaQuery.of(context).size;
+
+    return Column(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: Colors.black12, width: 1),
+            ),
           ),
-          child: EditorModal(
-            init: todo,
-            title: "할일 수정",
-            onSave: (context) => _updateTodo(context),
-            onCancel: (context) => Navigator.pop(context),
+          width: screen.width,
+          height: 50,
+          child: GestureDetector(
+            onTap: () => _toggle(),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  widget.title,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                AnimatedBuilder(
+                  animation: _animation,
+                  builder: (context, child) {
+                    return Transform.rotate(
+                      angle: _animation.value * 1 * pi,
+                      child: Icon(Icons.keyboard_arrow_down_rounded),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
-        );
-      },
+        ),
+        AnimatedContainer(
+          duration: Duration(milliseconds: 300),
+          height: isToggled ? screen.height * 0.3 : 0,
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              for (var item in widget.items)
+                widget.itemBuilder(item, widget.parentCtxt),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

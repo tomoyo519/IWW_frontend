@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:iww_frontend/utils/extension/int.ext.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:lottie/lottie.dart';
+import 'package:model_viewer_plus/model_viewer_plus.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
 // 할일 상태 바
@@ -12,7 +15,6 @@ class TodoProgress extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screen = MediaQuery.of(context).size;
-    DateTime today = DateTime.now().add(Duration(hours: 9));
     final model = context.watch<TodoViewModel>();
     final userinfo = context.watch<UserInfo>();
 
@@ -20,67 +22,156 @@ class TodoProgress extends StatelessWidget {
       userinfo.userCash,
     );
 
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: Colors.amber.shade50,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 0,
-            blurRadius: 5,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      padding: EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 5,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                "${model.todayDone}/${model.todayTotal}",
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+    DateTime now = DateTime.now();
+    String today = DateFormat('M월 d일 E요일', 'ko_KO').format(now);
+
+    // 이번 주의 첫째 날(월요일) 계산
+    int daysToMonday = now.weekday - DateTime.monday;
+    DateTime monday = now.subtract(Duration(days: daysToMonday));
+
+    // 이번 주의 마지막 날(일요일) 계산
+    // int daysToSunday = DateTime.sunday - now.weekday;
+    // DateTime sunday = now.add(Duration(days: daysToSunday));
+
+    // print('이번 주의 시작일: $monday');
+    // print('이번 주의 종료일: $sunday');
+
+    double progress =
+        model.todayTotal == 0 ? 0 : model.todayDone / model.todayTotal;
+
+    return SizedBox(
+      width: screen.width,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          vertical: 5,
+          horizontal: 10,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Color.fromARGB(255, 241, 241, 241),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                        RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 22,
+                              fontWeight: FontWeight.normal,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: today,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              TextSpan(
+                                text: "\n오늘의 할일은 무엇인가요",
+                                style: TextStyle(
+                                  color: Colors.black54,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: Color(0xffeeeeee),
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          child: Row(
+                            children: [
+                              _TodayBadge(title: "달성", data: model.todayTotal),
+                              _TodayBadge(title: "미달성", data: model.todayDone),
+                            ],
+                          ),
+                        )
+                      ])),
+                  SizedBox(
+                    width: screen.width * 0.3,
+                    child: ModelViewer(
+                      interactionPrompt: InteractionPrompt.none,
+                      src: 'assets/pets/small_fox.glb',
+                      animationName: 'Idle_A',
+                      autoPlay: true,
+                      cameraControls: false,
+                      cameraOrbit: '25deg 75deg 105%',
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(
-                width: 10,
+            ),
+            Container(
+              margin: EdgeInsets.only(bottom: 5),
+              // padding: EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(100),
+                color: Colors.white,
               ),
-              Text(
-                "${today.month}월 ${today.day}일",
-                style: TextStyle(
-                  fontSize: 13,
+              height: 5,
+              width: screen.width,
+              child: FractionallySizedBox(
+                alignment: Alignment.centerLeft,
+                widthFactor: progress,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    color: const Color.fromARGB(255, 255, 128, 0),
+                  ),
                 ),
               ),
-              CashBadge(cash: cash)
-            ],
-          ),
-          Expanded(
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                Column(
-                  children: [
-                    SizedBox(
-                      // width: ,
-                      child: Lottie.asset('assets/star.json'),
-                    ),
-                    Text("오늘 완료"),
-                    Text("45"),
-                  ],
-                )
-              ],
-            ),
-          ),
-        ],
+            )
+          ],
+        ),
       ),
     );
+  }
+}
+
+class _TodayBadge extends StatelessWidget {
+  final String title;
+  final int? data;
+
+  const _TodayBadge({
+    required this.title,
+    required this.data,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+        flex: 1,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              data.toString(),
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ));
   }
 }
 

@@ -219,41 +219,34 @@ class _MyPageState extends State<MyPage> {
                   ),
                   if (rewards != null && rewards!.isNotEmpty) ...[
                     Container(
-                        height: 200,
                         child: Expanded(
-                          child: GridView.builder(
-                              itemCount: rewards!.length,
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 3, childAspectRatio: 1.0),
-                              itemBuilder: (context, index) {
-                                return Card(
-                                    child: Column(children: [
-                                  Expanded(
-                                      child: Column(
-                                    children: [
-                                      Image.network(
-                                          '${Secrets.REMOTE_SERVER_URL}/group-image/' +
-                                              rewards![index]
-                                                  .achiImg
-                                                  .toString(),
-                                          fit: BoxFit.cover),
-                                      Text((rewards != null &&
+                      child: GridView.builder(
+                          itemCount: rewards!.length,
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3, childAspectRatio: 1.0),
+                          itemBuilder: (context, index) {
+                            return Card(
+                                child: Column(children: [
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Flexible(
+                                      child: Image.asset('assets/medal.png',
+                                          fit: BoxFit.scaleDown),
+                                    ),
+                                    Text(
+                                      (rewards != null &&
                                               rewards![index].achiName != null)
                                           ? rewards![index].achiName.toString()
-                                          : 'default value'),
-                                    ],
-                                  )
-                                      // Image.network(
-                                      // '${Secrets.REMOTE_SERVER_URL}/group-image/' +
-                                      //     routineImgs![index].todoImg,
-                                      // fit: BoxFit
-                                      // .cover, // 이미지가 부모 위젯의 크기에 맞게 조절되도록 합니다.
-                                      // ),
-                                      )
-                                ]));
-                              }),
-                        ))
+                                          : 'default value',
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ]));
+                          }),
+                    ))
                   ],
                   if (rewards != null && rewards!.isEmpty) ...[
                     Center(
