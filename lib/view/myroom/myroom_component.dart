@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/friends/friendMain.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';
@@ -118,32 +119,9 @@ class UnderLayer extends StatelessWidget {
 class StatusBar extends StatelessWidget {
   const StatusBar({super.key});
 
-  void evolution(BuildContext context, UserInfo userInfo) {
-    // TODO 진화되면 호출
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('펫이 진화했어요!'),
-          content: Text('축하합니다!'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                // 다이얼로그 닫기
-                Navigator.of(context).pop();
-              },
-              child: Text('확인'),
-            ),
-          ],
-        );
-      },
-    );
-
-  }
-
   @override
   Widget build(BuildContext context) {
-    var userInfo = context.watch<UserInfo>();
+    var userInfo = context.read<UserInfo>();
 
     return Container(
       padding: const EdgeInsets.all(30.0),
