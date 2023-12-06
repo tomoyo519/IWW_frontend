@@ -134,8 +134,6 @@ class _MyPageState extends State<MyPage> {
                                     ),
                                   );
 
-                                  LOG.log(emoji: 2, '바뀌었나요? $isChanged');
-
                                   if (isChanged != null && isChanged == true) {
                                     await userInfo.fetchUser();
                                   }

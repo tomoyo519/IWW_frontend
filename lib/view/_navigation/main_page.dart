@@ -57,15 +57,11 @@ class _MainPageState extends State<MainPage> {
   // 무조건 있어야함!
   @override
   Widget build(BuildContext context) {
-    LOG.log(RemoteDataSource.baseHeaders.toString());
     AppNavigator nav = context.watch<AppNavigator>();
     final List<AppPage> bottoms = nav.BOTTOM_PAGES;
     final List<AppPage> appbars = nav.APPBAR_PAGES;
 
     final AppPage curr = nav.current;
-    final UserInfo user = context.read<UserInfo>();
-
-    LOG.log('${RemoteDataSource.baseHeaders}');
 
     return Scaffold(
       resizeToAvoidBottomInset: false,

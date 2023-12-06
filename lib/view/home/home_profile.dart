@@ -5,6 +5,7 @@ import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 
 // 홈에 표시되는 프로필 영역
+// 2023.12.6 현재 사용하지 않음
 class HomeProfile extends StatelessWidget {
   final UserInfo user;
   const HomeProfile({super.key, required this.user});

@@ -8,6 +8,7 @@ import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 
 // 전체 투두리스트 상태를 관리
 class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
@@ -158,6 +159,7 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   }
 
   // 개인 투두에 대한 완료 처리
+  // 유저 상태정보를 업데이트
   Future<TodoCheckDto?> checkNormalTodo(int todoId, bool value) async {
     String todoIdStr = todoId.toString();
     return await _repository.checkNormalTodo(todoIdStr, value);
