@@ -193,6 +193,7 @@ class EventService {
       default:
         type = EventType.newComment;
     }
+    LOG.log("convert payload to event" + message);
     return Event(type: type, message: message);
   }
 
