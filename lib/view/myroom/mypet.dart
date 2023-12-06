@@ -77,33 +77,33 @@ class _MyPetState extends State<MyPet> {
   @override
   Widget build(BuildContext context) {
     // 모델 및 프리셋 선택
-    String targetResouce = '${widget.newSrc}_$_petActionIndex}';
-    var petModel = petModels[widget.newSrc]!;
-    Preset p = presets[petModel['motions']![_petActionIndex]]!;
+    String targetResouce = '${widget.newSrc}_$_petActionIndex';
+    Map<String, dynamic> selectedModel = petModels[widget.newSrc]!;
+    Preset p = presets[selectedModel['motions']![_petActionIndex]]!;
 
     // 체력이 0이면 비석으로 변경
     var userInfo = context.watch<UserInfo>();
     LOG.log('[마이펫 렌더링] key: $targetResouce');
 
     if (userInfo.userHp == 0) {
-      petModel = petModels['비석']!;
-      p = presets[petModel['motions']![0]]!;
+      selectedModel = petModels['비석']!;
+      p = presets[selectedModel['motions']![0]]!;
     }
 
     return GestureDetector(
-      behavior: HitTestBehavior.translucent,
+      behavior: HitTestBehavior.opaque,
       onTap: () {
+        LOG.log('아니 왜 안바뀌는데 $_petActionIndex');
         setState(() {
           _petActionIndex =
-              (_petActionIndex + 1) % petModel['preset']!.length as int;
-          LOG.log('아니 왜 안바뀌는데 $_petActionIndex');
+              (_petActionIndex + 1) % selectedModel['motions']!.length as int;
         });
       },
       child: SizedBox(
         height: MediaQuery.of(context).size.height * 0.5,
         child: ModelViewer(
           key: ValueKey(targetResouce),
-          src: petModel['src']!,
+          src: selectedModel['src'],
           animationName: p.animationName,
           cameraTarget: p.cameraTarget,
           cameraOrbit: p.cameraOrbit,
