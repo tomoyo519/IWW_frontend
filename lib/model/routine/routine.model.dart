@@ -10,14 +10,17 @@ class Routine {
   String? routEnd;
   String? routDesc;
 
-  Routine(
-      {required this.routName,
-      required this.grpId,
-      required this.routId,
-      this.routRepeat,
-      routDesc,
-      routSrt,
-      routEnd});
+  Routine({
+    required this.routName,
+    required this.grpId,
+    required this.routId,
+    this.routRepeat,
+    routDesc,
+    routSrt,
+    routEnd,
+  }) {
+    routRepeat = '1111111';
+  }
 
   Map<String, dynamic> toJSON() {
     return {
