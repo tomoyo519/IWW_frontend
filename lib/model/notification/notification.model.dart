@@ -6,8 +6,8 @@ class Notification {
   String receiverName;
   String senderId;
   String senderName;
-  int notiType;
-  int? subId;
+  String notiType;
+  String subId;
   String? todoTitle;
   String? reqType;
 
@@ -39,15 +39,15 @@ class Notification {
 
   factory Notification.fromJson(Map<String, dynamic> body) {
     return Notification(
-      notiId: body['noti_id'],
-      receiverId: body['receiver_id'],
+      notiId: body['noti_id'].toString(),
+      receiverId: body['receiver_id'].toString(),
       receiverName: body['receiver_name'],
-      senderId: body['sender_id'],
+      senderId: body['sender_id'].toString(),
       senderName: body['sender_name'],
       subId: body['sub_id'],
       notiType: body['noti_type'],
       reqType: body['req_type'],
-      todoTitle: body['todo_title'],
+      todoTitle: body['todo_name'],
     );
   }
 }

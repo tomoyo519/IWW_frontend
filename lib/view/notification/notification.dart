@@ -91,19 +91,19 @@ class _MyNotificationState extends State<MyNotification> {
     var sender = noti.senderName;
     String message;
     switch (noti.notiType) {
-      case 0:
+      case '0':
         message = '$sender님이 친구 추가 요청을 보냈습니다.';
         break;
-      case 1:
+      case '1':
         message = '$sender님이 친구 추가 요청을 수락하였습니다.';
         break;
-      case 2:
+      case '2':
         message = '$sender님이 "${noti.todoTitle}"에 대한 인증을 요청하였습니다.';
         break;
-      case 3:
+      case '3':
         message = '$sender님이 "${noti.todoTitle}"에 대한 인증을 완료하였습니다.';
         break;
-      case 4:
+      case '4':
         message = '$sender님이 방명록에 댓글을 남겼습니다.';
         break;
       default:
@@ -114,7 +114,7 @@ class _MyNotificationState extends State<MyNotification> {
   }
 
   Widget? buildTrailWidget(model.Notification noti) {
-    if (noti.notiType == 0 && noti.reqType == '0') {
+    if (noti.notiType == '0' && noti.reqType == '0') {
       return Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -148,9 +148,18 @@ class _MyNotificationState extends State<MyNotification> {
           ),
         ],
       );
-    } else if (noti.notiType == 2) {
+    } else if (noti.notiType == '2') {
       return ElevatedButton(
-        onPressed: () {},
+        onPressed: () {
+          String message = jsonEncode({
+            "senderId": int.parse(noti.senderId),
+            "senderName": noti.senderName,
+            "todoId": noti.subId,
+            "todoName": noti.todoTitle,
+            "photoUrl": noti.reqType
+          });
+          showTodoConfirmModal(context, message);
+        },
         style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
         child: Text('확인하기'),
       );
@@ -160,27 +169,16 @@ class _MyNotificationState extends State<MyNotification> {
 
   void navigateToSender(model.Notification noti) {
     AppNavigator nav = Provider.of<AppNavigator>(context, listen: false);
-    int senderId = int.parse(noti.senderId);
-    String message = jsonEncode({
-      "senderId": senderId,
-      "senderName": noti.senderName,
-      "todoId": noti.subId,
-      "todoName": noti.todoTitle,
-      "photoUrl": noti.reqType
-    });
     switch (noti.notiType) {
-      case 0:
-      case 1:
-      case 3:
-        nav.navigate(AppRoute.room, argument: senderId.toString());
+      case '0':
+      case '1':
+      case '2':
+      case '3':
+        nav.push(AppRoute.room, argument: noti.senderId);
         break;
-      case 2:
-        // 해당 todo의 인증샷에 대한 modal 창으로 redirect
-        showTodoConfirmModal(context, message);
-        break;
-      case 4:
+      case '4':
         // TODO - 내 방명록의 해당 댓글 위치로 redirect
-        nav.navigate(AppRoute.room);
+        nav.push(AppRoute.room);
         break;
     }
   }

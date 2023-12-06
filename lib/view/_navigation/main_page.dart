@@ -6,6 +6,7 @@ import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/_navigation/app_page.model.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
 import 'package:provider/provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class MainPage extends StatefulWidget implements PreferredSizeWidget {
   MainPage({super.key});
@@ -27,6 +28,7 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
+    requestNotificationPermission();
 
     // * ==== Event Listener ==== * //
     EventService.stream.listen(
@@ -38,6 +40,15 @@ class _MainPageState extends State<MainPage> {
         });
       },
     );
+  }
+
+  void requestNotificationPermission() async {
+    var status = await Permission.notification.status;
+    if (status.isDenied) {
+      // 사용자가 알림 권한을 거부한 경우
+      Permission.notification.request();
+    }
+    // 기타 상태 처리 (granted, permanentlyDenied 등)
   }
 
   // 무조건 있어야함!

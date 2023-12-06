@@ -63,14 +63,14 @@ extension EventTypeExtension on EventType {
         break;
       case EventType.friendRequest:
       case EventType.friendResponse:
-      case EventType.confirmRequest:
+      case EventType.confirmResponse:
         if (message != null) {
           var data = jsonDecode(message);
           int ownerId = data['senderId'];
           nav.navigate(AppRoute.room, argument: ownerId.toString());
         }
         break;
-      case EventType.confirmResponse:
+      case EventType.confirmRequest:
         showTodoConfirmModal(context, message);
         break;
       case EventType.newComment:

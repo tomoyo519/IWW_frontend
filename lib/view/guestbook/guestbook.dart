@@ -23,6 +23,23 @@ class CommentsProvider with ChangeNotifier {
     notifyListeners(); // 상태 변경 알림
   }
 
+  // 댓글 내용
+  String _comment = '';
+  set comment(String val) {
+    _comment = val;
+    notifyListeners();
+  }
+
+  // 이전 댓글 내용
+  String _prevComment = '';
+  set prevComment(String val) {
+    _prevComment = val;
+    notifyListeners();
+  }
+
+  // 댓글 수정 여부
+  bool get isModified => _comment.compareTo(_prevComment) != 0;
+
   // 댓글 생성
   Future<bool> addComment(String content) async {
     return await _commentRepository.addComment(_ownerId, _userId, content);
@@ -48,8 +65,8 @@ class CommentsProvider with ChangeNotifier {
 }
 
 // 방명록 bottom sheet 트리거
-void showCommentsBottomSheet(BuildContext context,
-    CommentsProvider commentsProvider) async {
+void showCommentsBottomSheet(
+    BuildContext context, CommentsProvider commentsProvider) async {
   // 댓글 데이터 가져오기
   await commentsProvider.fetchComment();
 
@@ -84,43 +101,47 @@ class CommentsBottomSheet extends StatelessWidget {
     return DraggableScrollableSheet(
       expand: false,
       builder: (BuildContext context, ScrollController scrollController) {
-        if (comments.isEmpty) {
-          return Center(
-            child: Lottie.asset(
-              'assets/empty.json',
-              repeat: true,
-              animate: true,
-              height: MediaQuery.of(context).size.height * 0.3,
-            ),
-          );
-        }
         return ClipRRect(
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(25.0),
             topRight: Radius.circular(25.0),
           ),
           child: Scaffold(
-              body: Column(
-            children: <Widget>[
-              Expanded(
-                  child: ListView.builder(
-                controller: scrollController,
-                itemCount: comments.length,
-                itemBuilder: (BuildContext context, int index) {
-                  Comment comment = comments[index];
-                  bool isCurrentUserComment = (comment.authorId == userId);
-                  return isCurrentUserComment
-                      ? _buildDismissibleComment(comment, context)
-                      : _buildListTile(comment);
-                },
-              )),
-              if (!isOwner)
-                CommentInputField(
-                    commentsProvider: commentsProvider,
-                    ownerId: ownerId,
-                    authorId: userId),
-            ],
-          )),
+            body: Column(
+              children: <Widget>[
+                // 댓글 목록 또는 빈 애니메이션 표시
+                Expanded(
+                  child: comments.isEmpty
+                      ? Center(
+                          child: Lottie.asset(
+                            'assets/empty.json',
+                            repeat: true,
+                            animate: true,
+                            height: MediaQuery.of(context).size.height * 0.3,
+                          ),
+                        )
+                      : ListView.builder(
+                          controller: scrollController,
+                          itemCount: comments.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            Comment comment = comments[index];
+                            bool isCurrentUserComment =
+                                (comment.authorId == userId);
+                            return isCurrentUserComment
+                                ? _buildDismissibleComment(comment, context)
+                                : _buildListTile(comment);
+                          },
+                        ),
+                ),
+                // 댓글 입력 필드 표시 (남의 방명록일 경우에도 포함)
+                if (!isOwner || comments.isEmpty)
+                  CommentInputField(
+                      commentsProvider: commentsProvider,
+                      ownerId: ownerId,
+                      authorId: userId),
+              ],
+            ),
+          ),
         );
       },
     );
