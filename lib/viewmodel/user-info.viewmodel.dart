@@ -102,7 +102,7 @@ class UserInfo extends ChangeNotifier {
       return;
     }
 
-    LOG.log('User cash: ${fetched.user.user_cash}');
+    LOG.log('User cash: ${jsonEncode(fetched.user.toMap())}');
     _setStateFromModels(fetched.user, fetched.pet);
     if (prevPetState.id != fetched.pet.id) {
       // 진화함!
@@ -170,7 +170,7 @@ class UserInfo extends ChangeNotifier {
 
     // === Pet === //
     _itemId = pet.id;
-    _petExp = pet.petExp!;
+    _petExp = pet.petExp ?? 0; // FIXME: 펫 타입으로 응답이 올 경우 경험치가 같이 와야함
     _petName = pet.name;
 
     notifyListeners();
