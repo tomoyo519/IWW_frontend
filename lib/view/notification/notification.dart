@@ -156,7 +156,7 @@ class _MyNotificationState extends State<MyNotification> {
             "senderName": noti.senderName,
             "todoId": noti.subId,
             "todoName": noti.todoTitle,
-            "photoUrl": noti.reqType
+            "todoImg": noti.reqType
           });
           LOG.log(message);
 
