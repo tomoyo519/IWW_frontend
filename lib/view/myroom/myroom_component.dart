@@ -115,37 +115,30 @@ class UnderLayer extends StatelessWidget {
 }
 
 // 펫의 체력, 경험치 표시
-class StatusBar extends StatefulWidget {
+class StatusBar extends StatelessWidget {
   const StatusBar({super.key});
 
-  @override
-  State<StatusBar> createState() => _StatusBarState();
-}
+  void evolution(BuildContext context, UserInfo userInfo) {
+    // TODO 진화되면 호출
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('펫이 진화했어요!'),
+          content: Text('축하합니다!'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                // 다이얼로그 닫기
+                Navigator.of(context).pop();
+              },
+              child: Text('확인'),
+            ),
+          ],
+        );
+      },
+    );
 
-class _StatusBarState extends State<StatusBar> with TickerProviderStateMixin {
-  Timer? _timer;
-  var _hp = 0.3;
-  var _exp = 0.1;
-
-  // TODO 할 일을 완료했을때 체력, 경험치가 오르도록 수정 필요
-  @override
-  void initState() {
-    super.initState();
-    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
-      // Call _setHP method here to update the hp value every 5 seconds
-      setState(() {
-        _hp >= 1 ? _hp : _hp += 0.1;
-        _exp >= 1 ? _exp : _exp += 0.2;
-
-        // LOG.log("HP: $_hp, EXP: $_exp");
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _timer!.cancel();
   }
 
   @override
@@ -167,22 +160,21 @@ class _StatusBarState extends State<StatusBar> with TickerProviderStateMixin {
           children: <Widget>[
             Row(
               children: [
-                Flexible(
-                  flex: 1,
+                SizedBox(
+                  width: 60,
                   child: Text(
-                    'HP',
+                    '체력:',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 20,
                       color: Colors.white,
                     ),
                     textAlign: TextAlign.left,
                   ),
                 ),
-                SizedBox(width: 30),
-                Flexible(
-                  flex: 8,
+                SizedBox(width: 10),
+                Expanded(
                   child: LinearProgressIndicator(
-                    value: userInfo.userHp / 100,
+                    value: userInfo.userHp / 10,
                     minHeight: 14,
                     valueColor: AlwaysStoppedAnimation<Color>(
                         const Color.fromARGB(255, 239, 118, 110)),
@@ -190,15 +182,11 @@ class _StatusBarState extends State<StatusBar> with TickerProviderStateMixin {
                     semanticsLabel: 'Linear progress indicator',
                   ),
                 ),
-              ],
-            ),
-            SizedBox(height: 10),
-            Row(
-              children: [
-                Flexible(
-                  flex: 1,
+                SizedBox(width: 10),
+                SizedBox(
+                  width: 100,
                   child: Text(
-                    'EXP',
+                    '${userInfo.userHp} / 10',
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.white,
@@ -206,9 +194,24 @@ class _StatusBarState extends State<StatusBar> with TickerProviderStateMixin {
                     textAlign: TextAlign.left,
                   ),
                 ),
-                SizedBox(width: 20),
-                Flexible(
-                  flex: 6,
+              ],
+            ),
+            SizedBox(height: 10),
+            Row(
+              children: [
+                SizedBox(
+                  width: 60,
+                  child: Text(
+                    '경험치: ',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+                SizedBox(width: 10),
+                Expanded(
                   child: LinearProgressIndicator(
                     value: userInfo.petExp / 100,
                     minHeight: 14,
@@ -218,6 +221,17 @@ class _StatusBarState extends State<StatusBar> with TickerProviderStateMixin {
                     semanticsLabel: 'Linear progress indicator',
                   ),
                 ),
+                SizedBox(width: 10),
+                SizedBox(
+                  width: 100,
+                  child: Text(
+                    '${userInfo.petExp} / 1000',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                )
               ],
             ),
           ],
