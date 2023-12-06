@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/model/item/item.model.dart';
+import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/friends/friendMain.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';
@@ -25,7 +27,16 @@ class MyRoomComponent extends StatelessWidget {
           // 방 렌더링
           RenderMyRoom(),
           // 펫 렌더링
-          MyPet(newSrc: context.watch<MyRoomViewModel>().findPetName()),
+          Selector<MyRoomViewModel, List<Item>>(
+              selector: (_, myRoomState) => myRoomState.roomObjects,
+              builder: (_, roomObjects, __) {
+                return MyPet(
+                    newSrc: roomObjects
+                        .firstWhere((element) => element.itemType == 1,
+                            orElse: () =>
+                                Item(id: 55, name: '구미호_01', itemType: 1))
+                        .name);
+              }),
           // 상단 상태바
           Positioned(
               left: 0,
@@ -115,42 +126,12 @@ class UnderLayer extends StatelessWidget {
 }
 
 // 펫의 체력, 경험치 표시
-class StatusBar extends StatefulWidget {
+class StatusBar extends StatelessWidget {
   const StatusBar({super.key});
 
   @override
-  State<StatusBar> createState() => _StatusBarState();
-}
-
-class _StatusBarState extends State<StatusBar> with TickerProviderStateMixin {
-  Timer? _timer;
-  var _hp = 0.3;
-  var _exp = 0.1;
-
-  // TODO 할 일을 완료했을때 체력, 경험치가 오르도록 수정 필요
-  @override
-  void initState() {
-    super.initState();
-    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
-      // Call _setHP method here to update the hp value every 5 seconds
-      setState(() {
-        _hp >= 1 ? _hp : _hp += 0.1;
-        _exp >= 1 ? _exp : _exp += 0.2;
-
-        // LOG.log("HP: $_hp, EXP: $_exp");
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _timer!.cancel();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    var userInfo = context.watch<UserInfo>();
+    var userInfo = context.read<UserInfo>();
 
     return Container(
       padding: const EdgeInsets.all(30.0),
@@ -167,22 +148,21 @@ class _StatusBarState extends State<StatusBar> with TickerProviderStateMixin {
           children: <Widget>[
             Row(
               children: [
-                Flexible(
-                  flex: 1,
+                SizedBox(
+                  width: 60,
                   child: Text(
-                    'HP',
+                    '체력:',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 20,
                       color: Colors.white,
                     ),
                     textAlign: TextAlign.left,
                   ),
                 ),
-                SizedBox(width: 30),
-                Flexible(
-                  flex: 8,
+                SizedBox(width: 10),
+                Expanded(
                   child: LinearProgressIndicator(
-                    value: userInfo.userHp / 100,
+                    value: userInfo.userHp / 10,
                     minHeight: 14,
                     valueColor: AlwaysStoppedAnimation<Color>(
                         const Color.fromARGB(255, 239, 118, 110)),
@@ -190,15 +170,11 @@ class _StatusBarState extends State<StatusBar> with TickerProviderStateMixin {
                     semanticsLabel: 'Linear progress indicator',
                   ),
                 ),
-              ],
-            ),
-            SizedBox(height: 10),
-            Row(
-              children: [
-                Flexible(
-                  flex: 1,
+                SizedBox(width: 10),
+                SizedBox(
+                  width: 100,
                   child: Text(
-                    'EXP',
+                    '${userInfo.userHp} / 10',
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.white,
@@ -206,9 +182,24 @@ class _StatusBarState extends State<StatusBar> with TickerProviderStateMixin {
                     textAlign: TextAlign.left,
                   ),
                 ),
-                SizedBox(width: 20),
-                Flexible(
-                  flex: 6,
+              ],
+            ),
+            SizedBox(height: 10),
+            Row(
+              children: [
+                SizedBox(
+                  width: 60,
+                  child: Text(
+                    '경험치: ',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+                SizedBox(width: 10),
+                Expanded(
                   child: LinearProgressIndicator(
                     value: userInfo.petExp / 100,
                     minHeight: 14,
@@ -218,6 +209,17 @@ class _StatusBarState extends State<StatusBar> with TickerProviderStateMixin {
                     semanticsLabel: 'Linear progress indicator',
                   ),
                 ),
+                SizedBox(width: 10),
+                SizedBox(
+                  width: 100,
+                  child: Text(
+                    '${userInfo.petExp} / 1000',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                )
               ],
             ),
           ],

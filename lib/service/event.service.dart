@@ -263,8 +263,6 @@ class EventService {
       'message': data['message']
     });
 
-    // LOG.log("event hander payload : " + payload);
-
     await flutterLocalNotificationsPlugin.show(
       2,
       'todo 인증 요청',

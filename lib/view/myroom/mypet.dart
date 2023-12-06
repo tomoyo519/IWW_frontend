@@ -78,7 +78,7 @@ class _MyPetState extends State<MyPet> {
   Widget build(BuildContext context) {
     // 모델 및 프리셋 선택
     String targetResouce = '${widget.newSrc}_$_petActionIndex}';
-    var petModel = petModels[widget.newSrc] ?? petModels['구미호_02']!;
+    var petModel = petModels[widget.newSrc]!;
     Preset p = presets[petModel['motions']![_petActionIndex]]!;
 
     // 체력이 0이면 비석으로 변경

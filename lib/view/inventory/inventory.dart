@@ -52,6 +52,7 @@ class InventoryView extends StatelessWidget {
   Widget build(BuildContext context) {
     var myRoomViewModel = context.watch<MyRoomViewModel>();
     var myRoomState = context.watch<MyRoomState>();
+    var userInfo = context.read<UserInfo>();
 
     return Container(
       height: double.infinity,
@@ -109,6 +110,7 @@ class InventoryView extends StatelessWidget {
               onPressed: () {
                   myRoomViewModel.applyChanges();
                 myRoomState.toggleGrowth();
+                userInfo.fetchUser();
               },
               child: Text('적용하기'),
             ),

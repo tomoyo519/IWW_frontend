@@ -16,7 +16,7 @@ void showTodoConfirmModal(BuildContext context, String? message) {
   String todoImg = data['todoImg'];
   int senderId = data['senderId'];
   String senderName = data['senderName'];
-  int todoId = data['todoId'];
+  int todoId = int.parse(data['todoId']);
   String todoName = data['todoName'];
 
   showDialog(
