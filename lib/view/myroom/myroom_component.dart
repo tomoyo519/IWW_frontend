@@ -20,30 +20,20 @@ class MyRoomComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var myRoomState = context.watch<MyRoomViewModel>();
+
     return Expanded(
       child: Stack(
         fit: StackFit.expand,
         children: [
           // 펫과 배경 등 구조물은 FutureBuilder를 통해 렌더링
-          FutureBuilder(
-              future: Future.wait([
-                context.read<MyRoomViewModel>().fetchMyRoom(),
-                context.read<MyRoomViewModel>().fetchInventory(),
-              ]),
-              builder: (context, snapshot) {
-              var myRoomState = context.read<MyRoomViewModel>();
-              return Stack(fit: StackFit.expand, children: [
                   RenderMyRoom(),
                   // 펫 렌더링
-                MyPet(
-                    newSrc: myRoomState.roomObjects
-                                .firstWhere((element) => element.itemType == 1,
-                            orElse: () =>
-                                Item(id: 55, name: '구미호_03', itemType: 1))
-                        .name),
-              ]);
-            },
-          ),
+          Selector<MyRoomViewModel, List<Item>>(
+              selector: (_, myRoomViewModel) => myRoomViewModel.roomObjects,
+              builder: (_, roomObjects, __) {
+                return MyPet(newSrc: myRoomState.findPetName());
+              }),
           // 방 렌더링
                   
           // 상단 상태바

@@ -17,7 +17,10 @@ class MyRoomViewModel with ChangeNotifier {
   int _roomOwner; // 현재 있는 방의 주인 (기본값은 로그인한 사용자의 id)
   List<Item> roomObjects = []; // 현재 방에 존재하는 오브젝트 리스트
 
-  MyRoomViewModel(this._userId, this._roomRepository, this._roomOwner);
+  MyRoomViewModel(this._userId, this._roomRepository, this._roomOwner) {
+    fetchMyRoom();
+    fetchInventory();
+  }
 
   Future<void> fetchMyRoom() async {
     roomObjects = await _roomRepository.getItemsOfMyRoom(_roomOwner);
@@ -112,5 +115,15 @@ class MyRoomViewModel with ChangeNotifier {
       alignment: Alignment.center,
       children: layers,
     );
+  }
+
+  String findPetName() {
+    for (var element in roomObjects) {
+      if (element.itemType == itemTypeOfPet) {
+        return element.name;
+      }
+    }
+    LOG.log("NO PET MODEL. default: 구미호_01");
+    return '구미호_01';
   }
 }
