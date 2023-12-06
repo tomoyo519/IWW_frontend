@@ -33,8 +33,11 @@ class _ShopItems extends State<ShopItems> {
   @override
   void initState() {
     super.initState();
+    ;
     Future.delayed(Duration.zero, () async {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _showDialog(context));
       await fetchFriend();
+
       LOG.log('thisisallpets: $allpets');
     });
     LOG.log('thisisallpets: $allpets');
@@ -131,4 +134,54 @@ class _ShopItems extends State<ShopItems> {
       ),
     );
   }
+}
+
+void _showDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Container(
+        width: MediaQuery.of(context).size.width * 0.6, // 너비 지정
+        height: 200, // 높이를 지정합니다.
+        child: AlertDialog(
+          title: Center(
+            child: Text('새로운 배경 출시!'),
+          ),
+          content: SingleChildScrollView(
+            // SingleChildScrollView를 사용합니다.
+            child: Container(
+              height: 400, // 여기에서 높이를 지정합니다.
+              child: Column(
+                children: [
+                  Text(
+                    '이번달 한정판매',
+                    style: TextStyle(
+                      fontSize: 16, // 글자 크기를 16으로 설정합니다.
+                    ),
+                  ),
+                  Text(
+                    '초원',
+                    style: TextStyle(
+                      fontSize: 16, // 글자 크기를 16으로 설정합니다.
+                    ),
+                  ),
+                  Image.asset('assets/bg/bg1.png')
+                ],
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                // 다이얼로그 닫기
+                Navigator.of(context).pop();
+              },
+              child: Text('확인'),
+            ),
+          ],
+        ),
+      );
+      // return the Dialog here.
+    },
+  );
 }
