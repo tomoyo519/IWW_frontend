@@ -24,19 +24,31 @@ class MyRoomComponent extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          // 방 렌더링
-          RenderMyRoom(),
-          // 펫 렌더링
-          Selector<MyRoomViewModel, List<Item>>(
-              selector: (_, myRoomState) => myRoomState.roomObjects,
-              builder: (_, roomObjects, __) {
-                return MyPet(
-                    newSrc: roomObjects
-                        .firstWhere((element) => element.itemType == 1,
-                            orElse: () =>
-                                Item(id: 55, name: '구미호_01', itemType: 1))
-                        .name);
+          // 펫과 배경 등 구조물은 FutureBuilder를 통해 렌더링
+          FutureBuilder(
+              future: Future.wait([
+                context.read<MyRoomViewModel>().fetchMyRoom(),
+                context.read<MyRoomViewModel>().fetchInventory(),
+              ]),
+              builder: (context, snapshot) {
+                return Stack(fit: StackFit.expand, children: [
+                  RenderMyRoom(),
+                  // 펫 렌더링
+                  Selector<MyRoomViewModel, List<Item>>(
+                      selector: (_, myRoomState) => myRoomState.roomObjects,
+                      builder: (_, roomObjects, __) {
+                        return MyPet(
+                            newSrc: roomObjects
+                                .firstWhere((element) => element.itemType == 1,
+                                    orElse: () =>
+                                    Item(
+                                        id: 55, name: '구미호_03', itemType: 1))
+                                .name);
+                      }),
+                ]);
               }),
+          // 방 렌더링
+                  
           // 상단 상태바
           Positioned(
               left: 0,
@@ -57,6 +69,7 @@ class MyRoomComponent extends StatelessWidget {
       ),
     );
   }
+  
 }
 
 // 방 렌더링
@@ -87,7 +100,9 @@ class RenderMyRoom extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-        child: roomState.renderRoomObjects(context),
+        child: roomState.renderRoomObjects(
+          MediaQuery.of(context).size.height / 6.0,
+        ),
       ),
       
     ]);
@@ -239,7 +254,7 @@ class BottomButtons extends StatelessWidget {
     final commentsProvider = context.read<CommentsProvider>();
     // final inventoryState = context.read<InventoryState>();
     final myRoomState = context.read<MyRoomState>();
-    var roomState = context.watch<MyRoomViewModel>();
+    var roomState = context.read<MyRoomViewModel>();
     final user = Provider.of<UserInfo>(context, listen: false);
 
     // 인벤토리 <-> 마이홈 버튼

@@ -17,18 +17,16 @@ class MyRoomViewModel with ChangeNotifier {
   int _roomOwner; // 현재 있는 방의 주인 (기본값은 로그인한 사용자의 id)
   List<Item> roomObjects = []; // 현재 방에 존재하는 오브젝트 리스트
 
-  MyRoomViewModel(this._userId, this._roomRepository, this._roomOwner) {
-    fetchMyRoom();
-    fetchInventory();
-  }
+  MyRoomViewModel(this._userId, this._roomRepository, this._roomOwner);
 
-  void fetchMyRoom() async {
+  Future<void> fetchMyRoom() async {
     roomObjects = await _roomRepository.getItemsOfMyRoom(_roomOwner);
     notifyListeners();
   }
 
-  void fetchInventory() async {
+  Future<void> fetchInventory() async {
     inventory = await _roomRepository.getItemsOfInventory(_userId);
+    notifyListeners();
   }
 
   // 현재 viewModel의 roomObject를 DB에 저장
@@ -88,8 +86,8 @@ class MyRoomViewModel with ChangeNotifier {
     return AssetImage('assets/bg/bg15.png');
   }
 
-  Widget renderRoomObjects(BuildContext context) {
-    LOG.log('방에 있는 오브젝트 개수: ${roomObjects.length}');
+  Widget renderRoomObjects(double height) {
+    LOG.log('[RenderRoomObjects] 방에 있는 오브젝트 개수: ${roomObjects.length}');
 
     List<Widget> layers = [];
     // 2/3 step: 가구 추가
@@ -97,7 +95,7 @@ class MyRoomViewModel with ChangeNotifier {
       var element = roomObjects[i];
       if (element.itemType == 2) {
         layers.add(Positioned(
-          top: MediaQuery.of(context).size.height / 6.0,
+          top: height,
           left: i * 100.0,
           width: 100,
           height: 100,
@@ -115,15 +113,4 @@ class MyRoomViewModel with ChangeNotifier {
       children: layers,
     );
   }
-
-  String findPetName() {
-    for (Item element in roomObjects) {
-      if (element.itemType == itemTypeOfPet) {
-        return element.name;
-      }
-    }
-
-    // default pet
-    return '구미호_02';
-  } 
 }
