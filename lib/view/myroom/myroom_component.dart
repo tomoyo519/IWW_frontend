@@ -175,7 +175,7 @@ class StatusBar extends StatelessWidget {
                 Expanded(
                   child: LinearProgressIndicator(
                     value: userInfo.userHp / 10,
-                    minHeight: 14,
+                    minHeight: 6,
                     valueColor: AlwaysStoppedAnimation<Color>(
                         const Color.fromARGB(255, 239, 118, 110)),
                     backgroundColor: Colors.grey[200],
@@ -214,7 +214,7 @@ class StatusBar extends StatelessWidget {
                 Expanded(
                   child: LinearProgressIndicator(
                     value: userInfo.petExp / 100,
-                    minHeight: 14,
+                    minHeight: 6,
                     valueColor: AlwaysStoppedAnimation<Color>(
                         Color.fromARGB(255, 155, 239, 110)),
                     backgroundColor: Colors.grey[200],
