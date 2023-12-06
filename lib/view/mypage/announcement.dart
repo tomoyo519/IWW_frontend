@@ -72,10 +72,12 @@ class _AnnouncementState extends State<Announcement> {
                                   child: ListView.builder(
                                       itemCount: announces.length,
                                       itemBuilder: (c, i) {
-                                        DateTime iso8601String =
+                                        String iso8601String =
                                             announces[i].regAt;
+                                        DateTime dateTimeObject =
+                                            DateTime.parse(iso8601String);
                                         String formattedString =
-                                            "${iso8601String.year}년 ${iso8601String.month}월 ${iso8601String.day}일 ${iso8601String.hour}시 ${iso8601String.minute}분";
+                                            "${dateTimeObject.year}년 ${dateTimeObject.month}월 ${dateTimeObject.day}일 ${dateTimeObject.hour}시 ${dateTimeObject.minute}분";
                                         Row(
                                           children: [
                                             Column(
