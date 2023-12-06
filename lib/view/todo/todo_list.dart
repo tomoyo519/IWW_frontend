@@ -18,7 +18,6 @@ import 'package:provider/provider.dart';
 
 class ToDoList extends StatelessWidget {
   final scroll = ScrollController();
-  final _formKey = GlobalKey<FormState>();
 
   ToDoList({super.key});
 
@@ -40,8 +39,8 @@ class ToDoList extends StatelessWidget {
     final viewmodel = context.watch<TodoViewModel>();
 
     return GestureDetector(
-      onTap: () => showTodoEditModal<TodoViewModel>(context, todo: todo),
-      onLongPress: () => _showDeleteModal(context, todo),
+      // onTap: () => showTodoEditModal<TodoViewModel>(context, todo: todo),
+      // onLongPress: () => _showDeleteModal(context, todo),
       child: GroupTodoTile(
         todo: todo,
         viewmodel: viewmodel,
@@ -266,7 +265,7 @@ class _ToggledTodoListState extends State<ToggledTodoList>
         ),
         AnimatedContainer(
           duration: Duration(milliseconds: 300),
-          height: isToggled ? screen.height * 0.3 : 0,
+          height: isToggled ? screen.height * 0.8 - 300 : 0,
           child: ListView(
             shrinkWrap: true,
             children: [

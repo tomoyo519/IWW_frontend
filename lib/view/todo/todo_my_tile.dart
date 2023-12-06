@@ -42,7 +42,7 @@ class _MyTodoTileState extends State<MyTodoTile> {
       ),
       margin: EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        color: Color.fromARGB(255, 243, 243, 243),
+        color: Color.fromARGB(255, 246, 246, 246),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(

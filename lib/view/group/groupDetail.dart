@@ -473,9 +473,11 @@ class _GroupDetailState extends State<GroupDetail> {
                         itemBuilder: (context, index) {
                           return InkWell(
                             onTap: () {
+                              // 사용자 화면으로 이동해야 합니다.
                               nav.push(AppRoute.room,
                                   argument:
                                       groupMems[index]["user_id"].toString());
+                              Navigator.pop(context);
                             },
                             child: Column(
                               children: [

@@ -42,7 +42,7 @@ class _PetEvolveModalState extends State<PetEvolveModal>
     model = const ModelViewer(
       loading: Loading.eager,
       shadowIntensity: 1,
-      src: 'assets/kitsune_ani.glb',
+      src: 'assets/mid_fox.glb',
       alt: 'cuttest pet ever',
       autoRotate: false,
       animationName: "Idle_A",

@@ -70,7 +70,7 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: Colors.orange.shade100,
+        color: Color.fromARGB(255, 246, 246, 246),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -228,7 +228,7 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
 
       if (context.mounted) {
         // * ==== 사진 확인 및 할일 완료 모달 ==== * //
-        showGeneralDialog(
+        bool? saved = await showGeneralDialog(
           context: context,
           pageBuilder: (
             BuildContext buildContext,
@@ -265,9 +265,8 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                       'todoId': widget.todo.todoId,
                     };
                     EventService.sendEvent('confirmRequest', data);
-
                     if (context.mounted) {
-                      Navigator.pop(context);
+                      Navigator.pop(context, true);
                     }
                   },
                 )
@@ -300,31 +299,18 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
           barrierColor: Colors.black45,
           transitionDuration: const Duration(milliseconds: 300),
         );
+
+        // * ===== 인증 완료 후 리프레시 ===== * //
+        if (saved != null && saved == true && context.mounted) {
+          LOG.log('message');
+          context.read<TodoViewModel>().fetchTodos();
+          EventService.publish(Event(
+            type: EventType.show_todo_snackbar,
+            message: "인증을 완료했어요!",
+          ));
+        }
       }
     }
-  }
-
-  Future<Object?> showCustomAlertDialog({
-    required BuildContext context,
-    required List<Widget>? actions,
-    required Widget? content,
-  }) {
-    return showGeneralDialog(
-      context: context,
-      pageBuilder: (
-        BuildContext buildContext,
-        Animation<double> animation,
-        Animation<double> secondaryAnimation,
-      ) {
-        return AlertDialog(
-          actions: actions,
-          content: content,
-        );
-      },
-      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-      barrierColor: Colors.black45,
-      transitionDuration: const Duration(milliseconds: 300),
-    );
   }
 
   // 그룹 투두를 체크한 경우

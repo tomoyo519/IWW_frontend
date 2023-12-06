@@ -1,15 +1,14 @@
 import 'dart:convert';
+import 'package:iww_frontend/datasource/localStorage.dart';
 import 'package:iww_frontend/model/todo/todo_update.dto.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/auth/login_result.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
-import 'package:iww_frontend/model/todo/todo_today_count.dart';
 import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/service/event.service.dart';
-import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/service/reward.service.dart';
 
 class UserInfo extends ChangeNotifier {
@@ -35,12 +34,14 @@ class UserInfo extends ChangeNotifier {
   late int _itemId;
   late int _petExp;
   late String _petName;
+  late String _itemName;
 
   // === Getters === //
   UserModel get userModel => _user;
   int get userId => _user.user_id;
   String get userName => _userName;
   String get userTel => _userTel;
+  String get itemName => _itemName;
 
   int get userCash => _userCash;
   int get userHp => _userHp;
@@ -147,7 +148,8 @@ class UserInfo extends ChangeNotifier {
 
     // FIXME: 펫 타입으로 응답이 올 경우 경험치가 같이 와야함
     _petExp = newPet.petExp ?? 0;
-    _petName = newPet.name;
+    _petName = newPet.petName ?? '';
+    _itemName = newPet.name;
 
     // * Trigger events * //
     onLoginReward(newUser.login_cnt);
@@ -160,6 +162,7 @@ class UserInfo extends ChangeNotifier {
   // 첫 투두 체크 이벤트
   void onTodoReward(int prevUserCash) {
     int reward = _userCash - prevUserCash;
+    LOG.log(emoji: 2, '$reward');
     if (reward == RewardService.FIRST_TODO_REWARD) {
       EventService.publish(
         Event(
@@ -172,27 +175,29 @@ class UserInfo extends ChangeNotifier {
   // 펫 진화 이벤트
   void onEvolution(int prevPetId) {
     if (prevPetId != _mainPet.id) {
-      EventService.publish(
-        Event(
-          type: EventType.show_pet_evolve,
-        ),
-      );
+      EventService.publish(Event(
+        type: EventType.show_pet_evolve,
+      ));
     }
   }
+
+  // FIXME: DB에 체크하기.
+  bool isLoginEventShown = false;
 
   // 로그인 이벤트
   void onLoginReward(int loginCnt) {
     int idx = RewardService.LOGIN_REWARD.indexOf(loginCnt);
     if (idx < 0) return; // 리워드에 해당하는 카운트가 아님
 
-    int reward = RewardService.LOGIN_REWARD[idx];
-    EventService.publish(
-      Event(
+    if (isLoginEventShown == false) {
+      int reward = RewardService.LOGIN_REWARD[idx];
+
+      EventService.publish(Event(
         type: EventType.show_login_achieve,
-        message: jsonEncode({
-          "title": "로그인 카운트 $reward회 달성!",
-        }),
-      ),
-    );
+        message: "로그인 카운트 $reward회 달성!",
+      ));
+      // LocalStorage.saveKey('isLoginEventShown', 'true');
+      isLoginEventShown = true;
+    }
   }
 }

@@ -7,6 +7,7 @@ import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/providers.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
+import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/style/button.dart';
 import 'package:iww_frontend/utils/logger.dart';
@@ -106,13 +107,18 @@ class RenderPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AuthService authService = context.watch<AuthService>();
-
     UserInfo? userInfo;
+
     if (authService.status == AuthStatus.initialized) {
+      // 사용자 전역 상태관리 객체 초기화
       UserModel user = authService.user!;
       Item mainPet = authService.mainPet!;
       UserRepository repo = Provider.of<UserRepository>(context, listen: false);
       userInfo = UserInfo(user, mainPet, repo);
+
+      // 이벤트 서비스 초기화
+      EventService.setUserId(user.user_id);
+      EventService.initialize(userInfo);
     }
 
     return authService.waiting
