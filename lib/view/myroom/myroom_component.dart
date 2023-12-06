@@ -31,22 +31,19 @@ class MyRoomComponent extends StatelessWidget {
                 context.read<MyRoomViewModel>().fetchInventory(),
               ]),
               builder: (context, snapshot) {
-                return Stack(fit: StackFit.expand, children: [
+              var myRoomState = context.read<MyRoomViewModel>();
+              return Stack(fit: StackFit.expand, children: [
                   RenderMyRoom(),
                   // 펫 렌더링
-                  Selector<MyRoomViewModel, List<Item>>(
-                      selector: (_, myRoomState) => myRoomState.roomObjects,
-                      builder: (_, roomObjects, __) {
-                        return MyPet(
-                            newSrc: roomObjects
+                MyPet(
+                    newSrc: myRoomState.roomObjects
                                 .firstWhere((element) => element.itemType == 1,
-                                    orElse: () =>
-                                    Item(
-                                        id: 55, name: '구미호_03', itemType: 1))
-                                .name);
-                      }),
-                ]);
-              }),
+                            orElse: () =>
+                                Item(id: 55, name: '구미호_03', itemType: 1))
+                        .name),
+              ]);
+            },
+          ),
           // 방 렌더링
                   
           // 상단 상태바
