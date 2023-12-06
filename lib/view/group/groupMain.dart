@@ -51,6 +51,8 @@ class MyGroup extends StatelessWidget {
         child: Column(
           children: [
             TabBar(
+              labelColor: Colors.black,
+              unselectedLabelColor: Colors.black,
               indicatorColor: Colors.black,
               indicatorPadding: EdgeInsets.only(left: 8.0, right: 8.0),
               indicatorSize: TabBarIndicatorSize.tab,
