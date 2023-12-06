@@ -256,14 +256,14 @@ class EventService {
     String payload = jsonEncode({
       'type': 'confirmRequest',
       'senderId': data['senderId'],
-      'sednerName': data['senderName'],
+      'senderName': data['senderName'],
       'todoId': data['todoId'],
       'todoName': data['todoName'],
       'todoImg': data['todoImg'],
       'message': data['message']
     });
 
-    LOG.log(payload);
+    LOG.log("event hander payload : " + payload);
 
     await flutterLocalNotificationsPlugin.show(
       2,
