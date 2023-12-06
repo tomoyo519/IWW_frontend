@@ -84,6 +84,13 @@ class TodoProgress extends StatelessWidget {
                                   fontSize: 12,
                                 ),
                               ),
+                              TextSpan(
+                                text: "  보유금액 ${userinfo.userCash}",
+                                style: TextStyle(
+                                  color: Colors.black54,
+                                  fontSize: 12,
+                                ),
+                              ),
                             ],
                           ),
                         ),
