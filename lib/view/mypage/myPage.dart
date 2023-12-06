@@ -22,6 +22,7 @@ class MyPage extends StatefulWidget {
 
 class _MyPageState extends State<MyPage> {
   List<Rewards>? rewards;
+  bool isLoading = true;
   @override
   void initState() {
     LOG.log('야호?');
@@ -44,6 +45,7 @@ class _MyPageState extends State<MyPage> {
             .toList();
         setState(() {
           rewards = result;
+          isLoading = false;
         });
       }
     });
@@ -217,36 +219,46 @@ class _MyPageState extends State<MyPage> {
                       )
                     ],
                   ),
+                  if (isLoading == true) ...[
+                    Lottie.asset('assets/spinner.json',
+                        repeat: true,
+                        animate: true,
+                        height: MediaQuery.of(context).size.height * 0.3),
+                  ],
                   if (rewards != null && rewards!.isNotEmpty) ...[
                     Container(
+                        padding: EdgeInsets.all(5),
                         child: Expanded(
-                      child: GridView.builder(
-                          itemCount: rewards!.length,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 3, childAspectRatio: 1.0),
-                          itemBuilder: (context, index) {
-                            return Card(
-                                child: Column(children: [
-                              Expanded(
-                                child: Column(
-                                  children: [
-                                    Flexible(
-                                      child: Image.asset('assets/medal.png',
-                                          fit: BoxFit.scaleDown),
+                          child: GridView.builder(
+                              itemCount: rewards!.length,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 3, childAspectRatio: 1.0),
+                              itemBuilder: (context, index) {
+                                return Card(
+                                    child: Column(children: [
+                                  Expanded(
+                                    child: Column(
+                                      children: [
+                                        Flexible(
+                                          child: Image.asset('assets/medal.png',
+                                              fit: BoxFit.scaleDown),
+                                        ),
+                                        Text(
+                                          (rewards != null &&
+                                                  rewards![index].achiName !=
+                                                      null)
+                                              ? rewards![index]
+                                                  .achiName
+                                                  .toString()
+                                              : '업적',
+                                        ),
+                                      ],
                                     ),
-                                    Text(
-                                      (rewards != null &&
-                                              rewards![index].achiName != null)
-                                          ? rewards![index].achiName.toString()
-                                          : 'default value',
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ]));
-                          }),
-                    ))
+                                  )
+                                ]));
+                              }),
+                        ))
                   ],
                   if (rewards != null && rewards!.isEmpty) ...[
                     Center(

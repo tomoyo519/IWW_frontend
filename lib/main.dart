@@ -57,15 +57,15 @@ void main() async {
   // * ======================= * //
 
   // 1. 로컬 로그인
-  await authService.localLogin();
+  // await authService.localLogin();
 
   // 2. 카카오로 로그인 시도
   // authService.oauthLogin(signup: false);
 
   // 3. 테스트유저 접속
-  // authService.testLogin();
-  // authService.status = AuthStatus.initialized;
-  // authService.waiting = false;
+  authService.testLogin();
+  authService.status = AuthStatus.initialized;
+  authService.waiting = false;
 
   runApp(
     MultiProvider(
