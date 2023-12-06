@@ -265,7 +265,7 @@ class _ToggledTodoListState extends State<ToggledTodoList>
         ),
         AnimatedContainer(
           duration: Duration(milliseconds: 300),
-          height: isToggled ? screen.height * 0.8 - 100 : 0,
+          height: isToggled ? screen.height * 0.8 - 300 : 0,
           child: ListView(
             shrinkWrap: true,
             children: [

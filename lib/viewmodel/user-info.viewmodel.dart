@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:iww_frontend/datasource/localStorage.dart';
 import 'package:iww_frontend/model/todo/todo_update.dto.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:flutter/material.dart';
@@ -195,6 +196,7 @@ class UserInfo extends ChangeNotifier {
         type: EventType.show_login_achieve,
         message: "로그인 카운트 $reward회 달성!",
       ));
+      // LocalStorage.saveKey('isLoginEventShown', 'true');
       isLoginEventShown = true;
     }
   }
