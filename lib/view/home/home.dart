@@ -34,13 +34,12 @@ class TodoPage extends StatelessWidget {
 
 // ****************************** //
 // *                            * //
-// *        Home Screen         * //
+// *        Todo Screen         * //
 // *                            * //
 // ****************************** //
 
 class MyTodo extends StatelessWidget {
   final UserInfo user;
-  final _formKey = GlobalKey<FormState>();
   MyTodo({super.key, required this.user});
 
   @override
@@ -48,9 +47,6 @@ class MyTodo extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white,
-      ),
       padding: EdgeInsets.symmetric(
         horizontal: 20,
       ),
@@ -79,14 +75,14 @@ class MyTodo extends StatelessWidget {
             right: 0,
             bottom: 15,
             child: IconButton(
-              onPressed: () => showTodoCreateModal(context),
+              onPressed: () => showTodoEditModal<TodoViewModel>(context),
               style: IconButton.styleFrom(
                 elevation: 1,
                 backgroundColor: Colors.orange,
                 shadowColor: Colors.black45,
               ),
               icon: Icon(
-                size: 30,
+                size: 40,
                 Icons.add,
                 color: Colors.white,
               ),
@@ -96,50 +92,4 @@ class MyTodo extends StatelessWidget {
       ),
     );
   }
-
-  // // TextEditingController _controller =
-  // // 클릭하면 할일 추가 모달 띄우기
-  // Future<void> _showTodoEditor(BuildContext context) async {
-  //   final userInfo = context.read<UserInfo>();
-  //   final todoviewmodel = context.read<TodoViewModel>();
-  //   TextEditingController controller = TextEditingController();
-  //   FocusNode focusNode = FocusNode();
-
-  //   return showModalBottomSheet(
-  //     context: context,
-  //     isScrollControlled: true,
-  //     builder: (bottomSheetContext) {
-  //       return ChangeNotifierProvider(
-  //         create: (_) => EditorModalViewModel(
-  //           user: userInfo,
-  //           parent: todoviewmodel,
-  //         ),
-  //         child: EditorModal(
-  //           init: null,
-  //           title: "할일 추가",
-  //           onSave: (context) async {
-  //             Navigator.pop(context);
-  //             await _createTodo(context);
-  //           },
-  //           onCancel: (context) => Navigator.pop(context),
-  //           focusNode: focusNode,
-  //           controller: controller,
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
-
-  // // ==== 할일 신규 생성 ==== //
-  // Future<bool> _createTodo(BuildContext context) async {
-  //   final editormodel = context.read<EditorModalViewModel>();
-  //   return await editormodel.createTodo().then((result) {
-  //     if (result == true && context.mounted) {
-  //       return true;
-  //     }
-  //     return false;
-  //   }).onError((error, stackTrace) {
-  //     return false;
-  //   });
-  // }
 }

@@ -35,7 +35,7 @@ class EditorModal extends StatelessWidget {
 
     return SafeArea(
       child: FractionallySizedBox(
-        heightFactor: isKeyboardOpen ? 1 : 0.6,
+        heightFactor: isKeyboardOpen ? 0.96 : 0.5,
         child: GestureDetector(
           // onTap: () => FocusScope.of(context).unfocus(),
           onTap: () => (),

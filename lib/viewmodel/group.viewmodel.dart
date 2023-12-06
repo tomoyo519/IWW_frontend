@@ -24,6 +24,9 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
   // 폼 상태 관리
   Map<String, dynamic> _groupData = {};
   Map<String, dynamic> get groupData => _groupData;
+  String get groupName => _groupData['grp_name'];
+  String get groupDesc => _groupData['grp_desc'];
+  int get groupCat => _groupData['cat_id'];
 
   List<Routine> _groupRoutine = [];
   List<Routine> get groupRoutine => _groupRoutine;
@@ -88,17 +91,22 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
       //   groups.add()
       // }
       //  ();
+      groupRoutine = [];
+      groupCat = 0;
       return true;
     } catch (err) {
       LOG.log('err:$err');
       return false;
+    } finally {
+      groupRoutine = [];
+      groupCat = 0;
     }
   }
 
   @override
   // EditorModal에서 폼 데이터를 가져와서 상태로 지정
   Future<bool> createTodo(Map<String, dynamic> data) async {
-    ;
+    LOG.log(emoji: 2, 'Create routine! ${jsonEncode(data)}');
     Routine routine = Routine.fromTodoJson(data);
 
     if (_groupRoutine.length < 3) {

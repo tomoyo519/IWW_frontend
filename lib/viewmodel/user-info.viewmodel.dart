@@ -9,7 +9,7 @@ import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
-import 'package:iww_frontend/utils/reward_service.dart';
+import 'package:iww_frontend/service/reward.service.dart';
 
 class UserInfo extends ChangeNotifier {
   final UserModel _user;
@@ -34,7 +34,6 @@ class UserInfo extends ChangeNotifier {
         ),
       );
     }
-    // _listenEvents();
   }
 
   // === Status === //
@@ -50,7 +49,7 @@ class UserInfo extends ChangeNotifier {
   // === Getters === //
   UserModel get userModel => _user;
   int get userId => _user.user_id;
-  String get userName => _user.user_name;
+  String get userName => _userName;
   String get userTel => _userTel;
 
   int get userCash => _userCash;
@@ -115,6 +114,7 @@ class UserInfo extends ChangeNotifier {
     }
   }
 
+  // TODO type 달기
   Future<bool> reNameUser(myname, userInfo) async {
     var userInfo;
 
@@ -133,7 +133,6 @@ class UserInfo extends ChangeNotifier {
           userName = myname;
           return true;
         }
-        ;
       });
     } catch (e) {
       return false;

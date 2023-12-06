@@ -22,7 +22,7 @@ class BottomSheetModalHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 30,
+      height: 35,
       child: DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(

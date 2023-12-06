@@ -66,19 +66,87 @@ class _GroupListState extends State<GroupList> {
                   child: ListView.builder(
                       itemCount: myGroups.length,
                       itemBuilder: (c, i) {
-                        LOG.log('mygroups:::::::::::::${myGroups[i]}');
-                        // Color bgColor;
-                        // switch (myGroups[i].catName) {
-                        //   case '코딩':
-                        //     bgColor = Colors.red;
-                        //     break;
-                        //   case '학업':
-                        //     bgColor = Colors.green;
-                        //     break;
-                        //   default:
-                        //     bgColor = Colors.white;
-                        //     break;
-                        // }
+                        String picturePath = 'assets/category/etc.jpg';
+                        switch (myGroups[i].catName) {
+                          case "전체":
+                            picturePath = 'assets/category/etc.jpg';
+                            break;
+
+                          case "요가":
+                            picturePath = 'assets/category/yoga.jpg';
+                            break;
+
+                          case "공부":
+                            picturePath = 'assets/category/study.jpg';
+                            break;
+
+                          case "운동":
+                            picturePath = 'assets/category/exercise.jpg';
+                            break;
+
+                          case "코딩":
+                            picturePath = 'assets/category/coding.jpg';
+                            break;
+
+                          case "게임":
+                            picturePath = 'assets/category/game.jpg';
+                            break;
+
+                          case "명상":
+                            picturePath = 'assets/category/meditation.jpg';
+                            break;
+
+                          case "모임":
+                            picturePath = 'assets/category/group.jpg';
+                            break;
+
+                          case "학업":
+                            picturePath = 'assets/category/academy.jpg';
+                            break;
+
+                          case "자유시간":
+                            picturePath = 'assets/category/freetime.jpg';
+                            break;
+
+                          case "자기관리":
+                            picturePath = 'assets/category/selfcontrol.jpg';
+                            break;
+
+                          case "독서":
+                            picturePath = 'assets/category/reading.jpg';
+                            break;
+
+                          case "여행":
+                            picturePath = 'assets/category/travel.jpg';
+                            break;
+
+                          case "유튜브":
+                            picturePath = 'assets/category/youtube.jpg';
+                            break;
+
+                          case "약속":
+                            picturePath = 'assets/category/appointment.jpg';
+                            break;
+
+                          case "산책":
+                            picturePath = 'assets/category/walking.jpg';
+                            break;
+
+                          case "집안일":
+                            picturePath = 'assets/category/housework.jpg';
+                            break;
+
+                          case "취미":
+                            picturePath = 'assets/category/hobby.jpg';
+                            break;
+
+                          case "기타":
+                            picturePath = 'assets/category/etc.jpg';
+                            break;
+                          default:
+                            picturePath = 'assets/category/etc.jpg';
+                            break;
+                        }
                         return TextButton(
                             onPressed: () {
                               var userInfo = context.read<UserInfo>();
@@ -123,11 +191,13 @@ class _GroupListState extends State<GroupList> {
                                 children: [
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(
-                                        10), // 원하는 border-radius 값으로 변경
+                                        20), // 원하는 border-radius 값으로 변경
                                     child: Image.asset(
-                                      'assets/profile.png',
-                                      width: 65,
-                                      height: 65,
+                                      picturePath,
+                                      fit: BoxFit
+                                          .cover, // 이미지의 비율을 유지하면서 가능한 한 많은 공간을 차지하도록 합니다.
+                                      width: 85,
+                                      height: 85,
                                     ),
                                   ),
                                   SizedBox(

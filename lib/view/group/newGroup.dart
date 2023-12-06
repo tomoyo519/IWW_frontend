@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/service/event.service.dart';
+import 'package:iww_frontend/style/button.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
 import 'package:iww_frontend/view/modals/custom_snackbar.dart';
+import 'package:iww_frontend/view/modals/todo_editor.dart';
 
 import 'package:iww_frontend/view/todo/fields/label_list_modal.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
@@ -45,9 +48,10 @@ class _NewGroupState extends State<NewGroup> {
     //   );
     //   return null;
     // }
-    if (
-        // _formKey.currentState?.validate() == true &&
-        viewModel.groupRoutine.isNotEmpty) {
+    if (viewModel.groupRoutine.isNotEmpty &&
+        viewModel.groupName != "" &&
+        viewModel.groupDesc != "" &&
+        viewModel.groupCat != 0) {
       final userInfo = context.read<UserInfo>();
       await viewModel.createGroup(userInfo.userId).then(
         (res) async {
@@ -72,23 +76,23 @@ class _NewGroupState extends State<NewGroup> {
   }
 
   void onCancel(BuildContext context) {
+    LOG.log('뒤로가기 버튼이세요?');
     Navigator.pop(context);
   }
 
   Future<void> _onSave(BuildContext context) async {
-    LOG.log("message");
     //저장누르면 루틴 추가하는 로직
     final editormodel = context.read<EditorModalViewModel>();
     bool result = await editormodel.createTodo();
-    LOG.log("message $result");
     if (context.mounted && result == true) {
       // groupmodel.createTodo(data);
+      FocusScope.of(context).unfocus();
       Navigator.pop(context);
-      showCustomSnackBar(
-        context,
-        text: "루틴 추가가 완료되었어요!",
-        icon: Icon(
-          Icons.ac_unit_outlined,
+
+      EventService.publish(
+        Event(
+          type: EventType.show_todo_snackbar,
+          message: "루틴 추가가 완료되었어요!",
         ),
       );
     }
@@ -127,8 +131,6 @@ class _NewGroupState extends State<NewGroup> {
 
   @override
   Widget build(BuildContext context) {
-    final groupRepository =
-        Provider.of<GroupRepository>(context, listen: false);
     final MyGroupViewModel viewModel = context.watch<MyGroupViewModel>();
     return WillPopScope(
         onWillPop: () async {
@@ -138,6 +140,8 @@ class _NewGroupState extends State<NewGroup> {
           // 이 함수는 Future<bool>를 반환해야 하며,
           // true를 반환하면 화면이 pop 됩니다.
           // false를 반환하면 화면이 pop 되지 않습니다.
+          viewModel.groupCat = 0;
+
           viewModel.groupRoutine = [];
 
           return Future.value(true);
@@ -199,7 +203,7 @@ class _NewGroupState extends State<NewGroup> {
                     },
                     decoration: InputDecoration(
                       hintText: "예) 1만보 걷기",
-                      hintStyle: TextStyle(fontSize: 13),
+                      // hintStyle: TextStyle(fontSize: 13),
                       filled: true,
                       fillColor: Colors.grey[200],
                       contentPadding: EdgeInsets.all(8.0),
@@ -301,7 +305,7 @@ class _NewGroupState extends State<NewGroup> {
                     maxLines: 3,
                     decoration: InputDecoration(
                       hintText: "예) 오늘 날짜와 걸음 수가 적힌 만보기 캡쳐 화면 업로드",
-                      hintStyle: TextStyle(fontSize: 13),
+                      // hintStyle: TextStyle(fontSize: 13),
                       filled: true,
                       fillColor: Colors.grey[200],
                       contentPadding: EdgeInsets.all(8.0),
@@ -382,45 +386,52 @@ class _NewGroupState extends State<NewGroup> {
                       ),
                     ),
                   ],
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      child: TextButton(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              border:
-                                  Border.all(color: Colors.black26, width: 1)),
-                          alignment: Alignment.center,
-                          margin: EdgeInsets.all(10),
-                          padding: EdgeInsets.all(10),
-                          child: Row(children: const [
-                            Icon(Icons.add_outlined),
-                            Text('그룹 루틴 추가 하기')
-                          ]),
+                  if (viewModel.groupRoutine.length < 3) ...[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        child: TextButton(
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                    color: Colors.black26, width: 1)),
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.all(10),
+                            padding: EdgeInsets.all(10),
+                            child: Row(children: const [
+                              Icon(Icons.add_outlined),
+                              Text('그룹 루틴 추가 하기')
+                            ]),
+                          ),
+                          onPressed: () =>
+                              showTodoEditModal<MyGroupViewModel>(context),
                         ),
-                        onPressed: () {
-                          _showTodoEditor(context, null);
-                        },
                       ),
                     ),
-                  ),
+                  ],
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.7,
                     height: 40,
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                          backgroundColor: Color(0xFF3A00E5),
-                          shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)))),
-                      onPressed: () {
+                    child: MyButton(
+                      full: true,
+                      onpressed: (context) {
                         _createGroup(context);
                         print('새로운 그룹 만들기');
                       },
-                      child: Text("새로운 그룹 만들기",
-                          style: TextStyle(color: Colors.white)),
+                      text: "새로운 그룹 만들기",
                     ),
+                    // TextButton(
+                    //   style: TextButton.styleFrom(
+                    //       backgroundColor: Color(0xFF3A00E5),
+                    //       shape: RoundedRectangleBorder(
+                    //           borderRadius:
+                    //               BorderRadius.all(Radius.circular(10)))),
+                    //   onPressed: () {
+
+                    //   },
+                    //   child: Text(,
+                    //       style: TextStyle(color: Colors.white)),
+                    // ),
                   )
                 ],
               ),

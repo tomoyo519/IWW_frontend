@@ -4,6 +4,7 @@ import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/model/todo/todo_update.dto.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_common/spinner.dart';
+import 'package:iww_frontend/view/modals/todo_editor.dart';
 import 'package:iww_frontend/view/todo/todo_empty.dart';
 import 'package:iww_frontend/view/todo/todo_my_tile.dart';
 import 'package:iww_frontend/view/todo/todo_editor.dart';
@@ -55,9 +56,9 @@ class ToDoList extends StatelessWidget {
                         ),
                         for (var todo in groupTodos)
                           GestureDetector(
-                            onTap: () => _showTodoEditor(context, todo),
-                            onLongPress: () =>
-                                _showTodoDeleteModal(context, todo),
+                            // onTap: () => _showTodoEditor(context, todo),
+                            // onLongPress: () =>
+                            // _showTodoDeleteModal(context, todo),
                             child: GroupTodoTile(
                               todo: todo,
                               viewModel: viewModel,
@@ -78,7 +79,8 @@ class ToDoList extends StatelessWidget {
                       ),
                       for (var todo in normalTodos)
                         GestureDetector(
-                          onTap: () => _showTodoEditor(context, todo),
+                          onTap: () => showTodoEditModal<TodoViewModel>(context,
+                              todo: todo),
                           onLongPress: () =>
                               _showTodoDeleteModal(context, todo),
                           child: MyTodoTile(
@@ -112,6 +114,7 @@ class ToDoList extends StatelessWidget {
 
     // 리워드 계산
     TodoCheckDto? result = await todomodel.checkNormalTodo(todo.todoId, value);
+
     if (result != null) {
       // 상태 셋
       usermodel.userCash = result.userCash;
