@@ -1,7 +1,7 @@
 class Announce {
   int annoId;
   String title;
-  DateTime regAt;
+  String regAt;
 
   Announce({
     required this.annoId,
