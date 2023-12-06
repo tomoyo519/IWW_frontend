@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget? title;
@@ -18,6 +20,23 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   // 무조건 있어야함!
   @override
   Widget build(BuildContext context) {
+    final userInfo = context.watch<UserInfo>();
+
+    List<Widget> defaultAppbar = <Widget>[
+      Row(
+        children: [
+          Icon(
+            Icons.monetization_on_outlined,
+          ),
+          Text(userInfo.userCash.toString())
+        ],
+      ),
+    ];
+
+    if (actions != null) {
+      defaultAppbar.addAll(actions!);
+    }
+
     return Container(
       decoration: BoxDecoration(
         border: Border(
@@ -37,7 +56,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         backgroundColor: Colors.white,
         elevation: 0,
-        actions: actions,
+        actions: defaultAppbar,
       ),
     );
   }

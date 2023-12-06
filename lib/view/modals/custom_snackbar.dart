@@ -10,8 +10,8 @@ void showCustomSnackBar(
       content: Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(
-          horizontal: 5,
-          vertical: 10,
+          horizontal: 10,
+          vertical: 15,
         ),
         margin: EdgeInsets.only(bottom: 5),
         decoration: BoxDecoration(
@@ -19,7 +19,7 @@ void showCustomSnackBar(
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
+              color: Colors.black.withOpacity(0.2),
               spreadRadius: 0,
               blurRadius: 5,
               offset: Offset(0, 3), // changes position of shadow
@@ -28,13 +28,13 @@ void showCustomSnackBar(
         ),
         child: Row(
           children: [
-            SizedBox(width: 20, child: icon),
+            SizedBox(width: 30, child: icon),
             SizedBox(
               width: 5,
             ),
             Text(
               text, // 텍스트
-              style: TextStyle(color: Colors.black54),
+              style: TextStyle(color: Colors.black87),
             )
           ],
         ),

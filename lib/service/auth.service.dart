@@ -151,7 +151,7 @@ class AuthService extends ChangeNotifier {
 
     RemoteDataSource.setAuthHeader("Bearer ${Secrets.JWT_TOKEN}");
     EventService.setUserId(29);
-    EventService.initialize();
+    // EventService.initialize();
 
     // await _initialize();
     status = AuthStatus.initialized;
@@ -181,9 +181,9 @@ class AuthService extends ChangeNotifier {
       _user = UserModel.fromJson(jsonBody['result']['user']);
       _mainPet = Item.fromJson(jsonBody['result']['user_pet']);
 
-      // 이벤트 서비스 초기화
-      EventService.setUserId(_user!.user_id);
-      EventService.initialize();
+      // // 이벤트 서비스 초기화
+      // EventService.setUserId(_user!.user_id);
+      // EventService.initialize();
 
       status = AuthStatus.initialized;
     } else {
@@ -248,10 +248,6 @@ class AuthService extends ChangeNotifier {
 
     _user = UserModel.fromJson(body['result']['user']);
     _mainPet = Item.fromJson(body['result']['user_pet']);
-
-    // 이벤트 서비스 초기화
-    EventService.setUserId(_user!.user_id);
-    EventService.initialize();
 
     status = AuthStatus.success;
     LOG.log("User authorization success: ${user!.user_id}");

@@ -21,8 +21,11 @@ class MyRoom extends StatelessWidget {
     final roomRepository = Provider.of<RoomRepository>(context, listen: false);
     final commentRepository =
         Provider.of<CommentRepository>(context, listen: false);
+
+    // 내비게이터 설정
     final nav = context.read<AppNavigator>();
     int roomOwner = nav.arg != null ? int.parse(nav.arg!) : userId;
+    nav.title = '친구의방';
 
     LOG.log('Room page: user id $userId, owner id $roomOwner');
 
