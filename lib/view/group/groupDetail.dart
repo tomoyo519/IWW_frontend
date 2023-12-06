@@ -9,6 +9,8 @@ import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
 import 'dart:convert';
 import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/view/_navigation/app_navigator.dart';
+import 'package:iww_frontend/view/_navigation/enum/app_route.dart';
 import 'package:iww_frontend/view/group/groupMain.dart';
 import 'package:iww_frontend/view/todo/todo_editor.dart';
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
@@ -247,6 +249,7 @@ class _GroupDetailState extends State<GroupDetail> {
 
   @override
   Widget build(BuildContext context) {
+    AppNavigator nav = context.read<AppNavigator>();
     return !isLoading
         ? Scaffold(
             appBar: MyAppBar(),
@@ -467,27 +470,32 @@ class _GroupDetailState extends State<GroupDetail> {
                             childAspectRatio: 2 / 1, crossAxisCount: 3),
                         itemCount: groupMems.isEmpty ? 0 : groupMems.length,
                         itemBuilder: (context, index) {
-                          return Column(
-                            children: [
-                              Container(
-                                  height: 50,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                          color: Colors.orangeAccent,
-                                          width: 5)),
-                                  alignment: Alignment.center,
-                                  margin: EdgeInsets.all(2),
-                                  padding: EdgeInsets.all(2),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      Icon(Icons.account_circle_rounded),
-                                      Text(groupMems[index]["user_name"] ?? "")
-                                    ],
-                                  ))
-                            ],
+                          return InkWell(
+                            onTap: () {
+                              nav.push(AppRoute.room, argument: groupMems[index]["user_id"].toString());
+                            },
+                            child :Column(
+                              children: [
+                                Container(
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                            color: Colors.orangeAccent,
+                                            width: 5)),
+                                    alignment: Alignment.center,
+                                    margin: EdgeInsets.all(2),
+                                    padding: EdgeInsets.all(2),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Icon(Icons.account_circle_rounded),
+                                        Text(groupMems[index]["user_name"] ?? "")
+                                      ],
+                                    ))
+                              ],
+                            ),
                           );
                         },
                       ),

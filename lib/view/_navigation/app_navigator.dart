@@ -50,6 +50,7 @@ class AppNavigator extends ChangeNotifier {
     _idx = route.index;
     _stack.add(route.index);
     _argument = argument;
+    LOG.log('push page $_idx, stack $_stack');
     notifyListeners();
   }
 
