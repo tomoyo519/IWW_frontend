@@ -25,4 +25,12 @@ class Item {
         petName = json['pet_name'],
         petExp = json['pet_exp'],
         itemType = json['item_type'];
+
+  // Map<String, dynamic> toMap() {
+  // return {
+  //   "item_id": id,
+  //   "item_name": name,
+  //   "descriptoin"
+  // }
+  // }
 }

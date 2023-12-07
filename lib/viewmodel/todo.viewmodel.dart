@@ -215,12 +215,12 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   Future<bool?> checkGroupTodo(int todoId, int userId, String path) async {
     bool? result = await _repository.checkGroupTodo(userId, todoId, path);
 
-    EventService.publish(Event(
-      type: EventType.show_todo_snackbar,
-      message: "인증을 완료했어요!",
-    ));
+    // EventService.publish(Event(
+    //   type: EventType.show_todo_snackbar,
+    //   message: "인증을 완료했어요!",
+    // ));
 
-    notifyListeners();
+    // notifyListeners();
     return result;
   }
 

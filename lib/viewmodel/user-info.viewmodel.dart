@@ -12,8 +12,8 @@ import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/service/reward.service.dart';
 
 class UserInfo extends ChangeNotifier {
-  final UserModel _user;
-  final Item _mainPet;
+  UserModel _user;
+  Item _mainPet;
   final UserRepository _repository;
 
   UserInfo(
@@ -32,8 +32,8 @@ class UserInfo extends ChangeNotifier {
   late int _userCash;
 
   late int _itemId;
-  late int _petExp;
-  late String _petName;
+  late int? _petExp;
+  late String? _petName;
   late String _itemName;
 
   // === Getters === //
@@ -41,13 +41,13 @@ class UserInfo extends ChangeNotifier {
   int get userId => _user.user_id;
   String get userName => _userName;
   String get userTel => _userTel;
-  String get itemName => _itemName;
+  String? get itemName => _itemName;
 
   int get userCash => _userCash;
   int get userHp => _userHp;
   int get itemId => _itemId;
-  int get petExp => _petExp;
-  String get mainPetName => _petName;
+  int? get petExp => _petExp;
+  String? get mainPetName => _petName;
 
   // === Setters === //
   bool _waiting = true;
@@ -72,7 +72,7 @@ class UserInfo extends ChangeNotifier {
     notifyListeners();
   }
 
-  set petExp(int exp) {
+  set petExp(int? exp) {
     _petExp = exp;
     notifyListeners();
   }
@@ -85,12 +85,14 @@ class UserInfo extends ChangeNotifier {
   // ==== CRUD ==== //
   Future<void> fetchUser() async {
     GetUserResult? fetched = await _repository.getUser();
+
     if (fetched == null) {
       // _authService.user = null; // 인가 정보를 삭제
       return;
     }
     // 유저의 상태 정보를 세팅하고 notify합니다.
     _setUserState(fetched.user, fetched.pet);
+    LOG.log("FETECHED NEW USER STATES!!!");
   }
 
   // TODO type 달기
@@ -138,18 +140,20 @@ class UserInfo extends ChangeNotifier {
     Item prevPet = _mainPet;
 
     // * Set new user info * //
+    _user = newUser;
     _userName = newUser.user_name;
     _userTel = newUser.user_tel;
     _userHp = newUser.user_hp;
     _userCash = newUser.user_cash;
 
     // * Set new pet info * //
+    _mainPet = newPet;
     _itemId = newPet.id;
-
-    // FIXME: 펫 타입으로 응답이 올 경우 경험치가 같이 와야함
-    _petExp = newPet.petExp ?? 0;
-    _petName = newPet.petName ?? '';
+    _petExp = newPet.petExp;
     _itemName = newPet.name;
+    _petName = newPet.petName ?? '';
+
+    // LOG.log('prev pet: ${jsonEncode(prevPe)}')
 
     // * Trigger events * //
     onLoginReward(newUser.login_cnt);

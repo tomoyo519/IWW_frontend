@@ -42,6 +42,7 @@ class MyTodo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size screen = MediaQuery.of(context).size;
+    context.read<UserInfo>().fetchUser();
 
     return Container(
       width: screen.width,

@@ -198,7 +198,7 @@ class StatusBar extends StatelessWidget {
                 SizedBox(width: 10),
                 Expanded(
                   child: LinearProgressIndicator(
-                    value: userInfo.petExp / 100,
+                    value: userInfo.petExp! / 100,
                     minHeight: 6,
                     valueColor: AlwaysStoppedAnimation<Color>(
                         Color.fromARGB(255, 155, 239, 110)),
