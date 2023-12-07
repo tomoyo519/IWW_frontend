@@ -41,7 +41,7 @@ class _FriendListState extends State<FriendList> {
     return Column(
       children: [
         Expanded(
-            child: ListView.builder(
+          child: ListView.builder(
           itemCount: friends.length,
           itemBuilder: (context, index) {
             FriendInfo user = friends[index];

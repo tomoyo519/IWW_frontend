@@ -42,7 +42,12 @@ class CommentsProvider with ChangeNotifier {
 
   // 댓글 생성
   Future<bool> addComment(String content) async {
-    return await _commentRepository.addComment(_ownerId, _userId, content);
+    bool result =
+        await _commentRepository.addComment(_ownerId, _userId, content);
+    if (result) {
+      fetchComment();
+    }
+    return result;
   }
 
   // 댓글 수정
@@ -338,13 +343,12 @@ class CommentInputField extends StatelessWidget {
             icon: Icon(Icons.send),
             onPressed: () async {
               if (controller.text.isNotEmpty) {
-                bool success =
-                    await commentsProvider.addComment(controller.text);
-                if (success) {
+                await commentsProvider.addComment(controller.text);
                   // 댓글 새로고침
-                  commentsProvider.fetchComment();
-                }
+                commentsProvider.fetchComment();
                 controller.clear();
+                FocusScope.of(context).unfocus();
+            
               }
             },
           ),
