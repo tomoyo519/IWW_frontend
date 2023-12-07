@@ -11,8 +11,8 @@ import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 
 // 마이홈 주요 구성 (펫, 배경, 하단 버튼)
-class MyRoomComponent extends StatelessWidget {
-  const MyRoomComponent({
+class RenderPage extends StatelessWidget {
+  const RenderPage({
     super.key,
   });
 
@@ -32,7 +32,8 @@ class MyRoomComponent extends StatelessWidget {
               builder: (context, snapshot) {
 
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return SizedBox();
+                  
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else {
@@ -269,7 +270,7 @@ class BottomButtons extends StatelessWidget {
       if (roomState.isMyRoom()) {
         return ElevatedButton(
             onPressed: () {
-              myRoomState.toggleGrowth();
+              // myRoomState.toggleGrowth();
             },
             child: Text('인벤토리'));
       } else {

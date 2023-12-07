@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/comment.repository.dart';
 import 'package:iww_frontend/repository/room.repository.dart';
-import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';
@@ -9,7 +8,7 @@ import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:iww_frontend/view/inventory/inventory.dart';
-import 'package:iww_frontend/view/myroom/myroom_component.dart';
+import 'package:iww_frontend/view/myroom/render_page.dart';
 
 class MyRoom extends StatelessWidget {
   const MyRoom({super.key});
@@ -45,15 +44,7 @@ class MyRoom extends StatelessWidget {
 
 // 인벤토리 뷰 토글을 위한 상태관리
 class MyRoomState extends ChangeNotifier {
-  double _growth = 0.0;
-  final maxGrowth = 350.0;
-
-  get growth => _growth;
-
-  void toggleGrowth() {
-    _growth = (growth == 0.0) ? maxGrowth : 0.0;
-    notifyListeners();
-  }
+  var selectedIndex = 0;
 }
 
 // 마이룸 기본 페이지
@@ -62,35 +53,30 @@ class MyRoomPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    var myRoomState = context.watch<MyRoomState>();
+    var colorScheme = Theme.of(context).colorScheme;
+    var selectedIndex = context.watch<MyRoomState>().selectedIndex;
 
-    return Center(
-      child: Stack(fit: StackFit.expand, children: [
-        // 마이룸 화면 구성
-        Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: AnimatedContainer(
-                width: double.infinity,
-                height: screenHeight - myRoomState.growth,
-                color: Colors.blue,
-                duration: Duration(milliseconds: 500),
-                curve: Curves.easeInOut,
-                child: MyRoomComponent())),
-        // 하단 인벤토리 뷰
-        Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: AnimatedContainer(
-                width: double.infinity,
-                height: myRoomState.growth,
-                duration: Duration(milliseconds: 500),
-                curve: Curves.easeInOut,
-                child: InventoryView()))
-      ]),
+    Widget page;
+    switch (selectedIndex) {
+      case 0:
+        page = RenderPage();
+        break;
+      case 1:
+        page = InventoryPage();
+      default:
+        throw UnimplementedError('no widget for $selectedIndex');
+    }
+
+    var mainArea = ColoredBox(
+      color: colorScheme.surfaceVariant,
+      child: AnimatedSwitcher(
+        duration: Duration(milliseconds: 200),
+        child: page,
+      ),
+    );
+
+    return SafeArea(
+      child: Expanded(child: mainArea),
     );
   }
 }
