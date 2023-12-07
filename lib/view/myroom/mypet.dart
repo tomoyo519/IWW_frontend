@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
-import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:provider/provider.dart';
 
@@ -20,11 +21,12 @@ class Preset {
   });
 }
 
-
 class MyPet extends StatefulWidget {
   final String newSrc;
+  final bool isDead;
 
-  const MyPet({Key? key, required this.newSrc}) : super(key: key);
+  const MyPet({Key? key, required this.newSrc, required this.isDead})
+      : super(key: key);
 
   @override
   State<MyPet> createState() => _MyPetState();
@@ -56,7 +58,7 @@ class _MyPetState extends State<MyPet> {
   };
 
   final Map<String, Map<String, dynamic>> petModels = {
-    '비석': {
+    '비석_00': {
       'src': 'assets/tomb.glb',
       'motions': ['Idle']
     },
@@ -82,42 +84,41 @@ class _MyPetState extends State<MyPet> {
     Preset p = presets[selectedModel['motions']![_petActionIndex]]!;
 
     // 체력이 0이면 비석으로 변경
-    var userInfo = context.watch<UserInfo>();
+    if (widget.isDead) {
+      targetResouce = '비석_00_0';
+      selectedModel = petModels['비석_00']!;
+      p = presets['Idle']!;
+    }
     LOG.log('[마이펫 렌더링] key: $targetResouce');
 
-    if (userInfo.userHp == 0) {
-      selectedModel = petModels['비석']!;
-      p = presets[selectedModel['motions']![0]]!;
-    }
-
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () {
-        LOG.log('아니 왜 안바뀌는데 $_petActionIndex');
-        setState(() {
-          _petActionIndex =
-              (_petActionIndex + 1) % selectedModel['motions']!.length as int;
-        });
-      },
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.5,
-        child: ModelViewer(
-          key: ValueKey(targetResouce),
-          src: selectedModel['src'],
-          animationName: p.animationName,
-          cameraTarget: p.cameraTarget,
-          cameraOrbit: p.cameraOrbit,
-          autoRotate: p.autoRotate,
-          rotationPerSecond: p.rotationPerSecond,
-          // 이하 고정값
-          interactionPrompt: InteractionPrompt.none,
-          cameraControls: false,
-          autoPlay: true,
-          shadowIntensity: 1,
-          disableZoom: true,
-          autoRotateDelay: 0,
-        ),
-      ),
+          return GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () {
+              LOG.log('아니 왜 안바뀌는데 $_petActionIndex');
+              setState(() {
+                _petActionIndex = (_petActionIndex + 1) %
+                    selectedModel['motions']!.length as int;
+              });
+            },
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.5,
+              child: ModelViewer(
+                key: ValueKey(targetResouce),
+                src: selectedModel['src'],
+                animationName: p.animationName,
+                cameraTarget: p.cameraTarget,
+                cameraOrbit: p.cameraOrbit,
+                autoRotate: p.autoRotate,
+                rotationPerSecond: p.rotationPerSecond,
+                // 이하 고정값
+                interactionPrompt: InteractionPrompt.none,
+                cameraControls: false,
+                autoPlay: true,
+                shadowIntensity: 1,
+                disableZoom: true,
+                autoRotateDelay: 0,
+              ),
+            ),
     );
   }
 }

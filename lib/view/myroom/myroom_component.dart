@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
+import 'package:iww_frontend/repository/user.repository.dart';
+import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/friends/friendMain.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';
@@ -24,12 +26,28 @@ class MyRoomComponent extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           // 펫과 배경 등 구조물은 FutureBuilder를 통해 렌더링
-          RenderMyRoom(),
-          // 펫 렌더링
-          Selector<MyRoomViewModel, List<Item>>(
-              selector: (_, myRoomViewModel) => myRoomViewModel.roomObjects,
-              builder: (_, roomObjects, __) {
-                return MyPet(newSrc: myRoomState.findPetName());
+                  RenderMyRoom(),
+                  // 펫 렌더링
+          FutureBuilder<int>(
+              future: UserRepository().getUserHealth(myRoomState.getRoomOwner),
+              builder: (context, snapshot) {
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  int health = snapshot.data!; // snapshot.data에서 비동기 작업 결과를 받아옴
+
+                return Selector<MyRoomViewModel, List<Item>>(
+                    selector: (_, myRoomViewModel) =>
+                        myRoomViewModel.roomObjects,
+                    builder: (_, roomObjects, __) {
+                        return MyPet(
+                            newSrc: myRoomState.findPetName(),
+                            isDead: health == 0);
+                      });
+                }
               }),
           // 방 렌더링
 
@@ -129,6 +147,7 @@ class StatusBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var userInfo = context.read<UserInfo>();
+    int totalExp = int.parse(userInfo.itemName.split('_')[1]) * 1000;
 
     return Container(
       padding: const EdgeInsets.all(30.0),
@@ -198,7 +217,7 @@ class StatusBar extends StatelessWidget {
                 SizedBox(width: 10),
                 Expanded(
                   child: LinearProgressIndicator(
-                    value: userInfo.petExp / 100,
+                    value: userInfo.petExp / totalExp,
                     minHeight: 6,
                     valueColor: AlwaysStoppedAnimation<Color>(
                         Color.fromARGB(255, 155, 239, 110)),
@@ -210,7 +229,7 @@ class StatusBar extends StatelessWidget {
                 SizedBox(
                   width: 100,
                   child: Text(
-                    '${userInfo.petExp} / 1000',
+                    '${userInfo.petExp} / $totalExp',
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.white,
