@@ -140,6 +140,7 @@ class StatusBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var userInfo = context.read<UserInfo>();
+    int totalExp = int.parse(userInfo.mainPetName.split('_')[1]) * 1000;
 
     return Container(
       padding: const EdgeInsets.all(30.0),
@@ -209,7 +210,7 @@ class StatusBar extends StatelessWidget {
                 SizedBox(width: 10),
                 Expanded(
                   child: LinearProgressIndicator(
-                    value: userInfo.petExp / 100,
+                    value: userInfo.petExp / totalExp,
                     minHeight: 6,
                     valueColor: AlwaysStoppedAnimation<Color>(
                         Color.fromARGB(255, 155, 239, 110)),
@@ -221,7 +222,7 @@ class StatusBar extends StatelessWidget {
                 SizedBox(
                   width: 100,
                   child: Text(
-                    '${userInfo.petExp} / 1000',
+                    '${userInfo.petExp} / $totalExp',
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.white,
