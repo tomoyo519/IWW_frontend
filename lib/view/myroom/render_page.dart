@@ -5,7 +5,6 @@ import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/friends/friendMain.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';
 import 'package:iww_frontend/view/myroom/mypet.dart';
-import 'package:iww_frontend/view/myroom/myroom.dart';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -30,7 +29,6 @@ class RenderPage extends StatelessWidget {
           FutureBuilder<int>(
               future: UserRepository().getUserHealth(myRoomState.getRoomOwner),
               builder: (context, snapshot) {
-
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return SizedBox();
                   
@@ -39,10 +37,10 @@ class RenderPage extends StatelessWidget {
                 } else {
                   int health = snapshot.data!; // snapshot.data에서 비동기 작업 결과를 받아옴
 
-                return Selector<MyRoomViewModel, List<Item>>(
-                    selector: (_, myRoomViewModel) =>
-                        myRoomViewModel.roomObjects,
-                    builder: (_, roomObjects, __) {
+                  return Selector<MyRoomViewModel, List<Item>>(
+                      selector: (_, myRoomViewModel) =>
+                          myRoomViewModel.roomObjects,
+                      builder: (_, roomObjects, __) {
                         return MyPet(
                             newSrc: myRoomState.findPetName(),
                             isDead: health == 0);
@@ -144,7 +142,7 @@ class StatusBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var userInfo = context.read<UserInfo>();
-    int totalExp = int.parse(userInfo.itemName.split('_')[1]) * 1000;
+    int totalExp = int.parse(userInfo.itemName!.split('_')[1]) * 1000;
     String petName = context.read<MyRoomViewModel>().findPetNickName();
 
     return Container(
@@ -221,7 +219,7 @@ class StatusBar extends StatelessWidget {
               SizedBox(width: 10),
               Expanded(
                 child: LinearProgressIndicator(
-                  value: userInfo.petExp / totalExp,
+                  value: (userInfo.petExp! / totalExp),
                   minHeight: 6,
                   valueColor: AlwaysStoppedAnimation<Color>(
                       Color.fromARGB(255, 155, 239, 110)),
@@ -257,7 +255,6 @@ class BottomButtons extends StatelessWidget {
     // NOTE 여기서 비동기 연산 수행
     final commentsProvider = context.read<CommentsProvider>();
     // final inventoryState = context.read<InventoryState>();
-    final myRoomState = context.read<MyRoomState>();
     var roomState = context.read<MyRoomViewModel>();
     final user = Provider.of<UserInfo>(context, listen: false);
 

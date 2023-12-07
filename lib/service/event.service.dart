@@ -315,8 +315,15 @@ class EventService {
       generalDetails,
       payload: payload,
     );
-    LOG.log('message인증전 ${userInfo.userCash} ${userInfo.petExp}');
+
+    // TODO: 유저 상태 바꾸기
     await userInfo.fetchUser();
+
+    LOG.log(emoji: 2, "여기에 들어오면 진화");
+    userInfo.forceEvolve();
+    _streamController.add(Event(type: EventType.show_pet_evolve));
+    // if (userInfo.petExp != null && userInfo.petExp! > 1000) {
+    // }
     LOG.log('인증후 ${userInfo.userCash} ${userInfo.petExp}');
   }
 

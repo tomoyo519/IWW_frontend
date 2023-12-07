@@ -7,12 +7,15 @@ import 'package:iww_frontend/view/_navigation/extension/app_route.ext.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/_navigation/app_page.model.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
+import 'package:iww_frontend/view/modals/pet_evolve_modal.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class MainPage extends StatefulWidget implements PreferredSizeWidget {
   MainPage({super.key});
+
+  bool userLoggedIn = false;
 
   @override
   State<MainPage> createState() => _MainPageState();
@@ -33,6 +36,11 @@ class _MainPageState extends State<MainPage> {
     super.initState();
     requestNotificationPermission();
 
+    Future.microtask(() async {
+      showPetEvolveModal(context);
+      // type.run(context, message: message);
+    });
+
     // * ==== Event Listener ==== * //
     EventService.stream.listen(
       (event) async {
@@ -43,10 +51,20 @@ class _MainPageState extends State<MainPage> {
         if (type.target == 'socket') {
           type.run(context, message: message);
         } else if (type.target == 'ui') {
-          LOG.log('ui 이벤트가 발생했어요.');
-          Future.microtask(() async {
-            type.run(context, message: message);
-          });
+          // 로그인 달성 모달인 경우
+          if (type == EventType.show_login_achieve && widget.userLoggedIn) {
+            Future.microtask(() async {
+              // showPetEvolveModal(context);
+              type.run(context, message: message);
+            });
+            widget.userLoggedIn = true;
+          } else {
+            // 기타 다른 UI 이벤트
+            Future.microtask(() async {
+              showPetEvolveModal(context);
+              // type.run(context, message: message);
+            });
+          }
         }
       },
     );

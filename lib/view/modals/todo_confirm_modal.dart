@@ -3,13 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:iww_frontend/service/event.service.dart';
+import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 
 void showTodoConfirmModal(BuildContext context, String? message) {
   if (message == null) return;
   final UserInfo user = Provider.of<UserInfo>(context, listen: false);
-  final TodoRepository todoRepository = Provider.of<TodoRepository>(context, listen: false);
+  final TodoRepository todoRepository =
+      Provider.of<TodoRepository>(context, listen: false);
 
   // message에서 필요한 데이터 파싱
   Map<String, dynamic> data = jsonDecode(message);
@@ -31,7 +33,8 @@ void showTodoConfirmModal(BuildContext context, String? message) {
               onTap: () {
                 // 사진 전체 화면으로 확대
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => FullScreenImage('${Secrets.REMOTE_SERVER_URL}/group-image/' + todoImg),
+                  builder: (_) => FullScreenImage(
+                      '${Secrets.REMOTE_SERVER_URL}/group-image/' + todoImg),
                 ));
               },
               child: Image.network(
@@ -58,6 +61,7 @@ void showTodoConfirmModal(BuildContext context, String? message) {
               // TODO: todo 업데이트 로직 및 socket.emit 구현
               bool result =
                   await todoRepository.confirmGroupTodo(todoId.toString());
+
               if (result) {
                 var data = {'userId': user.userId, 'todoId': todoId};
                 EventService.sendEvent('confirmResponse', data);

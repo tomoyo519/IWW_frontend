@@ -6,11 +6,14 @@ import 'package:lottie/lottie.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 
 // static method
-Future<void> showPetEvolveModal(BuildContext context) {
-  return showCustomFullScreenModal(
-    context,
-    PetEvolveModal(),
-  );
+void showPetEvolveModal(BuildContext context) {
+  showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: PetEvolveModal(), // 여기서 MyStatefulWidget은 Stateful 위젯
+        );
+      });
 }
 
 class PetEvolveModal extends StatefulWidget {
@@ -42,12 +45,13 @@ class _PetEvolveModalState extends State<PetEvolveModal>
     model = const ModelViewer(
       loading: Loading.eager,
       shadowIntensity: 1,
-      src: 'assets/mid_fox.glb',
+      src: 'assets/pets/mid_fox.glb',
       alt: 'cuttest pet ever',
       autoRotate: false,
       animationName: "Idle_A",
       autoPlay: true,
       disableZoom: true,
+      cameraOrbit: '25deg 75deg 105%',
       interactionPrompt: InteractionPrompt.none,
     );
 
@@ -64,16 +68,6 @@ class _PetEvolveModalState extends State<PetEvolveModal>
       begin: 1.0,
       end: 0.0,
     ).animate(_fadeController);
-
-    // set state
-    // _lottieController.addStatusListener((status) {
-    //   if (status == AnimationStatus.completed) {
-    //     // show model
-    //     setState(() {
-    //       evolved = true;
-    //     });
-    //   }
-    // });
 
     // Lottie 애니메이션 로드 및 시작
     _lottieController.forward();
@@ -93,38 +87,73 @@ class _PetEvolveModalState extends State<PetEvolveModal>
 
   @override
   Widget build(BuildContext context) {
+    Size screen = MediaQuery.of(context).size;
     return Center(
       child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: Colors.amber.shade50,
-          ),
-          child: Stack(
-            children: [
-              model,
-              FadeTransition(
-                opacity: _fadeAnimation,
-                child: Container(
-                  width: double.infinity,
-                  height: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                  ),
-                  child: Lottie.asset(
-                    "assets/todo/evolve.json",
-                    width: double.infinity,
-                    height: double.infinity,
-                    controller: _lottieController,
-                    // onLoaded: (composition) {
-                    //   _lottieController.duration = composition.duration;
-                    //   _lottieController.forward().then((value) {
-                    //     _fadeController.forward();
-                    //   });
-                    // },
-                  ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+        ),
+        child: Stack(
+          children: [
+            Material(
+              child: SizedBox(
+                height: screen.height,
+                width: screen.width,
+                child: Column(
+                  children: [
+                    Expanded(
+                      flex: 5,
+                      child: model,
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: Column(
+                        children: [
+                          Text(
+                            "펫이 진화했어요!",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: Text(
+                              "홈으로 가기",
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
                 ),
               ),
-            ],
-          )),
+            ),
+            FadeTransition(
+              opacity: _fadeAnimation,
+              child: Container(
+                width: double.infinity,
+                height: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                ),
+                child: Lottie.asset(
+                  "assets/todo/evolve.json",
+                  width: double.infinity,
+                  height: double.infinity,
+                  controller: _lottieController,
+                  onLoaded: (composition) {
+                    _lottieController.duration = composition.duration;
+                    _lottieController.forward().then((value) {
+                      _fadeController.forward();
+                    });
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
