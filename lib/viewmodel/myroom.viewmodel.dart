@@ -126,4 +126,13 @@ class MyRoomViewModel with ChangeNotifier {
     LOG.log("NO PET MODEL. default: 구미호_01");
     return '구미호_01';
   }
+
+  String findPetNickName() {
+    for (var element in roomObjects) {
+      if (element.itemType == itemTypeOfPet) {
+        return element.petName!;
+      }
+    }
+    return '이름을 지어주세요!';
+  }
 }
