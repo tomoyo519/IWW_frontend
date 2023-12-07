@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
-import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:provider/provider.dart';
 
@@ -19,7 +20,6 @@ class Preset {
     required this.rotationPerSecond,
   });
 }
-
 
 class MyPet extends StatefulWidget {
   final String newSrc;
@@ -82,42 +82,49 @@ class _MyPetState extends State<MyPet> {
     Preset p = presets[selectedModel['motions']![_petActionIndex]]!;
 
     // 체력이 0이면 비석으로 변경
-    var userInfo = context.watch<UserInfo>();
+    int roomOwner =
+        Provider.of<MyRoomViewModel>(context, listen: false).getRoomOwner;
+    Future<int> roomOwnerHealth = UserRepository().getUserHealth(roomOwner);
     LOG.log('[마이펫 렌더링] key: $targetResouce');
+    LOG.log('[마이펫 렌더링] roomOwnerHealth: $roomOwnerHealth');
 
-    if (userInfo.userHp == 0) {
-      selectedModel = petModels['비석']!;
-      p = presets[selectedModel['motions']![0]]!;
-    }
+    return FutureBuilder<int>(
+        future: roomOwnerHealth,
+        builder: (context, snapshot) {
+          if (snapshot.data == 0) {
+            selectedModel = petModels['비석']!;
+            p = presets[selectedModel['motions']![0]]!;
+          }
 
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () {
-        LOG.log('아니 왜 안바뀌는데 $_petActionIndex');
-        setState(() {
-          _petActionIndex =
-              (_petActionIndex + 1) % selectedModel['motions']!.length as int;
+          return GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () {
+              LOG.log('아니 왜 안바뀌는데 $_petActionIndex');
+              setState(() {
+                _petActionIndex = (_petActionIndex + 1) %
+                    selectedModel['motions']!.length as int;
+              });
+            },
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.5,
+              child: ModelViewer(
+                key: ValueKey(targetResouce),
+                src: selectedModel['src'],
+                animationName: p.animationName,
+                cameraTarget: p.cameraTarget,
+                cameraOrbit: p.cameraOrbit,
+                autoRotate: p.autoRotate,
+                rotationPerSecond: p.rotationPerSecond,
+                // 이하 고정값
+                interactionPrompt: InteractionPrompt.none,
+                cameraControls: false,
+                autoPlay: true,
+                shadowIntensity: 1,
+                disableZoom: true,
+                autoRotateDelay: 0,
+              ),
+            ),
+          );
         });
-      },
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.5,
-        child: ModelViewer(
-          key: ValueKey(targetResouce),
-          src: selectedModel['src'],
-          animationName: p.animationName,
-          cameraTarget: p.cameraTarget,
-          cameraOrbit: p.cameraOrbit,
-          autoRotate: p.autoRotate,
-          rotationPerSecond: p.rotationPerSecond,
-          // 이하 고정값
-          interactionPrompt: InteractionPrompt.none,
-          cameraControls: false,
-          autoPlay: true,
-          shadowIntensity: 1,
-          disableZoom: true,
-          autoRotateDelay: 0,
-        ),
-      ),
-    );
   }
 }
