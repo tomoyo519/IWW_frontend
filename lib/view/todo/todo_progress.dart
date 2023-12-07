@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/utils/extension/int.ext.dart';
+import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:lottie/lottie.dart';
@@ -44,6 +45,8 @@ class TodoProgress extends StatelessWidget {
       "구미호_02": "assets/pets/mid_fox.glb",
       "구미호_03": "assets/pets/kitsune.glb",
     };
+
+    LOG.log(assetPath[userinfo.itemName] ?? 'null');
 
     return SizedBox(
       width: screen.width,

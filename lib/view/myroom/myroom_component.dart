@@ -25,12 +25,11 @@ class MyRoomComponent extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           // 펫과 배경 등 구조물은 FutureBuilder를 통해 렌더링
-                  RenderMyRoom(),
-                  // 펫 렌더링
+          RenderMyRoom(),
+          // 펫 렌더링
           FutureBuilder<int>(
               future: UserRepository().getUserHealth(myRoomState.getRoomOwner),
               builder: (context, snapshot) {
-
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return CircularProgressIndicator();
                 } else if (snapshot.hasError) {
@@ -38,10 +37,10 @@ class MyRoomComponent extends StatelessWidget {
                 } else {
                   int health = snapshot.data!; // snapshot.data에서 비동기 작업 결과를 받아옴
 
-                return Selector<MyRoomViewModel, List<Item>>(
-                    selector: (_, myRoomViewModel) =>
-                        myRoomViewModel.roomObjects,
-                    builder: (_, roomObjects, __) {
+                  return Selector<MyRoomViewModel, List<Item>>(
+                      selector: (_, myRoomViewModel) =>
+                          myRoomViewModel.roomObjects,
+                      builder: (_, roomObjects, __) {
                         return MyPet(
                             newSrc: myRoomState.findPetName(),
                             isDead: health == 0);

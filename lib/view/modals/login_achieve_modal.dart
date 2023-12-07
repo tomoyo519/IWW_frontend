@@ -3,8 +3,8 @@ import 'package:iww_frontend/view/modals/custom_fullscreen_modal.dart';
 import 'package:lottie/lottie.dart';
 
 // static method
-Future<void> showLoginAchieveModal(BuildContext context, String message) {
-  return showCustomFullScreenModal(
+void showLoginAchieveModal(BuildContext context, String message) {
+  showCustomFullScreenModal(
     context,
     LoginAchieveModal(message: message),
   );
