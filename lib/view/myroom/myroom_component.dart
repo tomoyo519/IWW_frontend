@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
+import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/friends/friendMain.dart';
@@ -29,10 +30,15 @@ class MyRoomComponent extends StatelessWidget {
           // 펫과 배경 등 구조물은 FutureBuilder를 통해 렌더링
                   RenderMyRoom(),
                   // 펫 렌더링
-          Selector<MyRoomViewModel, List<Item>>(
-              selector: (_, myRoomViewModel) => myRoomViewModel.roomObjects,
-              builder: (_, roomObjects, __) {
-                return MyPet(newSrc: myRoomState.findPetName());
+          FutureBuilder<int>(
+              future: UserRepository().getUserHealth(myRoomState.getRoomOwner),
+              builder: (context, snapshot) {
+                return Selector<MyRoomViewModel, List<Item>>(
+                    selector: (_, myRoomViewModel) =>
+                        myRoomViewModel.roomObjects,
+                    builder: (_, roomObjects, __) {
+                      return MyPet(newSrc: myRoomState.findPetName(), isDead: snapshot.data! == 0);
+                    });
               }),
           // 방 렌더링
                   

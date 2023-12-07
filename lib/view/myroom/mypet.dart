@@ -23,8 +23,10 @@ class Preset {
 
 class MyPet extends StatefulWidget {
   final String newSrc;
+  final bool isDead;
 
-  const MyPet({Key? key, required this.newSrc}) : super(key: key);
+  const MyPet({Key? key, required this.newSrc, required this.isDead})
+      : super(key: key);
 
   @override
   State<MyPet> createState() => _MyPetState();
@@ -82,19 +84,12 @@ class _MyPetState extends State<MyPet> {
     Preset p = presets[selectedModel['motions']![_petActionIndex]]!;
 
     // 체력이 0이면 비석으로 변경
-    int roomOwner =
-        Provider.of<MyRoomViewModel>(context, listen: false).getRoomOwner;
-    Future<int> roomOwnerHealth = UserRepository().getUserHealth(roomOwner);
+    if (widget.isDead) {
+      targetResouce = '비석';
+      selectedModel = petModels['비석']!;
+      p = presets['Idle']!;
+    }
     LOG.log('[마이펫 렌더링] key: $targetResouce');
-    LOG.log('[마이펫 렌더링] roomOwnerHealth: $roomOwnerHealth');
-
-    return FutureBuilder<int>(
-        future: roomOwnerHealth,
-        builder: (context, snapshot) {
-          if (snapshot.data == 0) {
-            selectedModel = petModels['비석']!;
-            p = presets[selectedModel['motions']![0]]!;
-          }
 
           return GestureDetector(
             behavior: HitTestBehavior.opaque,
@@ -124,7 +119,6 @@ class _MyPetState extends State<MyPet> {
                 autoRotateDelay: 0,
               ),
             ),
-          );
-        });
+    );
   }
 }
