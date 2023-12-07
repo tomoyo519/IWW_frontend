@@ -25,8 +25,13 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
     List<Widget> defaultAppbar = <Widget>[
       Row(
         children: [
-          Icon(
-            Icons.monetization_on_outlined,
+          Padding(
+            padding: const EdgeInsets.only(right: 5.0),
+            child: Image.asset(
+              'assets/cash.png',
+              width: 25,
+              height: 25,
+            ),
           ),
           Text(userInfo.userCash.toString())
         ],
