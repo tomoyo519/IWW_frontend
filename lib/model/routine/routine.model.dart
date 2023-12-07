@@ -10,14 +10,17 @@ class Routine {
   String? routEnd;
   String? routDesc;
 
-  Routine(
-      {required this.routName,
-      required this.grpId,
-      required this.routId,
-      this.routRepeat,
-      routDesc,
-      routSrt,
-      routEnd});
+  Routine({
+    required this.routName,
+    required this.grpId,
+    required this.routId,
+    this.routRepeat,
+    routDesc,
+    routSrt,
+    routEnd,
+  }) {
+    routRepeat = routRepeat ?? '1111111';
+  }
 
   Map<String, dynamic> toJSON() {
     return {
@@ -32,7 +35,7 @@ class Routine {
   Routine.fromTodoJson(Map<String, dynamic> json)
       : routName = json['todo_name'],
         routDesc = json['todo_desc'],
-        routRepeat = json['rout_repeat'],
+        routRepeat = json['rout_repeat'] ?? '1111111',
         grpId = 0,
         routId = 0,
         routSrt = json['todo_start'],
@@ -41,7 +44,7 @@ class Routine {
   Routine.fromJson(Map<String, dynamic> json)
       : routName = json['rout_name'] ?? json['todo_name'],
         routDesc = json['rout_desc'],
-        routRepeat = json['rout_repeat'],
+        routRepeat = json['rout_repeat'] ?? '1111111',
         grpId = json['grp_id'],
         routId = json['rout_id'],
         routSrt = json['rout_srt'],

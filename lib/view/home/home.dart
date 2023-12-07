@@ -54,33 +54,17 @@ class MyTodo extends StatelessWidget {
           Column(
             children: [
               SizedBox(
-                height: screen.height * 0.2,
+                height: 150,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // SizedBox(child: HomeProfile(user: user)),
                     Expanded(flex: 3, child: TodoProgress()),
                   ],
                 ),
               ),
-              // Expanded(
-              //   child: Container(
-              //     color: Colors.red,
-              //   ),
-              // )
               Expanded(
-                // flex: 1,
-                child: SingleChildScrollView(
-                  child: ToDoList(),
-                ),
+                child: ToDoList(),
               )
-
-              // SizedBox(
-
-              //   child: ModelViewer(
-              //     src: 'assets/pets/kitsune.glb',
-              //   ),
-              // ),
             ],
           ),
           // ==== Floating Button ==== //

@@ -134,7 +134,7 @@ class CommentsBottomSheet extends StatelessWidget {
                         ),
                 ),
                 // 댓글 입력 필드 표시 (남의 방명록일 경우에도 포함)
-                if (!isOwner || comments.isEmpty)
+                if (!isOwner)
                   CommentInputField(
                       commentsProvider: commentsProvider,
                       ownerId: ownerId,

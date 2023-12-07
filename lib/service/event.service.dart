@@ -10,6 +10,7 @@ import 'package:iww_frontend/view/modals/todo_confirm_modal.dart';
 import 'package:iww_frontend/view/modals/pet_evolve_modal.dart';
 import 'package:iww_frontend/view/modals/todo_first_done.dart';
 import 'package:iww_frontend/view/modals/custom_snackbar.dart';
+import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:lottie/lottie.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:provider/provider.dart';
@@ -26,20 +27,40 @@ class Event {
   });
 }
 
+// TODO: 파일 분리
 enum EventType {
-  // 화면 업데이트 이벤트
-  show_todo_snackbar,
-  show_first_todo_modal,
-  show_login_achieve,
+  // Socket Event
   friendRequest,
   friendResponse,
   confirmRequest,
   confirmResponse,
   newComment,
+  // UI Event
+  show_todo_snackbar,
+  show_first_todo_modal,
+  show_login_achieve,
   show_pet_evolve,
 }
 
 extension EventTypeExtension on EventType {
+  String get target {
+    switch (this) {
+      case EventType.friendRequest:
+      case EventType.friendResponse:
+      case EventType.confirmRequest:
+      case EventType.confirmResponse:
+      case EventType.newComment:
+        return "socket";
+      case EventType.show_todo_snackbar:
+      case EventType.show_first_todo_modal:
+      case EventType.show_login_achieve:
+      case EventType.show_pet_evolve:
+        return "ui";
+      default:
+        return '';
+    }
+  }
+
   void run(BuildContext context, {String? message}) async {
     AppNavigator nav = Provider.of<AppNavigator>(context, listen: false);
 
@@ -87,13 +108,13 @@ extension EventTypeExtension on EventType {
 // * 모달을 띄우는 뷰는 main_page.dart
 // */
 class EventService {
-  static final EventService _instance = EventService.initialize();
   static final _streamController = StreamController<Event>.broadcast();
   static String? _userId;
   static late IO.Socket socket;
   static late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  late UserInfo userInfo; // unique
 
-  EventService.initialize() {
+  EventService.initialize(this.userInfo) {
     print(_userId);
     socket = IO
         .io('${Secrets.REMOTE_SERVER_URL}?user_id=$_userId', <String, dynamic>{
@@ -294,6 +315,9 @@ class EventService {
       generalDetails,
       payload: payload,
     );
+    LOG.log('message인증전 ${userInfo.userCash} ${userInfo.petExp}');
+    await userInfo.fetchUser();
+    LOG.log('인증후 ${userInfo.userCash} ${userInfo.petExp}');
   }
 
   Future _handleNewComment(dynamic data) async {

@@ -37,11 +37,17 @@ class _MainPageState extends State<MainPage> {
     EventService.stream.listen(
       (event) async {
         String? message = event.message;
-        LOG.log("main_page event listen msg : " +message!);
         EventType type = event.type;
-        Future.microtask(() async {
+        LOG.log("main_page event listen msg : ${message ?? ''} ${type.target}");
+
+        if (type.target == 'socket') {
           type.run(context, message: message);
-        });
+        } else if (type.target == 'ui') {
+          LOG.log('ui 이벤트가 발생했어요.');
+          Future.microtask(() async {
+            type.run(context, message: message);
+          });
+        }
       },
     );
   }
@@ -69,7 +75,7 @@ class _MainPageState extends State<MainPage> {
       // * ======= APPBAR ======= * //
       appBar: MyAppBar(
         leading: nav.pushback,
-        title: Text(curr.label),
+        title: Text(nav.title ?? curr.label),
         actions: appbars
             .map(
               (each) => each.toAppbarIcon(
@@ -82,14 +88,9 @@ class _MainPageState extends State<MainPage> {
       ),
       // * ======= BODY ======= * //
       // 종속성 주입 부분
-      body: Padding(
-        padding: EdgeInsets.symmetric(
-          vertical: 10,
-        ),
-        child: Builder(
-          // 빌더 함수 콜
-          builder: (context) => curr.builder(context),
-        ),
+      body: Builder(
+        // 빌더 함수 콜
+        builder: (context) => curr.builder(context),
       ),
       bottomNavigationBar: nav.isBottomSheetPage
           ? BottomNavigationBar(

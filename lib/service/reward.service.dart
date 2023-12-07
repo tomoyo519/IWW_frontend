@@ -5,7 +5,7 @@ class RewardService {
   RewardService._internal();
 
   // 캐시 10이 지급되는 로그인 개수
-  static const List<int> LOGIN_REWARD = [1, 5, 100];
+  static const List<int> LOGIN_REWARD = [1, 2, 3, 4, 5, 100];
 
   static const int PET_EXP_REWARD = 10;
   static const int FIRST_TODO_REWARD = 100;

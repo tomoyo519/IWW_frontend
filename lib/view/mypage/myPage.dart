@@ -225,27 +225,26 @@ class _MyPageState extends State<MyPage> {
                   ],
                   if (rewards != null && rewards!.isNotEmpty) ...[
                     Container(
-                        padding: EdgeInsets.all(5),
-                        child: Expanded(
-                          child: GridView.builder(
-                              itemCount: rewards!.length,
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 3, childAspectRatio: 1.0),
-                              itemBuilder: (context, index) {
-                                return Card(
-                                    child: Column(children: [
+                      padding: EdgeInsets.all(5),
+                      child: Expanded(
+                        child: GridView.builder(
+                          itemCount: rewards!.length,
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3, childAspectRatio: 1.0),
+                          itemBuilder: (context, index) {
+                            return Card(
+                              child: Column(
+                                children: [
                                   Expanded(
                                     child: Column(
                                       children: [
-                                        Flexible(
-                                          child: Image.asset('assets/medal.png',
-                                              fit: BoxFit.scaleDown),
+                                        Image.asset(
+                                          rewards![index].achiImg!,
+                                          fit: BoxFit.scaleDown,
                                         ),
                                         Text(
-                                          (rewards != null &&
-                                                  rewards![index].achiName !=
-                                                      null)
+                                          (rewards != null)
                                               ? rewards![index]
                                                   .achiName
                                                   .toString()
@@ -254,9 +253,13 @@ class _MyPageState extends State<MyPage> {
                                       ],
                                     ),
                                   )
-                                ]));
-                              }),
-                        ))
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    )
                   ],
                   if (rewards != null && rewards!.isEmpty) ...[
                     Center(
