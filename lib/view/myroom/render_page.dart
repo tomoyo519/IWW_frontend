@@ -24,9 +24,9 @@ class RenderPage extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          // 펫과 배경 등 구조물은 FutureBuilder를 통해 렌더링
-                  RenderMyRoom(),
-                  // 펫 렌더링
+          // 배경, 가구 렌더링
+          RenderMyRoom(),
+          // 펫 렌더링
           FutureBuilder<int>(
               future: UserRepository().getUserHealth(myRoomState.getRoomOwner),
               builder: (context, snapshot) {
@@ -49,15 +49,12 @@ class RenderPage extends StatelessWidget {
                       });
                 }
               }),
-          // 방 렌더링
-
           // 상단 상태바
           Positioned(
               left: 0,
               right: 0,
               top: MediaQuery.of(context).size.height * 0.01,
-              height: 150,
-              child: UnderLayer()),
+              child: StatusBar()),
           // 하단 버튼
           // Positioned(
           //   left: 0,
@@ -151,102 +148,101 @@ class StatusBar extends StatelessWidget {
     String petName = context.read<MyRoomViewModel>().findPetNickName();
 
     return Container(
-      padding: const EdgeInsets.all(30.0),
-      child: Container(
-        padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-        decoration: BoxDecoration(
-          color: Color.fromRGBO(0, 0, 0, 0.3),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              petName,
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.white,
+      height: 100,
+      margin: EdgeInsets.all(20),
+      padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+      decoration: BoxDecoration(
+        color: Color.fromRGBO(0, 0, 0, 0.3),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            petName,
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.white,
+            ),
+          ),
+          Row(
+            children: [
+              SizedBox(
+                width: 45,
+                child: Text(
+                  '체력',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
               ),
-            ),
-            Row(
-              children: [
-                SizedBox(
-                  width: 45,
-                  child: Text(
-                    '체력',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                    ),
-                    textAlign: TextAlign.left,
+              SizedBox(width: 10),
+              Expanded(
+                child: LinearProgressIndicator(
+                  value: userInfo.userHp / 10,
+                  minHeight: 6,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      const Color.fromARGB(255, 239, 118, 110)),
+                  backgroundColor: Colors.grey[200],
+                  semanticsLabel: 'Linear progress indicator',
+                ),
+              ),
+              SizedBox(width: 10),
+              SizedBox(
+                width: 100,
+                child: Text(
+                  '${userInfo.userHp} / 10',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              SizedBox(
+                width: 45,
+                child: Text(
+                  '경험치 ',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                child: LinearProgressIndicator(
+                  value: userInfo.petExp / totalExp,
+                  minHeight: 6,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      Color.fromARGB(255, 155, 239, 110)),
+                  backgroundColor: Colors.grey[200],
+                  semanticsLabel: 'Linear progress indicator',
+                ),
+              ),
+              SizedBox(width: 10),
+              SizedBox(
+                width: 100,
+                child: Text(
+                  '${userInfo.petExp} / $totalExp',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white,
                   ),
                 ),
-                SizedBox(width: 10),
-                Expanded(
-                  child: LinearProgressIndicator(
-                    value: userInfo.userHp / 10,
-                    minHeight: 6,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                        const Color.fromARGB(255, 239, 118, 110)),
-                    backgroundColor: Colors.grey[200],
-                    semanticsLabel: 'Linear progress indicator',
-                  ),
-                ),
-                SizedBox(width: 10),
-                SizedBox(
-                  width: 100,
-                  child: Text(
-                    '${userInfo.userHp} / 10',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white,
-                    ),
-                    textAlign: TextAlign.left,
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                SizedBox(
-                  width: 45,
-                  child: Text(
-                    '경험치 ',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                    ),
-                    textAlign: TextAlign.left,
-                  ),
-                ),
-                SizedBox(width: 10),
-                Expanded(
-                  child: LinearProgressIndicator(
-                    value: userInfo.petExp / totalExp,
-                    minHeight: 6,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                        Color.fromARGB(255, 155, 239, 110)),
-                    backgroundColor: Colors.grey[200],
-                    semanticsLabel: 'Linear progress indicator',
-                  ),
-                ),
-                SizedBox(width: 10),
-                SizedBox(
-                  width: 100,
-                  child: Text(
-                    '${userInfo.petExp} / $totalExp',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white,
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ],
-        ),
+              )
+            ],
+          ),
+        ],
       ),
     );
   }
