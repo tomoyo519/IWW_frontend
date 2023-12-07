@@ -58,16 +58,10 @@ class RemoteDataSource {
       }
     }
     if (file != null) {
-      // 파일
-      // request.files.add(http.MultipartFile(
-      //     field, file.readAsBytes().asStream(), file.lengthSync(),
-      //     filename: filename));
-      LOG.log(
-          '${DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())} 파일경로: $filename');
+      LOG.log("[PATCH FORMDATA] ${server + url} $filename");
       request.files.add(await http.MultipartFile.fromPath('file', filename!));
       var res = await request.send();
-      LOG.log(
-          '${DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())} 사진 전송 결과: @@@${res.statusCode}');
+      LOG.log("[PATCH FORMDATA] Responsed: ${res.statusCode}");
       return res;
     } else {
       throw Exception('file must not be null');

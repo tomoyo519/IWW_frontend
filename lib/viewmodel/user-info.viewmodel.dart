@@ -82,6 +82,24 @@ class UserInfo extends ChangeNotifier {
     notifyListeners();
   }
 
+  // TODO 강제 진화
+  void forceEvolve() async {
+    _mainPet = Item(
+      id: 54,
+      name: "구미호_02",
+      itemType: 1,
+      path: "assets/pets/mid_fox.glb",
+      petName: "꾸미호",
+      petExp: 0,
+    );
+
+    _itemId = 54;
+    _itemName = "구미호_02";
+    _petExp = 0;
+    _petName = "꾸미호";
+    notifyListeners();
+  }
+
   // ==== CRUD ==== //
   Future<void> fetchUser() async {
     GetUserResult? fetched = await _repository.getUser();
