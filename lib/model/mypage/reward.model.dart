@@ -19,4 +19,13 @@ class Rewards {
       achiImg: body['achi_img'],
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      "achi_name": achiName,
+      "achi_desc": achiDesc,
+      "is_hidden": isHidden,
+      "achi_img": achiImg,
+    };
+  }
 }

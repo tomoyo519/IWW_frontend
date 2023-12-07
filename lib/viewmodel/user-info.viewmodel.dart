@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:iww_frontend/datasource/localStorage.dart';
+import 'package:iww_frontend/model/mypage/reward.model.dart';
 import 'package:iww_frontend/model/todo/todo_update.dto.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:flutter/material.dart';
@@ -12,16 +13,18 @@ import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/service/reward.service.dart';
 
 class UserInfo extends ChangeNotifier {
+  final UserRepository _repository;
   UserModel _user;
   Item _mainPet;
-  final UserRepository _repository;
+  Rewards? _reward;
 
   UserInfo(
     this._user,
     this._mainPet,
     this._repository,
+    this._reward,
   ) {
-    _setUserState(_user, _mainPet);
+    _setUserState(_user, _mainPet, _reward);
   }
 
   // === Status === //
@@ -83,14 +86,14 @@ class UserInfo extends ChangeNotifier {
 
   // 로그인되자마자 트리거되어야 하는 이벤트들
   void initEvents() {
-    _onLoginReward(_user.login_cnt);
+    _onLoginReward(_reward);
   }
 
   // 유저 정보 갱신
   Future<void> fetchUser() async {
     GetUserResult? fetched = await _repository.getUser();
     if (fetched != null) {
-      _setUserState(fetched.user, fetched.pet);
+      _setUserState(fetched.user, fetched.pet, null);
       LOG.log("FETECHED NEW USER STATES!!!");
     }
   }
@@ -144,7 +147,7 @@ class UserInfo extends ChangeNotifier {
   }
 
   // Fetch해온 유저 정보를 상태로 세팅
-  void _setUserState(UserModel newUser, Item newPet) {
+  void _setUserState(UserModel newUser, Item newPet, Rewards? reward) {
     // * Set new user info * //
     _user = newUser;
     _userName = newUser.user_name;
@@ -158,6 +161,9 @@ class UserInfo extends ChangeNotifier {
     _petExp = newPet.petExp;
     _itemName = newPet.name;
     _petName = newPet.petName ?? '';
+
+    // * Set reward info * //
+    _reward = reward;
 
     notifyListeners();
   }
@@ -182,15 +188,13 @@ class UserInfo extends ChangeNotifier {
   }
 
   // 로그인 이벤트
-  void _onLoginReward(int loginCnt) {
-    int idx = RewardService.LOGIN_REWARD.indexOf(loginCnt);
-    if (idx < 0) return; // 리워드에 해당하는 카운트가 아님
+  void _onLoginReward(Rewards? reward) {
+    if (reward == null) return;
 
-    int reward = RewardService.LOGIN_REWARD[idx];
-
+    var message = jsonEncode(reward.toMap());
     EventService.publish(Event(
       type: EventType.show_login_achieve,
-      message: "로그인 카운트 $reward회 달성!",
+      message: message,
     ));
   }
 }
