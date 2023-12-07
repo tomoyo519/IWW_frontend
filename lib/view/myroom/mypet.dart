@@ -36,6 +36,12 @@ class _MyPetState extends State<MyPet> {
   int _petActionIndex = 1;
 
   final Map<String, Preset> presets = {
+    '비석': Preset(
+        animationName: 'Idle',
+        cameraOrbit: '30deg 80deg 8m',
+        cameraTarget: '0.3m 0.9m 0.4m',
+        autoRotate: false,
+        rotationPerSecond: '0rad'),
     'Idle': Preset(
         animationName: 'Idle',
         cameraOrbit: '30deg 80deg 8m',
@@ -87,7 +93,7 @@ class _MyPetState extends State<MyPet> {
     if (widget.isDead) {
       targetResouce = '비석_00_0';
       selectedModel = petModels['비석_00']!;
-      p = presets['Idle']!;
+      p = presets['비석']!;
     }
     LOG.log('[마이펫 렌더링] key: $targetResouce');
 
