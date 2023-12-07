@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
-import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/friends/friendMain.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';

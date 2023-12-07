@@ -91,34 +91,34 @@ class _MyPetState extends State<MyPet> {
     }
     LOG.log('[마이펫 렌더링] key: $targetResouce');
 
-          return GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {
-              LOG.log('아니 왜 안바뀌는데 $_petActionIndex');
-              setState(() {
-                _petActionIndex = (_petActionIndex + 1) %
-                    selectedModel['motions']!.length as int;
-              });
-            },
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height * 0.5,
-              child: ModelViewer(
-                key: ValueKey(targetResouce),
-                src: selectedModel['src'],
-                animationName: p.animationName,
-                cameraTarget: p.cameraTarget,
-                cameraOrbit: p.cameraOrbit,
-                autoRotate: p.autoRotate,
-                rotationPerSecond: p.rotationPerSecond,
-                // 이하 고정값
-                interactionPrompt: InteractionPrompt.none,
-                cameraControls: false,
-                autoPlay: true,
-                shadowIntensity: 1,
-                disableZoom: true,
-                autoRotateDelay: 0,
-              ),
-            ),
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        LOG.log('아니 왜 안바뀌는데 $_petActionIndex');
+        setState(() {
+          _petActionIndex =
+              (_petActionIndex + 1) % selectedModel['motions']!.length as int;
+        });
+      },
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.5,
+        child: ModelViewer(
+          key: ValueKey(targetResouce),
+          src: selectedModel['src'],
+          animationName: p.animationName,
+          cameraTarget: p.cameraTarget,
+          cameraOrbit: p.cameraOrbit,
+          autoRotate: p.autoRotate,
+          rotationPerSecond: p.rotationPerSecond,
+          // 이하 고정값
+          interactionPrompt: InteractionPrompt.none,
+          cameraControls: false,
+          autoPlay: true,
+          shadowIntensity: 1,
+          disableZoom: true,
+          autoRotateDelay: 0,
+        ),
+      ),
     );
   }
 }
