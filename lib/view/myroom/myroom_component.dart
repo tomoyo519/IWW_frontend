@@ -145,7 +145,7 @@ class StatusBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var userInfo = context.read<UserInfo>();
-    int totalExp = int.parse(userInfo.itemName.split('_')[1]) * 1000;
+    int totalExp = int.parse(userInfo.itemName!.split('_')[1]) * 1000;
     String petName = context.read<MyRoomViewModel>().findPetNickName();
 
     return Container(
