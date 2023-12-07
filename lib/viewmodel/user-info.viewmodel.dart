@@ -21,7 +21,6 @@ class UserInfo extends ChangeNotifier {
     this._mainPet,
     this._repository,
   ) {
-    // initialize
     _setUserState(_user, _mainPet);
   }
 
@@ -82,38 +81,20 @@ class UserInfo extends ChangeNotifier {
     notifyListeners();
   }
 
-  // TODO 강제 진화
-  void forceEvolve() async {
-    _mainPet = Item(
-      id: 54,
-      name: "구미호_02",
-      itemType: 1,
-      path: "assets/pets/mid_fox.glb",
-      petName: "꾸미호",
-      petExp: 0,
-    );
-
-    _itemId = 54;
-    _itemName = "구미호_02";
-    _petExp = 0;
-    _petName = "꾸미호";
-    notifyListeners();
+  // 로그인되자마자 트리거되어야 하는 이벤트들
+  void initEvents() {
+    _onLoginReward(_user.login_cnt);
   }
 
-  // ==== CRUD ==== //
+  // 유저 정보 갱신
   Future<void> fetchUser() async {
     GetUserResult? fetched = await _repository.getUser();
-
-    if (fetched == null) {
-      // _authService.user = null; // 인가 정보를 삭제
-      return;
+    if (fetched != null) {
+      _setUserState(fetched.user, fetched.pet);
+      LOG.log("FETECHED NEW USER STATES!!!");
     }
-    // 유저의 상태 정보를 세팅하고 notify합니다.
-    _setUserState(fetched.user, fetched.pet);
-    LOG.log("FETECHED NEW USER STATES!!!");
   }
 
-  // TODO type 달기
   Future<bool> reNameUser(myname, userInfo) async {
     try {
       var json = {
@@ -147,16 +128,23 @@ class UserInfo extends ChangeNotifier {
     if (userId == dto.userId) {
       _userCash = dto.userCash;
       notifyListeners();
-      onTodoReward(prevUserCash);
+      _onTodoReward(prevUserCash);
     }
   }
 
-  // Fetch해온 유저 정보를 상태로 세팅하고
-  // 관련 이벤트를 트리거합니다.
-  void _setUserState(UserModel newUser, Item newPet) {
-    UserModel prevUser = _user;
-    Item prevPet = _mainPet;
+  // 다른 유저에 의해 그룹 인증이 체크 완료된 경우
+  Future<void> handleGroupCheck() async {
+    int prevPetId = _itemId;
+    int prevUserCash = _userCash;
 
+    await fetchUser();
+
+    _onTodoReward(prevUserCash);
+    _onEvolution(prevPetId);
+  }
+
+  // Fetch해온 유저 정보를 상태로 세팅
+  void _setUserState(UserModel newUser, Item newPet) {
     // * Set new user info * //
     _user = newUser;
     _userName = newUser.user_name;
@@ -171,31 +159,21 @@ class UserInfo extends ChangeNotifier {
     _itemName = newPet.name;
     _petName = newPet.petName ?? '';
 
-    // LOG.log('prev pet: ${jsonEncode(prevPe)}')
-
-    // * Trigger events * //
-    onLoginReward(newUser.login_cnt);
-    onTodoReward(prevUser.user_cash);
-    onEvolution(prevPet.id);
-
     notifyListeners();
   }
 
   // 첫 투두 체크 이벤트
-  void onTodoReward(int prevUserCash) {
+  void _onTodoReward(int prevUserCash) {
     int reward = _userCash - prevUserCash;
-    LOG.log(emoji: 2, '$reward');
     if (reward == RewardService.FIRST_TODO_REWARD) {
-      EventService.publish(
-        Event(
-          type: EventType.show_first_todo_modal,
-        ),
-      );
+      EventService.publish(Event(
+        type: EventType.show_first_todo_modal,
+      ));
     }
   }
 
   // 펫 진화 이벤트
-  void onEvolution(int prevPetId) {
+  void _onEvolution(int prevPetId) {
     if (prevPetId != _mainPet.id) {
       EventService.publish(Event(
         type: EventType.show_pet_evolve,
@@ -203,23 +181,16 @@ class UserInfo extends ChangeNotifier {
     }
   }
 
-  // FIXME: DB에 체크하기.
-  bool isLoginEventShown = false;
-
   // 로그인 이벤트
-  void onLoginReward(int loginCnt) {
+  void _onLoginReward(int loginCnt) {
     int idx = RewardService.LOGIN_REWARD.indexOf(loginCnt);
     if (idx < 0) return; // 리워드에 해당하는 카운트가 아님
 
-    if (isLoginEventShown == false) {
-      int reward = RewardService.LOGIN_REWARD[idx];
+    int reward = RewardService.LOGIN_REWARD[idx];
 
-      EventService.publish(Event(
-        type: EventType.show_login_achieve,
-        message: "로그인 카운트 $reward회 달성!",
-      ));
-      // LocalStorage.saveKey('isLoginEventShown', 'true');
-      isLoginEventShown = true;
-    }
+    EventService.publish(Event(
+      type: EventType.show_login_achieve,
+      message: "로그인 카운트 $reward회 달성!",
+    ));
   }
 }

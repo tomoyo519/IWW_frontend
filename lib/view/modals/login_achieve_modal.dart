@@ -5,8 +5,8 @@ import 'package:lottie/lottie.dart';
 // static method
 void showLoginAchieveModal(BuildContext context, String message) {
   showCustomFullScreenModal(
-    context,
-    LoginAchieveModal(message: message),
+    context: context,
+    builder: (context) => LoginAchieveModal(message: message),
   );
 }
 

@@ -5,8 +5,8 @@ import 'package:lottie/lottie.dart';
 // static method
 void showTodoFirstDoneModal(BuildContext context) {
   showCustomFullScreenModal(
-    context,
-    TodoFirstDoneModal(),
+    context: context,
+    builder: (context) => TodoFirstDoneModal(),
   );
 }
 

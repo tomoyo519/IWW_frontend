@@ -151,15 +151,13 @@ class AuthService extends ChangeNotifier {
 
     RemoteDataSource.setAuthHeader("Bearer ${Secrets.JWT_TOKEN}");
     EventService.setUserId(29);
-    // EventService.initialize();
 
-    // await _initialize();
+    // await _initialize(); // 서버 접속 되는경우 주석해제
     status = AuthStatus.initialized;
     waiting = false;
   }
 
   ///** 로컬에 저장된 토큰 기반 로그인을 시작합니다.
-  ///
   /// */
   Future<void> localLogin() async {
     waiting = true;
@@ -180,10 +178,6 @@ class AuthService extends ChangeNotifier {
       var jsonBody = jsonDecode(response.body);
       _user = UserModel.fromJson(jsonBody['result']['user']);
       _mainPet = Item.fromJson(jsonBody['result']['user_pet']);
-
-      // // 이벤트 서비스 초기화
-      // EventService.setUserId(_user!.user_id);
-      // EventService.initialize();
 
       status = AuthStatus.initialized;
     } else {

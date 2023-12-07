@@ -36,11 +36,6 @@ class _MainPageState extends State<MainPage> {
     super.initState();
     requestNotificationPermission();
 
-    Future.microtask(() async {
-      showPetEvolveModal(context);
-      // type.run(context, message: message);
-    });
-
     // * ==== Event Listener ==== * //
     EventService.stream.listen(
       (event) async {
@@ -51,23 +46,18 @@ class _MainPageState extends State<MainPage> {
         if (type.target == 'socket') {
           type.run(context, message: message);
         } else if (type.target == 'ui') {
-          // 로그인 달성 모달인 경우
-          if (type == EventType.show_login_achieve && widget.userLoggedIn) {
-            Future.microtask(() async {
-              // showPetEvolveModal(context);
-              type.run(context, message: message);
-            });
-            widget.userLoggedIn = true;
-          } else {
-            // 기타 다른 UI 이벤트
-            Future.microtask(() async {
-              showPetEvolveModal(context);
-              // type.run(context, message: message);
-            });
-          }
+          Future.microtask(() async {
+            type.run(context, message: message);
+          });
         }
       },
     );
+
+    // * ==== Trigger Login Event ==== * //
+    context.read<UserInfo>().initEvents();
+    // Future.microtask(() async {
+    //   EventType.show_pet_evolve.run(context);
+    // });
   }
 
   void requestNotificationPermission() async {

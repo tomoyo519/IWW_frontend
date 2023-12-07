@@ -316,15 +316,8 @@ class EventService {
       payload: payload,
     );
 
-    // TODO: 유저 상태 바꾸기
-    await userInfo.fetchUser();
-
-    LOG.log(emoji: 2, "여기에 들어오면 진화");
-    userInfo.forceEvolve();
-    _streamController.add(Event(type: EventType.show_pet_evolve));
-    // if (userInfo.petExp != null && userInfo.petExp! > 1000) {
-    // }
-    LOG.log('인증후 ${userInfo.userCash} ${userInfo.petExp}');
+    // 유저 정보 갱신
+    await userInfo.handleGroupCheck();
   }
 
   Future _handleNewComment(dynamic data) async {

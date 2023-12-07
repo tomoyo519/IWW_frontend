@@ -1,23 +1,23 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/view/_navigation/app_navigator.dart';
+import 'package:iww_frontend/view/_navigation/enum/app_route.dart';
 import 'package:iww_frontend/view/modals/custom_fullscreen_modal.dart';
 import 'package:lottie/lottie.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
+import 'package:provider/provider.dart';
 
 // static method
 void showPetEvolveModal(BuildContext context) {
-  showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: PetEvolveModal(), // 여기서 MyStatefulWidget은 Stateful 위젯
-        );
-      });
+  showCustomFullScreenModal(
+    context: context,
+    builder: (context) => PetEvolveModal(),
+  );
 }
 
 class PetEvolveModal extends StatefulWidget {
-  // final
   const PetEvolveModal({
     super.key,
   });
@@ -86,13 +86,13 @@ class _PetEvolveModalState extends State<PetEvolveModal>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext _) {
     Size screen = MediaQuery.of(context).size;
     return Center(
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: Colors.white,
-        ),
+            // color: Colors.white,
+            ),
         child: Stack(
           children: [
             Material(
@@ -117,7 +117,7 @@ class _PetEvolveModalState extends State<PetEvolveModal>
                             ),
                           ),
                           ElevatedButton(
-                            onPressed: () => Navigator.of(context).pop(),
+                            onPressed: () => Navigator.pop(context),
                             child: Text(
                               "홈으로 가기",
                             ),
