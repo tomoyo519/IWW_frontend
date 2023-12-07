@@ -59,14 +59,14 @@ class RenderPage extends StatelessWidget {
               height: 150,
               child: UnderLayer()),
           // 하단 버튼
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: kBottomNavigationBarHeight +
-                MediaQuery.of(context).size.height * 0.14,
-            height: 50,
-            child: BottomButtons(),
-          ),
+          // Positioned(
+          //   left: 0,
+          //   right: 0,
+          //   bottom: kBottomNavigationBarHeight +
+          //       MediaQuery.of(context).size.height * 0.14,
+          //   height: 50,
+          //   child: BottomButtons(),
+          // ),
         ],
       ),
     );

@@ -44,39 +44,100 @@ class MyRoom extends StatelessWidget {
 
 // 인벤토리 뷰 토글을 위한 상태관리
 class MyRoomState extends ChangeNotifier {
-  var selectedIndex = 0;
+  // TODO 필요에 따라서 사용
 }
 
 // 마이룸 기본 페이지
-class MyRoomPage extends StatelessWidget {
+class MyRoomPage extends StatefulWidget {
   const MyRoomPage({super.key});
+
+  @override
+  State<MyRoomPage> createState() => _MyRoomPageState();
+}
+
+class _MyRoomPageState extends State<MyRoomPage> {
+  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
-    var selectedIndex = context.watch<MyRoomState>().selectedIndex;
 
-    Widget page;
-    switch (selectedIndex) {
-      case 0:
-        page = RenderPage();
-        break;
-      case 1:
-        page = InventoryPage();
-      default:
-        throw UnimplementedError('no widget for $selectedIndex');
-    }
-
+    // 테마 컬러 적용 (배경색`)
     var mainArea = ColoredBox(
       color: colorScheme.surfaceVariant,
       child: AnimatedSwitcher(
         duration: Duration(milliseconds: 200),
-        child: page,
+        child: getPage(_selectedIndex),
       ),
     );
 
-    return SafeArea(
-      child: Expanded(child: mainArea),
+    return Scaffold(
+      body: mainArea,
+      // 페이지 중앙왼쪽 각종 버튼
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniStartTop,
+      floatingActionButton: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          FloatingActionButton(
+              child: Column(
+                children: const [
+                  Icon(Icons.note),
+                  Text('마이홈'),
+                ],
+              ),
+              onPressed: () => setState(() {
+                    _selectedIndex = 0;
+                  })),
+          const SizedBox(height: 10),
+          FloatingActionButton(
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(Icons.inventory_2_rounded),
+                    Text('인벤토리')
+                  ]),
+              onPressed: () => setState(() {
+                    _selectedIndex = 1;
+                  })),
+          const SizedBox(height: 10),
+          FloatingActionButton(
+              child: Column(
+                children: const [
+                  Icon(Icons.note),
+                  Text('방명록'),
+                ],
+              ),
+              onPressed: () => setState(() {
+                    _selectedIndex = 2;
+                  })),
+          const SizedBox(height: 10),
+          FloatingActionButton(
+              child: Column(
+                children: const [
+                  Icon(Icons.group),
+                  Text('친구목록'),
+                ],
+              ),
+              onPressed: () => setState(() {
+                    _selectedIndex = 3;
+                  })),
+        ],
+      ),
     );
+  }
+
+  // NOTE 페이지 인덱스에 따라서 페이지를 반환합니다.
+  Widget getPage(int index) {
+    switch (index) {
+      case 0:
+        return RenderPage();
+      case 1:
+        return InventoryPage();
+      default:
+        return Center(
+            child: SizedBox(
+                height: 300, width: 300, child: Text('페이지를 찾을 수 없습니다.')));
+    }
   }
 }
