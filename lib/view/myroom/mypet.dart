@@ -58,7 +58,7 @@ class _MyPetState extends State<MyPet> {
   };
 
   final Map<String, Map<String, dynamic>> petModels = {
-    '비석': {
+    '비석_00': {
       'src': 'assets/tomb.glb',
       'motions': ['Idle']
     },
@@ -85,8 +85,8 @@ class _MyPetState extends State<MyPet> {
 
     // 체력이 0이면 비석으로 변경
     if (widget.isDead) {
-      targetResouce = '비석';
-      selectedModel = petModels['비석']!;
+      targetResouce = '비석_00_0';
+      selectedModel = petModels['비석_00']!;
       p = presets['Idle']!;
     }
     LOG.log('[마이펫 렌더링] key: $targetResouce');
