@@ -147,6 +147,7 @@ class StatusBar extends StatelessWidget {
   Widget build(BuildContext context) {
     var userInfo = context.read<UserInfo>();
     int totalExp = int.parse(userInfo.itemName.split('_')[1]) * 1000;
+    String petName = context.read<MyRoomViewModel>().findPetNickName();
 
     return Container(
       padding: const EdgeInsets.all(30.0),
@@ -161,12 +162,19 @@ class StatusBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
+            Text(
+              petName,
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.white,
+              ),
+            ),
             Row(
               children: [
                 SizedBox(
-                  width: 60,
+                  width: 45,
                   child: Text(
-                    '체력:',
+                    '체력',
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.white,
@@ -191,7 +199,7 @@ class StatusBar extends StatelessWidget {
                   child: Text(
                     '${userInfo.userHp} / 10',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 14,
                       color: Colors.white,
                     ),
                     textAlign: TextAlign.left,
@@ -199,13 +207,12 @@ class StatusBar extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 10),
             Row(
               children: [
                 SizedBox(
-                  width: 60,
+                  width: 45,
                   child: Text(
-                    '경험치: ',
+                    '경험치 ',
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.white,
@@ -230,7 +237,7 @@ class StatusBar extends StatelessWidget {
                   child: Text(
                     '${userInfo.petExp} / $totalExp',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 14,
                       color: Colors.white,
                     ),
                   ),
