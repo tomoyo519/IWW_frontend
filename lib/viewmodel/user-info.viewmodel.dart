@@ -168,7 +168,7 @@ class UserInfo extends ChangeNotifier {
   // 로그인되자마자 트리거되어야 하는 이벤트들
   void initEvents() {
     _onLoginReward(_reward);
-    EventService.publish(Event(type: EventType.SHOW_TODO_DONE));
+    // EventService.publish(Event(type: EventType.SHOW_TODO_DONE));
   }
 
   // 첫 투두 체크 이벤트
