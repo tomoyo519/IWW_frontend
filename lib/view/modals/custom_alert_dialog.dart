@@ -16,6 +16,9 @@ Future<Object?> showCustomAlertDialog({
       return AlertDialog(
         actions: actions,
         content: content,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        shadowColor: Colors.transparent,
       );
     },
     barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,

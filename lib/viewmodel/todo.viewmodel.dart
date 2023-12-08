@@ -142,13 +142,6 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
       _normalTodos.add(todo);
       result = true;
       waiting = false;
-
-      EventService.publish(
-        Event(
-          type: EventType.show_todo_snackbar,
-          message: "새로운 할일이에요!",
-        ),
-      );
     }
     waiting = false;
     return result;
@@ -164,18 +157,7 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
 
     return await _repository
         .deleteTodo(delTodo.todoId.toString())
-        .then((value) {
-      if (value == true) {
-        EventService.publish(
-          Event(
-            type: EventType.show_todo_snackbar,
-            message: "할일을 삭제했어요!",
-          ),
-        );
-        return true;
-      }
-      return false;
-    });
+        .then((value) => value == true);
   }
 
   // ****************************** //
@@ -214,13 +196,6 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
 
   Future<bool?> checkGroupTodo(int todoId, int userId, String path) async {
     bool? result = await _repository.checkGroupTodo(userId, todoId, path);
-
-    // EventService.publish(Event(
-    //   type: EventType.show_todo_snackbar,
-    //   message: "인증을 완료했어요!",
-    // ));
-
-    // notifyListeners();
     return result;
   }
 

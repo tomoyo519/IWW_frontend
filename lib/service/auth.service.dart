@@ -9,6 +9,7 @@ import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/auth/auth_status.dart';
 import 'package:iww_frontend/model/auth/login_result.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
+import 'package:iww_frontend/model/mypage/reward.model.dart';
 import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
@@ -29,6 +30,9 @@ class AuthService extends ChangeNotifier {
 
   Item? _mainPet;
   Item? get mainPet => _mainPet;
+
+  Rewards? _reward;
+  Rewards? get reward => _reward;
 
   String? _kakaoId;
   String? get kakaoId => _kakaoId;
@@ -77,6 +81,7 @@ class AuthService extends ChangeNotifier {
     // 상태 저장
     _user = result.user;
     _mainPet = result.pet;
+    _reward = result.reward;
 
     status = AuthStatus.initialized;
     waiting = false;
@@ -103,7 +108,7 @@ class AuthService extends ChangeNotifier {
         if (link != null) {
           LOG.log("App link received");
 
-          ///** 앱 초기화 수행
+          // 앱 초기화 수행
           await _authorize(link, signup: signup);
           if (status == AuthStatus.success) {
             await _initialize();
@@ -126,7 +131,7 @@ class AuthService extends ChangeNotifier {
     _kakaoLogin(prompt: prompt); // 카카오 로그인
   }
 
-  //** Test Login **//
+  // * Test Login **//
   Future<void> testLogin() async {
     _user = UserModel(
       user_id: 1,
@@ -157,8 +162,7 @@ class AuthService extends ChangeNotifier {
     waiting = false;
   }
 
-  ///** 로컬에 저장된 토큰 기반 로그인을 시작합니다.
-  /// */
+  // * 로컬에 저장된 토큰 기반 로그인을 시작합니다. * //
   Future<void> localLogin() async {
     waiting = true;
 
@@ -178,6 +182,11 @@ class AuthService extends ChangeNotifier {
       var jsonBody = jsonDecode(response.body);
       _user = UserModel.fromJson(jsonBody['result']['user']);
       _mainPet = Item.fromJson(jsonBody['result']['user_pet']);
+
+      if (jsonBody['result']['user_achi'] != null) {
+        // 로그인 업적이 있는 경우
+        _reward = Rewards.fromJson(jsonBody['result']['user_achi']);
+      }
 
       status = AuthStatus.initialized;
     } else {
@@ -289,7 +298,9 @@ class AuthService extends ChangeNotifier {
           var jsonBody = jsonDecode(response.body);
           LOG.log("Initialize todo: $jsonBody");
 
-          // TODO: 여기서 받아온 정보로 재초기화.
+          if (jsonBody['user_achi'] != null) {
+            _reward = Rewards.fromJson(jsonBody['user_achi']);
+          }
         } else {
           LOG.log("Error: ${response.body}");
           status = AuthStatus.failed;
@@ -308,7 +319,6 @@ class AuthService extends ChangeNotifier {
         } else {
           LOG.log("Error: ${response.body}");
           status = AuthStatus.failed;
-          _mainPet = Item(id: 54, name: "기본펫", itemType: 1);
         }
       },
     );

@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/_navigation/enum/app_route.dart';
+import 'package:iww_frontend/view/modals/greeting.dart';
 import 'package:iww_frontend/view/modals/login_achieve_modal.dart';
 import 'package:iww_frontend/view/modals/todo_confirm_modal.dart';
 import 'package:iww_frontend/view/modals/pet_evolve_modal.dart';
+import 'package:iww_frontend/view/modals/todo_done.dart';
 import 'package:iww_frontend/view/modals/todo_first_done.dart';
 import 'package:iww_frontend/view/modals/custom_snackbar.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
@@ -40,6 +42,8 @@ enum EventType {
   show_first_todo_modal,
   show_login_achieve,
   show_pet_evolve,
+  SHOW_GREETING,
+  SHOW_TODO_DONE,
 }
 
 extension EventTypeExtension on EventType {
@@ -55,6 +59,8 @@ extension EventTypeExtension on EventType {
       case EventType.show_first_todo_modal:
       case EventType.show_login_achieve:
       case EventType.show_pet_evolve:
+      case EventType.SHOW_GREETING:
+      case EventType.SHOW_TODO_DONE:
         return "ui";
       default:
         return '';
@@ -65,6 +71,7 @@ extension EventTypeExtension on EventType {
     AppNavigator nav = Provider.of<AppNavigator>(context, listen: false);
 
     switch (this) {
+      // ==== UI ==== //
       case EventType.show_first_todo_modal:
         showTodoFirstDoneModal(context);
         break;
@@ -81,6 +88,13 @@ extension EventTypeExtension on EventType {
       case EventType.show_pet_evolve:
         showPetEvolveModal(context);
         break;
+      case EventType.SHOW_GREETING:
+        showGreetingModal(context);
+        break;
+      case EventType.SHOW_TODO_DONE:
+        showTodoDoneModal(context);
+        break;
+      // ==== SOCKET ==== //
       case EventType.friendRequest:
       case EventType.friendResponse:
       case EventType.confirmResponse:
