@@ -54,15 +54,18 @@ class ShopRepository {
   };
 
   Future<List<ShopInfo>> getPets(userId) async {
-    return await RemoteDataSource.get('/item-shop/${userId ?? 1}').then((res) {
+    return await RemoteDataSource.get('/item-shop/${userId ?? 1}/1')
+        .then((res) {
+      LOG.log('res.body:${res.body}');
       if (res.statusCode == 200) {
         var jsonData = jsonDecode(res.body);
         LOG.log('res.body:${jsonData["result"]}');
         return List<ShopInfo>.from(
-            jsonData["result"]["pet"].map((item) => ShopInfo.fromJson(item)));
+            jsonData["result"].map((item) => ShopInfo.fromJson(item)));
       } else {
-        if (dummy["result"] != null && dummy["result"]!["pet"] != null) {
-          return Future.value(List<ShopInfo>.from(dummy["result"]!["pet"]!));
+        if (dummy["result"] != null && dummy["result"] != null) {
+          return Future.value(
+              List<ShopInfo>.from(dummy["result"] as List<ShopInfo>));
         } else {
           return Future.value([]);
         }
@@ -73,17 +76,18 @@ class ShopRepository {
 
 // background
   Future<List<ShopInfo>> getFuns(userId) async {
-    return await RemoteDataSource.get('/item-shop/${userId ?? 1}').then((res) {
+    return await RemoteDataSource.get('/item-shop/${userId ?? 1}/2')
+        .then((res) {
       if (res.statusCode == 200) {
         var jsonData = jsonDecode(res.body);
 
         LOG.log('res.body:${jsonData["result"]}');
-        return List<ShopInfo>.from(jsonData["result"]["background"]
-            .map((item) => ShopInfo.fromJson(item)));
+        return List<ShopInfo>.from(
+            jsonData["result"].map((item) => ShopInfo.fromJson(item)));
       } else {
-        if (dummy["result"] != null && dummy["result"]!["background"] != null) {
+        if (dummy["result"] != null && dummy["result"] != null) {
           return Future.value(
-              List<ShopInfo>.from(dummy["result"]!["background"]!));
+              List<ShopInfo>.from(dummy["result"] as List<ShopInfo>));
         } else {
           return Future.value([]);
         }

@@ -1,30 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/repository/room.repository.dart';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
-import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
 
-class Inventory extends StatelessWidget {
-  const Inventory({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    var userInfo = context.watch<UserInfo>();
-
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-            create: (_) => MyRoomViewModel(userInfo.userId, RoomRepository(), userInfo.userId)),
-      ],
-      child: InventoryView(),
-    );
-  }
-}
-
-class InventoryView extends StatelessWidget {
-  const InventoryView({super.key});
+class InventoryPage extends StatelessWidget {
+  const InventoryPage({super.key});
 
   void onePetOneBgAlert(BuildContext context) {
     showDialog(
@@ -50,6 +31,7 @@ class InventoryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var myRoomViewModel = context.watch<MyRoomViewModel>();
+    var userInfo = context.read<UserInfo>();
 
     return Container(
       height: double.infinity,
@@ -60,7 +42,7 @@ class InventoryView extends StatelessWidget {
         ),
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
           Expanded(
@@ -89,7 +71,7 @@ class InventoryView extends StatelessWidget {
                           children: [
                             Text(myRoomViewModel.inventory[idx].name),
                             Image.asset(
-                              'assets/thumbnail/${myRoomViewModel.inventory[idx].path!.split('.')[0]}.png',
+                              'assets/thumbnail/${myRoomViewModel.inventory[idx].path!}',
                               fit: BoxFit.cover,
                               height: 80,
                             )
@@ -100,12 +82,15 @@ class InventoryView extends StatelessWidget {
                   }),
             ),
           ),
-          Container(
+          Positioned(
+            left: MediaQuery.of(context).size.width * 0.5,
+            bottom: MediaQuery.of(context).size.height * 0.1,
             height: 40,
-            color: Colors.transparent,
             child: ElevatedButton(
               onPressed: () {
                   myRoomViewModel.applyChanges();
+                // myRoomState.toggleGrowth();
+                userInfo.fetchUser();
               },
               child: Text('적용하기'),
             ),

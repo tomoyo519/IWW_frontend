@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/service/event.service.dart';
+import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_navigation/extension/app_page.ext.dart';
 import 'package:iww_frontend/view/_navigation/extension/app_route.ext.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/_navigation/app_page.model.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
+import 'package:iww_frontend/view/modals/pet_evolve_modal.dart';
+import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class MainPage extends StatefulWidget implements PreferredSizeWidget {
   MainPage({super.key});
+
+  bool userLoggedIn = false;
 
   @override
   State<MainPage> createState() => _MainPageState();
@@ -25,6 +31,8 @@ class MainPage extends StatefulWidget implements PreferredSizeWidget {
 /// ************************ ///
 
 class _MainPageState extends State<MainPage> {
+  bool waiting = false;
+
   @override
   void initState() {
     super.initState();
@@ -35,9 +43,15 @@ class _MainPageState extends State<MainPage> {
       (event) async {
         String? message = event.message;
         EventType type = event.type;
-        Future.microtask(() async {
+        LOG.log("main_page event listen msg : ${message ?? ''} ${type.target}");
+
+        if (type.target == 'socket') {
           type.run(context, message: message);
-        });
+        } else if (type.target == 'ui') {
+          Future.microtask(() async {
+            type.run(context, message: message);
+          });
+        }
       },
     );
   }
@@ -65,7 +79,7 @@ class _MainPageState extends State<MainPage> {
       // * ======= APPBAR ======= * //
       appBar: MyAppBar(
         leading: nav.pushback,
-        title: Text(curr.label),
+        title: Text(nav.title ?? curr.label),
         actions: appbars
             .map(
               (each) => each.toAppbarIcon(
@@ -77,15 +91,9 @@ class _MainPageState extends State<MainPage> {
             .toList(),
       ),
       // * ======= BODY ======= * //
-      // 종속성 주입 부분
-      body: Padding(
-        padding: EdgeInsets.symmetric(
-          vertical: 10,
-        ),
-        child: Builder(
-          // 빌더 함수 콜
-          builder: (context) => curr.builder(context),
-        ),
+      body: Builder(
+        // 빌더 함수 콜
+        builder: (context) => curr.builder(context),
       ),
       bottomNavigationBar: nav.isBottomSheetPage
           ? BottomNavigationBar(

@@ -42,7 +42,12 @@ class CommentsProvider with ChangeNotifier {
 
   // 댓글 생성
   Future<bool> addComment(String content) async {
-    return await _commentRepository.addComment(_ownerId, _userId, content);
+    bool result =
+        await _commentRepository.addComment(_ownerId, _userId, content);
+    if (result) {
+      fetchComment();
+    }
+    return result;
   }
 
   // 댓글 수정
@@ -134,7 +139,7 @@ class CommentsBottomSheet extends StatelessWidget {
                         ),
                 ),
                 // 댓글 입력 필드 표시 (남의 방명록일 경우에도 포함)
-                if (!isOwner || comments.isEmpty)
+                if (!isOwner)
                   CommentInputField(
                       commentsProvider: commentsProvider,
                       ownerId: ownerId,
@@ -338,13 +343,12 @@ class CommentInputField extends StatelessWidget {
             icon: Icon(Icons.send),
             onPressed: () async {
               if (controller.text.isNotEmpty) {
-                bool success =
-                    await commentsProvider.addComment(controller.text);
-                if (success) {
+                await commentsProvider.addComment(controller.text);
                   // 댓글 새로고침
-                  commentsProvider.fetchComment();
-                }
+                commentsProvider.fetchComment();
                 controller.clear();
+                FocusScope.of(context).unfocus();
+            
               }
             },
           ),

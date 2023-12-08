@@ -3,10 +3,10 @@ import 'package:iww_frontend/view/modals/custom_fullscreen_modal.dart';
 import 'package:lottie/lottie.dart';
 
 // static method
-Future<void> showTodoFirstDoneModal(BuildContext context) {
-  return showCustomFullScreenModal(
-    context,
-    TodoFirstDoneModal(),
+void showTodoFirstDoneModal(BuildContext context) {
+  showCustomFullScreenModal(
+    context: context,
+    builder: (context) => TodoFirstDoneModal(),
   );
 }
 

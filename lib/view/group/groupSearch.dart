@@ -74,9 +74,11 @@ class _GroupSearchState extends State<GroupSearch> {
                   setState(() {
                     keyword = value;
                   });
+                  getList();
                 },
                 elevation: MaterialStateProperty.all(0),
                 onSubmitted: (value) {
+                  FocusManager.instance.primaryFocus?.unfocus();
                   getList();
                 },
                 backgroundColor: MaterialStateProperty.all(

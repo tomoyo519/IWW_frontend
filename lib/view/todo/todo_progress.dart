@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/utils/extension/int.ext.dart';
+import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:lottie/lottie.dart';
@@ -38,6 +39,12 @@ class TodoProgress extends StatelessWidget {
 
     double progress =
         model.todayTotal == 0 ? 0 : model.todayDone / model.todayTotal;
+
+    Map<String, String> assetPath = {
+      "구미호_01": "assets/pets/small_fox.glb",
+      "구미호_02": "assets/pets/mid_fox.glb",
+      "구미호_03": "assets/pets/kitsune.glb",
+    };
 
     return SizedBox(
       width: screen.width,
@@ -94,8 +101,14 @@ class TodoProgress extends StatelessWidget {
                           ),
                           child: Row(
                             children: [
-                              _TodayBadge(title: "달성", data: model.todayTotal),
-                              _TodayBadge(title: "미달성", data: model.todayDone),
+                              _TodayBadge(
+                                title: "달성",
+                                data: model.todayDone,
+                              ),
+                              _TodayBadge(
+                                title: "미달성",
+                                data: model.todayTotal - model.todayDone,
+                              ),
                             ],
                           ),
                         )
@@ -104,7 +117,7 @@ class TodoProgress extends StatelessWidget {
                     width: screen.width * 0.3,
                     child: ModelViewer(
                       interactionPrompt: InteractionPrompt.none,
-                      src: 'assets/pets/small_fox.glb',
+                      src: assetPath[userinfo.itemName]!,
                       animationName: 'Idle_A',
                       autoPlay: true,
                       cameraControls: false,
@@ -116,7 +129,6 @@ class TodoProgress extends StatelessWidget {
             ),
             Container(
               margin: EdgeInsets.only(bottom: 5),
-              // padding: EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(100),
                 color: Colors.white,

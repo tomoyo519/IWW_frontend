@@ -2,15 +2,17 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/utils/extension/event.ext.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/_navigation/enum/app_route.dart';
+import 'package:iww_frontend/view/modals/greeting.dart';
 import 'package:iww_frontend/view/modals/login_achieve_modal.dart';
 import 'package:iww_frontend/view/modals/todo_confirm_modal.dart';
 import 'package:iww_frontend/view/modals/pet_evolve_modal.dart';
+import 'package:iww_frontend/view/modals/todo_done.dart';
 import 'package:iww_frontend/view/modals/todo_first_done.dart';
 import 'package:iww_frontend/view/modals/custom_snackbar.dart';
+import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:lottie/lottie.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:provider/provider.dart';
@@ -27,24 +29,49 @@ class Event {
   });
 }
 
+// TODO: 파일 분리
 enum EventType {
-  // 화면 업데이트 이벤트
-  show_todo_snackbar,
-  show_first_todo_modal,
-  show_login_achieve,
+  // Socket Event
   friendRequest,
   friendResponse,
   confirmRequest,
   confirmResponse,
   newComment,
+  // UI Event
+  show_todo_snackbar,
+  show_first_todo_modal,
+  show_login_achieve,
   show_pet_evolve,
+  SHOW_GREETING,
+  SHOW_TODO_DONE,
 }
 
 extension EventTypeExtension on EventType {
+  String get target {
+    switch (this) {
+      case EventType.friendRequest:
+      case EventType.friendResponse:
+      case EventType.confirmRequest:
+      case EventType.confirmResponse:
+      case EventType.newComment:
+        return "socket";
+      case EventType.show_todo_snackbar:
+      case EventType.show_first_todo_modal:
+      case EventType.show_login_achieve:
+      case EventType.show_pet_evolve:
+      case EventType.SHOW_GREETING:
+      case EventType.SHOW_TODO_DONE:
+        return "ui";
+      default:
+        return '';
+    }
+  }
+
   void run(BuildContext context, {String? message}) async {
     AppNavigator nav = Provider.of<AppNavigator>(context, listen: false);
 
     switch (this) {
+      // ==== UI ==== //
       case EventType.show_first_todo_modal:
         showTodoFirstDoneModal(context);
         break;
@@ -61,6 +88,13 @@ extension EventTypeExtension on EventType {
       case EventType.show_pet_evolve:
         showPetEvolveModal(context);
         break;
+      case EventType.SHOW_GREETING:
+        showGreetingModal(context);
+        break;
+      case EventType.SHOW_TODO_DONE:
+        showTodoDoneModal(context);
+        break;
+      // ==== SOCKET ==== //
       case EventType.friendRequest:
       case EventType.friendResponse:
       case EventType.confirmResponse:
@@ -71,6 +105,7 @@ extension EventTypeExtension on EventType {
         }
         break;
       case EventType.confirmRequest:
+        // LOG.log(message!);
         showTodoConfirmModal(context, message);
         break;
       case EventType.newComment:
@@ -87,13 +122,13 @@ extension EventTypeExtension on EventType {
 // * 모달을 띄우는 뷰는 main_page.dart
 // */
 class EventService {
-  static final EventService _instance = EventService.initialize();
   static final _streamController = StreamController<Event>.broadcast();
   static String? _userId;
   static late IO.Socket socket;
   static late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  late UserInfo userInfo; // unique
 
-  EventService.initialize() {
+  EventService.initialize(this.userInfo) {
     print(_userId);
     socket = IO
         .io('${Secrets.REMOTE_SERVER_URL}?user_id=$_userId', <String, dynamic>{
@@ -159,6 +194,7 @@ class EventService {
       onSelectNotification: (String? payload) {
         if (payload != null) {
           // payload를 Event 객체로 변환
+          // LOG.log("onSelect :" + payload);
           Event event = _convertPayloadToEvent(payload);
           _streamController.add(event); // Event 객체를 스트림에 추가
         }
@@ -192,6 +228,7 @@ class EventService {
       default:
         type = EventType.newComment;
     }
+    // LOG.log("convert payload to event" + message);
     return Event(type: type, message: message);
   }
 
@@ -254,7 +291,7 @@ class EventService {
     String payload = jsonEncode({
       'type': 'confirmRequest',
       'senderId': data['senderId'],
-      'sednerName': data['senderName'],
+      'senderName': data['senderName'],
       'todoId': data['todoId'],
       'todoName': data['todoName'],
       'todoImg': data['todoImg'],
@@ -292,6 +329,9 @@ class EventService {
       generalDetails,
       payload: payload,
     );
+
+    // 유저 정보 갱신
+    await userInfo.handleGroupCheck();
   }
 
   Future _handleNewComment(dynamic data) async {

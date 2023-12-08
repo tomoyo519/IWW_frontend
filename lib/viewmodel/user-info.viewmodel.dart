@@ -1,26 +1,30 @@
 import 'dart:convert';
+import 'package:iww_frontend/datasource/localStorage.dart';
+import 'package:iww_frontend/model/mypage/reward.model.dart';
+import 'package:iww_frontend/model/todo/todo_update.dto.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/auth/login_result.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
-import 'package:iww_frontend/model/todo/todo_today_count.dart';
 import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/service/event.service.dart';
-import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/service/reward.service.dart';
 
 class UserInfo extends ChangeNotifier {
-  final UserModel _user;
-  final Item _mainPet;
   final UserRepository _repository;
+  UserModel _user;
+  Item _mainPet;
+  Rewards? _reward;
 
   UserInfo(
     this._user,
     this._mainPet,
     this._repository,
+    this._reward,
   ) {
+    _setUserState(_user, _mainPet, _reward);
     _setStateFromModels(_user, _mainPet);
 
     // 초기 로그인 카운트 알림
@@ -43,20 +47,24 @@ class UserInfo extends ChangeNotifier {
   late int _userCash;
 
   late int _itemId;
-  late int _petExp;
-  late String _petName;
+  late int? _petExp;
+  late String? _petName;
+  late String _itemName;
 
   // === Getters === //
+  Item get mainPet => _mainPet;
   UserModel get userModel => _user;
+
   int get userId => _user.user_id;
   String get userName => _userName;
   String get userTel => _userTel;
+  String? get itemName => _itemName;
 
   int get userCash => _userCash;
   int get userHp => _userHp;
   int get itemId => _itemId;
-  int get petExp => _petExp;
-  String get mainPetName => _petName;
+  int? get petExp => _petExp;
+  String? get mainPetName => _petName;
 
   // === Setters === //
   bool _waiting = true;
@@ -81,7 +89,7 @@ class UserInfo extends ChangeNotifier {
     notifyListeners();
   }
 
-  set petExp(int exp) {
+  set petExp(int? exp) {
     _petExp = exp;
     notifyListeners();
   }
@@ -91,30 +99,15 @@ class UserInfo extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ==== CRUD ==== //
+  // 유저 정보 갱신
   Future<void> fetchUser() async {
-    UserModel prevUserState = _user;
-    Item prevPetState = _mainPet;
-
     GetUserResult? fetched = await _repository.getUser();
-    if (fetched == null) {
-      // _authService.user = null; // 인가 정보를 삭제
-      return;
-    }
-
-    LOG.log('User cash: ${fetched.user.user_cash}');
-    _setStateFromModels(fetched.user, fetched.pet);
-    if (prevPetState.id != fetched.pet.id) {
-      // 진화함!
-      EventService.publish(
-        Event(
-          type: EventType.show_pet_evolve,
-        ),
-      );
+    if (fetched != null) {
+      _setUserState(fetched.user, fetched.pet, null);
+      LOG.log("FETECHED NEW USER STATES!!!");
     }
   }
 
-  // TODO type 달기
   Future<bool> reNameUser(myname, userInfo) async {
     try {
       var json = {
@@ -140,39 +133,84 @@ class UserInfo extends ChangeNotifier {
     }
   }
 
-  void setStateFromTodo(bool isDone, bool isGroup, int todayDone) {
-    // 리워드 계산
-    int cash = RewardService.calculateNormalCash(isDone, todayDone);
-    int petExp = RewardService.calculatePetExp(isDone);
+  // 개인 할일 체크에 따른 보상 상태 적용하고
+  // 첫 투두인 경우 리워드 관련 모달을 띄웁니다.
+  void handleTodoCheck(TodoCheckDto dto) {
+    int prevUserCash = _userCash;
 
-    // 상태 변경
-    _userCash += cash;
-    _petExp += petExp;
+    if (userId == dto.userId) {
+      _userCash = dto.userCash;
+      notifyListeners();
+      _onTodoReward(prevUserCash);
+    }
+  }
+
+  // 다른 유저에 의해 그룹 인증이 체크 완료된 경우
+  Future<void> handleGroupCheck() async {
+    int prevPetId = _itemId;
+    int prevUserCash = _userCash;
+
+    await fetchUser();
+
+    _onTodoReward(prevUserCash);
+    _onEvolution(prevPetId);
+  }
+
+  // Fetch해온 유저 정보를 상태로 세팅
+  void _setUserState(UserModel newUser, Item newPet, Rewards? reward) {
+    // * Set new user info * //
+    _user = newUser;
+    _userName = newUser.user_name;
+    _userTel = newUser.user_tel;
+    _userHp = newUser.user_hp;
+    _userCash = newUser.user_cash;
+
+    // * Set new pet info * //
+    _mainPet = newPet;
+    _itemId = newPet.id;
+    _petExp = newPet.petExp;
+    _itemName = newPet.name;
+    _petName = newPet.petName ?? '';
+
+    // * Set reward info * //
+    _reward = reward;
+
     notifyListeners();
+  }
 
-    //상태 변경에 따른 이벤트 트리거 ==== //
-    if (cash == RewardService.FIRST_TODO_REWARD) {
+  // 로그인되자마자 트리거되어야 하는 이벤트들
+  void initEvents() {
+    _onLoginReward(_reward);
+    // EventService.publish(Event(type: EventType.SHOW_TODO_DONE));
+  }
+
+  // 첫 투두 체크 이벤트
+  void _onTodoReward(int prevUserCash) {
+    int reward = _userCash - prevUserCash;
+    if (reward == RewardService.FIRST_TODO_REWARD) {
       EventService.publish(Event(
         type: EventType.show_first_todo_modal,
       ));
     }
   }
 
-  void _setStateFromModels(
-    UserModel user,
-    Item pet,
-  ) {
-    // 사용자가 변경 가능한 필드
-    _userName = user.user_name;
-    _userTel = user.user_tel;
-    _userHp = user.user_hp;
-    _userCash = user.user_cash;
+  // 펫 진화 이벤트
+  void _onEvolution(int prevPetId) {
+    if (prevPetId != _mainPet.id) {
+      EventService.publish(Event(
+        type: EventType.show_pet_evolve,
+      ));
+    }
+  }
 
-    // === Pet === //
-    _itemId = pet.id;
-    _petExp = pet.petExp!;
-    _petName = pet.name;
+  // 로그인 이벤트
+  void _onLoginReward(Rewards? reward) {
+    if (reward == null) return;
 
-    notifyListeners();
+    var message = jsonEncode(reward.toMap());
+    EventService.publish(Event(
+      type: EventType.show_login_achieve,
+      message: message,
+    ));
   }
 }

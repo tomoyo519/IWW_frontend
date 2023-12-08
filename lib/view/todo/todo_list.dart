@@ -18,7 +18,6 @@ import 'package:provider/provider.dart';
 
 class ToDoList extends StatelessWidget {
   final scroll = ScrollController();
-  final _formKey = GlobalKey<FormState>();
 
   ToDoList({super.key});
 
@@ -40,8 +39,8 @@ class ToDoList extends StatelessWidget {
     final viewmodel = context.watch<TodoViewModel>();
 
     return GestureDetector(
-      onTap: () => showTodoEditModal<TodoViewModel>(context, todo: todo),
-      onLongPress: () => _showDeleteModal(context, todo),
+      // onTap: () => showTodoEditModal<TodoViewModel>(context, todo: todo),
+      // onLongPress: () => _showDeleteModal(context, todo),
       child: GroupTodoTile(
         todo: todo,
         viewmodel: viewmodel,
@@ -76,7 +75,7 @@ class ToDoList extends StatelessWidget {
                         initialToggle: true,
                         parentCtxt: context,
                         items: groupTodos,
-                        itemBuilder: normalTodoBuilder,
+                        itemBuilder: groupTodoBuiler,
                       ),
                       ToggledTodoList(
                         title: "오늘의 할일",
@@ -99,39 +98,23 @@ class ToDoList extends StatelessWidget {
   Future<void> _onNormalTodoChk(
       BuildContext context, Todo todo, bool value) async {
     // 개인 todo 인 경우 UI 업데이트
-    final todomodel = context.read<TodoViewModel>();
-    final usermodel = context.read<UserInfo>();
+    TodoViewModel todomodel = context.read<TodoViewModel>();
+    UserInfo usermodel = context.read<UserInfo>();
     int userId = usermodel.userId;
 
+    // 할일 상태를 완료됨으로 변경
     todomodel.checkTodoState(todo, value, userId, null);
-    usermodel.setStateFromTodo(value, false, todomodel.todayDone);
-
-    // * ===== ! UI UPDATED ! ===== * //
 
     // 리워드 계산
     TodoCheckDto? result = await todomodel.checkNormalTodo(todo.todoId, value);
-
     if (result != null) {
-      // 상태 셋
-      usermodel.userCash = result.userCash;
-      usermodel.itemId = result.itemId ?? usermodel.itemId;
-      usermodel.petExp = result.petExp ?? usermodel.petExp;
-    }
-
-    // expect data와 현재 상태를 비교하고 필요시 새로 fetch합니다.
-    if (result == null || // 응답이 없음
-            result.todoDone != value || // 투두 체크 실패
-            result.userCash != usermodel.userCash // 유저 보상 오류
-        ) {
-      LOG.log("Failed to update properly. Fetch data...");
-      LOG.log("Expected {done: $value, cash: ${usermodel.userCash}}");
-      LOG.log("Current {done: ${result!.todoDone}, cash: ${result.userCash}}");
-
-      await usermodel.fetchUser();
-      await todomodel.fetchTodos();
-      usermodel.waiting = false;
+      usermodel.handleTodoCheck(result);
     }
   }
+
+  // ****************************** //
+  // *       On Todo Delete       * //
+  // ****************************** //
 
   // 삭제 모달에서 삭제를 누르면 실행되는 함수
   Future<void> _onClickDelete(BuildContext context, Todo todo) async {
@@ -141,17 +124,17 @@ class ToDoList extends StatelessWidget {
     await viewModel.deleteTodo(todo);
   }
 
-  // 투두 에디터에서 저장을 누르면 실행되는 함수
-  Future<void> _updateTodo(BuildContext context) async {
-    final viewModel = context.read<EditorModalViewModel>();
-    await viewModel.updateTodo().then(
-      (result) {
-        if (context.mounted) {
-          Navigator.pop(context);
-        }
-      },
-    );
-  }
+  // // 투두 에디터에서 저장을 누르면 실행되는 함수
+  // Future<void> _updateTodo(BuildContext context) async {
+  //   final viewModel = context.read<EditorModalViewModel>();
+  //   await viewModel.updateTodo().then(
+  //     (result) {
+  //       if (context.mounted) {
+  //         Navigator.pop(context);
+  //       }
+  //     },
+  //   );
+  // }
 
   // ****************************** //
   // *       Show Modal UI        * //
@@ -282,7 +265,7 @@ class _ToggledTodoListState extends State<ToggledTodoList>
         ),
         AnimatedContainer(
           duration: Duration(milliseconds: 300),
-          height: isToggled ? screen.height * 0.3 : 0,
+          height: isToggled ? screen.height * 0.8 - 300 : 0,
           child: ListView(
             shrinkWrap: true,
             children: [

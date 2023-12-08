@@ -9,6 +9,20 @@ import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
 
+class SubTodoList {
+  int idx;
+  String title;
+  List<Todo> items;
+  bool toggled;
+
+  SubTodoList({
+    required this.idx,
+    required this.title,
+    required this.items,
+    required this.toggled,
+  });
+}
+
 // 전체 투두리스트 상태를 관리
 class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   final int _userId;
@@ -17,6 +31,21 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   // 생성자
   TodoViewModel(this._repository, this._userId) {
     fetchTodos();
+
+    subList = [
+      SubTodoList(
+        idx: 0,
+        title: "그룹 인증 할일",
+        items: _normalTodos,
+        toggled: true,
+      ),
+      SubTodoList(
+        idx: 0,
+        title: "오늘의 할일",
+        items: _groupTodos,
+        toggled: true,
+      ),
+    ];
   }
 
   @override
@@ -28,6 +57,8 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   // ****************************** //
   // *        View States         * //
   // ****************************** //
+
+  late List<SubTodoList> subList;
 
   // 1. 전체 투두
   List<Todo> _todos = [];
@@ -44,6 +75,14 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   // 4. 기한이 지난 개인투두
   List<Todo> _prevTodos = [];
   List<Todo> get prevTodos => _prevTodos;
+
+  // 현재 토글된 투두
+  int _toggledList = 0;
+  int get toggledList => _toggledList;
+  set toggledList(int val) {
+    _toggledList = val;
+    notifyListeners();
+  }
 
   bool _waiting = true;
   bool get waiting => _waiting;
@@ -103,13 +142,6 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
       _normalTodos.add(todo);
       result = true;
       waiting = false;
-
-      EventService.publish(
-        Event(
-          type: EventType.show_todo_snackbar,
-          message: "새로운 할일이에요!",
-        ),
-      );
     }
     waiting = false;
     return result;
@@ -125,18 +157,7 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
 
     return await _repository
         .deleteTodo(delTodo.todoId.toString())
-        .then((value) {
-      if (value == true) {
-        EventService.publish(
-          Event(
-            type: EventType.show_todo_snackbar,
-            message: "할일을 삭제했어요!",
-          ),
-        );
-        return true;
-      }
-      return false;
-    });
+        .then((value) => value == true);
   }
 
   // ****************************** //
@@ -153,18 +174,29 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
     } else {
       // 개인 투두인 경우
       _todos[idx].todoDone = value;
+
+      // 달성하면 이벤트
+      if (value == true) {
+        EventService.publish(Event(
+          type: EventType.show_todo_snackbar,
+          message: "할일을 달성했어요!",
+        ));
+      }
       waiting = false;
     }
   }
 
   // 개인 투두에 대한 완료 처리
+  // 유저 상태정보를 업데이트
   Future<TodoCheckDto?> checkNormalTodo(int todoId, bool value) async {
     String todoIdStr = todoId.toString();
-    return await _repository.checkNormalTodo(todoIdStr, value);
+    TodoCheckDto? result = await _repository.checkNormalTodo(todoIdStr, value);
+    return result;
   }
 
   Future<bool?> checkGroupTodo(int todoId, int userId, String path) async {
-    return await _repository.checkGroupTodo(userId, todoId, path);
+    bool? result = await _repository.checkGroupTodo(userId, todoId, path);
+    return result;
   }
 
   @override

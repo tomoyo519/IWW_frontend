@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-Future<Object?> showCustomFullScreenModal(
-  BuildContext context,
-  Widget child,
-) {
+void showCustomFullScreenModal({
+  required BuildContext context,
+  required WidgetBuilder builder,
+}) {
   var screen = MediaQuery.of(context).size;
-  return showGeneralDialog(
+  showGeneralDialog(
     context: context,
     pageBuilder: (
       BuildContext buildContext,
@@ -16,8 +16,7 @@ Future<Object?> showCustomFullScreenModal(
         child: Container(
           width: screen.width,
           height: screen.height,
-          color: Colors.white,
-          child: child,
+          child: builder(context),
         ),
       );
     },

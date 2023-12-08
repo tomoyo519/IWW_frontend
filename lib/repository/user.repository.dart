@@ -119,6 +119,19 @@ class UserRepository {
     });
   }
 
+  Future<int> getUserHealth(int roomOwner) async {
+    return RemoteDataSource.get('/user/status/$roomOwner').then((response) {
+      var json = jsonDecode(response.body);
+      if (json['result'] != null) {
+        return json['result']['user_hp'];
+      }
+      // return json['result']['user_hp'];
+      else {
+        return 0;
+      }
+    });
+  }
+
   /// ================== ///
   ///       Update       ///
   /// ================== ///

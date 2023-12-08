@@ -19,6 +19,9 @@ class TodoPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final UserInfo user = context.read<UserInfo>();
 
+    // * ==== Trigger Login Event ==== * //
+    context.read<UserInfo>().initEvents();
+
     return ChangeNotifierProvider<TodoViewModel>(
       create: (context) => TodoViewModel(
         Provider.of<TodoRepository>(context, listen: false),
@@ -42,6 +45,7 @@ class MyTodo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size screen = MediaQuery.of(context).size;
+    // context.read<UserInfo>().fetchUser();
 
     return Container(
       width: screen.width,
@@ -54,33 +58,17 @@ class MyTodo extends StatelessWidget {
           Column(
             children: [
               SizedBox(
-                height: screen.height * 0.2,
+                height: 150,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // SizedBox(child: HomeProfile(user: user)),
                     Expanded(flex: 3, child: TodoProgress()),
                   ],
                 ),
               ),
-              // Expanded(
-              //   child: Container(
-              //     color: Colors.red,
-              //   ),
-              // )
               Expanded(
-                // flex: 1,
-                child: SingleChildScrollView(
-                  child: ToDoList(),
-                ),
+                child: ToDoList(),
               )
-
-              // SizedBox(
-
-              //   child: ModelViewer(
-              //     src: 'assets/pets/kitsune.glb',
-              //   ),
-              // ),
             ],
           ),
           // ==== Floating Button ==== //

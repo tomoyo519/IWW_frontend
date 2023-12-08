@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/room.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
-import 'package:iww_frontend/model/pet/pet_models.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
 
 class MyRoomViewModel with ChangeNotifier {
@@ -18,17 +17,18 @@ class MyRoomViewModel with ChangeNotifier {
   List<Item> roomObjects = []; // 현재 방에 존재하는 오브젝트 리스트
 
   MyRoomViewModel(this._userId, this._roomRepository, this._roomOwner) {
-    fetchMyRoom();
-    fetchInventory();
+    fetchMyRoom(_roomOwner);
+    fetchInventory(_userId);
   }
 
-  void fetchMyRoom() async {
-    roomObjects = await _roomRepository.getItemsOfMyRoom(_roomOwner);
+  Future<void> fetchMyRoom(userId) async {
+    roomObjects = await _roomRepository.getItemsOfMyRoom(userId);
     notifyListeners();
   }
 
-  void fetchInventory() async {
-    inventory = await _roomRepository.getItemsOfInventory(_userId);
+  Future<void> fetchInventory(userId) async {
+    inventory = await _roomRepository.getItemsOfInventory(userId);
+    notifyListeners();
   }
 
   // 현재 viewModel의 roomObject를 DB에 저장
@@ -67,7 +67,7 @@ class MyRoomViewModel with ChangeNotifier {
 
   set roomOwner(int userId) {
     _roomOwner = userId;
-    fetchMyRoom();
+    fetchMyRoom(userId);
     notifyListeners();
   }
 
@@ -88,16 +88,16 @@ class MyRoomViewModel with ChangeNotifier {
     return AssetImage('assets/bg/bg15.png');
   }
 
-  Widget renderRoomObjects(BuildContext context) {
-    LOG.log('방에 있는 오브젝트 개수: ${roomObjects.length}');
+  Widget renderRoomObjects(double height) {
+    LOG.log('[RenderRoomObjects] 방에 있는 오브젝트 개수: ${roomObjects.length}');
 
     List<Widget> layers = [];
     // 2/3 step: 가구 추가
     for (int i = 0; i < roomObjects.length; i++) {
-      var element = roomObjects[i];
+      Item element = roomObjects[i];
       if (element.itemType == 2) {
         layers.add(Positioned(
-          top: MediaQuery.of(context).size.height / 6.0,
+          top: height,
           left: i * 100.0,
           width: 100,
           height: 100,
@@ -117,13 +117,21 @@ class MyRoomViewModel with ChangeNotifier {
   }
 
   String findPetName() {
-    for (Item element in roomObjects) {
+    for (var element in roomObjects) {
       if (element.itemType == itemTypeOfPet) {
         return element.name;
       }
     }
+    LOG.log("NO PET MODEL. default: 구미호_01");
+    return '구미호_01';
+  }
 
-    // default pet
-    return '구미호_02';
-  } 
+  String findPetNickName() {
+    for (var element in roomObjects) {
+      if (element.itemType == itemTypeOfPet) {
+        return element.petName!;
+      }
+    }
+    return '이름을 지어주세요!';
+  }
 }

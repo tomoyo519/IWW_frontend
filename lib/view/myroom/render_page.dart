@@ -1,47 +1,76 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/model/item/item.model.dart';
+import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/friends/friendMain.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';
 import 'package:iww_frontend/view/myroom/mypet.dart';
-import 'package:iww_frontend/view/myroom/myroom.dart';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 
 // 마이홈 주요 구성 (펫, 배경, 하단 버튼)
-class MyRoomComponent extends StatelessWidget {
-  const MyRoomComponent({
+class RenderPage extends StatelessWidget {
+  const RenderPage({
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
+    var myRoomState = context.watch<MyRoomViewModel>();
+
     return Expanded(
       child: Stack(
         fit: StackFit.expand,
         children: [
-          // 방 렌더링
-          RenderMyRoom(),
+          // 배경, 가구 렌더링
+          Selector<MyRoomViewModel, List<Item>>(
+              selector: (_, myRoomViewModel) => myRoomViewModel.roomObjects,
+              builder: (_, roomObjects, __) {
+                return RenderMyRoom();
+              }),
           // 펫 렌더링
-          MyPet(newSrc: context.watch<MyRoomViewModel>().findPetName()),
+          FutureBuilder<int>(
+              future: UserRepository().getUserHealth(myRoomState.getRoomOwner),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return SizedBox();
+                  
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  int health = snapshot.data!; // snapshot.data에서 비동기 작업 결과를 받아옴
+
+                  return Selector<MyRoomViewModel, List<Item>>(
+                      selector: (_, myRoomViewModel) =>
+                          myRoomViewModel.roomObjects,
+                      builder: (_, roomObjects, __) {
+                        return Positioned(
+                          bottom: MediaQuery.of(context).size.height * 0.05,
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.width,
+                          child: MyPet(
+                              newSrc: myRoomState.findPetName(),
+                              isDead: health == 0),
+                        );
+                      });
+                }
+              }),
           // 상단 상태바
           Positioned(
               left: 0,
               right: 0,
               top: MediaQuery.of(context).size.height * 0.01,
-              height: 150,
-              child: UnderLayer()),
+              child: StatusBar()),
           // 하단 버튼
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: kBottomNavigationBarHeight +
-                MediaQuery.of(context).size.height * 0.14,
-            height: 50,
-            child: BottomButtons(),
-          ),
+          // Positioned(
+          //   left: 0,
+          //   right: 0,
+          //   bottom: kBottomNavigationBarHeight +
+          //       MediaQuery.of(context).size.height * 0.14,
+          //   height: 50,
+          //   child: BottomButtons(),
+          // ),
         ],
       ),
     );
@@ -66,9 +95,7 @@ class RenderMyRoom extends StatelessWidget {
     // }
 
     // 1/3 step: 배경 지정
-    return Stack(alignment: Alignment.center, children: [
-      // 펫 렌더링
-
+    return 
       Container(
         decoration: BoxDecoration(
           image: DecorationImage(
@@ -76,10 +103,35 @@ class RenderMyRoom extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-        child: roomState.renderRoomObjects(context),
+      child: Stack(
+        // 방안의 오브젝트 렌더링
+        children: roomState.roomObjects.map((Item item) {
+          // 가구가 아니면 렌더링하지 않음.
+          if (item.itemType != 2) {
+            return SizedBox();
+          }
+
+          List<double> position =
+              item.metadata!.split('x').map((e) => double.parse(e)).toList();
+          double x = position[0];
+          double y = position[1];
+
+          double imageWidth = MediaQuery.of(context).size.width * 0.2;
+
+          return Positioned(
+            top: MediaQuery.of(context).size.height * y,
+            left: MediaQuery.of(context).size.width * x,
+            width: imageWidth,
+            height: imageWidth,
+            child: Image.asset(
+              'assets/furniture/${item.path}',
+              fit: BoxFit.fill,
+            ),
+          );
+        }).toList(),
       ),
-      
-    ]);
+    );
+    
 
     // 유저의 펫 정보 불러오기
 
@@ -115,113 +167,111 @@ class UnderLayer extends StatelessWidget {
 }
 
 // 펫의 체력, 경험치 표시
-class StatusBar extends StatefulWidget {
+class StatusBar extends StatelessWidget {
   const StatusBar({super.key});
 
   @override
-  State<StatusBar> createState() => _StatusBarState();
-}
-
-class _StatusBarState extends State<StatusBar> with TickerProviderStateMixin {
-  Timer? _timer;
-  var _hp = 0.3;
-  var _exp = 0.1;
-
-  // TODO 할 일을 완료했을때 체력, 경험치가 오르도록 수정 필요
-  @override
-  void initState() {
-    super.initState();
-    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
-      // Call _setHP method here to update the hp value every 5 seconds
-      setState(() {
-        _hp >= 1 ? _hp : _hp += 0.1;
-        _exp >= 1 ? _exp : _exp += 0.2;
-
-        // LOG.log("HP: $_hp, EXP: $_exp");
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _timer!.cancel();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    var userInfo = context.watch<UserInfo>();
+    var userInfo = context.read<UserInfo>();
+    int totalExp = int.parse(userInfo.itemName!.split('_')[1]) * 1000;
+    String petName = context.read<MyRoomViewModel>().findPetNickName();
 
     return Container(
-      padding: const EdgeInsets.all(30.0),
-      child: Container(
-        padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-        decoration: BoxDecoration(
-          color: Color.fromRGBO(0, 0, 0, 0.3),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Row(
-              children: [
-                Flexible(
-                  flex: 1,
-                  child: Text(
-                    'HP',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                    ),
-                    textAlign: TextAlign.left,
-                  ),
-                ),
-                SizedBox(width: 30),
-                Flexible(
-                  flex: 8,
-                  child: LinearProgressIndicator(
-                    value: userInfo.userHp / 100,
-                    minHeight: 14,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                        const Color.fromARGB(255, 239, 118, 110)),
-                    backgroundColor: Colors.grey[200],
-                    semanticsLabel: 'Linear progress indicator',
-                  ),
-                ),
-              ],
+      height: 100,
+      margin: EdgeInsets.all(20),
+      padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+      decoration: BoxDecoration(
+        color: Color.fromRGBO(0, 0, 0, 0.3),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            petName,
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.white,
             ),
-            SizedBox(height: 10),
-            Row(
-              children: [
-                Flexible(
-                  flex: 1,
-                  child: Text(
-                    'EXP',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                    ),
-                    textAlign: TextAlign.left,
+          ),
+          Row(
+            children: [
+              SizedBox(
+                width: 45,
+                child: Text(
+                  '체력',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                child: LinearProgressIndicator(
+                  value: userInfo.userHp / 10,
+                  minHeight: 6,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      const Color.fromARGB(255, 239, 118, 110)),
+                  backgroundColor: Colors.grey[200],
+                  semanticsLabel: 'Linear progress indicator',
+                ),
+              ),
+              SizedBox(width: 10),
+              SizedBox(
+                width: 100,
+                child: Text(
+                  '${userInfo.userHp} / 10',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              SizedBox(
+                width: 45,
+                child: Text(
+                  '경험치 ',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                child: LinearProgressIndicator(
+                  value: (userInfo.petExp! / totalExp),
+                  minHeight: 6,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      Color.fromARGB(255, 155, 239, 110)),
+                  backgroundColor: Colors.grey[200],
+                  semanticsLabel: 'Linear progress indicator',
+                ),
+              ),
+              SizedBox(width: 10),
+              SizedBox(
+                width: 100,
+                child: Text(
+                  '${userInfo.petExp} / $totalExp',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white,
                   ),
                 ),
-                SizedBox(width: 20),
-                Flexible(
-                  flex: 6,
-                  child: LinearProgressIndicator(
-                    value: userInfo.petExp / 100,
-                    minHeight: 14,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                        Color.fromARGB(255, 155, 239, 110)),
-                    backgroundColor: Colors.grey[200],
-                    semanticsLabel: 'Linear progress indicator',
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+              )
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -236,8 +286,7 @@ class BottomButtons extends StatelessWidget {
     // NOTE 여기서 비동기 연산 수행
     final commentsProvider = context.read<CommentsProvider>();
     // final inventoryState = context.read<InventoryState>();
-    final myRoomState = context.read<MyRoomState>();
-    var roomState = context.watch<MyRoomViewModel>();
+    var roomState = context.read<MyRoomViewModel>();
     final user = Provider.of<UserInfo>(context, listen: false);
 
     // 인벤토리 <-> 마이홈 버튼
@@ -245,7 +294,7 @@ class BottomButtons extends StatelessWidget {
       if (roomState.isMyRoom()) {
         return ElevatedButton(
             onPressed: () {
-              myRoomState.toggleGrowth();
+              // myRoomState.toggleGrowth();
             },
             child: Text('인벤토리'));
       } else {
@@ -271,7 +320,7 @@ class BottomButtons extends StatelessWidget {
                   ),
                 ),
               );
-              
+
               if (result != null) {
                 roomState.roomOwner = result as int;
               }

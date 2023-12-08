@@ -27,8 +27,16 @@ class AppNavigator extends ChangeNotifier {
   List<int> _stack = [];
   int _idx = 0;
 
+  // 현재 페이지
+  String? _title; // 지정
+  String? get title => _title;
+  set title(String? val) {
+    _title = val;
+    // notifyListeners();
+  }
+
   AppPage get current => ALL_PAGES[_idx];
-  bool get isBottomSheetPage => _idx < 5;
+  bool get isBottomSheetPage => _idx < 5 && _stack.length < 2;
   int get idx => _idx;
 
   String? _argument;
@@ -38,26 +46,31 @@ class AppNavigator extends ChangeNotifier {
     notifyListeners();
   }
 
-  void navigate(AppRoute route, {String? argument}) {
+  // * ====== navigator methods ====== * //
+  void navigate(AppRoute route, {String? argument, String? title}) {
     _idx = route.index;
     _stack = [];
     _stack.add(route.index);
     _argument = argument;
+    _title = null;
     notifyListeners();
   }
 
-  void push(AppRoute route, {String? argument}) {
+  void push(AppRoute route, {String? argument, String? title}) {
     _idx = route.index;
     _stack.add(route.index);
     _argument = argument;
-    LOG.log('push page $_idx, stack $_stack');
+    _title = null;
+    LOG.log('[AppNav] push page $_idx, stack $_stack');
     notifyListeners();
   }
 
-  void pop({String? argument}) {
+  void pop({String? argument, String? title}) {
     _stack.removeLast();
     _idx = _stack.isEmpty ? 0 : _stack.last;
     _argument = argument;
+    _title = null;
+    LOG.log('[AppNav] pop page, stack $_stack');
     notifyListeners();
   }
 
@@ -127,4 +140,29 @@ class AppNavigator extends ChangeNotifier {
     icon: Icons.notifications,
     builder: (context) => MyNotification(),
   );
+
+  // final AppPage _wallet = AppPage(
+  //   idx: AppRoute.wallet,
+  //   label: "지갑",
+  //   icon: Icons.attach_money_rounded,
+  //   builder: (context) => Placeholder(),
+  //   pagetype: 'modal',
+  // );
+
+  String _getPageTitle() {
+    switch (ALL_PAGES[_idx].idx) {
+      case AppRoute.todo:
+        return _todo.label;
+      case AppRoute.group:
+        return _group.label;
+      case AppRoute.room:
+        return _room.label;
+      case AppRoute.shop:
+        return _shop.label;
+      case AppRoute.notification:
+        return _notification.label;
+      default:
+        return '';
+    }
+  }
 }

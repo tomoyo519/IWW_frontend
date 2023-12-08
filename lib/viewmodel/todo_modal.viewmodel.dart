@@ -23,16 +23,16 @@ class TodoModalViewModel<T extends ChangeNotifier> extends ChangeNotifier {
     if (todo != null) {
       // 기존 투두를 수정하는 경우
       _todoName = todo!.todoName;
-      _todoCate = todo!.todoLabel;
-      _todoDesc = todo!.todoDesc;
+      _todoCate = todo?.todoLabel ?? 0;
+      _todoDesc = todo?.todoDesc ?? '';
       _todoDone = todo!.todoDone;
 
-      _todoDate = todo!.todoDate.toDateTime();
-      _todoSrt = todo!.todoStart.toTimeOfDay();
-      _todoEnd = todo!.todoEnd.toTimeOfDay();
+      _todoDate = todo?.todoDate.toDateTime();
+      _todoSrt = todo?.todoStart.toTimeOfDay();
+      _todoEnd = todo?.todoEnd.toTimeOfDay();
 
       _nameControl.text = _todoName!;
-      _descControl.text = _todoDesc!;
+      _descControl.text = _todoDesc ?? '';
     } else {
       // 새로운 투두를 생성하는 경우
       _todoCate = 0;
