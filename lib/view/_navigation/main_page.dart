@@ -31,6 +31,8 @@ class MainPage extends StatefulWidget implements PreferredSizeWidget {
 /// ************************ ///
 
 class _MainPageState extends State<MainPage> {
+  bool waiting = false;
+
   @override
   void initState() {
     super.initState();
@@ -52,12 +54,6 @@ class _MainPageState extends State<MainPage> {
         }
       },
     );
-
-    // * ==== Trigger Login Event ==== * //
-    context.read<UserInfo>().initEvents();
-    // Future.microtask(() async {
-    //   EventType.show_pet_evolve.run(context);
-    // });
   }
 
   void requestNotificationPermission() async {
@@ -95,7 +91,6 @@ class _MainPageState extends State<MainPage> {
             .toList(),
       ),
       // * ======= BODY ======= * //
-      // 종속성 주입 부분
       body: Builder(
         // 빌더 함수 콜
         builder: (context) => curr.builder(context),

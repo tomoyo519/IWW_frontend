@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/model/auth/auth_status.dart';
+import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -20,15 +22,19 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   // 무조건 있어야함!
   @override
   Widget build(BuildContext context) {
-    final userInfo = context.watch<UserInfo>();
+    final status = context.read<AuthService>().status;
+    bool isUser = status == AuthStatus.initialized;
 
     List<Widget> defaultAppbar = <Widget>[
       Row(
         children: [
-          Icon(
-            Icons.monetization_on_outlined,
-          ),
-          Text(userInfo.userCash.toString())
+          // 로그인된 페이지인 경우에만 캐시 노출
+          if (isUser == true) ...[
+            Icon(
+              Icons.monetization_on_outlined,
+            ),
+            Text(context.watch<UserInfo>().userCash.toString())
+          ]
         ],
       ),
     ];

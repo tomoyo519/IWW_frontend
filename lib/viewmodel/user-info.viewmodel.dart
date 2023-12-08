@@ -39,7 +39,9 @@ class UserInfo extends ChangeNotifier {
   late String _itemName;
 
   // === Getters === //
+  Item get mainPet => _mainPet;
   UserModel get userModel => _user;
+
   int get userId => _user.user_id;
   String get userName => _userName;
   String get userTel => _userTel;
@@ -82,11 +84,6 @@ class UserInfo extends ChangeNotifier {
   set userCash(int cash) {
     _userCash = cash;
     notifyListeners();
-  }
-
-  // 로그인되자마자 트리거되어야 하는 이벤트들
-  void initEvents() {
-    _onLoginReward(_reward);
   }
 
   // 유저 정보 갱신
@@ -166,6 +163,12 @@ class UserInfo extends ChangeNotifier {
     _reward = reward;
 
     notifyListeners();
+  }
+
+  // 로그인되자마자 트리거되어야 하는 이벤트들
+  void initEvents() {
+    _onLoginReward(_reward);
+    EventService.publish(Event(type: EventType.SHOW_TODO_DONE));
   }
 
   // 첫 투두 체크 이벤트

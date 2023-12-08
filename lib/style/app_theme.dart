@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 ThemeData getapptheme() {
   return ThemeData(
     useMaterial3: true,
-    fontFamily: 'Pretendard',
+    fontFamily: 'NanumSquareRound',
     scaffoldBackgroundColor: Colors.white,
     textTheme: TextTheme(
       bodySmall: TextStyle(fontSize: 14, color: Colors.black87),

@@ -108,7 +108,7 @@ class AuthService extends ChangeNotifier {
         if (link != null) {
           LOG.log("App link received");
 
-          ///** 앱 초기화 수행
+          // 앱 초기화 수행
           await _authorize(link, signup: signup);
           if (status == AuthStatus.success) {
             await _initialize();
@@ -131,7 +131,7 @@ class AuthService extends ChangeNotifier {
     _kakaoLogin(prompt: prompt); // 카카오 로그인
   }
 
-  //** Test Login **//
+  // * Test Login **//
   Future<void> testLogin() async {
     _user = UserModel(
       user_id: 1,
@@ -162,8 +162,7 @@ class AuthService extends ChangeNotifier {
     waiting = false;
   }
 
-  ///** 로컬에 저장된 토큰 기반 로그인을 시작합니다.
-  /// */
+  // * 로컬에 저장된 토큰 기반 로그인을 시작합니다. * //
   Future<void> localLogin() async {
     waiting = true;
 
@@ -320,7 +319,6 @@ class AuthService extends ChangeNotifier {
         } else {
           LOG.log("Error: ${response.body}");
           status = AuthStatus.failed;
-          _mainPet = Item(id: 54, name: "기본펫", itemType: 1);
         }
       },
     );
