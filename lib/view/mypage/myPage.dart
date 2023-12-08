@@ -12,6 +12,7 @@ import 'package:lottie/lottie.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/model/mypage/reward.model.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
+import 'package:iww_frontend/view/mypage/slider.dart';
 
 class MyPage extends StatefulWidget {
   MyPage({super.key});
@@ -274,6 +275,7 @@ class _MyPageState extends State<MyPage> {
             Divider(
               thickness: 10,
             ),
+            // CarouselSliderDemo(),
             Container(
               child: Padding(
                 padding: const EdgeInsets.only(left: 20.0, bottom: 5.0),

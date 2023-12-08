@@ -24,16 +24,16 @@ class UserInfo extends ChangeNotifier {
     _setStateFromModels(_user, _mainPet);
 
     // 초기 로그인 카운트 알림
-    if (_user.login_cnt >= 30) {
-      EventService.publish(
-        Event(
-          type: EventType.show_login_achieve,
-          message: jsonEncode({
-            "title": "로그인 카운트 30회 달성!",
-          }),
-        ),
-      );
-    }
+    // if (_user.login_cnt >= 30) {
+    //   EventService.publish(
+    //     Event(
+    //       type: EventType.show_login_achieve,
+    //       message: jsonEncode({
+    //         "title": "로그인 카운트 30회 달성!",
+    //       }),
+    //     ),
+    //   );
+    // }
   }
 
   // === Status === //
