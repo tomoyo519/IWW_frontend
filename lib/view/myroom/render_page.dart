@@ -104,7 +104,7 @@ class RenderMyRoom extends StatelessWidget {
           ),
         ),
       child: Stack(
-        // 방안의 오브젝트 렌더링
+        // 1/2 step: 방안의 오브젝트 렌더링
         children: roomState.roomObjects.map((Item item) {
           // 가구가 아니면 렌더링하지 않음.
           if (item.itemType != 2) {
@@ -116,16 +116,16 @@ class RenderMyRoom extends StatelessWidget {
           double x = position[0];
           double y = position[1];
 
-          double imageWidth = MediaQuery.of(context).size.width * 0.2;
+          // double imageWidth = MediaQuery.of(context).size.width * 0.2;
 
           return Positioned(
             top: MediaQuery.of(context).size.height * y,
             left: MediaQuery.of(context).size.width * x,
-            width: imageWidth,
-            height: imageWidth,
+            // width: imageWidth,
+            // height: imageWidth,
             child: Image.asset(
               'assets/furniture/${item.path}',
-              fit: BoxFit.fill,
+              fit: BoxFit.none,
             ),
           );
         }).toList(),
@@ -250,7 +250,7 @@ class StatusBar extends StatelessWidget {
               SizedBox(width: 10),
               Expanded(
                 child: LinearProgressIndicator(
-                  value: (userInfo.petExp! / totalExp),
+                  value: (userInfo.petExp ?? 0) / totalExp,
                   minHeight: 6,
                   valueColor: AlwaysStoppedAnimation<Color>(
                       Color.fromARGB(255, 155, 239, 110)),

@@ -85,7 +85,7 @@ class MyRoomViewModel with ChangeNotifier {
       }
     }
     LOG.log("NO BACKGROUND IMAGE. default: bg15.png");
-    return AssetImage('assets/bg/bg15.png');
+    return AssetImage('assets/bg/bg21.png');
   }
 
   Widget renderRoomObjects(double height) {
