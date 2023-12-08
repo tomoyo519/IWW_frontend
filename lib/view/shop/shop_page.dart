@@ -16,7 +16,6 @@ class ShopPage extends StatelessWidget {
   }
 }
 
-// cla
 class ShopItems extends StatefulWidget {
   const ShopItems({super.key});
   @override
@@ -27,20 +26,19 @@ class _ShopItems extends State<ShopItems> {
   List<ShopInfo>? allpets;
   List<dynamic>? allfuns;
   List<dynamic>? allemot;
-  bool isLoading = true;
+
+  bool isPetLoading = true;
+  bool isFunLoading = true;
   final ShopRepository shopRepository = ShopRepository();
 
   @override
   void initState() {
     super.initState();
-    ;
+    // 상점 신제품 알려주는 모달
     Future.delayed(Duration.zero, () async {
       WidgetsBinding.instance.addPostFrameCallback((_) => _showDialog(context));
       await fetchFriend();
-
-      LOG.log('thisisallpets: $allpets');
     });
-    LOG.log('thisisallpets: $allpets');
   }
 
   void purchase(idx) async {
@@ -62,19 +60,17 @@ class _ShopItems extends State<ShopItems> {
   fetchFriend() async {
     final userId = context.read<UserInfo>().userId;
     List<ShopInfo> fetchPets = await shopRepository.getPets(userId);
+    setState(() {
+      allpets = fetchPets;
+      isPetLoading = false;
+    });
     List<ShopInfo> fetchFuns = await shopRepository.getFuns(userId);
-    // List<ShopInfo> fetchEmoj = await shopRepository.getEmoj(userId);
+
+    setState(() {
+      allfuns = fetchFuns;
+      isFunLoading = false;
+    });
     LOG.log('fetchPets: $fetchPets');
-    if (mounted) {
-      // 안하면 중간에 앱 멈추는 현상 발견
-      setState(() {
-        allpets = fetchPets;
-        allfuns = fetchFuns;
-        // allemot = fetchEmoj;
-      });
-      LOG.log('thisis$allfuns');
-    }
-    isLoading = false;
   }
 
   @override
@@ -93,35 +89,34 @@ class _ShopItems extends State<ShopItems> {
               // Tab(text: "이모티콘"),
             ],
           ),
-          !isLoading
-              ? Expanded(
-                  child: TabBarView(
-                    children: <Widget>[
-                      if (allpets!.isEmpty) ...[
-                        Lottie.asset('assets/empty.json',
-                            repeat: true,
-                            animate: true,
-                            height: MediaQuery.of(context).size.height * 0.3),
-                      ],
-                      if (allpets!.isNotEmpty) ...[
-                        ShowItem(allpets: allpets, purchase: purchase),
-                      ],
-                      if (allfuns!.isEmpty) ...[
-                        Lottie.asset('assets/empty.json',
-                            repeat: true,
-                            animate: true,
-                            height: MediaQuery.of(context).size.height * 0.3),
-                      ],
-                      if (allfuns!.isNotEmpty) ...[
-                        ShowItem(allpets: allfuns, purchase: purchase),
-                      ],
-                    ],
-                  ),
-                )
-              : Lottie.asset('assets/spinner.json',
-                  repeat: true,
-                  animate: true,
-                  height: MediaQuery.of(context).size.height * 0.3),
+          Expanded(
+            child: TabBarView(
+              children: <Widget>[
+                if (allpets != null && allpets!.isEmpty)
+                  Lottie.asset('assets/empty.json',
+                      repeat: true,
+                      animate: true,
+                      height: MediaQuery.of(context).size.height * 0.3),
+                if (allpets != null && allpets!.isNotEmpty)
+                  ShowItem(
+                      allpets: allpets,
+                      purchase: purchase,
+                      isLoading: isPetLoading),
+                if (allpets == null || allpets!.isEmpty) Container(),
+                if (allfuns != null && allfuns!.isEmpty)
+                  Lottie.asset('assets/empty.json',
+                      repeat: true,
+                      animate: true,
+                      height: MediaQuery.of(context).size.height * 0.3),
+                if (allfuns != null && allfuns!.isNotEmpty)
+                  ShowItem(
+                      allpets: allfuns,
+                      purchase: purchase,
+                      isLoading: isPetLoading),
+                if (allfuns == null || allfuns!.isEmpty) Container(),
+              ],
+            ),
+          )
         ],
       ),
     );
