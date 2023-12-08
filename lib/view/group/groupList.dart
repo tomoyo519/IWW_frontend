@@ -269,11 +269,20 @@ class _GroupListState extends State<GroupList> {
                       }),
                 )
               : Expanded(
-                  child: Lottie.asset('assets/empty.json',
-                      repeat: true,
-                      animate: true,
-                      height: MediaQuery.of(context).size.height * 0.3),
-                )
+                  child: Center(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Lottie.asset('assets/empty.json',
+                            repeat: true,
+                            animate: true,
+                            height: MediaQuery.of(context).size.height * 0.3),
+                        Text(
+                          "가입된 그룹이 없어요! \n그룹에 참여 해보거나, 내가 그룹을 만들 수 있어요!",
+                          textAlign: TextAlign.center,
+                        )
+                      ]),
+                ))
     ]);
   }
 }

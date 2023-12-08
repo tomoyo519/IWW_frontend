@@ -67,10 +67,10 @@ void main() async {
   // authService.oauthLogin(signup: false);
 
   // 3. 테스트유저 접속
-  // await authService.testLogin();
+  await authService.testLogin();
 
-  // authService.status = AuthStatus.initialized;
-  // authService.waiting = false;
+  authService.status = AuthStatus.initialized;
+  authService.waiting = false;
 
   runApp(
     MultiProvider(
