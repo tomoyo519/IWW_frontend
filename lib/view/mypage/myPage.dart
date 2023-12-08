@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/auth/auth_status.dart';
 import 'package:iww_frontend/service/auth.service.dart';
+import 'package:iww_frontend/view/mypage/%08graph.dart';
 import 'package:iww_frontend/view/mypage/announcement.dart';
 import 'package:iww_frontend/view/mypage/myInfoEdit.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
@@ -12,6 +13,7 @@ import 'package:lottie/lottie.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/model/mypage/reward.model.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
+import 'package:iww_frontend/view/mypage/graph.dart';
 
 class MyPage extends StatefulWidget {
   MyPage({super.key});
@@ -54,7 +56,6 @@ class _MyPageState extends State<MyPage> {
   @override
   Widget build(BuildContext context) {
     final userInfo = context.watch<UserInfo>();
-    LOG.log('thisisname:${userInfo.userName}');
     String formattedNumber = userInfo.userTel.substring(0, 3) +
         '-' +
         userInfo.userTel.substring(3, 7) +
@@ -160,49 +161,53 @@ class _MyPageState extends State<MyPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Column(
-                      children: [
-                        Lottie.asset("assets/money.json",
-                            animate: true,
-                            repeat: false,
-                            width: 50,
-                            height: 50),
-                        Text(
-                          "보유 캐시",
-                          style: TextStyle(
-                            fontSize: 13,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start, // 추가된 부분
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft, // 추가된 부분
+                            child: Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Text(
+                                "유저 경험치",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                        Text(
-                          userInfo.userHp.toString() + '원',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
+                          // Lottie.asset("assets/star.json",
+                          //     animate: true,
+                          //     repeat: false,
+                          //     width: 50,
+                          //     height: 50),
+
+                          Center(
+                            child: Container(
+                              height: 100, // 또는 원하는 높이로 설정
+                              child: Column(
+                                children: [
+                                  Expanded(
+                                    child: CircleGauge(
+                                      percent: userInfo.userHp / 100,
+                                      width: 100,
+                                    ),
+                                  ),
+                                  Text(
+                                    userInfo.userHp.toString() + 'xp',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
                           ),
-                        )
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        Lottie.asset("assets/star.json",
-                            animate: true,
-                            repeat: false,
-                            width: 50,
-                            height: 50),
-                        Text(
-                          "경험치",
-                          style: TextStyle(
-                            fontSize: 13,
-                          ),
-                        ),
-                        Text(
-                          userInfo.userHp.toString() + 'P',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        )
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -225,6 +230,20 @@ class _MyPageState extends State<MyPage> {
                         )
                       ],
                     ),
+                    if (rewards != null && rewards!.isEmpty) ...[
+                      Column(children: [
+                        Lottie.asset('assets/empty.json',
+                            repeat: true,
+                            animate: true,
+                            height: MediaQuery.of(context).size.height * 0.2),
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Text("업적이 없네요! 할일 수행해서 업적 받아봐요!"),
+                          ),
+                        )
+                      ]),
+                    ],
                     if (isLoading == true) ...[
                       Lottie.asset('assets/spinner.json',
                           repeat: true,
