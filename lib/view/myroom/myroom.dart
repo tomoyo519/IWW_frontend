@@ -101,33 +101,47 @@ class _MyRoomPageState extends State<MyRoomPage> {
 
   SpeedDial buildSpeedDial() {
     return SpeedDial(
+      child: Icon(Icons.menu),
       overlayOpacity: 0.0,
-      animatedIcon: AnimatedIcons.menu_close,
+      animatedIcon: AnimatedIcons.view_list,
       children: [
         SpeedDialChild(
-          child: Icon(Icons.note),
-          label: '마이홈',
+          shape: CircleBorder(),
+          child: CircleAvatar(
+            // 원형 아이콘
+            child: Icon(Icons.home),
+            backgroundColor: Colors.white,
+          ),
+          // label: '마이홈',
+          // labelBackgroundColor: Colors.green, // 투
+
           onTap: () => setState(() {
             _selectedIndex = 0;
           }),
         ),
         SpeedDialChild(
-          child: Icon(Icons.inventory_2_rounded),
-          label: '인벤토리',
+          shape: CircleBorder(),
+          child: CircleAvatar(
+            child: Icon(Icons.backpack),
+            backgroundColor: (Colors.white),
+          ),
+          // label: '인벤토리',
           onTap: () => setState(() {
             _selectedIndex = 1;
           }),
         ),
         SpeedDialChild(
-          child: Icon(Icons.note),
-          label: '방명록',
+          shape: CircleBorder(),
+          child: Icon(Icons.local_post_office),
+          // label: '방명록',
           onTap: () => setState(() {
             _selectedIndex = 2;
           }),
         ),
         SpeedDialChild(
+          shape: CircleBorder(),
           child: Icon(Icons.group),
-          label: '친구목록',
+          // label: '친구목록',
           onTap: () => setState(() {
             _selectedIndex = 3;
           }),

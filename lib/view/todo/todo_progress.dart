@@ -41,6 +41,7 @@ class TodoProgress extends StatelessWidget {
         model.todayTotal == 0 ? 0 : model.todayDone / model.todayTotal;
 
     Map<String, String> assetPath = {
+      "기본펫": "assets/pets/small_fox.glb",
       "구미호_01": "assets/pets/small_fox.glb",
       "구미호_02": "assets/pets/mid_fox.glb",
       "구미호_03": "assets/pets/kitsune.glb",
