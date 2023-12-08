@@ -31,14 +31,14 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
           // 로그인된 페이지인 경우에만 캐시 노출
           if (isUser == true) ...[
             Padding(
-            padding: const EdgeInsets.only(right: 5.0),
-            child: Image.asset(
-              'assets/cash.png',
-              width: 25,
-              height: 25,
+              padding: const EdgeInsets.only(right: 5.0),
+              child: Image.asset(
+                'assets/cash.png',
+                width: 25,
+                height: 25,
+              ),
             ),
-          ),
-          Text(userInfo.userCash.toString())
+            Text(context.read<UserInfo>().userCash.toString())
           ]
         ],
       ),
