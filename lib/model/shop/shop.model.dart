@@ -6,6 +6,7 @@ class ShopInfo {
   final int item_id;
   final String item_name;
   final int item_cost;
+  final String? item_desc;
   final String item_path;
 
   ShopInfo({
@@ -13,14 +14,15 @@ class ShopInfo {
     required this.item_name,
     required this.item_cost,
     required this.item_path,
+    this.item_desc,
   });
 
   factory ShopInfo.fromJson(Map<String, dynamic> data) {
     return ShopInfo(
-      item_id: data["item_id"],
-      item_name: data["item_name"],
-      item_cost: data["item_cost"],
-      item_path: data["item_path"],
-    );
+        item_id: data["item_id"],
+        item_name: data["item_name"],
+        item_cost: data["item_cost"],
+        item_path: data["item_path"],
+        item_desc: data["item_desc"]);
   }
 }

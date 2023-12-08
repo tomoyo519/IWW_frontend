@@ -41,13 +41,9 @@ class _MyPetState extends State<MyPet> {
         cameraOrbit: '30deg 80deg 8m',
         cameraTarget: '0.3m 0.9m 0.4m',
         autoRotate: false,
-        rotationPerSecond: '0rad'),
-    'Idle': Preset(
-        animationName: 'Idle',
-        cameraOrbit: '30deg 80deg 8m',
-        cameraTarget: '0.1m 1.2m 0.3m',
-        autoRotate: false,
-        rotationPerSecond: '0rad'),
+      rotationPerSecond: '0rad',
+    ),
+    // 움직임
     'Walk': Preset(
       animationName: 'Walk',
       cameraOrbit: '0deg 70deg 8m',
@@ -55,12 +51,57 @@ class _MyPetState extends State<MyPet> {
       autoRotate: true,
       rotationPerSecond: '0.6rad',
     ),
+    'Roll': Preset(
+      animationName: 'Roll',
+      cameraOrbit: '0deg 70deg 8m',
+      cameraTarget: '0.7m 0.7m 0m',
+      autoRotate: true,
+      rotationPerSecond: '0.8rad',
+    ),
+    'Swim': Preset(
+      animationName: 'Swim',
+      cameraOrbit: '0deg 70deg 8m',
+      cameraTarget: '0.7m 0.7m 0m',
+      autoRotate: true,
+      rotationPerSecond: '0.6rad',
+    ),
+    // 이하 제자리
+    'Idle': Preset(
+      animationName: 'Idle',
+      cameraOrbit: '30deg 80deg 0m',
+      cameraTarget: '0.5m 0.7m 0.8m',
+      autoRotate: false,
+      rotationPerSecond: '0rad',
+    ),
     'Jump': Preset(
         animationName: 'Jump',
         cameraOrbit: '30deg 80deg 0m',
         cameraTarget: '0.5m 0.7m 0.8m',
         autoRotate: false,
-        rotationPerSecond: '0rad'),
+      rotationPerSecond: '0rad',
+    ),
+    'Bounce': Preset(
+      animationName: 'Bounce',
+      cameraOrbit: '30deg 80deg 0m',
+      cameraTarget: '0.5m 0.7m 0.8m',
+      autoRotate: false,
+      rotationPerSecond: '0rad',
+    ),
+    'Clicked': Preset(
+      animationName: 'Clicked',
+      cameraOrbit: '30deg 80deg 0m',
+      cameraTarget: '0.5m 0.7m 0.8m',
+      autoRotate: false,
+      rotationPerSecond: '0rad',
+    ),
+    'Spin': Preset(
+      animationName: 'Spin',
+      cameraOrbit: '30deg 80deg 0m',
+      cameraTarget: '0.5m 0.7m 0.8m',
+      autoRotate: false,
+      rotationPerSecond: '0rad',
+    ),
+
   };
 
   final Map<String, Map<String, dynamic>> petModels = {
@@ -74,7 +115,16 @@ class _MyPetState extends State<MyPet> {
     },
     '구미호_02': {
       'src': 'assets/pets/mid_fox.glb',
-      'motions': ['Idle', 'Walk', 'Jump']
+      'motions': [
+        'Idle',
+        'Walk',
+        'Jump',
+        'Roll',
+        'Swim',
+        'Spin',
+        'Bounce',
+        'Clicked'
+      ]
     },
     '구미호_03': {
       'src': 'assets/pets/kitsune.glb',
@@ -103,28 +153,32 @@ class _MyPetState extends State<MyPet> {
         LOG.log('아니 왜 안바뀌는데 $_petActionIndex');
         setState(() {
           _petActionIndex =
-              (_petActionIndex + 1) % selectedModel['motions']!.length as int;
+              (_petActionIndex + 1) %
+                (selectedModel['motions']!.length as int);
         });
       },
       child: SizedBox(
         height: MediaQuery.of(context).size.height * 0.5,
-        child: ModelViewer(
-          key: ValueKey(targetResouce),
-          src: selectedModel['src'],
-          animationName: p.animationName,
-          cameraTarget: p.cameraTarget,
-          cameraOrbit: p.cameraOrbit,
-          autoRotate: p.autoRotate,
-          rotationPerSecond: p.rotationPerSecond,
-          // 이하 고정값
-          interactionPrompt: InteractionPrompt.none,
-          cameraControls: false,
-          autoPlay: true,
-          shadowIntensity: 1,
-          disableZoom: true,
-          autoRotateDelay: 0,
-        ),
-      ),
+          child: IgnorePointer(
+            ignoring: true,
+            child: ModelViewer(
+              key: ValueKey(targetResouce),
+              src: selectedModel['src'],
+              animationName: p.animationName,
+              cameraTarget: p.cameraTarget,
+              cameraOrbit: p.cameraOrbit,
+              autoRotate: p.autoRotate,
+              rotationPerSecond: p.rotationPerSecond,
+              // 이하 고정값
+              interactionPrompt: InteractionPrompt.none,
+              cameraControls: false,
+              autoPlay: true,
+              shadowIntensity: 1,
+              disableZoom: true,
+              autoRotateDelay: 0,
+            ),
+          ),
+        )
     );
   }
 }
