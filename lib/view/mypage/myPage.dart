@@ -230,7 +230,7 @@ class _MyPageState extends State<MyPage> {
                         )
                       ],
                     ),
-                    if (rewards!.isEmpty) ...[
+                    if (rewards != null && rewards!.isEmpty) ...[
                       Column(children: [
                         Lottie.asset('assets/empty.json',
                             repeat: true,

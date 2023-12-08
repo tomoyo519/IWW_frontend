@@ -130,7 +130,7 @@ void _showDialog(BuildContext context) {
     context: context,
     builder: (BuildContext context) {
       return Container(
-        width: MediaQuery.of(context).size.width * 0.6, // 너비 지정
+        width: MediaQuery.of(context).size.width * 0.8, // 너비 지정
         height: 100, // 높이를 지정합니다.
 
         child: AlertDialog(
@@ -143,6 +143,7 @@ void _showDialog(BuildContext context) {
             // SingleChildScrollView를 사용합니다.
             child: Container(
               color: Colors.white,
+              width: MediaQuery.of(context).size.width * 0.8, // 너비 지정
               height: 350, // 여기에서 높이를 지정합니다.
               child: Column(
                 children: [
