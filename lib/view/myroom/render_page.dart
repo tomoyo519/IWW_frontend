@@ -45,9 +45,14 @@ class RenderPage extends StatelessWidget {
                       selector: (_, myRoomViewModel) =>
                           myRoomViewModel.roomObjects,
                       builder: (_, roomObjects, __) {
-                        return MyPet(
-                            newSrc: myRoomState.findPetName(),
-                            isDead: health == 0);
+                        return Positioned(
+                          bottom: MediaQuery.of(context).size.height * 0.05,
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.width,
+                          child: MyPet(
+                              newSrc: myRoomState.findPetName(),
+                              isDead: health == 0),
+                        );
                       });
                 }
               }),
@@ -90,9 +95,7 @@ class RenderMyRoom extends StatelessWidget {
     // }
 
     // 1/3 step: 배경 지정
-    return Stack(alignment: Alignment.center, children: [
-      // 펫 렌더링
-
+    return 
       Container(
         decoration: BoxDecoration(
           image: DecorationImage(
@@ -100,11 +103,35 @@ class RenderMyRoom extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-        child: roomState.renderRoomObjects(
-          MediaQuery.of(context).size.height / 6.0,
-        ),
+      child: Stack(
+        // 방안의 오브젝트 렌더링
+        children: roomState.roomObjects.map((Item item) {
+          // 가구가 아니면 렌더링하지 않음.
+          if (item.itemType != 2) {
+            return SizedBox();
+          }
+
+          List<double> position =
+              item.metadata!.split('x').map((e) => double.parse(e)).toList();
+          double x = position[0];
+          double y = position[1];
+
+          double imageWidth = MediaQuery.of(context).size.width * 0.2;
+
+          return Positioned(
+            top: MediaQuery.of(context).size.height * y,
+            left: MediaQuery.of(context).size.width * x,
+            width: imageWidth,
+            height: imageWidth,
+            child: Image.asset(
+              'assets/furniture/${item.path}',
+              fit: BoxFit.fill,
+            ),
+          );
+        }).toList(),
       ),
-    ]);
+    );
+    
 
     // 유저의 펫 정보 불러오기
 
