@@ -109,6 +109,10 @@ class _MyPetState extends State<MyPet> {
       'src': 'assets/tomb.glb',
       'motions': ['Idle']
     },
+    '기본펫': {
+      'src': 'assets/pets/small_fox.glb',
+      'motions': ['Idle', 'Walk', 'Jump']
+    },
     '구미호_01': {
       'src': 'assets/pets/small_fox.glb',
       'motions': ['Idle', 'Walk', 'Jump']
@@ -128,6 +132,30 @@ class _MyPetState extends State<MyPet> {
     },
     '구미호_03': {
       'src': 'assets/pets/kitsune.glb',
+      'motions': ['Idle', 'Walk', 'Jump']
+    },
+    '용_01': {
+      'src': 'assets/pets/monitor_lizard.glb',
+      'motions': ['Idle', 'Walk', 'Jump']
+    },
+    // '용_02': {
+    //   'src': 'assets/pets/monitor_lizard.glb',
+    //   'motions': ['Idle', 'Walk', 'Jump']
+    // },    
+    '용_03': {
+      'src': 'assets/pets/chinese_dragon.glb',
+      'motions': ['Idle', 'Walk', 'Jump']
+    },
+    '불사조_01': {
+      'src': 'assets/pets/pink_robin.glb',
+      'motions': ['Idle', 'Walk', 'Jump']
+    },
+    '불사조_02': {
+      'src': 'assets/pets/archers_buzzard.glb',
+      'motions': ['Idle', 'Walk', 'Jump']
+    },
+    '불사조_03': {
+      'src': 'assets/pets/pheonix.glb',
       'motions': ['Idle', 'Walk', 'Jump']
     },
   };
