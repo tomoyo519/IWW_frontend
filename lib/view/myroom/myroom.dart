@@ -59,6 +59,12 @@ class MyRoomPage extends StatefulWidget {
 class _MyRoomPageState extends State<MyRoomPage> {
   int _selectedIndex = 0;
 
+  void _showComments() {
+    final commentsProvider =
+        Provider.of<CommentsProvider>(context, listen: false);
+    showCommentsBottomSheet(context, commentsProvider);
+  }
+
   @override
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
@@ -132,11 +138,9 @@ class _MyRoomPageState extends State<MyRoomPage> {
         ),
         SpeedDialChild(
           shape: CircleBorder(),
+          onTap: _showComments,
           child: Icon(Icons.local_post_office),
           // label: '방명록',
-          onTap: () => setState(() {
-            _selectedIndex = 2;
-          }),
         ),
         SpeedDialChild(
           shape: CircleBorder(),

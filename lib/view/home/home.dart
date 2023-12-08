@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/style/button.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
+import 'package:iww_frontend/view/home/attendance.dart';
 import 'package:iww_frontend/view/home/home_profile.dart';
 import 'package:iww_frontend/view/modals/todo_editor.dart';
 import 'package:iww_frontend/view/todo/todo_list.dart';
@@ -10,6 +11,7 @@ import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:iww_frontend/view/home/attendance.dart';
 
 // 홈 레이아웃 및 의존성 주입
 class TodoPage extends StatelessWidget {
@@ -58,11 +60,12 @@ class MyTodo extends StatelessWidget {
           Column(
             children: [
               SizedBox(
-                height: 150,
+                height: 200,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(flex: 3, child: TodoProgress()),
+                    Expanded(child: Attendance())
                   ],
                 ),
               ),
