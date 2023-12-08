@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/room.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
-import 'package:iww_frontend/model/pet/pet_models.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
 
 class MyRoomViewModel with ChangeNotifier {
@@ -18,17 +17,17 @@ class MyRoomViewModel with ChangeNotifier {
   List<Item> roomObjects = []; // 현재 방에 존재하는 오브젝트 리스트
 
   MyRoomViewModel(this._userId, this._roomRepository, this._roomOwner) {
-    fetchMyRoom();
-    fetchInventory();
+    fetchMyRoom(_roomOwner);
+    fetchInventory(_userId);
   }
 
-  Future<void> fetchMyRoom() async {
-    roomObjects = await _roomRepository.getItemsOfMyRoom(_roomOwner);
+  Future<void> fetchMyRoom(userId) async {
+    roomObjects = await _roomRepository.getItemsOfMyRoom(userId);
     notifyListeners();
   }
 
-  Future<void> fetchInventory() async {
-    inventory = await _roomRepository.getItemsOfInventory(_userId);
+  Future<void> fetchInventory(userId) async {
+    inventory = await _roomRepository.getItemsOfInventory(userId);
     notifyListeners();
   }
 
@@ -68,7 +67,7 @@ class MyRoomViewModel with ChangeNotifier {
 
   set roomOwner(int userId) {
     _roomOwner = userId;
-    fetchMyRoom();
+    fetchMyRoom(userId);
     notifyListeners();
   }
 
@@ -95,7 +94,7 @@ class MyRoomViewModel with ChangeNotifier {
     List<Widget> layers = [];
     // 2/3 step: 가구 추가
     for (int i = 0; i < roomObjects.length; i++) {
-      var element = roomObjects[i];
+      Item element = roomObjects[i];
       if (element.itemType == 2) {
         layers.add(Positioned(
           top: height,

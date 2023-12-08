@@ -6,6 +6,7 @@ class Item {
   String? description;
   String? petName;
   int? petExp;
+  String? metadata;
 
   Item({
     required this.id,
@@ -15,6 +16,7 @@ class Item {
     this.description,
     this.petName,
     this.petExp,
+    this.metadata,
   });
 
   Item.fromJson(Map<String, dynamic> json)
@@ -24,7 +26,8 @@ class Item {
         path = json['item_path'],
         petName = json['pet_name'],
         petExp = json['pet_exp'],
-        itemType = json['item_type'];
+        itemType = json['item_type'],
+        metadata = json['metadata'];
 
   // Map<String, dynamic> toMap() {
   // return {
