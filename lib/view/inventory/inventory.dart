@@ -71,7 +71,7 @@ class InventoryPage extends StatelessWidget {
                           children: [
                             Text(myRoomViewModel.inventory[idx].name),
                             Image.asset(
-                              'assets/thumbnail/${myRoomViewModel.inventory[idx].path!.split('.')[0]}.png',
+                              'assets/thumbnail/${myRoomViewModel.inventory[idx].path!}',
                               fit: BoxFit.cover,
                               height: 80,
                             )
