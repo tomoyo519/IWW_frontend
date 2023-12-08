@@ -46,8 +46,6 @@ class TodoProgress extends StatelessWidget {
       "구미호_03": "assets/pets/kitsune.glb",
     };
 
-    LOG.log(assetPath[userinfo.itemName] ?? 'null');
-
     return SizedBox(
       width: screen.width,
       child: Container(

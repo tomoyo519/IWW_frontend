@@ -31,15 +31,12 @@ class MainPage extends StatefulWidget implements PreferredSizeWidget {
 /// ************************ ///
 
 class _MainPageState extends State<MainPage> {
+  bool waiting = false;
+
   @override
   void initState() {
     super.initState();
     requestNotificationPermission();
-
-    Future.microtask(() async {
-      showPetEvolveModal(context);
-      // type.run(context, message: message);
-    });
 
     // * ==== Event Listener ==== * //
     EventService.stream.listen(
@@ -51,20 +48,9 @@ class _MainPageState extends State<MainPage> {
         if (type.target == 'socket') {
           type.run(context, message: message);
         } else if (type.target == 'ui') {
-          // 로그인 달성 모달인 경우
-          if (type == EventType.show_login_achieve && widget.userLoggedIn) {
-            Future.microtask(() async {
-              // showPetEvolveModal(context);
-              type.run(context, message: message);
-            });
-            widget.userLoggedIn = true;
-          } else {
-            // 기타 다른 UI 이벤트
-            Future.microtask(() async {
-              showPetEvolveModal(context);
-              // type.run(context, message: message);
-            });
-          }
+          Future.microtask(() async {
+            type.run(context, message: message);
+          });
         }
       },
     );
@@ -105,7 +91,6 @@ class _MainPageState extends State<MainPage> {
             .toList(),
       ),
       // * ======= BODY ======= * //
-      // 종속성 주입 부분
       body: Builder(
         // 빌더 함수 콜
         builder: (context) => curr.builder(context),

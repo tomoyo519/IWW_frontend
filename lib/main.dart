@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/auth/auth_status.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
+import 'package:iww_frontend/model/mypage/reward.model.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/providers.dart';
@@ -113,8 +114,9 @@ class RenderPage extends StatelessWidget {
       // 사용자 전역 상태관리 객체 초기화
       UserModel user = authService.user!;
       Item mainPet = authService.mainPet!;
+      Rewards? reward = authService.reward;
       UserRepository repo = Provider.of<UserRepository>(context, listen: false);
-      userInfo = UserInfo(user, mainPet, repo);
+      userInfo = UserInfo(user, mainPet, repo, reward);
 
       // 이벤트 서비스 초기화
       EventService.setUserId(user.user_id);
