@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/auth/auth_status.dart';
 import 'package:iww_frontend/service/auth.service.dart';
-import 'package:iww_frontend/view/mypage/%08graph.dart';
+import 'package:iww_frontend/view/mypage/graph.dart';
 import 'package:iww_frontend/view/mypage/announcement.dart';
 import 'package:iww_frontend/view/mypage/myInfoEdit.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
@@ -14,7 +14,7 @@ import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/model/mypage/reward.model.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:iww_frontend/view/mypage/slider.dart';
-import 'package:iww_frontend/view/mypage/graph.dart';
+import 'package:iww_frontend/view/mypage/graph.dart';
 
 class MyPage extends StatefulWidget {
   MyPage({super.key});
@@ -312,11 +312,8 @@ class _MyPageState extends State<MyPage> {
                   ],
                 ),
               ),
-              Divider(
-                thickness: 10,
-              ),
               Container(
-                height: 300,
+                height: 150,
                 // width: MediaQuery.of(context).size.width * 0.9,
                 child: CarouselSliderDemo(),
               ),
