@@ -24,7 +24,11 @@ class RenderPage extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           // 배경, 가구 렌더링
-          RenderMyRoom(),
+          Selector<MyRoomViewModel, List<Item>>(
+              selector: (_, myRoomViewModel) => myRoomViewModel.roomObjects,
+              builder: (_, roomObjects, __) {
+                return RenderMyRoom();
+              }),
           // 펫 렌더링
           FutureBuilder<int>(
               future: UserRepository().getUserHealth(myRoomState.getRoomOwner),
