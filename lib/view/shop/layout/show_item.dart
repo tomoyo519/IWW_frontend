@@ -10,7 +10,7 @@ class ShowItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-        child: allpets.length > 0
+        child: allpets?.length > 0
             ? ListView.builder(
                 itemCount: allpets?.length,
                 itemBuilder: (context, idx) {
@@ -85,7 +85,7 @@ class ShowItem extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               Expanded(
-                                flex: 4,
+                                flex: 3,
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(
                                       10.0), // 원하는 radius 값으로 변경 가능합니다.
@@ -97,7 +97,7 @@ class ShowItem extends StatelessWidget {
                                 ),
                               ),
                               Expanded(
-                                flex: 6,
+                                flex: 7,
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Column(
