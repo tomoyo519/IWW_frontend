@@ -315,7 +315,11 @@ class _MyPageState extends State<MyPage> {
               Divider(
                 thickness: 10,
               ),
-              // CarouselSliderDemo(),
+              Container(
+                height: 300,
+                // width: MediaQuery.of(context).size.width * 0.9,
+                child: CarouselSliderDemo(),
+              ),
               Container(
                 child: Padding(
                   padding: const EdgeInsets.only(left: 20.0, bottom: 5.0),

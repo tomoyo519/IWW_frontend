@@ -25,7 +25,7 @@ class UserInfo extends ChangeNotifier {
     this._reward,
   ) {
     _setUserState(_user, _mainPet, _reward);
-    _setStateFromModels(_user, _mainPet);
+    // _setStateFromModels(_user, _mainPet);
 
     // 초기 로그인 카운트 알림
     // if (_user.login_cnt >= 30) {
