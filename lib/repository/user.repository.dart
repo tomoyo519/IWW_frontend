@@ -6,6 +6,7 @@ import 'package:iww_frontend/datasource/localStorage.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/auth/login_result.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
+import 'package:iww_frontend/model/user/attendance.model.dart';
 import 'package:iww_frontend/model/user/get-user-by-contact.dto.dart';
 import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/utils/logger.dart';
@@ -84,6 +85,7 @@ class UserRepository {
 
   Future<GetUserResult?> getUser() async {
     return await RemoteDataSource.get("/user").then((response) {
+      LOG.log(response.body);
       if (response.statusCode == 200) {
         var jsonBody = jsonDecode(response.body)['result'];
         Item pet = Item.fromJson(jsonBody['user_pet']);
@@ -168,6 +170,22 @@ class UserRepository {
       return true;
     } catch (error) {
       return false;
+    }
+  }
+
+  Future<List<UserAttandance>?> fetUserAtt(userId) async {
+    try {
+      return RemoteDataSource.get("/attendance/${userId}").then((res) {
+        if (res.statusCode == 200) {
+          var jsonData = json.decode(res.body);
+
+          LOG.log('${jsonData["result"]}');
+          return List<UserAttandance>.from(
+              jsonData["result"].map((item) => UserAttandance.fromJson(item)));
+        }
+      });
+    } catch (err) {
+      return null;
     }
   }
 }

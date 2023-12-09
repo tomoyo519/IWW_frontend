@@ -224,6 +224,7 @@ class _MyRoomPageState extends State<MyRoomPage> {
           // label: '방명록',
           onTap: _showComments,
           child: Icon(Icons.local_post_office),
+          // label: '방명록',
         ),
         SpeedDialChild(
           shape: CircleBorder(),
