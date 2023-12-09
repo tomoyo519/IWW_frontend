@@ -49,6 +49,7 @@ class _GroupDetailState extends State<GroupDetail> {
   bool isLoading = true;
   late TextEditingController _controller;
   late GlobalKey<FormState> _formKey;
+  List<Routine>? routines;
   List<GroupImg>? routineImgs;
 
   getData() async {
@@ -176,32 +177,49 @@ class _GroupDetailState extends State<GroupDetail> {
   }
 
   void _setRoutinePicture(int rout_id) async {
-    var result = await RemoteDataSource.get(
-            "/group/${widget.group.groupId}/user/${rout_id}/image")
-        .then((res) {
-      if (res.statusCode == 200) {
-        var json = jsonDecode(res.body);
-        LOG.log(res.body);
-        setState(() {
-          routineImgs = (json["result"] as List)
-              .map((item) => GroupImg.fromJson(item))
-              .toList();
-        });
-      }
-      LOG.log('thisisroutineImgs: ${routineImgs}');
-    });
+    // 첫 번째 루틴 로드인 경우 상태 불러와서 세트
+    if (routines == null) {
+      await RemoteDataSource.get('/routine/${widget.group.groupId}')
+          .then((res) {
+        if (res.statusCode == 200) {
+          List<dynamic> jsonList = jsonDecode(res.body)['result'];
+          routines = jsonList.map((e) => Routine.fromJson(e)).toList();
+        }
+        return [];
+      });
+    }
+
     // 클릭시, 그룹 구성원의 사진 인증 보여주는 기능
-    // ignore: use_build_context_synchronously
+    Routine? rout = routines?.where((e) => e.routId == rout_id).first;
+    if (rout != null) {
+      await RemoteDataSource.get(
+              "/group/${widget.group.groupId}/user/$rout_id/image")
+          .then((res) {
+        if (res.statusCode == 200) {
+          var json = jsonDecode(res.body);
+          LOG.log(res.body);
+          setState(() {
+            routineImgs = (json["result"] as List)
+                .map((item) => GroupImg.fromJson(item))
+                .toList();
+          });
+        }
+        LOG.log('thisisroutineImgs: ${routineImgs}');
+      });
+    }
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       useRootNavigator: true,
       builder: (BuildContext context) {
-        return Container(
+        return SizedBox(
           height: MediaQuery.of(context).size.height * 0.8,
           width: MediaQuery.of(context).size.width,
           child: Column(
             children: [
+              // 1. 루틴 제목
+              // 2. 루틴 설명
+              //
               routineImgs!.isNotEmpty
                   ? Container(
                       child: Expanded(
@@ -251,16 +269,28 @@ class _GroupDetailState extends State<GroupDetail> {
   @override
   Widget build(BuildContext context) {
     AppNavigator nav = context.read<AppNavigator>();
+    Size screen = MediaQuery.of(context).size;
     return !isLoading
         ? Scaffold(
             appBar: MyAppBar(),
-            body: Container(
-                // padding: EdgeInsets.all(20),
-                child: SingleChildScrollView(
+            body: SingleChildScrollView(
               child: Column(children: [
+                // 1. 상단 이미지
+                ConstrainedBox(
+                  constraints: BoxConstraints.expand(
+                    height: screen.height * 0.25,
+                  ),
+                  child: Image.asset(
+                    'assets/category/academy.jpg',
+                    fit: BoxFit.cover,
+                    alignment: Alignment.center,
+                  ),
+                ),
+
+                // 2. 그룹 제목
                 Padding(
                   padding: const EdgeInsets.all(20.0),
-                  child: Container(
+                  child: SizedBox(
                     width: double.infinity,
                     child: Text(
                       widget.group.grpName,
@@ -272,36 +302,47 @@ class _GroupDetailState extends State<GroupDetail> {
                     ),
                   ),
                 ),
-                // Divider(color: Colors.grey, thickness: 1, indent: 10),
+
+                // 3. 그룹 운영자
                 Padding(
-                  padding: const EdgeInsets.only(left: 20.0, right: 20),
+                  padding:
+                      const EdgeInsets.only(left: 20.0, right: 20, top: 10),
                   child: Row(
-                    children: [
-                      Icon(
-                        Icons.person,
-                        color: Colors.black54,
-                        size: 20,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Expanded(
+                        flex: 7,
+                        child: Text(
+                          "그룹장",
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
-                      // Padding(
-                      //   padding: const EdgeInsets.only(right: 3),
-                      //   child: Text(
-                      //     "BY",
-                      //     style: TextStyle(
-                      //       fontWeight: FontWeight.bold,
-                      //       color: Colors.black54,
-                      //     ),
-                      //   ),
-                      // ),
-                      Text(
-                        widget.group.ownerName ?? "운영자",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
+                      Expanded(
+                        flex: 3,
+                        child: Container(
+                          padding: EdgeInsets.only(top: 10),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 10),
+                            child: Text(
+                              widget.group.ownerName ?? "운영자",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
 
+                // 4. 카테고리
                 Padding(
                   padding: const EdgeInsets.only(left: 20.0, right: 20),
                   child: SizedBox(
@@ -309,7 +350,7 @@ class _GroupDetailState extends State<GroupDetail> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
+                      children: <Widget>[
                         Expanded(
                           flex: 7,
                           child: Text(
@@ -347,41 +388,46 @@ class _GroupDetailState extends State<GroupDetail> {
                   ),
                 ),
 
+                // 5. 그룹 설명
                 Padding(
-                  padding:
-                      const EdgeInsets.only(left: 20.0, right: 20, top: 20),
-                  child: Container(
-                    width: double.infinity,
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          "그룹 세부 정보",
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        "그룹 세부 정보",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
                         ),
-                      ],
-                    ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(top: 10),
+                        alignment: Alignment.topLeft,
+                        decoration: BoxDecoration(),
+                        child: Text(widget.group.grpDesc ?? "그룹 설명"),
+                      ),
+                    ],
                   ),
                 ),
 
-                // DecoratedBox(decoration: )
+                // Divider(color: Colors.grey, thickness: 1, indent: 10),
 
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: TextField(
-                    readOnly: true,
-                    controller: _controller,
-                    decoration: InputDecoration(
-                      hintText: "우리 그룹에 대한 설명이에요",
-                      contentPadding: EdgeInsets.all(10),
-                      border: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.black, width: 1)),
-                    ),
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.all(20.0),
+                //   child: TextField(
+                //     readOnly: true,
+                //     controller: _controller,
+                //     decoration: InputDecoration(
+                //       hintText: "우리 그룹에 대한 설명이에요",
+                //       contentPadding: EdgeInsets.all(10),
+                //       border: OutlineInputBorder(
+                //           borderSide:
+                //               BorderSide(color: Colors.black, width: 1)),
+                //     ),
+                //   ),
+                // ),
 
                 Divider(
                   thickness: 10,
@@ -389,17 +435,18 @@ class _GroupDetailState extends State<GroupDetail> {
                 ),
 
                 Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "기본 루틴",
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w900,
-                        ),
+                  padding: const EdgeInsets.all(20.0),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "기본 루틴",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w900,
                       ),
-                    )),
+                    ),
+                  ),
+                ),
 
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -604,7 +651,7 @@ class _GroupDetailState extends State<GroupDetail> {
                   )
                 ]
               ]),
-            )))
+            ))
         : Lottie.asset('assets/spinner.json',
             repeat: true,
             animate: true,

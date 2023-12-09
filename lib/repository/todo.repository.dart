@@ -10,34 +10,45 @@ class TodoRepository {
   /// ================== ///
   ///         Get        ///
   /// ================== ///
-  Future<List<Todo>> getTodos(int userId) async {
+  Future<Map<String, List<Todo>>> getTodos(int userId) async {
     return await RemoteDataSource.get("/todo/user/$userId").then((response) {
       if (response.statusCode == 200) {
         List<dynamic> jsonData = jsonDecode(response.body);
 
         // 만약 할일이 없으면
         if (jsonData.isEmpty) {
-          return [];
+          return {
+            "normal": [],
+            "group": [],
+            "total": [],
+          };
         }
 
         List<Todo>? data = jsonData.map((data) => Todo.fromJson(data)).toList();
         // 오늘
         DateTime yesterday = DateTime.now().subtract(Duration(days: 1));
-        data = data
-            .where((element) =>
-                element.userId == userId &&
-                element.todoDeleted == false &&
-                (DateTime.parse(
-                      element.todoDate,
-                    ).isAfter(yesterday) ||
-                    element.todoDone == false))
+        List<Todo> normal = data
+            .where((e) => (e.grpId == null &&
+                (DateTime.parse(e.todoDate).isAfter(yesterday) ||
+                    e.todoDone == false)))
             .toList();
 
-        // 정렬해서 넘김
-        data.sort((a, b) => a.todoDate.compareTo(b.todoDate));
-        return data;
+        List<Todo> group = data
+            .where((e) => (e.grpId != null &&
+                DateTime.parse(e.todoDate).isAfter(yesterday)))
+            .toList();
+
+        return {
+          "normal": normal,
+          "group": group,
+          "total": data,
+        };
       }
-      return [];
+      return {
+        "normal": [],
+        "group": [],
+        "total": [],
+      };
     });
   }
 

@@ -7,46 +7,10 @@ import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/utils/logger.dart';
 
-// class Attendance extends StatefulWidget {
-//   const Attendance({super.key});
-
-//   @override
-//   State<Attendance> createState() => _AttendanceState();
-// }
-
 class Attendance extends StatelessWidget {
   // late UserInfo userInfo;
   final List<String> attDays;
   Attendance({super.key, required this.attDays});
-
-  // List attDays = [];
-  // List days = ["일", "월", "화", "수", "목", "금", "토"];
-  // @override
-  // void initState() {
-  //   super.initState();
-
-  //   WidgetsBinding.instance!.addPostFrameCallback((_) {
-  //     getList();
-  //   });
-  // }
-
-  // getList() async {
-  //   userInfo = context.read<UserInfo>();
-  //   await RemoteDataSource.get('/attendance/${userInfo.userId}').then((res) {
-  //     LOG.log(res.body);
-  //     if (res.statusCode == 200) {
-  //       var json = jsonDecode(res.body);
-
-  //       for (int i = 0; i < json.length; i++) {
-  //         LOG.log('${json["result"][i]["day_of_week"]}');
-  //         setState(() {
-  //           attDays.add(json["result"][i]["day_of_week"].toString());
-  //         });
-  //       }
-  //       LOG.log('thisisdays; $attDays');
-  //     }
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
