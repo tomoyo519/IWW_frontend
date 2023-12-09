@@ -69,7 +69,6 @@ void main() async {
 
   // 3. 테스트유저 접속
   // await authService.testLogin();
-
   // authService.status = AuthStatus.initialized;
   // authService.waiting = false;
 
@@ -92,7 +91,10 @@ void main() async {
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: getapptheme(),
-          home: RenderPage(),
+          home: RenderPage(
+            authService: authService,
+            repository: userRepository,
+          ),
         ),
       ),
     ),
@@ -103,31 +105,50 @@ void main() async {
 // 미인증 사용자인 경우 → Landing
 // 인증된 사용자인 경우 → MainPage
 // */
-class RenderPage extends StatelessWidget {
-  const RenderPage({super.key});
+class RenderPage extends StatefulWidget {
+  AuthService authService;
+  UserRepository repository;
+
+  RenderPage({
+    super.key,
+    required this.authService,
+    required this.repository,
+  });
 
   @override
-  Widget build(BuildContext context) {
-    AuthService authService = context.watch<AuthService>();
-    UserInfo? userInfo;
+  State<RenderPage> createState() => _RenderPageState();
+}
 
-    if (authService.status == AuthStatus.initialized) {
+class _RenderPageState extends State<RenderPage> {
+  UserInfo? userInfo;
+  AuthService? auth;
+
+  @override
+  void initState() {
+    super.initState();
+
+    auth = widget.authService;
+    UserRepository repo = widget.repository;
+
+    if (auth!.status == AuthStatus.initialized) {
       // 사용자 전역 상태관리 객체 초기화
-      UserModel user = authService.user!;
-      Item mainPet = authService.mainPet!;
-      Rewards? reward = authService.reward;
-      List<UserAttandance> attd = authService.attendance ?? [];
-      UserRepository repo = Provider.of<UserRepository>(context, listen: false);
+      UserModel user = auth!.user!;
+      Item mainPet = auth!.mainPet!;
+      Rewards? reward = auth!.reward;
+      List<UserAttandance> attd = auth!.attendance ?? [];
       userInfo = UserInfo(user, mainPet, repo, reward, attd);
 
       // 이벤트 서비스 초기화
       EventService.setUserId(user.user_id);
-      EventService.initialize(userInfo);
+      EventService.initialize(userInfo!);
     }
+  }
 
-    return authService.waiting
+  @override
+  Widget build(BuildContext context) {
+    return auth!.waiting
         ? LoadingPage()
-        : authService.status != AuthStatus.initialized
+        : auth != null && auth!.status != AuthStatus.initialized
             ? LandingPage()
             : MultiProvider(
                 providers: [

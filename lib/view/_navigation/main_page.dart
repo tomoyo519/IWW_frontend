@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
@@ -35,6 +36,8 @@ class MainPage extends StatefulWidget implements PreferredSizeWidget {
 class _MainPageState extends State<MainPage> {
   bool waiting = false;
   StreamSubscription<Event>? sub;
+  final Queue<Event> _eventQueue = Queue<Event>();
+  bool _isProcessing = false;
 
   @override
   void initState() {
@@ -51,12 +54,32 @@ class _MainPageState extends State<MainPage> {
         if (type.target == 'socket') {
           type.run(context, message: message);
         } else if (type.target == 'ui') {
-          Future.microtask(() async {
-            type.run(context, message: message);
-          });
+          _eventQueue.add(event);
+          if (!_isProcessing) {
+            _nextEvent();
+          }
         }
       },
     );
+  }
+
+  void _nextEvent() {
+    if (_eventQueue.isEmpty) {
+      _isProcessing = false;
+      return;
+    }
+
+    _isProcessing = true;
+    Event event = _eventQueue.removeFirst();
+    String? message = event.message;
+    EventType type = event.type;
+
+    Future.microtask(() async {
+      type.run(context, message: message);
+    }).then((value) {
+      _isProcessing = false;
+      _nextEvent();
+    });
   }
 
   @override
@@ -106,6 +129,7 @@ class _MainPageState extends State<MainPage> {
       ),
       bottomNavigationBar: nav.isBottomSheetPage
           ? BottomNavigationBar(
+              iconSize: 30,
               currentIndex: nav.current.idx.index,
               onTap: (idx) {
                 nav.navigate(idx.route);
@@ -117,9 +141,7 @@ class _MainPageState extends State<MainPage> {
                       ))
                   .toList(),
               type: BottomNavigationBarType.fixed,
-              // 이 옵션 주면 라벨 text 뜨지않음
-              showSelectedLabels: false,
-              showUnselectedLabels: false,
+
               // 선택된 페이지 컬러
               selectedItemColor: Colors.orange)
           : null,

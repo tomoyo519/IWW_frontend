@@ -11,6 +11,7 @@ import 'package:iww_frontend/model/user/user.model.dart';
 
 // 그룹 리스트 화면의 상태를 관리
 class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
+  bool _isDisposed = false;
   final GroupRepository _groupRepository;
   // final UserInfo? _userInfo;
   final int _user;
@@ -59,6 +60,12 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
     notifyListeners();
   }
 
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
+  }
+
   Future<void> fetchMyGroupList(userId) async {
     try {
       List<Group>? data = await _groupRepository.getMyGroupList(userId);
@@ -71,8 +78,11 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
       groups = [];
       LOG.log('error: $err');
     } finally {
-      notifyListeners();
-      waiting = false;
+      // after disposed 관련 exception 방지
+      if (!_isDisposed) {
+        notifyListeners();
+        waiting = false;
+      }
     }
   }
 

@@ -7,6 +7,7 @@ class Group {
   String grpName;
   String? grpDesc;
   int? catId;
+  String? catImg;
   String? catName;
   String? ownerName;
   String memCnt;
@@ -18,6 +19,7 @@ class Group {
     required this.memCnt,
     this.grpDesc,
     this.catName,
+    this.catImg,
     this.catId,
   });
 
@@ -29,6 +31,7 @@ class Group {
       grpDesc: body['grp_desc'],
       catId: body['cat_id'],
       catName: body['cat_name'],
+      catImg: body['cat_img'],
       ownerName: body['owner'],
       memCnt: body['mem_cnt'],
     );
@@ -41,6 +44,7 @@ class Group {
       'grp_desc': grpDesc,
       'cat_id': catId,
       'cat_name': catName,
+      'cat_img': catImg,
       'owner': ownerName,
       'mem_cnt': memCnt
     };
@@ -53,6 +57,7 @@ class Group {
       'grp_desc': grpDesc,
       'cat_id': catId,
       'cat_name': catName,
+      'cat_img': catImg,
       'owner': ownerName,
       'mem_cnt': memCnt
     };

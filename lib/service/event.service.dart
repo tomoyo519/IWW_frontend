@@ -332,13 +332,13 @@ class EventService {
       'message': data['message']
     });
 
-    await flutterLocalNotificationsPlugin.show(
-      3,
-      'todo 인증 확인',
-      '${data['message']}',
-      generalDetails,
-      payload: payload,
-    );
+    // await flutterLocalNotificationsPlugin.show(
+    //   3,
+    //   'todo 인증 확인',
+    //   '${data['message']}',
+    //   generalDetails,
+    //   payload: payload,
+    // );
 
     // 유저 정보 갱신
     await userInfo.handleGroupCheck();

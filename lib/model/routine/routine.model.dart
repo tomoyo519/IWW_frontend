@@ -4,7 +4,7 @@ class Routine {
   int grpId;
   int routId;
   String routName;
-  String? routRepeat;
+  String routRepeat;
 
   String? routSrt;
   String? routEnd;
@@ -14,13 +14,11 @@ class Routine {
     required this.routName,
     required this.grpId,
     required this.routId,
-    this.routRepeat,
+    required this.routRepeat,
     routDesc,
     routSrt,
     routEnd,
-  }) {
-    routRepeat = routRepeat ?? '1111111';
-  }
+  });
 
   Map<String, dynamic> toJSON() {
     return {
@@ -41,19 +39,22 @@ class Routine {
         routSrt = json['todo_start'],
         routEnd = json['todo_end'];
 
-  Routine.fromJson(Map<String, dynamic> json)
+  Routine.fromJson(Map<String, dynamic> json, {int? routId})
       : routName = json['rout_name'] ?? json['todo_name'],
         routDesc = json['rout_desc'],
         routRepeat = json['rout_repeat'] ?? '1111111',
         grpId = json['grp_id'],
-        routId = json['rout_id'],
+        routId = json['rout_id'] ?? routId,
         routSrt = json['rout_srt'],
         routEnd = json['rout_end'];
 
   Routine.fromGroupDetailJson(Map<String, dynamic> json, this.grpId)
       : routId = json['rout_id'],
         routName = json['rout_name'],
-        routDesc = json['rout_desc'];
+        routDesc = json['rout_desc'],
+        routRepeat = json['rout_repeat'] ?? '1111111',
+        routSrt = json['rout_srt'],
+        routEnd = json['rout_end'];
 
   // 오늘 날짜로 user_id를 매핑한 Todo를 생성해 반환한다.
   Todo generateTodo(int userId) {
