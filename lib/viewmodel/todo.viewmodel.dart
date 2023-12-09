@@ -9,20 +9,6 @@ import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
 
-class SubTodoList {
-  int idx;
-  String title;
-  List<Todo> items;
-  bool toggled;
-
-  SubTodoList({
-    required this.idx,
-    required this.title,
-    required this.items,
-    required this.toggled,
-  });
-}
-
 // 전체 투두리스트 상태를 관리
 class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   final int _userId;
@@ -31,21 +17,6 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   // 생성자
   TodoViewModel(this._repository, this._userId) {
     fetchTodos();
-
-    subList = [
-      SubTodoList(
-        idx: 0,
-        title: "그룹 인증 할일",
-        items: _normalTodos,
-        toggled: true,
-      ),
-      SubTodoList(
-        idx: 0,
-        title: "오늘의 할일",
-        items: _groupTodos,
-        toggled: true,
-      ),
-    ];
   }
 
   @override
@@ -57,8 +28,6 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   // ****************************** //
   // *        View States         * //
   // ****************************** //
-
-  late List<SubTodoList> subList;
 
   // 1. 전체 투두
   List<Todo> _todos = [];
@@ -75,14 +44,6 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   // 4. 기한이 지난 개인투두
   List<Todo> _prevTodos = [];
   List<Todo> get prevTodos => _prevTodos;
-
-  // 현재 토글된 투두
-  int _toggledList = 0;
-  int get toggledList => _toggledList;
-  set toggledList(int val) {
-    _toggledList = val;
-    notifyListeners();
-  }
 
   bool _waiting = true;
   bool get waiting => _waiting;

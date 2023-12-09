@@ -169,12 +169,19 @@ class UserInfo extends ChangeNotifier {
   void initEvents() {
     _onLoginReward(_reward);
 
-    // EVENT TEST
-    var message = "000님께서 5분 아침체조 루틴을 인증했어요";
-    EventService.publish(Event(
-      type: EventType.onTodoApproved,
-      message: message,
-    ));
+    // 업적 달성 모달 테스트
+    // Rewards reward = Rewards(
+    //   achiName: '첫 로그인',
+    //   achiDesc: 'achiDesc',
+    //   isHidden: false,
+    //   achiImg: 'assets/achi/login.png',
+    // );
+
+    // var message = jsonEncode(reward.toMap());
+    // EventService.publish(Event(
+    //   type: EventType.onAchieve,
+    //   message: message,
+    // ));
   }
 
   // 첫 투두 체크 이벤트
@@ -198,7 +205,7 @@ class UserInfo extends ChangeNotifier {
 
   // 로그인 이벤트
   void _onLoginReward(Rewards? reward) {
-    if (reward == null) return;
+    if (reward == null || reward.isHidden == true) return;
 
     var message = jsonEncode(reward.toMap());
     EventService.publish(Event(
