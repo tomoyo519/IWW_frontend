@@ -19,27 +19,16 @@ class UserInfo extends ChangeNotifier {
   UserModel _user;
   Item _mainPet;
   Rewards? _reward;
+  List<UserAttandance> _attendances;
 
   UserInfo(
     this._user,
     this._mainPet,
     this._repository,
     this._reward,
+    this._attendances,
   ) {
-    _setUserState(_user, _mainPet, _reward);
-    // _setStateFromModels(_user, _mainPet);
-
-    // 초기 로그인 카운트 알림
-    // if (_user.login_cnt >= 30) {
-    //   EventService.publish(
-    //     Event(
-    //       type: EventType.show_login_achieve,
-    //       message: jsonEncode({
-    //         "title": "로그인 카운트 30회 달성!",
-    //       }),
-    //     ),
-    //   );
-    // }
+    _setUserState(_user, _mainPet, reward: _reward, attd: _attendances);
   }
 
   // === Status === //
@@ -56,6 +45,8 @@ class UserInfo extends ChangeNotifier {
   // === Getters === //
   Item get mainPet => _mainPet;
   UserModel get userModel => _user;
+  List<String> get attendance =>
+      _attendances.map((e) => e.day_of_week.toString()).toList();
 
   int get userId => _user.user_id;
   String get userName => _userName;
@@ -101,13 +92,11 @@ class UserInfo extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<UserAttandance> attendances = [];
-
-  // 유저 정보 갱신
+  // 유저 정보 갱신 (초기 로그인시 작동)
   Future<void> fetchUser() async {
     GetUserResult? fetched = await _repository.getUser();
     if (fetched != null) {
-      _setUserState(fetched.user, fetched.pet, null);
+      _setUserState(fetched.user, fetched.pet);
       LOG.log("Fetched user state.");
     }
   }
@@ -161,7 +150,8 @@ class UserInfo extends ChangeNotifier {
   }
 
   // Fetch해온 유저 정보를 상태로 세팅
-  void _setUserState(UserModel newUser, Item newPet, Rewards? reward) {
+  void _setUserState(UserModel newUser, Item newPet,
+      {Rewards? reward, List<UserAttandance>? attd}) {
     // * Set new user info * //
     _user = newUser;
     _userName = newUser.user_name;
@@ -176,8 +166,12 @@ class UserInfo extends ChangeNotifier {
     _itemName = newPet.name;
     _petName = newPet.petName ?? '';
 
-    // * Set reward info * //
+    // * Set other info * //
     _reward = reward;
+
+    if (attd != null) {
+      _attendances = attd;
+    }
 
     notifyListeners();
   }
@@ -231,14 +225,14 @@ class UserInfo extends ChangeNotifier {
     ));
   }
 
-  Future<List<UserAttandance>?> fetchAttandance() async {
-    List<UserAttandance>? fetched = await _repository.fetUserAtt(userId);
-    LOG.log('야홓호호ㅗㅗ호호호$fetched');
-    if (fetched != null) {
-      attendances = fetched;
-      return fetched;
-    } else {
-      return null;
-    }
-  }
+  // Future<List<UserAttandance>?> fetchAttandance() async {
+  //   List<UserAttandance>? fetched = await _repository.fetUserAtt(userId);
+  //   LOG.log('야홓호호ㅗㅗ호호호$fetched');
+  //   if (fetched != null) {
+  //     attendances = fetched;
+  //     return fetched;
+  //   } else {
+  //     return null;
+  //   }
+  // }
 }
