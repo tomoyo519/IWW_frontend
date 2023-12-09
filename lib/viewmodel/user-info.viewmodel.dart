@@ -181,18 +181,18 @@ class UserInfo extends ChangeNotifier {
     _onLoginReward(_reward);
 
     // 업적 달성 모달 테스트
-    // Rewards reward = Rewards(
-    //   achiName: '첫 로그인',
-    //   achiDesc: 'achiDesc',
-    //   isHidden: false,
-    //   achiImg: 'assets/achi/login.png',
-    // );
+    Rewards reward = Rewards(
+      achiName: '첫 로그인',
+      achiDesc: 'achiDesc',
+      isHidden: false,
+      achiImg: 'assets/achi/login.png',
+    );
 
-    // var message = jsonEncode(reward.toMap());
-    // EventService.publish(Event(
-    //   type: EventType.onAchieve,
-    //   message: message,
-    // ));
+    var message = jsonEncode(reward.toMap());
+    EventService.publish(Event(
+      type: EventType.onAchieve,
+      message: message,
+    ));
   }
 
   // 첫 투두 체크 이벤트
