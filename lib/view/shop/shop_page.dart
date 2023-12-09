@@ -102,7 +102,11 @@ class _ShopItems extends State<ShopItems> {
                       allpets: allpets,
                       purchase: purchase,
                       isLoading: isPetLoading),
-                if (allpets == null || allpets!.isEmpty) Container(),
+                if (isPetLoading == true)
+                  Lottie.asset('assets/spinner.json',
+                      repeat: true,
+                      animate: true,
+                      height: MediaQuery.of(context).size.height * 0.3),
                 if (allfuns != null && allfuns!.isEmpty)
                   Lottie.asset('assets/empty.json',
                       repeat: true,
@@ -113,7 +117,11 @@ class _ShopItems extends State<ShopItems> {
                       allpets: allfuns,
                       purchase: purchase,
                       isLoading: isPetLoading),
-                if (allfuns == null || allfuns!.isEmpty) Container(),
+                if (isFunLoading == true)
+                  Lottie.asset('assets/spinner.json',
+                      repeat: true,
+                      animate: true,
+                      height: MediaQuery.of(context).size.height * 0.3),
               ],
             ),
           )

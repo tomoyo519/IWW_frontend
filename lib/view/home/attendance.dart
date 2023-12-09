@@ -89,7 +89,7 @@ class Attendance extends StatelessWidget {
                           //     ),
                           //     child:
                           //   )
-                          : ElevatedButton(
+                          : TextButton(
                               onPressed: () {},
                               child: Text(
                                 index == 0
@@ -105,8 +105,10 @@ class Attendance extends StatelessWidget {
                                                     : index == 5
                                                         ? "금"
                                                         : "토",
+                                style: TextStyle(color: Colors.black),
                               ),
                               style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.grey[100],
                                 shape: CircleBorder(),
                               ),
                             );
