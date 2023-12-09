@@ -145,16 +145,19 @@ class TopObjects extends StatelessWidget {
         return SizedBox();
       }
 
+      // [x, y] 형태로 상대좌표 획득
       List<double> position =
           item.metadata!.split('x').map((e) => double.parse(e)).toList();
-      double x = position[0];
-      double y = position[1];
+
+      // 가로 전체, 세로 기준 2/3 지점까지만 배치 가능
+      double x = MediaQuery.of(context).size.width * position[0];
+      double y = (MediaQuery.of(context).size.height * 0.67) * position[1];
 
       // double imageWidth = MediaQuery.of(context).size.width * 0.2;
 
       return Positioned(
-        top: MediaQuery.of(context).size.height * y,
-        left: MediaQuery.of(context).size.width * x,
+        top: y,
+        left: x,
         // width: imageWidth,
         // height: imageWidth,
         child: Image.asset(
