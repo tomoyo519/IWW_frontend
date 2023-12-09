@@ -56,7 +56,7 @@ class _MyPetState extends State<MyPet> {
       cameraOrbit: '0deg 70deg 8m',
       cameraTarget: '0.7m 0.7m 0m',
       autoRotate: true,
-      rotationPerSecond: '0.8rad',
+      rotationPerSecond: '2rad',
     ),
     'Swim': Preset(
       animationName: 'Swim',
@@ -69,35 +69,35 @@ class _MyPetState extends State<MyPet> {
     'Idle': Preset(
       animationName: 'Idle',
       cameraOrbit: '30deg 80deg 0m',
-      cameraTarget: '0.5m 0.7m 0.8m',
+      cameraTarget: '0.5m 0.7m 1m',
       autoRotate: false,
       rotationPerSecond: '0rad',
     ),
     'Jump': Preset(
-      animationName: 'Jump',
-      cameraOrbit: '30deg 80deg 0m',
-      cameraTarget: '0.5m 0.7m 0.8m',
-      autoRotate: false,
+        animationName: 'Jump',
+        cameraOrbit: '30deg 80deg 0m',
+      cameraTarget: '0.5m 0.8m 0.8m',
+        autoRotate: false,
       rotationPerSecond: '0rad',
     ),
     'Bounce': Preset(
       animationName: 'Bounce',
       cameraOrbit: '30deg 80deg 0m',
-      cameraTarget: '0.5m 0.7m 0.8m',
+      cameraTarget: '0.5m 0.8m 0.8m',
       autoRotate: false,
       rotationPerSecond: '0rad',
     ),
     'Clicked': Preset(
       animationName: 'Clicked',
       cameraOrbit: '30deg 80deg 0m',
-      cameraTarget: '0.5m 0.7m 0.8m',
+      cameraTarget: '0.5m 0.8m 0.8m',
       autoRotate: false,
       rotationPerSecond: '0rad',
     ),
     'Spin': Preset(
       animationName: 'Spin',
       cameraOrbit: '30deg 80deg 0m',
-      cameraTarget: '0.5m 0.7m 0.8m',
+      cameraTarget: '0.5m 0.8m 0.8m',
       autoRotate: false,
       rotationPerSecond: '0rad',
     ),
@@ -131,6 +131,39 @@ class _MyPetState extends State<MyPet> {
     },
     '구미호_03': {
       'src': 'assets/pets/kitsune.glb',
+      'motions': [
+        'Idle',
+        'Walk',
+        'Jump',
+        'Roll',
+        'Swim',
+        'Spin',
+        'Bounce',
+        'Clicked'
+      ]
+    },
+    '용_01': {
+      'src': 'assets/pets/monitor_lizard.glb',
+      'motions': ['Idle', 'Walk', 'Jump']
+    },
+    // '용_02': {
+    //   'src': 'assets/pets/monitor_lizard.glb',
+    //   'motions': ['Idle', 'Walk', 'Jump']
+    // },    
+    '용_03': {
+      'src': 'assets/pets/chinese_dragon.glb',
+      'motions': ['Idle', 'Walk', 'Jump']
+    },
+    '불사조_01': {
+      'src': 'assets/pets/pink_robin.glb',
+      'motions': ['Idle', 'Walk', 'Jump']
+    },
+    '불사조_02': {
+      'src': 'assets/pets/archers_buzzard.glb',
+      'motions': ['Idle', 'Walk', 'Jump']
+    },
+    '불사조_03': {
+      'src': 'assets/pets/pheonix.glb',
       'motions': ['Idle', 'Walk', 'Jump']
     },
   };

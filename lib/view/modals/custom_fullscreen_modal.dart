@@ -13,18 +13,17 @@ void showCustomFullScreenModal({
       Animation<double> secondaryAnimation,
     ) {
       return Material(
-        child: Container(
+        color: Colors.transparent,
+        child: SizedBox(
           width: screen.width,
           height: screen.height,
-          child: builder(context),
+          child: Center(child: builder(context)),
         ),
       );
     },
     barrierDismissible: true,
-    barrierLabel: MaterialLocalizations.of(
-      context,
-    ).modalBarrierDismissLabel,
-    barrierColor: Colors.black45,
+    barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+    barrierColor: Color.fromARGB(220, 0, 0, 0),
     transitionDuration: const Duration(
       milliseconds: 200,
     ),

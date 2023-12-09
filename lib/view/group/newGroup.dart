@@ -85,16 +85,8 @@ class _NewGroupState extends State<NewGroup> {
     final editormodel = context.read<EditorModalViewModel>();
     bool result = await editormodel.createTodo();
     if (context.mounted && result == true) {
-      // groupmodel.createTodo(data);
       FocusScope.of(context).unfocus();
       Navigator.pop(context);
-
-      EventService.publish(
-        Event(
-          type: EventType.show_todo_snackbar,
-          message: "루틴 추가가 완료되었어요!",
-        ),
-      );
     }
   }
 

@@ -16,10 +16,187 @@ import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 
-class ToDoList extends StatelessWidget {
-  final scroll = ScrollController();
-
+class ToDoList extends StatefulWidget {
   ToDoList({super.key});
+
+  @override
+  State<ToDoList> createState() => _ToDoListState();
+}
+
+class _ToDoListState extends State<ToDoList> with TickerProviderStateMixin {
+  final scroll = ScrollController();
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  late List<SubTodoList> _sublist;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller =
+        AnimationController(duration: Duration(milliseconds: 300), vsync: this);
+    _animation = Tween<double>(begin: 0, end: 0.5) // 0.5는 180도 회전을 의미
+        .animate(_controller);
+
+    _sublist = [
+      SubTodoList(
+        idx: 0,
+        title: "그룹 인증 할일",
+        items: [],
+        isOpen: true,
+        builder: groupTodoBuiler,
+      ),
+      SubTodoList(
+        idx: 1,
+        title: "오늘의 할일",
+        items: [],
+        isOpen: true,
+        builder: normalTodoBuilder,
+      ),
+    ];
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _toggle(SubTodoList sub) {
+    setState(() {
+      sub.isOpen = !sub.isOpen;
+    });
+    if (_animation.isDismissed) {
+      _controller.forward();
+    } else {
+      _controller.reverse();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // 데이터 가져오기
+    final viewModel = context.watch<TodoViewModel>();
+    _sublist[0].items = viewModel.groupTodos;
+    _sublist[1].items = viewModel.normalTodos;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: viewModel.waiting
+          ? Spinner()
+          : viewModel.groupTodos.isEmpty && viewModel.todos.isEmpty
+              ? TodoListEmpty()
+              : SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      for (SubTodoList sub in _sublist) ...[
+                        GestureDetector(
+                          onTap: () => _toggle(sub),
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 60,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  sub.title,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                                if (sub.isOpen == true)
+                                  Icon(Icons.keyboard_arrow_down)
+                                else
+                                  Icon(Icons.keyboard_arrow_left)
+                                // AnimatedBuilder(
+                                //   animation: _animation,
+                                //   builder: (context, child) {
+                                //     if (sub.isOpen == false) {
+                                //       return Transform.rotate(
+                                //         angle: _animation.value * 1 * pi,
+                                //         child: Icon(Icons.keyboard_arrow_down),
+                                //       );
+                                //     } else {
+                                //       return Icon(
+                                //           Icons.keyboard_arrow_left_rounded);
+                                //     }
+                                //   },
+                                // ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        if (sub.items.isNotEmpty) ...[
+                          AnimatedSize(
+                            duration: Duration(milliseconds: 300),
+                            child: sub.isOpen
+                                ? Column(children: [
+                                    for (Todo todo in sub.items)
+                                      sub.builder(todo, context)
+                                  ])
+                                : SizedBox(width: double.infinity, height: 0),
+                          )
+                        ]
+                      ]
+                    ],
+                  ),
+                ),
+    );
+  }
+
+  // ****************************** //
+  Future<void> _onNormalTodoChk(
+      BuildContext context, Todo todo, bool value) async {
+    // 개인 todo 인 경우 UI 업데이트
+    TodoViewModel todomodel = context.read<TodoViewModel>();
+    UserInfo usermodel = context.read<UserInfo>();
+    int userId = usermodel.userId;
+
+    // 할일 상태를 완료됨으로 변경
+    todomodel.checkTodoState(todo, value, userId, null);
+
+    // 리워드 계산
+    TodoCheckDto? result = await todomodel.checkNormalTodo(todo.todoId, value);
+    if (result != null) {
+      usermodel.handleTodoCheck(result);
+    }
+  }
+
+  Future<void> _onClickDelete(BuildContext context, Todo todo) async {
+    Navigator.pop(context);
+
+    final viewModel = context.read<TodoViewModel>();
+    await viewModel.deleteTodo(todo);
+  }
+
+  _showDeleteModal(BuildContext context, Todo todo) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext buildContext) => CupertinoActionSheet(
+        title: Text('할일을 삭제하시겠어요?'),
+        actions: <Widget>[
+          CupertinoActionSheetAction(
+            isDestructiveAction: true,
+            onPressed: () => _onClickDelete(context, todo),
+            child: Text('할일을 삭제할래요!'),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          isDefaultAction: true,
+          onPressed: () {
+            LOG.log('취소 선택');
+            Navigator.pop(context);
+          },
+          child: Text('취소'),
+        ),
+      ),
+    );
+  }
 
   Widget normalTodoBuilder(Todo todo, BuildContext context) {
     final viewmodel = context.watch<TodoViewModel>();
@@ -47,234 +224,20 @@ class ToDoList extends StatelessWidget {
       ),
     );
   }
-
-  @override
-  Widget build(BuildContext context) {
-    // 데이터 가져오기
-    final viewModel = context.watch<TodoViewModel>();
-    final groupTodos = viewModel.groupTodos;
-    final normalTodos = viewModel.normalTodos;
-
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: viewModel.waiting
-          ? Spinner()
-          : viewModel.groupTodos.isEmpty && viewModel.todos.isEmpty
-              ? TodoListEmpty()
-              : SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // * ==== 개인투두 ==== * //
-
-                      ToggledTodoList(
-                        title: "그룹 인증 할일",
-                        initialToggle: true,
-                        parentCtxt: context,
-                        items: groupTodos,
-                        itemBuilder: groupTodoBuiler,
-                      ),
-                      ToggledTodoList(
-                        title: "오늘의 할일",
-                        initialToggle: true,
-                        parentCtxt: context,
-                        items: normalTodos,
-                        itemBuilder: normalTodoBuilder,
-                      ),
-                    ],
-                  ),
-                ),
-    );
-  }
-
-  // ****************************** //
-  // *       On Todo Check        * //
-  // ****************************** //
-
-  // 할일 체크했을때의 로직
-  Future<void> _onNormalTodoChk(
-      BuildContext context, Todo todo, bool value) async {
-    // 개인 todo 인 경우 UI 업데이트
-    TodoViewModel todomodel = context.read<TodoViewModel>();
-    UserInfo usermodel = context.read<UserInfo>();
-    int userId = usermodel.userId;
-
-    // 할일 상태를 완료됨으로 변경
-    todomodel.checkTodoState(todo, value, userId, null);
-
-    // 리워드 계산
-    TodoCheckDto? result = await todomodel.checkNormalTodo(todo.todoId, value);
-    if (result != null) {
-      usermodel.handleTodoCheck(result);
-    }
-  }
-
-  // ****************************** //
-  // *       On Todo Delete       * //
-  // ****************************** //
-
-  // 삭제 모달에서 삭제를 누르면 실행되는 함수
-  Future<void> _onClickDelete(BuildContext context, Todo todo) async {
-    Navigator.pop(context);
-
-    final viewModel = context.read<TodoViewModel>();
-    await viewModel.deleteTodo(todo);
-  }
-
-  // // 투두 에디터에서 저장을 누르면 실행되는 함수
-  // Future<void> _updateTodo(BuildContext context) async {
-  //   final viewModel = context.read<EditorModalViewModel>();
-  //   await viewModel.updateTodo().then(
-  //     (result) {
-  //       if (context.mounted) {
-  //         Navigator.pop(context);
-  //       }
-  //     },
-  //   );
-  // }
-
-  // ****************************** //
-  // *       Show Modal UI        * //
-  // ****************************** //
-
-  // 할일 삭제 모달
-  _showDeleteModal(BuildContext context, Todo todo) {
-    showCupertinoModalPopup(
-      context: context,
-      builder: (BuildContext buildContext) => CupertinoActionSheet(
-        title: Text('할일을 삭제하시겠어요?'),
-        actions: <Widget>[
-          CupertinoActionSheetAction(
-            isDestructiveAction: true,
-            onPressed: () => _onClickDelete(context, todo),
-            child: Text('할일을 삭제할래요!'),
-          ),
-        ],
-        cancelButton: CupertinoActionSheetAction(
-          isDefaultAction: true,
-          onPressed: () {
-            LOG.log('취소 선택');
-            Navigator.pop(context);
-          },
-          child: Text('취소'),
-        ),
-      ),
-    );
-  }
 }
 
-class ToggledTodoList extends StatefulWidget {
+class SubTodoList {
+  int idx;
   String title;
+  bool isOpen;
   List<Todo> items;
-  bool initialToggle;
-  BuildContext parentCtxt;
-  Widget Function(Todo, BuildContext) itemBuilder;
+  Widget Function(Todo todo, BuildContext context) builder;
 
-  ToggledTodoList({
-    super.key,
+  SubTodoList({
+    required this.idx,
     required this.title,
     required this.items,
-    required this.parentCtxt,
-    required this.itemBuilder,
-    required this.initialToggle,
+    required this.isOpen,
+    required this.builder,
   });
-
-  @override
-  State<ToggledTodoList> createState() => _ToggledTodoListState();
-}
-
-class _ToggledTodoListState extends State<ToggledTodoList>
-    with TickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-  bool isToggled = false;
-
-  @override
-  void initState() {
-    super.initState();
-    isToggled = widget.initialToggle;
-
-    _controller = AnimationController(
-      duration: Duration(milliseconds: 300),
-      vsync: this,
-    );
-    _animation = Tween<double>(begin: 0, end: 0.5) // 0.5는 180도 회전을 의미
-        .animate(_controller);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _toggle() {
-    setState(() {
-      isToggled = !isToggled; // 토글 상태 전환
-    });
-
-    if (_controller.isDismissed) {
-      _controller.forward();
-    } else {
-      _controller.reverse();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Size screen = MediaQuery.of(context).size;
-
-    return Column(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(color: Colors.black12, width: 1),
-            ),
-          ),
-          width: screen.width,
-          height: 50,
-          child: GestureDetector(
-            onTap: () => _toggle(),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  widget.title,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                AnimatedBuilder(
-                  animation: _animation,
-                  builder: (context, child) {
-                    return Transform.rotate(
-                      angle: _animation.value * 1 * pi,
-                      child: Icon(Icons.keyboard_arrow_down_rounded),
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-        AnimatedContainer(
-          duration: Duration(milliseconds: 300),
-          height: isToggled ? screen.height * 0.8 - 300 : 0,
-          child: ListView(
-            shrinkWrap: true,
-            children: [
-              for (var item in widget.items)
-                widget.itemBuilder(item, widget.parentCtxt),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
 }

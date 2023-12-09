@@ -12,13 +12,15 @@ class MyRoomViewModel with ChangeNotifier {
 
   final RoomRepository _roomRepository;
   final int _userId; // 로그인한 사용자의 id
-  List<Item> inventory = []; // 사용자의 인벤토리
+  List<Item> items = []; // 사용자의 인벤토리
+  List<Item> pets = [];
   int _roomOwner; // 현재 있는 방의 주인 (기본값은 로그인한 사용자의 id)
   List<Item> roomObjects = []; // 현재 방에 존재하는 오브젝트 리스트
 
   MyRoomViewModel(this._userId, this._roomRepository, this._roomOwner) {
     fetchMyRoom(_roomOwner);
-    fetchInventory(_userId);
+    fetchPet(_userId);
+    fetchItem(_userId);
   }
 
   Future<void> fetchMyRoom(userId) async {
@@ -26,8 +28,13 @@ class MyRoomViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchInventory(userId) async {
-    inventory = await _roomRepository.getItemsOfInventory(userId);
+  Future<void> fetchPet(userId) async {
+    pets = await _roomRepository.getPetsOfInventory(userId);
+    notifyListeners();
+  }
+
+  Future<void> fetchItem(userId) async {
+    items = await _roomRepository.getItemsOfInventory(userId);
     notifyListeners();
   }
 
@@ -57,7 +64,7 @@ class MyRoomViewModel with ChangeNotifier {
         return;
       }
     }
-    
+
     // 중복되는 경우가 하나도 없을경우 -> 아이템 삽입
     roomObjects.add(target);
     notifyListeners();
@@ -85,7 +92,7 @@ class MyRoomViewModel with ChangeNotifier {
       }
     }
     LOG.log("NO BACKGROUND IMAGE. default: bg15.png");
-    return AssetImage('assets/bg/bg15.png');
+    return AssetImage('assets/bg/bg21.png');
   }
 
   Widget renderRoomObjects(double height) {

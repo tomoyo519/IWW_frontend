@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/service/event.service.dart';
@@ -32,6 +34,7 @@ class MainPage extends StatefulWidget implements PreferredSizeWidget {
 
 class _MainPageState extends State<MainPage> {
   bool waiting = false;
+  StreamSubscription<Event>? sub;
 
   @override
   void initState() {
@@ -39,7 +42,7 @@ class _MainPageState extends State<MainPage> {
     requestNotificationPermission();
 
     // * ==== Event Listener ==== * //
-    EventService.stream.listen(
+    sub = EventService.stream.listen(
       (event) async {
         String? message = event.message;
         EventType type = event.type;
@@ -54,6 +57,12 @@ class _MainPageState extends State<MainPage> {
         }
       },
     );
+  }
+
+  @override
+  void dispose() {
+    if (sub != null) sub!.cancel();
+    super.dispose();
   }
 
   void requestNotificationPermission() async {

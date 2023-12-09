@@ -1,10 +1,8 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/auth/auth_status.dart';
 import 'package:iww_frontend/service/auth.service.dart';
-import 'package:iww_frontend/view/mypage/graph.dart';
 import 'package:iww_frontend/view/mypage/announcement.dart';
 import 'package:iww_frontend/view/mypage/myInfoEdit.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
@@ -12,9 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:lottie/lottie.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/model/mypage/reward.model.dart';
-import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:iww_frontend/view/mypage/slider.dart';
-import 'package:iww_frontend/view/mypage/graph.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 class MyPage extends StatefulWidget {

@@ -10,6 +10,7 @@ import 'package:iww_frontend/model/auth/auth_status.dart';
 import 'package:iww_frontend/model/auth/login_result.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
 import 'package:iww_frontend/model/mypage/reward.model.dart';
+import 'package:iww_frontend/model/user/attendance.model.dart';
 import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
@@ -36,6 +37,9 @@ class AuthService extends ChangeNotifier {
 
   String? _kakaoId;
   String? get kakaoId => _kakaoId;
+
+  List<UserAttandance>? _attendance;
+  List<UserAttandance>? get attendance => _attendance;
 
   AuthStatus _status = AuthStatus.waiting;
   AuthStatus get status => _status;
@@ -183,17 +187,17 @@ class AuthService extends ChangeNotifier {
       _user = UserModel.fromJson(jsonBody['result']['user']);
       _mainPet = Item.fromJson(jsonBody['result']['user_pet']);
 
+      // 로그인 업적이 있는 경우
       if (jsonBody['result']['user_achi'] != null) {
-        // 로그인 업적이 있는 경우
         _reward = Rewards.fromJson(jsonBody['result']['user_achi']);
       }
 
+      await _initialize();
       status = AuthStatus.initialized;
     } else {
       // Unauthorized
       status = AuthStatus.failed;
     }
-
     waiting = false;
   }
 
@@ -280,6 +284,7 @@ class AuthService extends ChangeNotifier {
   Future<void> _initialize() async {
     await _initializeTodos();
     await _initializeItems();
+    await _initializedAttd();
 
     status = AuthStatus.initialized;
   }
@@ -319,6 +324,21 @@ class AuthService extends ChangeNotifier {
         } else {
           LOG.log("Error: ${response.body}");
           status = AuthStatus.failed;
+        }
+      },
+    );
+  }
+
+  Future<void> _initializedAttd() async {
+    await RemoteDataSource.get('/attendance/${_user!.user_id}').then(
+      (res) {
+        if (res.statusCode == 200) {
+          List<dynamic> jsonList = jsonDecode(res.body)['result'];
+
+          if (jsonList.isNotEmpty) {
+            _attendance =
+                jsonList.map((e) => UserAttandance.fromJson(e)).toList();
+          }
         }
       },
     );

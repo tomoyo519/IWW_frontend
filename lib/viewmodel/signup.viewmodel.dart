@@ -116,7 +116,7 @@ class SignUpViewModel extends ChangeNotifier {
 
     EventService.publish(
       Event(
-        type: EventType.show_todo_snackbar,
+        type: EventType.onSnsAuth,
         message: "인증번호는 0000 입니다.",
       ),
     );

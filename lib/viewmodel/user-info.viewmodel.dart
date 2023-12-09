@@ -19,27 +19,16 @@ class UserInfo extends ChangeNotifier {
   UserModel _user;
   Item _mainPet;
   Rewards? _reward;
+  List<UserAttandance> _attendances;
 
   UserInfo(
     this._user,
     this._mainPet,
     this._repository,
     this._reward,
+    this._attendances,
   ) {
-    _setUserState(_user, _mainPet, _reward);
-    // _setStateFromModels(_user, _mainPet);
-
-    // 초기 로그인 카운트 알림
-    // if (_user.login_cnt >= 30) {
-    //   EventService.publish(
-    //     Event(
-    //       type: EventType.show_login_achieve,
-    //       message: jsonEncode({
-    //         "title": "로그인 카운트 30회 달성!",
-    //       }),
-    //     ),
-    //   );
-    // }
+    _setUserState(_user, _mainPet, reward: _reward, attd: _attendances);
   }
 
   // === Status === //
@@ -56,6 +45,8 @@ class UserInfo extends ChangeNotifier {
   // === Getters === //
   Item get mainPet => _mainPet;
   UserModel get userModel => _user;
+  List<String> get attendance =>
+      _attendances.map((e) => e.day_of_week.toString()).toList();
 
   int get userId => _user.user_id;
   String get userName => _userName;
@@ -101,14 +92,12 @@ class UserInfo extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<UserAttandance> attendances = [];
-
-  // 유저 정보 갱신
+  // 유저 정보 갱신 (초기 로그인시 작동)
   Future<void> fetchUser() async {
     GetUserResult? fetched = await _repository.getUser();
     if (fetched != null) {
-      _setUserState(fetched.user, fetched.pet, null);
-      LOG.log("FETECHED NEW USER STATES!!!");
+      _setUserState(fetched.user, fetched.pet);
+      LOG.log("Fetched user state.");
     }
   }
 
@@ -161,7 +150,8 @@ class UserInfo extends ChangeNotifier {
   }
 
   // Fetch해온 유저 정보를 상태로 세팅
-  void _setUserState(UserModel newUser, Item newPet, Rewards? reward) {
+  void _setUserState(UserModel newUser, Item newPet,
+      {Rewards? reward, List<UserAttandance>? attd}) {
     // * Set new user info * //
     _user = newUser;
     _userName = newUser.user_name;
@@ -176,8 +166,12 @@ class UserInfo extends ChangeNotifier {
     _itemName = newPet.name;
     _petName = newPet.petName ?? '';
 
-    // * Set reward info * //
+    // * Set other info * //
     _reward = reward;
+
+    if (attd != null) {
+      _attendances = attd;
+    }
 
     notifyListeners();
   }
@@ -185,7 +179,20 @@ class UserInfo extends ChangeNotifier {
   // 로그인되자마자 트리거되어야 하는 이벤트들
   void initEvents() {
     _onLoginReward(_reward);
-    // EventService.publish(Event(type: EventType.SHOW_TODO_DONE));
+
+    // 업적 달성 모달 테스트
+    // Rewards reward = Rewards(
+    //   achiName: '첫 로그인',
+    //   achiDesc: 'achiDesc',
+    //   isHidden: false,
+    //   achiImg: 'assets/achi/login.png',
+    // );
+
+    // var message = jsonEncode(reward.toMap());
+    // EventService.publish(Event(
+    //   type: EventType.onAchieve,
+    //   message: message,
+    // ));
   }
 
   // 첫 투두 체크 이벤트
@@ -193,7 +200,7 @@ class UserInfo extends ChangeNotifier {
     int reward = _userCash - prevUserCash;
     if (reward == RewardService.FIRST_TODO_REWARD) {
       EventService.publish(Event(
-        type: EventType.show_first_todo_modal,
+        type: EventType.onFirstTodoDone,
       ));
     }
   }
@@ -202,30 +209,30 @@ class UserInfo extends ChangeNotifier {
   void _onEvolution(int prevPetId) {
     if (prevPetId != _mainPet.id) {
       EventService.publish(Event(
-        type: EventType.show_pet_evolve,
+        type: EventType.onPetEvolve,
       ));
     }
   }
 
   // 로그인 이벤트
   void _onLoginReward(Rewards? reward) {
-    if (reward == null) return;
+    if (reward == null || reward.isHidden == true) return;
 
     var message = jsonEncode(reward.toMap());
     EventService.publish(Event(
-      type: EventType.show_login_achieve,
+      type: EventType.onAchieve,
       message: message,
     ));
   }
 
-  Future<List<UserAttandance>?> fetchAttandance() async {
-    List<UserAttandance>? fetched = await _repository.fetUserAtt(userId);
-    LOG.log('야홓호호ㅗㅗ호호호$fetched');
-    if (fetched != null) {
-      attendances = fetched;
-      return fetched;
-    } else {
-      return null;
-    }
-  }
+  // Future<List<UserAttandance>?> fetchAttandance() async {
+  //   List<UserAttandance>? fetched = await _repository.fetUserAtt(userId);
+  //   LOG.log('야홓호호ㅗㅗ호호호$fetched');
+  //   if (fetched != null) {
+  //     attendances = fetched;
+  //     return fetched;
+  //   } else {
+  //     return null;
+  //   }
+  // }
 }

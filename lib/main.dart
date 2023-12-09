@@ -5,6 +5,7 @@ import 'package:iww_frontend/model/auth/auth_status.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
 import 'package:iww_frontend/model/mypage/reward.model.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
+import 'package:iww_frontend/model/user/attendance.model.dart';
 import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/providers.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
@@ -115,8 +116,9 @@ class RenderPage extends StatelessWidget {
       UserModel user = authService.user!;
       Item mainPet = authService.mainPet!;
       Rewards? reward = authService.reward;
+      List<UserAttandance> attd = authService.attendance ?? [];
       UserRepository repo = Provider.of<UserRepository>(context, listen: false);
-      userInfo = UserInfo(user, mainPet, repo, reward);
+      userInfo = UserInfo(user, mainPet, repo, reward, attd);
 
       // 이벤트 서비스 초기화
       EventService.setUserId(user.user_id);

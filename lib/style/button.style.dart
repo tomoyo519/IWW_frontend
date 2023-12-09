@@ -7,7 +7,7 @@ extension MyButtonStyle on MyButtonType {
   static Color onPrimary = Colors.white;
   static Color onSecondary = Colors.black;
   static Color disabled = Colors.grey.shade200;
-  static Color onDisabled = Colors.black38;
+  static Color onDisabled = Colors.black;
 
   Color background() {
     switch (this) {
