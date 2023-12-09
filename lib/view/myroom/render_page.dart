@@ -89,37 +89,32 @@ class RenderMyRoom extends StatelessWidget {
     // }
 
     /* 1/3 step: 배경 지정 */
-    return SizedBox(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // 상단 배경
-          Expanded(
-            flex: 2,
-            child: Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/bg/top_01.png'),
-                    fit: BoxFit.cover,
-                  ),
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // 상단 배경
+        Expanded(
+          flex: 2,
+          child: Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/bg/top_01.png'),
+                  fit: BoxFit.cover,
                 ),
-                child: TopObjects(),
               ),
+              child: TopObjects(),
             ),
           ),
-          // 하단 배경
-          Expanded(
-              flex: 1,
-              child: Container(
-                  child:
-                      Image.asset('assets/bg/bottom_01.png',
-                      fit: BoxFit.fill))),
-        ],
-      ),
+        ),
+        // 하단 배경
+        Expanded(
+            flex: 1,
+            child: Container(
+                child:
+                    Image.asset('assets/bg/bottom_01.png', fit: BoxFit.fill))),
+      ],
     );
 
     // 유저의 펫 정보 불러오기
@@ -187,7 +182,7 @@ class StatusBar extends StatelessWidget {
     return Container(
       height: 100,
       margin: EdgeInsets.all(20),
-      padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
       decoration: BoxDecoration(
         color: Color.fromRGBO(0, 0, 0, 0.3),
         borderRadius: BorderRadius.circular(10),
@@ -200,18 +195,18 @@ class StatusBar extends StatelessWidget {
           Text(
             petName,
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 20,
               color: Colors.white,
             ),
           ),
           Row(
             children: [
               SizedBox(
-                width: 45,
+                width: 60,
                 child: Text(
                   '체력',
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 18,
                     color: Colors.white,
                   ),
                   textAlign: TextAlign.left,
@@ -234,7 +229,7 @@ class StatusBar extends StatelessWidget {
                 child: Text(
                   '${userInfo.userHp} / 10',
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 16,
                     color: Colors.white,
                   ),
                   textAlign: TextAlign.left,
@@ -245,11 +240,11 @@ class StatusBar extends StatelessWidget {
           Row(
             children: [
               SizedBox(
-                width: 45,
+                width: 60,
                 child: Text(
                   '경험치 ',
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 18,
                     color: Colors.white,
                   ),
                   textAlign: TextAlign.left,
@@ -272,7 +267,7 @@ class StatusBar extends StatelessWidget {
                 child: Text(
                   '${userInfo.petExp} / $totalExp',
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 16,
                     color: Colors.white,
                   ),
                 ),
