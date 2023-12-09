@@ -37,10 +37,10 @@ class _MyPetState extends State<MyPet> {
 
   final Map<String, Preset> presets = {
     '비석': Preset(
-        animationName: 'Idle',
-        cameraOrbit: '30deg 80deg 8m',
-        cameraTarget: '0.3m 0.9m 0.4m',
-        autoRotate: false,
+      animationName: 'Idle',
+      cameraOrbit: '30deg 80deg 8m',
+      cameraTarget: '0.3m 0.9m 0.4m',
+      autoRotate: false,
       rotationPerSecond: '0rad',
     ),
     // 움직임
@@ -74,10 +74,10 @@ class _MyPetState extends State<MyPet> {
       rotationPerSecond: '0rad',
     ),
     'Jump': Preset(
-        animationName: 'Jump',
-        cameraOrbit: '30deg 80deg 0m',
-        cameraTarget: '0.5m 0.7m 0.8m',
-        autoRotate: false,
+      animationName: 'Jump',
+      cameraOrbit: '30deg 80deg 0m',
+      cameraTarget: '0.5m 0.7m 0.8m',
+      autoRotate: false,
       rotationPerSecond: '0rad',
     ),
     'Bounce': Preset(
@@ -101,13 +101,16 @@ class _MyPetState extends State<MyPet> {
       autoRotate: false,
       rotationPerSecond: '0rad',
     ),
-
   };
 
   final Map<String, Map<String, dynamic>> petModels = {
     '비석_00': {
       'src': 'assets/tomb.glb',
       'motions': ['Idle']
+    },
+    '기본펫': {
+      'src': 'assets/pets/small_fox.glb',
+      'motions': ['Idle', 'Walk', 'Jump']
     },
     '구미호_01': {
       'src': 'assets/pets/small_fox.glb',
@@ -148,17 +151,16 @@ class _MyPetState extends State<MyPet> {
     LOG.log('[마이펫 렌더링] key: $targetResouce');
 
     return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () {
-        LOG.log('아니 왜 안바뀌는데 $_petActionIndex');
-        setState(() {
-          _petActionIndex =
-              (_petActionIndex + 1) %
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          LOG.log('아니 왜 안바뀌는데 $_petActionIndex');
+          setState(() {
+            _petActionIndex = (_petActionIndex + 1) %
                 (selectedModel['motions']!.length as int);
-        });
-      },
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.5,
+          });
+        },
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height * 0.5,
           child: IgnorePointer(
             ignoring: true,
             child: ModelViewer(
@@ -178,7 +180,6 @@ class _MyPetState extends State<MyPet> {
               autoRotateDelay: 0,
             ),
           ),
-        )
-    );
+        ));
   }
 }

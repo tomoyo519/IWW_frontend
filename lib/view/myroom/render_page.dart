@@ -24,14 +24,17 @@ class RenderPage extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           // 배경, 가구 렌더링
-          RenderMyRoom(),
+          Selector<MyRoomViewModel, List<Item>>(
+              selector: (_, myRoomViewModel) => myRoomViewModel.roomObjects,
+              builder: (_, roomObjects, __) {
+                return RenderMyRoom();
+              }),
           // 펫 렌더링
           FutureBuilder<int>(
               future: UserRepository().getUserHealth(myRoomState.getRoomOwner),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return SizedBox();
-                  
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else {
@@ -41,9 +44,14 @@ class RenderPage extends StatelessWidget {
                       selector: (_, myRoomViewModel) =>
                           myRoomViewModel.roomObjects,
                       builder: (_, roomObjects, __) {
-                        return MyPet(
-                            newSrc: myRoomState.findPetName(),
-                            isDead: health == 0);
+                        return Positioned(
+                          bottom: MediaQuery.of(context).size.height * 0.05,
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.width,
+                          child: MyPet(
+                              newSrc: myRoomState.findPetName(),
+                              isDead: health == 0),
+                        );
                       });
                 }
               }),
@@ -86,21 +94,41 @@ class RenderMyRoom extends StatelessWidget {
     // }
 
     // 1/3 step: 배경 지정
-    return Stack(alignment: Alignment.center, children: [
-      // 펫 렌더링
-
-      Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: roomState.getBackgroundImage(),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: roomState.renderRoomObjects(
-          MediaQuery.of(context).size.height / 6.0,
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: roomState.getBackgroundImage(),
+          fit: BoxFit.cover,
         ),
       ),
-    ]);
+      child: Stack(
+        // 방안의 오브젝트 렌더링
+        children: roomState.roomObjects.map((Item item) {
+          // 가구가 아니면 렌더링하지 않음.
+          if (item.itemType != 2) {
+            return SizedBox();
+          }
+
+          List<double> position =
+              item.metadata!.split('x').map((e) => double.parse(e)).toList();
+          double x = position[0];
+          double y = position[1];
+
+          double imageWidth = MediaQuery.of(context).size.width * 0.2;
+
+          return Positioned(
+            top: MediaQuery.of(context).size.height * y,
+            left: MediaQuery.of(context).size.width * x,
+            width: imageWidth,
+            height: imageWidth,
+            child: Image.asset(
+              'assets/furniture/${item.path}',
+              fit: BoxFit.fill,
+            ),
+          );
+        }).toList(),
+      ),
+    );
 
     // 유저의 펫 정보 불러오기
 
@@ -142,7 +170,8 @@ class StatusBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var userInfo = context.read<UserInfo>();
-    int totalExp = int.parse(userInfo.itemName!.split('_')[1]) * 1000;
+    // int totalExp = int.parse(userInfo.itemName!.split('_')[1]) * 1000;
+    int totalExp = 1000;
     String petName = context.read<MyRoomViewModel>().findPetNickName();
 
     return Container(

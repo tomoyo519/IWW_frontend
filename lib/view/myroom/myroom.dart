@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:iww_frontend/view/inventory/inventory.dart';
 import 'package:iww_frontend/view/myroom/render_page.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 class MyRoom extends StatelessWidget {
   const MyRoom({super.key});
@@ -71,73 +72,131 @@ class _MyRoomPageState extends State<MyRoomPage> {
       ),
     );
 
+    // return Scaffold(
+    //   body: mainArea,
+    //   // 페이지 중앙왼쪽 각종 버튼
+    //   floatingActionButtonLocation: FloatingActionButtonLocation.miniStartTop,
+    //   floatingActionButton: Column(
+    //     crossAxisAlignment: CrossAxisAlignment.end,
+    //     mainAxisAlignment: MainAxisAlignment.center,
+    //     children: <Widget>[
+    //       FloatingActionButton(
+
+    //           child: Column(
+    //             children: const [
+    //              ,
+    //               Text('마이홈'),
+    //             ],
+    //           ),
+    //           onPressed: () => setState(() {
+    //                 _selectedIndex = 0;
+    //               })),
+    //       const SizedBox(height: 10),
+
     return Scaffold(
       body: mainArea,
-      // 페이지 중앙왼쪽 각종 버튼
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniStartTop,
-      floatingActionButton: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          FloatingActionButton(
-              child: Column(
-                children: const [
-                  Icon(Icons.note),
-                  Text('마이홈'),
-                ],
-              ),
-              onPressed: () => setState(() {
-                    _selectedIndex = 0;
-                  })),
-          const SizedBox(height: 10),
-          FloatingActionButton(
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(Icons.inventory_2_rounded),
-                    Text('인벤토리')
-                  ]),
-              onPressed: () => setState(() {
-                    _selectedIndex = 1;
-                  })),
-          const SizedBox(height: 10),
-          FloatingActionButton(
-              child: Column(
-                children: const [
-                  Icon(Icons.note),
-                  Text('방명록'),
-                ],
-              ),
-              onPressed: () => setState(() {
-                    _selectedIndex = 2;
-                  })),
-          const SizedBox(height: 10),
-          FloatingActionButton(
-              child: Column(
-                children: const [
-                  Icon(Icons.group),
-                  Text('친구목록'),
-                ],
-              ),
-              onPressed: () => setState(() {
-                    _selectedIndex = 3;
-                  })),
-        ],
-      ),
+      floatingActionButton: buildSpeedDial(),
     );
   }
 
-  // NOTE 페이지 인덱스에 따라서 페이지를 반환합니다.
-  Widget getPage(int index) {
-    switch (index) {
-      case 0:
-        return RenderPage();
-      case 1:
-        return InventoryPage();
-      default:
-        return Center(
-            child: SizedBox(
-                height: 300, width: 300, child: Text('페이지를 찾을 수 없습니다.')));
-    }
+  SpeedDial buildSpeedDial() {
+    return SpeedDial(
+      child: Icon(Icons.menu),
+      overlayOpacity: 0.0,
+      animatedIcon: AnimatedIcons.view_list,
+      children: [
+        SpeedDialChild(
+          shape: CircleBorder(),
+          child: CircleAvatar(
+            // 원형 아이콘
+            child: Icon(Icons.home),
+            backgroundColor: Colors.white,
+          ),
+          // label: '마이홈',
+          // labelBackgroundColor: Colors.green, // 투
+
+          onTap: () => setState(() {
+            _selectedIndex = 0;
+          }),
+        ),
+        SpeedDialChild(
+          shape: CircleBorder(),
+          child: CircleAvatar(
+            child: Icon(Icons.backpack),
+            backgroundColor: (Colors.white),
+          ),
+          // label: '인벤토리',
+          onTap: () => setState(() {
+            _selectedIndex = 1;
+          }),
+        ),
+        SpeedDialChild(
+          shape: CircleBorder(),
+          child: Icon(Icons.local_post_office),
+          // label: '방명록',
+          onTap: () => setState(() {
+            _selectedIndex = 2;
+          }),
+        ),
+        SpeedDialChild(
+          shape: CircleBorder(),
+          child: Icon(Icons.group),
+          // label: '친구목록',
+          onTap: () => setState(() {
+            _selectedIndex = 3;
+          }),
+        ),
+      ],
+    );
+  }
+
+  //       FloatingActionButton(
+  //           child: Column(
+  //               mainAxisAlignment: MainAxisAlignment.center,
+  //               children: const [
+  //               ,
+  //                 Text('인벤토리')
+  //               ]),
+  //           onPressed: () => setState(() {
+  //                 _selectedIndex = 1;
+  //               })),
+  //       const SizedBox(height: 10),
+  //       FloatingActionButton(
+  //           child: Column(
+  //             children: const [
+  //               Icon(Icons.note),
+  //               Text('방명록'),
+  //             ],
+  //           ),
+  //           onPressed: () => setState(() {
+  //                 _selectedIndex = 2;
+  //               })),
+  //       const SizedBox(height: 10),
+  //       FloatingActionButton(
+  //           child: Column(
+  //             children: const [
+  //               Icon(Icons.group),
+  //               Text('친구목록'),
+  //             ],
+  //           ),
+  //           onPressed: () => setState(() {
+  //                 _selectedIndex = 3;
+  //               })),
+  //     ],
+  //   ),
+  // );
+}
+
+// NOTE 페이지 인덱스에 따라서 페이지를 반환합니다.
+Widget getPage(int index) {
+  switch (index) {
+    case 0:
+      return RenderPage();
+    case 1:
+      return InventoryPage();
+    default:
+      return Center(
+          child: SizedBox(
+              height: 300, width: 300, child: Text('페이지를 찾을 수 없습니다.')));
   }
 }

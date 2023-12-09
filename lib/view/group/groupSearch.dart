@@ -348,11 +348,20 @@ class _GroupSearchState extends State<GroupSearch> {
                         }),
                   )
                 : Expanded(
-                    child: Lottie.asset('assets/empty.json',
-                        repeat: true,
-                        animate: true,
-                        height: MediaQuery.of(context).size.height * 0.3),
-                  ),
+                    child: Center(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Lottie.asset('assets/empty.json',
+                              repeat: true,
+                              animate: true,
+                              height: MediaQuery.of(context).size.height * 0.3),
+                          Text(
+                            "원하는 조건의 그룹이 없어요! \n 다른 키워드, 카테고리로 검색하거나 그룹을 만들 수 있어요.",
+                            textAlign: TextAlign.center,
+                          )
+                        ]),
+                  ))
       ]),
     );
   }
