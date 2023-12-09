@@ -76,15 +76,12 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
     waiting = true;
 
     // 상태 업데이트
-    var data = await _repository.getTodos(_userId);
+    Map<String, List<Todo>> data = await _repository.getTodos(_userId);
 
     // 분리해서 가져오기
-    _todos = data;
-    _normalTodos = data.where((todo) => todo.grpId == null).toList();
-    _groupTodos = data.where((todo) => todo.grpId != null).toList();
-    _prevTodos = _normalTodos
-        .where((todo) => todo.todoDate.compareTo(getToday()) < 0)
-        .toList();
+    _todos = data['total']!;
+    _normalTodos = data['normal']!;
+    _groupTodos = data['group']!;
 
     LOG.log("Fetched data group todo ${data.length}");
     waiting = false;

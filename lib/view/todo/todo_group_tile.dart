@@ -1,18 +1,26 @@
 // ignore_for_file: constant_identifier_names
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:iww_frontend/datasource/remoteDataSource.dart';
+import 'package:iww_frontend/model/group/group.model.dart';
+import 'package:iww_frontend/model/group/groupDetail.model.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
+import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/style/button.dart';
 import 'package:iww_frontend/style/button.type.dart';
 import 'package:iww_frontend/utils/extension/string.ext.dart';
 import 'package:iww_frontend/utils/extension/timeofday.ext.dart';
 import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/view/group/groupDetail.dart' as page;
+import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 
 // Todo Extension으로 스타일 만들기
@@ -42,11 +50,11 @@ class GroupTodoTile extends StatefulWidget {
 
 class _GroupTodoTileState extends State<GroupTodoTile> {
   late File _imageFile;
+  late GroupTodoState todoState;
+  late Group group;
 
   final _picker = ImagePicker();
   final scroll = ScrollController();
-
-  late GroupTodoState todoState;
 
   @override
   void initState() {
@@ -66,6 +74,8 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
 
   @override
   Widget build(BuildContext context) {
+    UserInfo userInfo = context.read<UserInfo>();
+
     return Container(
       margin: EdgeInsets.only(bottom: 10),
       padding: EdgeInsets.symmetric(
@@ -79,56 +89,90 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                widget.todo.todoName,
-                style: TextStyle(
-                  fontSize: 16,
-                  decoration: todoState == GroupTodoState.APPROVED
-                      ? TextDecoration.lineThrough // 완료된 경우
-                      : TextDecoration.none, // 아직 미완
-                  color: todoState == GroupTodoState.APPROVED
-                      ? Colors.black45
-                      : Colors.black87,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              SizedBox(
-                height: 7,
-              ),
-              Row(
+          Expanded(
+            flex: 8,
+            child: GestureDetector(
+              onTap: () {
+                //  클릭하면 그룹 상세화면으로 이동
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => MultiProvider(
+                      // ==== 종속성 주입 ==== //
+                      providers: [
+                        ChangeNotifierProvider.value(
+                            value: context.read<UserInfo>()),
+                        ChangeNotifierProvider(
+                          create: (_) => GroupDetailModel(
+                              Provider.of<GroupRepository>(context,
+                                  listen: false),
+                              userInfo.userId),
+                        )
+                      ],
+                      child: page.GroupDetail(
+                        getList: null,
+                        groupId: widget.todo.grpId!,
+                        ownerName: userInfo.userName,
+                      ),
+                    ),
+                  ),
+                );
+              },
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 3),
-                    child: Icon(
-                      Icons.timer_outlined,
-                      size: 15,
-                    ),
-                  ),
                   Text(
-                    toViewDate(widget.todo.todoDate, null),
+                    widget.todo.todoName,
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 16,
+                      decoration: todoState == GroupTodoState.APPROVED
+                          ? TextDecoration.lineThrough // 완료된 경우
+                          : TextDecoration.none, // 아직 미완
+                      color: todoState == GroupTodoState.APPROVED
+                          ? Colors.black45
+                          : Colors.black87,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
+                  SizedBox(
+                    height: 7,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 3),
+                        child: Icon(
+                          Icons.timer_outlined,
+                          size: 15,
+                        ),
+                      ),
+                      Text(
+                        toViewDate(widget.todo.todoDate, null),
+                        style: TextStyle(
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  )
                 ],
-              )
-            ],
+              ),
+            ),
           ),
-          MyButton(
-            type: MyButtonType.primary,
-            text: todoState == GroupTodoState.UNDONE
-                ? "인증하기"
-                : todoState == GroupTodoState.DONE
-                    ? "인증 대기중"
-                    : "✔ 인증 완료",
-            onpressed: (context) => _onGrpTodoCheck(context, widget.todo),
-            enabled: todoState == GroupTodoState.UNDONE,
+          Expanded(
+            flex: 2,
+            child: MyButton(
+              type: MyButtonType.primary,
+              text: todoState == GroupTodoState.UNDONE
+                  ? "인증하기"
+                  : todoState == GroupTodoState.DONE
+                      ? "인증 대기중"
+                      : "✔ 인증 완료",
+              onpressed: (context) => _onGrpTodoCheck(context, widget.todo),
+              enabled: todoState == GroupTodoState.UNDONE,
+            ),
           ),
         ],
       ),
@@ -294,96 +338,8 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
         if (saved != null && saved == true && context.mounted) {
           LOG.log('message');
           context.read<TodoViewModel>().fetchTodos();
-          EventService.publish(Event(
-            type: EventType.onTodoApproved,
-            message: "인증을 완료했어요!",
-          ));
         }
       }
     }
-  }
-
-  // 그룹 투두를 체크한 경우
-  // Future<void> _groupTodoCheck(
-  //   BuildContext context,
-  //   XFile pickedFile,
-  //   String formattedDate,
-  // ) {
-  //   return
-  // }
-
-  // // ****************************** //
-  // // *                            * //
-  // // *        Cash Reward         * //
-  // // *                            * //
-  // // ****************************** //
-
-  // // 리워드 지급
-  // void _handleTodoCashReward({
-  //   required BuildContext context,
-  //   required bool value,
-  // }) {
-  //   final usermodel = context.read<UserProvider>();
-  //   final todomodel = context.read<TodoViewModel>();
-
-  //   if (value == true) {
-  //     // 펫 경험치 업데이트
-  //     usermodel.petExp += 10;
-
-  //     // 유저 Hp 업데이트
-
-  //     var cash = todomodel.isTodaysFirstTodo ? 100 : 25;
-  //     usermodel.userCash += cash;
-
-  //     // UI
-  //     if (todomodel.notifyUser) {
-  //       _showFirstTodoDoneModal(context);
-  //       todomodel.notifyUser = false;
-  //       return;
-  //     }
-  //     _showCheckSnackBar(context, "할일이 완료되었어요! +$cash");
-  //   } else {
-  //     // 펫 경험치 업데이트
-
-  //     // 유저 Hp 업데이트
-
-  //     // 오늘의 마지막 투두이면
-  //     var cash = todomodel.getTodaysChecked(DateTime.now()) == 1 ? 100 : 25;
-  //     usermodel.userCash -= cash;
-
-  //     _showCheckSnackBar(context, "할일을 취소했어요 -$cash");
-  //   }
-  // }
-
-  // // 스낵바를 보여줍니다
-  // void _showCheckSnackBar(BuildContext context, String message) {
-  //   showCustomSnackBar(
-  //     context,
-  //     text: message,
-  //     icon: Lottie.asset(
-  //       "assets/star.json",
-  //       animate: true,
-  //     ),
-  //   );
-  // }
-
-  // // * 첫 투두 완료 모달 *//
-  // Future<void> _showFirstTodoDoneModal(BuildContext context) async {
-  //   // 위젯 빌드 후에 모달 표시
-  //   Future.microtask(() async {
-  //     await showCustomFullScreenModal(
-  //       context,
-  //       TodoFirstDoneModal(),
-  //     );
-  //   });
-  // }
-}
-
-class CutomAlertDialog extends StatelessWidget {
-  const CutomAlertDialog({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
   }
 }
