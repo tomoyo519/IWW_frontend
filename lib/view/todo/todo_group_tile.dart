@@ -305,7 +305,7 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
           LOG.log('message');
           context.read<TodoViewModel>().fetchTodos();
           EventService.publish(Event(
-            type: EventType.show_todo_snackbar,
+            type: EventType.onTodoApproved,
             message: "인증을 완료했어요!",
           ));
         }

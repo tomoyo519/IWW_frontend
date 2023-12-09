@@ -178,7 +178,7 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
       // 달성하면 이벤트
       if (value == true) {
         EventService.publish(Event(
-          type: EventType.show_todo_snackbar,
+          type: EventType.onTodoDone,
           message: "할일을 달성했어요!",
         ));
       }

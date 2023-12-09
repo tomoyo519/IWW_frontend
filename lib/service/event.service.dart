@@ -7,9 +7,9 @@ import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/_navigation/enum/app_route.dart';
 import 'package:iww_frontend/view/modals/greeting.dart';
 import 'package:iww_frontend/view/modals/login_achieve_modal.dart';
+import 'package:iww_frontend/view/modals/todo_approved_modal.dart';
 import 'package:iww_frontend/view/modals/todo_confirm_modal.dart';
 import 'package:iww_frontend/view/modals/pet_evolve_modal.dart';
-import 'package:iww_frontend/view/modals/todo_done.dart';
 import 'package:iww_frontend/view/modals/todo_first_done.dart';
 import 'package:iww_frontend/view/modals/custom_snackbar.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
@@ -38,12 +38,13 @@ enum EventType {
   confirmResponse,
   newComment,
   // UI Event
-  show_todo_snackbar,
-  show_first_todo_modal,
-  show_login_achieve,
-  show_pet_evolve,
-  SHOW_GREETING,
-  SHOW_TODO_DONE,
+  onAppLogin,
+  onSnsAuth,
+  onAchieve,
+  onPetEvolve,
+  onTodoDone,
+  onFirstTodoDone,
+  onTodoApproved,
 }
 
 extension EventTypeExtension on EventType {
@@ -55,12 +56,13 @@ extension EventTypeExtension on EventType {
       case EventType.confirmResponse:
       case EventType.newComment:
         return "socket";
-      case EventType.show_todo_snackbar:
-      case EventType.show_first_todo_modal:
-      case EventType.show_login_achieve:
-      case EventType.show_pet_evolve:
-      case EventType.SHOW_GREETING:
-      case EventType.SHOW_TODO_DONE:
+      case EventType.onAppLogin:
+      case EventType.onSnsAuth:
+      case EventType.onAchieve:
+      case EventType.onTodoDone:
+      case EventType.onPetEvolve:
+      case EventType.onFirstTodoDone:
+      case EventType.onTodoApproved:
         return "ui";
       default:
         return '';
@@ -72,27 +74,35 @@ extension EventTypeExtension on EventType {
 
     switch (this) {
       // ==== UI ==== //
-      case EventType.show_first_todo_modal:
-        showTodoFirstDoneModal(context);
+      case EventType.onFirstTodoDone:
+        showTodoDoneModal(context);
         break;
-      case EventType.show_todo_snackbar:
+      case EventType.onTodoDone:
         showCustomSnackBar(
           context,
           text: message ?? "",
           icon: Lottie.asset("assets/star.json"),
         );
         break;
-      case EventType.show_login_achieve:
+      case EventType.onSnsAuth:
+        showCustomSnackBar(
+          context,
+          text: message ?? "",
+          icon: Icon(Icons.mail),
+        );
+      case EventType.onAchieve:
         showLoginAchieveModal(context, message!);
         break;
-      case EventType.show_pet_evolve:
+      case EventType.onPetEvolve:
         showPetEvolveModal(context);
         break;
-      case EventType.SHOW_GREETING:
+      case EventType.onAppLogin:
         showGreetingModal(context);
         break;
-      case EventType.SHOW_TODO_DONE:
-        showTodoDoneModal(context);
+      case EventType.onTodoApproved:
+        if (message != null) {
+          showTodoApprovedModal(context, message: message);
+        }
         break;
       // ==== SOCKET ==== //
       case EventType.friendRequest:

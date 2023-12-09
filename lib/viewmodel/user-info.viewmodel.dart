@@ -91,7 +91,7 @@ class UserInfo extends ChangeNotifier {
     GetUserResult? fetched = await _repository.getUser();
     if (fetched != null) {
       _setUserState(fetched.user, fetched.pet, null);
-      LOG.log("FETECHED NEW USER STATES!!!");
+      LOG.log("Fetched user state.");
     }
   }
 
@@ -168,7 +168,13 @@ class UserInfo extends ChangeNotifier {
   // 로그인되자마자 트리거되어야 하는 이벤트들
   void initEvents() {
     _onLoginReward(_reward);
-    // EventService.publish(Event(type: EventType.SHOW_TODO_DONE));
+
+    // EVENT TEST
+    var message = "000님께서 5분 아침체조 루틴을 인증했어요";
+    EventService.publish(Event(
+      type: EventType.onTodoApproved,
+      message: message,
+    ));
   }
 
   // 첫 투두 체크 이벤트
@@ -176,7 +182,7 @@ class UserInfo extends ChangeNotifier {
     int reward = _userCash - prevUserCash;
     if (reward == RewardService.FIRST_TODO_REWARD) {
       EventService.publish(Event(
-        type: EventType.show_first_todo_modal,
+        type: EventType.onFirstTodoDone,
       ));
     }
   }
@@ -185,7 +191,7 @@ class UserInfo extends ChangeNotifier {
   void _onEvolution(int prevPetId) {
     if (prevPetId != _mainPet.id) {
       EventService.publish(Event(
-        type: EventType.show_pet_evolve,
+        type: EventType.onPetEvolve,
       ));
     }
   }
@@ -196,7 +202,7 @@ class UserInfo extends ChangeNotifier {
 
     var message = jsonEncode(reward.toMap());
     EventService.publish(Event(
-      type: EventType.show_login_achieve,
+      type: EventType.onAchieve,
       message: message,
     ));
   }

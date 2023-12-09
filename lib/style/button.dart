@@ -30,7 +30,7 @@ class MyButton extends StatelessWidget {
     Size screen = MediaQuery.of(context).size;
 
     return SizedBox(
-      width: full == true ? screen.width : null,
+      width: full == true ? double.infinity : null,
       child: ElevatedButton(
         onPressed: enabled == false ? null : () => onpressed(context),
         style: ElevatedButton.styleFrom(
