@@ -17,16 +17,32 @@ class RoomRepository {
     });
   }
 
+  Future<List<Item>> getPetsOfInventory(int userId) async {
+    return await RemoteDataSource.get('/item-inventory/$userId/1')
+        .then((response) {
+      Map<String, dynamic> parsedJson = json.decode(response.body);
+      List<Item> pets = (parsedJson['result'] as List<dynamic>)
+          .map((item) => Item.fromJson(item))
+          .toList();
+
+      for (var element in pets) {
+        LOG.log('[Inventory Pet]: ${element.name}, ${element.itemType}}');
+      }
+
+      return pets;
+    });
+  }
+
   // NOTE 하위 3개의 함수의 인자 userId는 항상 나 자신의 userId 입니다.
   // 나의 인벤토리 정보 가져오기
   Future<List<Item>> getItemsOfInventory(int userId) async {
-    return await RemoteDataSource.get('/item-inventory/$userId')
+    return await RemoteDataSource.get('/item-inventory/$userId/2')
         .then((response) {
       Map<String, dynamic> parsedJson = json.decode(response.body);
       List<Item> items = (parsedJson['result'] as List<dynamic>)
           .map((item) => Item.fromJson(item))
           .toList();
-      
+
       for (var element in items) {
         LOG.log('[Inventory item]: ${element.name}, ${element.itemType}}');
       }
@@ -41,7 +57,6 @@ class RoomRepository {
       LOG.log('[Apply changes status] ${response.body}');
       return true;
     });
-
   }
 
   // 나의의 룸에 아이템 추가하기
