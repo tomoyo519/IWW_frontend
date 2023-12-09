@@ -93,14 +93,28 @@ class RenderMyRoom extends StatelessWidget {
     //   print("[log/myroom]: $e");
     // }
 
-    // 1/3 step: 배경 지정
+    /* 1/3 step: 배경 지정 */
     return Stack(
       children: [
         Column(
-          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Flexible(flex: 2, child: Image.asset('assets/bg/top_01.png')),
-            Flexible(flex: 1, child: Image.asset('assets/bg/bottom_01.png')),
+            // 상단 배경
+            Flexible(
+                flex: 2,
+                child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/bg/top_01.png'),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    child: TopObjects())),
+            // 하단 배경
+            Flexible(
+                flex: 1,
+                child:
+                    Image.asset('assets/bg/bottom_01.png', fit: BoxFit.fill)),
           ],
         ),
         ...roomState.roomObjects.map((Item item) {
@@ -145,21 +159,13 @@ class RenderMyRoom extends StatelessWidget {
   }
 }
 
-// status bar or chatting(빈칸)
-class UnderLayer extends StatelessWidget {
-  UnderLayer({Key? key}) : super(key: key);
+// 상단 배경 부분을 차지하는 컨테이너
+class TopObjects extends StatelessWidget {
+  const TopObjects({super.key});
 
-  // myroom: status bar, other's room: chatting
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).padding.top + 30,
-      color: Colors.transparent,
-      child: context.watch<MyRoomViewModel>().isMyRoom()
-          ? StatusBar()
-          : SizedBox(height: 110, width: 20), // TODO chatting으로 변경
-      // BottomButtons()
-    );
+    return Container();
   }
 }
 
