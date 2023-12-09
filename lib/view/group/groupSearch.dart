@@ -39,13 +39,14 @@ class _GroupSearchState extends State<GroupSearch> {
         userInfo.userId, labelNum, keyword);
     LOG.log('thisistmepLIst:$tempList');
     // List<GroupCategory>
-    await RemoteDataSource.get('/category').then((res) {
-      if (res.statusCode == 200) {
-        List<dynamic> jsonList = jsonDecode(res.body);
-        categories = jsonList.map((e) => GroupCategory.fromJson(e)).toList();
-        isLoading = false;
-      }
-    });
+    // TODO: 카테고리 정보
+    // await RemoteDataSource.get('/category').then((res) {
+    //   if (res.statusCode == 200) {
+    //     List<dynamic> jsonList = jsonDecode(res.body);
+    //     categories = jsonList.map((e) => GroupCategory.fromJson(e)).toList();
+    //     isLoading = false;
+    //   }
+    // });
     setState(() {
       groupList = tempList;
     });
