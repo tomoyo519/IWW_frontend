@@ -23,7 +23,6 @@ class _GroupSearchState extends State<GroupSearch> {
   var labelNum = 0;
   String keyword = "";
   List<Group>? groupList = [];
-  List<GroupCategory>? categories;
   bool isClicked = false;
   bool isLoading = true;
 
