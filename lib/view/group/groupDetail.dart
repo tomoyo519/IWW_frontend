@@ -480,6 +480,7 @@ class _GroupDetailState extends State<GroupDetail> {
                 ),
 
                 Divider(
+                  color: Colors.grey[200],
                   thickness: 10,
                   height: 30,
                 ),
@@ -699,7 +700,6 @@ class _GroupDetailState extends State<GroupDetail> {
                   )
                 ],
                 if (myGroup) ...[
-                  Divider(color: Colors.grey, thickness: 1, indent: 10),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: SizedBox(
