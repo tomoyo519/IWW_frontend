@@ -188,9 +188,10 @@ class _GroupDetailState extends State<GroupDetail> {
         return [];
       });
     }
+    // 지금 보여주는 루틴
+    Routine? rout = routines?.where((e) => e.routId == rout_id).first;
 
     // 클릭시, 그룹 구성원의 사진 인증 보여주는 기능
-    Routine? rout = routines?.where((e) => e.routId == rout_id).first;
     if (rout != null) {
       await RemoteDataSource.get(
               "/group/${widget.group.groupId}/user/$rout_id/image")
@@ -207,6 +208,7 @@ class _GroupDetailState extends State<GroupDetail> {
         LOG.log('thisisroutineImgs: ${routineImgs}');
       });
     }
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,

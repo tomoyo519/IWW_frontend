@@ -28,8 +28,7 @@ class UserInfo extends ChangeNotifier {
     this._reward,
     this._attendances,
   ) {
-    LOG.log('유저인포 생성');
-    // 업적 달성 모달 테스트
+    // FIXME: 업적 달성 모달 항상 뜨도록 설정
     _reward = Rewards(
       achiName: '첫 로그인',
       achiDesc: 'achiDesc',
