@@ -104,6 +104,11 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                         ChangeNotifierProvider.value(
                             value: context.read<UserInfo>()),
                         ChangeNotifierProvider(
+                            create: (_) => MyGroupViewModel(
+                                Provider.of<GroupRepository>(context,
+                                    listen: false),
+                                context.read<UserInfo>().userId)),
+                        ChangeNotifierProvider(
                           create: (_) => GroupDetailModel(
                               Provider.of<GroupRepository>(context,
                                   listen: false),

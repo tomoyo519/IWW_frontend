@@ -29,12 +29,12 @@ class UserInfo extends ChangeNotifier {
     this._attendances,
   ) {
     // FIXME: 업적 달성 모달 항상 뜨도록 설정
-    _reward = Rewards(
-      achiName: '첫 로그인',
-      achiDesc: 'achiDesc',
-      isHidden: false,
-      achiImg: 'assets/achi/login.png',
-    );
+    // _reward = Rewards(
+    //   achiName: '첫 로그인',
+    //   achiDesc: 'achiDesc',
+    //   isHidden: false,
+    //   achiImg: 'assets/achi/login.png',
+    // );
     _setUserState(_user, _mainPet, reward: _reward, attd: _attendances);
   }
 

@@ -17,6 +17,7 @@ import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/style/button.dart';
 import 'package:iww_frontend/style/button.type.dart';
 import 'package:iww_frontend/utils/extension/string.ext.dart';
+import 'package:iww_frontend/utils/weekdays.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
 import 'dart:convert';
 import 'package:iww_frontend/utils/logger.dart';
@@ -24,6 +25,7 @@ import 'package:iww_frontend/view/_common/bottom_sheet_header.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/_navigation/enum/app_route.dart';
 import 'package:iww_frontend/view/group/groupMain.dart';
+import 'package:iww_frontend/view/modals/custom_snackbar.dart';
 import 'package:iww_frontend/view/todo/todo_editor.dart';
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
@@ -226,70 +228,100 @@ class _GroupDetailState extends State<GroupDetail> {
         LOG.log('thisisroutineImgs: $routineImgs');
       });
     }
+    // ignore: use_build_context_synchronously
+    Size screen = MediaQuery.of(context).size;
 
     // ignore: use_build_context_synchronously
     showModalBottomSheet(
-      backgroundColor: Colors.white,
       context: context,
       isScrollControlled: true,
       useRootNavigator: true,
       builder: (BuildContext context) {
-        return SizedBox(
-          height: MediaQuery.of(context).size.height * 0.8,
-          width: MediaQuery.of(context).size.width,
+        return Container(
+          height: screen.height * 0.8,
+          width: screen.width,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(15),
+              topRight: Radius.circular(15),
+            ),
+          ),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              BottomSheetModalHeader(), // 모서리 둥글기 적용
-
-              Expanded(
-                  flex: 3,
-                  child: Padding(
-                    padding: EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              rout!.routName,
-                              style: TextStyle(
-                                fontSize: 26,
-                                fontWeight: FontWeight.bold,
-                              ),
+              Padding(
+                padding: EdgeInsets.only(
+                  top: 30,
+                  left: 20,
+                  right: 20,
+                  bottom: 20,
+                ),
+                child: SizedBox(
+                  height: screen.height * 0.15,
+                  width: screen.width,
+                  child: Column(
+                    children: [
+                      Flexible(
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: Text(
+                            "인증 현황 보기",
+                            style: TextStyle(
+                              fontSize: 26,
+                              fontWeight: FontWeight.w900,
                             ),
-                          ],
-                        ),
-                        Text(
-                          "상세정보",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w900,
                           ),
                         ),
-                        Text(
-                          rout.routDesc!,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w400,
+                      ),
+                      Flexible(
+                        flex: 1,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: Colors.black12,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      rout!.routRepeat.toWeekRepeat().name,
+                                      style: TextStyle(
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.w900),
+                                    ),
+                                    Text("인증해요"),
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      '${routineImgs?.length ?? 0}건',
+                                      style: TextStyle(
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.w900),
+                                    ),
+                                    Text("인증완료"),
+                                  ],
+                                ),
+                              )
+                            ],
                           ),
                         ),
-                        Row(
-                          children: [Text("루틴 제목"), Text(rout.routDesc ?? '')],
-                        ),
-                        Row(
-                          children: [Text("루틴 제목"), Text(rout.routName)],
-                        ),
-                        Row(
-                          children: [Text("루틴 제목"), Text(rout.routName)],
-                        ),
-                      ],
-                    ),
-                  )),
-
+                      )
+                    ],
+                  ),
+                ),
+              ),
               routineImgs!.isNotEmpty
-                  ? SizedBox(
-                      child: Expanded(
+                  ? Expanded(
                       child: GridView.builder(
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 3, // 각 행에 3개의 그리드 항목이 표시됩니다.
@@ -297,29 +329,20 @@ class _GroupDetailState extends State<GroupDetail> {
                         ),
                         itemCount: routineImgs?.length ?? 0,
                         itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: Column(
-                              children: [
-                                Container(
-                                  height: MediaQuery.of(context).size.height *
-                                      0.15, // 높이를 줄입니다.
-                                  width: MediaQuery.of(context).size.width *
-                                      0.3, // 너비를 줄입니다.
-                                  margin: EdgeInsets.all(2),
-                                  padding: EdgeInsets.all(2),
-                                  child: Image.network(
-                                    '${Secrets.REMOTE_SERVER_URL}/group-image/${routineImgs![index].todoImg}',
-                                    // 이미지가 부모 위젯의 크기에 맞게 조절되도록 합니다.
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ],
+                          return Container(
+                            height: MediaQuery.of(context).size.height * 0.15,
+                            width: MediaQuery.of(context).size.width * 0.3,
+                            margin: EdgeInsets.all(2),
+                            padding: EdgeInsets.all(2),
+                            child: Image.network(
+                              '${Secrets.REMOTE_SERVER_URL}/group-image/${routineImgs![index].todoImg}',
+                              // 이미지가 부모 위젯의 크기에 맞게 조절되도록 합니다.
+                              fit: BoxFit.cover,
                             ),
                           );
                         },
                       ),
-                    ))
+                    )
                   : Expanded(
                       child: Lottie.asset('assets/empty.json',
                           repeat: true,
@@ -348,9 +371,14 @@ class _GroupDetailState extends State<GroupDetail> {
                     height: screen.height * 0.25,
                   ),
                   child: Image.asset(
-                    'assets/category/academy.jpg',
+                    'assets/category/${groupDetail!.catId!}.jpg',
                     fit: BoxFit.cover,
                     alignment: Alignment.center,
+                    errorBuilder: (context, error, stackTrace) => Image.asset(
+                      'assets/category/academy.jpg',
+                      fit: BoxFit.cover,
+                      alignment: Alignment.center,
+                    ),
                   ),
                 ),
 
@@ -363,7 +391,7 @@ class _GroupDetailState extends State<GroupDetail> {
                       groupDetail!.grpName,
                       textAlign: TextAlign.left,
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 30,
                         fontWeight: FontWeight.w900,
                       ),
                     ),
@@ -383,8 +411,8 @@ class _GroupDetailState extends State<GroupDetail> {
                         child: Text(
                           "그룹장",
                           style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w900,
                           ),
                         ),
                       ),
@@ -399,6 +427,7 @@ class _GroupDetailState extends State<GroupDetail> {
                             child: Text(
                               widget.ownerName ?? '운영자',
                               style: TextStyle(
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -411,7 +440,8 @@ class _GroupDetailState extends State<GroupDetail> {
 
                 // 4. 카테고리
                 Padding(
-                  padding: const EdgeInsets.only(left: 20.0, right: 20),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                   child: SizedBox(
                     width: double.infinity,
                     child: Row(
@@ -423,8 +453,8 @@ class _GroupDetailState extends State<GroupDetail> {
                           child: Text(
                             "카테고리 ",
                             style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w900,
                             ),
                           ),
                         ),
@@ -444,7 +474,12 @@ class _GroupDetailState extends State<GroupDetail> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text(groupDetail!.catName),
+                                  Text(
+                                    groupDetail!.catName,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -457,7 +492,12 @@ class _GroupDetailState extends State<GroupDetail> {
 
                 // 5. 그룹 설명
                 Padding(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.only(
+                    top: 10,
+                    left: 20,
+                    right: 20,
+                    bottom: 20,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -465,15 +505,20 @@ class _GroupDetailState extends State<GroupDetail> {
                       Text(
                         "그룹 세부 정보",
                         style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w900,
                         ),
                       ),
                       Container(
                         padding: EdgeInsets.only(top: 10),
                         alignment: Alignment.topLeft,
                         decoration: BoxDecoration(),
-                        child: Text(groupDetail!.grpDesc),
+                        child: Text(
+                          groupDetail!.grpDesc,
+                          style: TextStyle(
+                            fontSize: 18,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -482,6 +527,7 @@ class _GroupDetailState extends State<GroupDetail> {
                 Divider(
                   thickness: 10,
                   height: 30,
+                  color: Colors.black12,
                 ),
 
                 Padding(
@@ -491,7 +537,7 @@ class _GroupDetailState extends State<GroupDetail> {
                     child: Text(
                       "기본 루틴",
                       style: TextStyle(
-                        fontSize: 15,
+                        fontSize: 20,
                         fontWeight: FontWeight.w900,
                       ),
                     ),
@@ -502,94 +548,127 @@ class _GroupDetailState extends State<GroupDetail> {
                   padding: const EdgeInsets.all(8.0),
                   child: Expanded(
                     child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: groupRoutine.length,
-                        itemBuilder: (c, i) {
-                          return groupRoutine.isNotEmpty
-                              ? Container(
-                                  margin: EdgeInsets.all(10),
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 10,
-                                    horizontal: 10,
-                                  ),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                          color: Colors.black26, width: 1)),
-                                  child: Row(children: [
-                                    Expanded(
-                                      flex: 8,
-                                      child: GestureDetector(
-                                        onLongPress: () => myGroup
-                                            ? _showTodoEditor(
-                                                context, groupRoutine[i])
-                                            : null,
-                                        onTap: () {
-                                          _setRoutinePicture(
-                                              groupRoutine[i].routId);
-                                        },
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  bottom: 5),
-                                              child: Text(
+                      shrinkWrap: true,
+                      itemCount: groupRoutine.length,
+                      itemBuilder: (c, i) {
+                        WeekRepeat repeat =
+                            groupRoutine[i].routRepeat.toWeekRepeat();
+
+                        return groupRoutine.isNotEmpty
+                            ? Container(
+                                margin: EdgeInsets.all(10),
+                                padding: EdgeInsets.all(15),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                      color: Colors.black26, width: 1),
+                                ),
+                                child: Stack(
+                                  children: [
+                                    myGroup == true // 내가 가입한 그룹인 경우 수정버튼 표시
+                                        ? Positioned(
+                                            top: 0,
+                                            right: 0,
+                                            child: IconButton(
+                                              style: IconButton.styleFrom(
+                                                backgroundColor: Colors.black12,
+                                                padding: EdgeInsets.all(0),
+                                              ),
+                                              icon: Icon(
+                                                Icons.edit_outlined,
+                                                color: Colors.black54,
+                                                size: 20,
+                                              ),
+                                              onPressed: () => _showTodoEditor(
+                                                  context, groupRoutine[i]),
+                                            ),
+                                          )
+                                        : SizedBox.shrink(),
+                                    Column(
+                                      children: [
+                                        ConstrainedBox(
+                                          constraints: BoxConstraints(
+                                            minHeight: 50,
+                                            minWidth: double.infinity,
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
                                                 groupRoutine[i].routName,
                                                 style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w900,
+                                                  fontSize: 18,
+                                                ),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  _RoutineBadge(
+                                                    content:
+                                                        '${repeat.name} 반복',
+                                                  ),
+                                                  if (repeat.count != 7) ...[
+                                                    SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    _RoutineBadge(
+                                                      content: repeat.weekday
+                                                          .map((e) => e.name)
+                                                          .join('・')
+                                                          .toString(),
+                                                    ),
+                                                  ]
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Expanded(
+                                              child: MyButton(
+                                                type: MyButtonType.secondary,
+                                                text: "인증 현황 보기",
+                                                onpressed: (context) =>
+                                                    _setRoutinePicture(
+                                                        groupRoutine[i].routId),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            Expanded(
+                                              child: MyButton(
+                                                type: MyButtonType.primary,
+                                                text:
+                                                    "인증하기", // TODO: 실제 정보가 아닙니다.
+                                                onpressed: (context) =>
+                                                    _onGrpRoutCheck(
+                                                  context,
+                                                  groupRoutine[i].grpId,
+                                                  userInfo.userId,
                                                 ),
                                               ),
                                             ),
-                                            Row(
-                                              children: [
-                                                Container(
-                                                  padding: EdgeInsets.symmetric(
-                                                    horizontal: 5,
-                                                    vertical: 3,
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                      color:
-                                                          Colors.grey.shade200,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              5)),
-                                                  child: Text(
-                                                    // 비트로 체크된 루틴 반복날짜를 스트링으로 변환
-                                                    '주 ${(groupRoutine[i].routRepeat).toWeekDays().where((e) => e['isOn'] == true).length}회 반복',
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                )
-                                              ],
-                                            )
                                           ],
                                         ),
-                                      ),
+                                      ],
                                     ),
-                                    Expanded(
-                                      flex: 2,
-                                      child: MyButton(
-                                        type: MyButtonType.primary,
-                                        text: "인증하기", // TODO: 실제 정보가 아닙니다.
-                                        onpressed: (context) => _onGrpRoutCheck(
-                                          context,
-                                          groupRoutine[i].grpId,
-                                          userInfo.userId,
-                                        ),
-                                      ),
-                                    ),
-                                  ]),
-                                )
-                              : Text("조회된 그룹이 없습니다.");
-                        }),
+                                  ],
+                                ))
+                            : Text("조회된 그룹이 없습니다.");
+                      },
+                    ),
                   ),
+                ),
+
+                Divider(
+                  thickness: 10,
+                  height: 30,
+                  color: Colors.black12,
                 ),
 
                 Padding(
@@ -603,25 +682,37 @@ class _GroupDetailState extends State<GroupDetail> {
                           Text(
                             "참가자",
                             style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w900,
                             ),
                           ),
                         ],
                       ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          // 스타일 설정 추가
-                          backgroundColor: Colors.orange, // 버튼 배경색을 오렌지색으로 설정
+                      DecoratedBox(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                          border: Border.all(
+                            color: Colors.black45,
+                            width: 0.5,
+                          ),
                         ),
-                        onPressed: () {},
-                        child: Container(
-                          width: MediaQuery.of(context).size.width * 0.15,
-                          alignment: Alignment.center,
-                          child: Text(
-                            '${groupMems.length}명',
-                            style:
-                                TextStyle(color: Colors.white), // 글자색을 흰색으로 설정
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 10,
+                            horizontal: 20,
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "${groupMems.length}명",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -629,7 +720,8 @@ class _GroupDetailState extends State<GroupDetail> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: LayoutBuilder(
                     builder:
                         (BuildContext context, BoxConstraints constraints) {
@@ -652,10 +744,12 @@ class _GroupDetailState extends State<GroupDetail> {
                                 Container(
                                   height: 50,
                                   decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                          color: Colors.orangeAccent,
-                                          width: 5)),
+                                    borderRadius: BorderRadius.circular(15),
+                                    border: Border.all(
+                                      color: Colors.black12,
+                                      width: 2,
+                                    ),
+                                  ),
                                   alignment: Alignment.center,
                                   margin: EdgeInsets.all(2),
                                   padding: EdgeInsets.all(2),
@@ -664,7 +758,12 @@ class _GroupDetailState extends State<GroupDetail> {
                                         MainAxisAlignment.spaceEvenly,
                                     children: [
                                       Icon(Icons.account_circle_rounded),
-                                      Text(groupMems[index]["user_name"] ?? "")
+                                      Text(
+                                        groupMems[index]["user_name"] ?? "",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                        ),
+                                      )
                                     ],
                                   ),
                                 )
@@ -760,7 +859,7 @@ class _GroupDetailState extends State<GroupDetail> {
             return AlertDialog(
               actions: [
                 TextButton(
-                  child: Text('할일 완료!'),
+                  child: Text('인증샷 올리기'),
                   onPressed: () async {
                     // * ==== 버튼 눌렀을때의 로직 ==== * //
                     var image = File(pickedFile.path);
@@ -779,9 +878,9 @@ class _GroupDetailState extends State<GroupDetail> {
                     // };
 
                     // EventService.sendEvent('confirmRequest', data);
-                    // if (context.mounted) {
-                    //   Navigator.pop(context, true);
-                    // }
+                    if (context.mounted) {
+                      Navigator.pop(context, true);
+                    }
                   },
                 )
               ],
@@ -813,17 +912,41 @@ class _GroupDetailState extends State<GroupDetail> {
           barrierColor: Colors.black45,
           transitionDuration: const Duration(milliseconds: 300),
         );
-
-        // * ===== 인증 완료 후 리프레시 ===== * //
-        // if (saved != null && saved == true && context.mounted) {
-        //   LOG.log('message');
-        //   context.read<TodoViewModel>().fetchTodos();
-        //   EventService.publish(Event(
-        //     type: EventType.onTodoApproved,
-        //     message: "인증을 완료했어요!",
-        //   ));
-        // }
       }
     }
+  }
+}
+
+class _RoutineBadge extends StatelessWidget {
+  const _RoutineBadge({
+    super.key,
+    required this.content,
+  });
+
+  final String content;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(
+        vertical: 10,
+      ),
+      padding: EdgeInsets.symmetric(
+        horizontal: 5,
+        vertical: 3,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade200,
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Text(
+        // 비트로 체크된 루틴 반복날짜를 스트링으로 변환
+        content,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 16,
+        ),
+      ),
+    );
   }
 }
