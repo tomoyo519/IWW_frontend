@@ -23,13 +23,9 @@ class _TelPageState extends State<TelPage> {
     super.initState();
 
     _sub = EventService.stream.listen((event) {
-      if (event.type == EventType.show_todo_snackbar) {
+      if (event.type == EventType.onSnsAuth) {
         Future.microtask(() {
-          showCustomSnackBar(
-            context,
-            text: event.message!,
-            icon: Icon(Icons.mail),
-          );
+          event.type.run(context);
         });
       }
     });

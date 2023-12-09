@@ -6,6 +6,7 @@ import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/model/group/groupImg.model.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
+import 'package:iww_frontend/utils/extension/string.ext.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
 import 'dart:convert';
 import 'package:iww_frontend/utils/logger.dart';
@@ -264,46 +265,80 @@ class _GroupDetailState extends State<GroupDetail> {
                     child: Text(
                       widget.group.grpName,
                       textAlign: TextAlign.left,
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w900,
+                      ),
                     ),
                   ),
                 ),
                 // Divider(color: Colors.grey, thickness: 1, indent: 10),
+                Padding(
+                  padding: const EdgeInsets.only(left: 20.0, right: 20),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.person,
+                        color: Colors.black54,
+                        size: 20,
+                      ),
+                      // Padding(
+                      //   padding: const EdgeInsets.only(right: 3),
+                      //   child: Text(
+                      //     "BY",
+                      //     style: TextStyle(
+                      //       fontWeight: FontWeight.bold,
+                      //       color: Colors.black54,
+                      //     ),
+                      //   ),
+                      // ),
+                      Text(
+                        widget.group.ownerName ?? "운영자",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
 
                 Padding(
                   padding: const EdgeInsets.only(left: 20.0, right: 20),
-                  child: Container(
+                  child: SizedBox(
+                    width: double.infinity,
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Container(
-                          child: Row(
-                            children: <Widget>[
-                              Text(
-                                "카테고리 ",
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
+                        Expanded(
+                          flex: 7,
+                          child: Text(
+                            "카테고리 ",
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            // 스타일 설정 추가
-                            backgroundColor: Colors.orange, // 버튼 배경색을 오렌지색으로 설정
-                          ),
-                          onPressed: () {},
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.15,
-                            alignment: Alignment.center,
-                            child: Text(
-                              widget.group.catName ?? "카테고리 미확인",
-                              style: TextStyle(
-                                  color: Colors.white), // 글자색을 흰색으로 설정
+                        Expanded(
+                          flex: 3,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                              border: Border.all(
+                                color: Colors.black45,
+                                width: 0.5,
+                              ),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(widget.group.catName ?? '카테고리 미확인'),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -311,21 +346,6 @@ class _GroupDetailState extends State<GroupDetail> {
                     ),
                   ),
                 ),
-
-                // Row(
-                //   crossAxisAlignment: CrossAxisAlignment.center,
-                //   mainAxisAlignment: MainAxisAlignment.end,
-                //   children: [
-                //     ElevatedButton(
-                //       onPressed: () {},
-                //       child: Container(
-                //           width: MediaQuery.of(context).size.width * 0.15,
-                //           alignment: Alignment.center,
-                //           // TODO - 수정되어야 함.
-                //           child: Text(widget.group.catName ?? "카테고리")),
-                //     ),
-                //   ],
-                // ),
 
                 Padding(
                   padding:
@@ -345,6 +365,9 @@ class _GroupDetailState extends State<GroupDetail> {
                     ),
                   ),
                 ),
+
+                // DecoratedBox(decoration: )
+
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: TextField(
@@ -373,7 +396,7 @@ class _GroupDetailState extends State<GroupDetail> {
                         "기본 루틴",
                         style: TextStyle(
                           fontSize: 15,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w900,
                         ),
                       ),
                     )),
@@ -387,9 +410,10 @@ class _GroupDetailState extends State<GroupDetail> {
                         itemBuilder: (c, i) {
                           return groupRoutine.isNotEmpty
                               ? GestureDetector(
-                                  onLongPress: () {
-                                    _showTodoEditor(context, groupRoutine[i]);
-                                  },
+                                  onLongPress: () => myGroup
+                                      ? _showTodoEditor(
+                                          context, groupRoutine[i])
+                                      : null,
                                   onTap: () {
                                     _setRoutinePicture(groupRoutine[i].routId);
                                   },
@@ -402,19 +426,46 @@ class _GroupDetailState extends State<GroupDetail> {
                                     alignment: Alignment.center,
                                     margin: EdgeInsets.all(10),
                                     padding: EdgeInsets.all(10),
-                                    child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Checkbox(
-                                            onChanged: null,
-                                            value: false,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(bottom: 5),
+                                          child: Text(
+                                            groupRoutine[i].routName,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                            ),
                                           ),
-                                          Text(groupRoutine[i].routName),
-                                          Icon(Icons.groups_outlined)
-                                        ]),
+                                        ),
+                                        Row(
+                                          children: [
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: 5,
+                                                vertical: 3,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                  color: Colors.grey.shade200,
+                                                  borderRadius:
+                                                      BorderRadius.circular(5)),
+                                              child: Text(
+                                                // 비트로 체크된 루틴 반복날짜를 스트링으로 변환
+                                                '주 ${(groupRoutine[i].routRepeat ?? '1111111').toWeekDays().where((e) => e['isOn'] == true).length}회 반복',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 )
                               : Text("조회된 그룹이 없습니다.");

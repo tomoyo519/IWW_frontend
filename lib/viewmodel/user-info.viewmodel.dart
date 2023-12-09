@@ -108,7 +108,7 @@ class UserInfo extends ChangeNotifier {
     GetUserResult? fetched = await _repository.getUser();
     if (fetched != null) {
       _setUserState(fetched.user, fetched.pet, null);
-      LOG.log("FETECHED NEW USER STATES!!!");
+      LOG.log("Fetched user state.");
     }
   }
 
@@ -185,7 +185,20 @@ class UserInfo extends ChangeNotifier {
   // 로그인되자마자 트리거되어야 하는 이벤트들
   void initEvents() {
     _onLoginReward(_reward);
-    // EventService.publish(Event(type: EventType.SHOW_TODO_DONE));
+
+    // 업적 달성 모달 테스트
+    // Rewards reward = Rewards(
+    //   achiName: '첫 로그인',
+    //   achiDesc: 'achiDesc',
+    //   isHidden: false,
+    //   achiImg: 'assets/achi/login.png',
+    // );
+
+    // var message = jsonEncode(reward.toMap());
+    // EventService.publish(Event(
+    //   type: EventType.onAchieve,
+    //   message: message,
+    // ));
   }
 
   // 첫 투두 체크 이벤트
@@ -193,7 +206,7 @@ class UserInfo extends ChangeNotifier {
     int reward = _userCash - prevUserCash;
     if (reward == RewardService.FIRST_TODO_REWARD) {
       EventService.publish(Event(
-        type: EventType.show_first_todo_modal,
+        type: EventType.onFirstTodoDone,
       ));
     }
   }
@@ -202,18 +215,18 @@ class UserInfo extends ChangeNotifier {
   void _onEvolution(int prevPetId) {
     if (prevPetId != _mainPet.id) {
       EventService.publish(Event(
-        type: EventType.show_pet_evolve,
+        type: EventType.onPetEvolve,
       ));
     }
   }
 
   // 로그인 이벤트
   void _onLoginReward(Rewards? reward) {
-    if (reward == null) return;
+    if (reward == null || reward.isHidden == true) return;
 
     var message = jsonEncode(reward.toMap());
     EventService.publish(Event(
-      type: EventType.show_login_achieve,
+      type: EventType.onAchieve,
       message: message,
     ));
   }
