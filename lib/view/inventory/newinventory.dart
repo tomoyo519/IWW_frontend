@@ -76,8 +76,8 @@ Widget inventorySheet(BuildContext context, MyRoomViewModel myRoomViewModel) {
     child: Container(
       height: 160,
       decoration: BoxDecoration(
-        color: Colors.white54,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        color: Colors.white,
+        // borderRadius: BorderRadius.vertical(bottoom: Radius.circular(20)),
       ),
       child: DefaultTabController(
         length: 2, // 탭의 수
