@@ -49,8 +49,8 @@ class AuthService extends ChangeNotifier {
     if (val == AuthStatus.initialized) {
       String now = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
       LOG.log('[$now] ${_user!.user_id} logged in.');
+      notifyListeners();
     }
-    notifyListeners();
   }
 
   bool _waiting = true;

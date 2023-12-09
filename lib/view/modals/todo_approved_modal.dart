@@ -7,31 +7,12 @@ import 'package:iww_frontend/style/button.type.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/_navigation/enum/app_route.dart';
 import 'package:iww_frontend/view/modals/custom_fullscreen_modal.dart';
-import 'package:iww_frontend/view/modals/todo_first_done.dart';
+import 'package:iww_frontend/view/modals/custom_pet_modal.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 void showTodoApprovedModal(BuildContext context, {required String message}) {
-  final Map<String, Map<String, dynamic>> petModels = {
-    '비석_00': {
-      'src': 'assets/tomb.glb',
-      'motions': ['Idle']
-    },
-    '구미호_01': {
-      'src': 'assets/pets/small_fox.glb',
-      'motions': ['Idle', 'Walk', 'Jump']
-    },
-    '구미호_02': {
-      'src': 'assets/pets/mid_fox.glb',
-      'motions': ['Idle', 'Walk', 'Jump']
-    },
-    '구미호_03': {
-      'src': 'assets/pets/kitsune.glb',
-      'motions': ['Idle', 'Walk', 'Jump']
-    },
-  };
-
   Size screen = MediaQuery.of(context).size;
   Item pet = context.read<UserInfo>().mainPet;
 
