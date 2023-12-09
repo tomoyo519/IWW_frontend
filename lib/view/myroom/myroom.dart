@@ -76,6 +76,7 @@ class _MyRoomPageState extends State<MyRoomPage> {
   @override
   Widget build(BuildContext context) {
     var myRoomViewModel = Provider.of<MyRoomViewModel>(context);
+    var userInfo = context.read<UserInfo>();
     var colorScheme = Theme.of(context).colorScheme;
 
     // 테마 컬러 적용 (배경색`)
@@ -91,6 +92,21 @@ class _MyRoomPageState extends State<MyRoomPage> {
       body: Stack(
         children: [
           mainArea,
+          if (isSheetOpen)
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  myRoomViewModel.applyChanges();
+                  // myRoomState.toggleGrowth();
+                  userInfo.fetchUser();
+                  isSheetOpen = false; // 탭 시 인벤토리 시트 닫기
+                });
+              },
+              behavior: HitTestBehavior.opaque, // 전체 영역에서 탭 감지
+              child: Container(
+                color: Colors.transparent,
+              ),
+            ),
           if (isSheetOpen) inventorySheet(context, myRoomViewModel),
         ],
       ),
