@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:iww_frontend/service/event.service.dart';
-import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
+import 'package:photo_view/photo_view.dart';
 
 void showTodoConfirmModal(BuildContext context, String? message) {
   if (message == null) return;
@@ -24,10 +24,82 @@ void showTodoConfirmModal(BuildContext context, String? message) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
+      // return AlertDialog(
+      //   title: Text('그룹 할일 인증'),
+      //   content: Column(
+      //     mainAxisSize: MainAxisSize.min,
+      //     children: [
+      //       GestureDetector(
+      //         onTap: () {
+      //           // 사진 전체 화면으로 확대
+      //           Navigator.of(context).push(MaterialPageRoute(
+      //             builder: (_) => FullScreenImage(
+      //                 '${Secrets.REMOTE_SERVER_URL}/group-image/' + todoImg),
+      //           ));
+      //         },
+      //         child: Image.network(
+      //             '${Secrets.REMOTE_SERVER_URL}/group-image/' + todoImg,
+      //             fit: BoxFit.cover),
+      //       ),
+      //       SizedBox(height: 10),
+      //       Row(
+      //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //         children: [
+      //           Expanded(child: Text(todoName)),
+      //           Text(senderName),
+      //         ],
+      //       ),
+      //     ],
+      //   ),
+      //   actions: [
+      //     TextButton(
+      //       onPressed: () => Navigator.of(context).pop(),
+      //       child: Text('취소'),
+      //     ),
+      //     TextButton(
+      //       onPressed: () async {
+      //         // TODO: todo 업데이트 로직 및 socket.emit 구현
+      //         bool result =
+      //             await todoRepository.confirmGroupTodo(todoId.toString());
+
+      //         if (result) {
+      //           var data = {'userId': user.userId, 'todoId': todoId};
+      //           EventService.sendEvent('confirmResponse', data);
+      //         }
+      //         Navigator.of(context).pop();
+      //       },
+      //       child: Text('인증 완료'),
+      //     ),
+      //   ],
+      // );
       return AlertDialog(
-        title: Text(todoName),
+        surfaceTintColor: Colors.white,
+        backgroundColor: Colors.white,
+        titlePadding: EdgeInsets.all(0),
+        title: Container(
+          decoration: BoxDecoration(
+            color: Color.fromARGB(255, 254, 204, 129),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20))
+          ),
+          padding: EdgeInsets.all(10),
+          child: Text(
+            '그룹 할일 인증',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        // title: Text(
+        //   '그룹 할일 인증',
+        //   style: TextStyle(
+        //     fontWeight: FontWeight.bold,
+        //   ),
+        // ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             GestureDetector(
               onTap: () {
@@ -37,23 +109,33 @@ void showTodoConfirmModal(BuildContext context, String? message) {
                       '${Secrets.REMOTE_SERVER_URL}/group-image/' + todoImg),
                 ));
               },
-              child: Image.network(
+              child:  ClipRRect(
+                borderRadius: BorderRadius.circular(8), // 모서리 반경 설정
+                child: Image.network(
                   '${Secrets.REMOTE_SERVER_URL}/group-image/' + todoImg,
-                  fit: BoxFit.cover),
-            ),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),        
             SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(child: Text(todoName)),
-                Text(senderName),
-              ],
+            Text(
+              "$senderName님의 \"$todoName\"",
+              style: TextStyle(
+                fontSize: 18,
+              ),
             ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.grey[350],
+              foregroundColor: Colors.grey[800],
+              shape: RoundedRectangleBorder( // 모서리 둥글기 조절
+                borderRadius: BorderRadius.circular(8), // 모서리 반경 조절
+              ),
+            ),
             child: Text('취소'),
           ),
           TextButton(
@@ -68,9 +150,18 @@ void showTodoConfirmModal(BuildContext context, String? message) {
               }
               Navigator.of(context).pop();
             },
+            style: TextButton.styleFrom(
+              backgroundColor: const Color.fromARGB(255, 54, 180, 58),
+              foregroundColor: Colors.white,
+              // backgroundColor: Color.fromARGB(255, 254, 204, 129),
+              // foregroundColor: Colors.grey[900],
+              shape: RoundedRectangleBorder( // 모서리 둥글기 조절
+                borderRadius: BorderRadius.circular(8), // 모서리 반경 조절
+              ),              
+            ),            
             child: Text('인증 완료'),
           ),
-        ],
+        ],        
       );
     },
   );
@@ -87,7 +178,15 @@ class FullScreenImage extends StatelessWidget {
       body: GestureDetector(
         onTap: () => Navigator.of(context).pop(),
         child: Center(
-          child: Image.network(imageUrl, fit: BoxFit.cover),
+          child: PhotoView(
+            imageProvider: NetworkImage(imageUrl),
+            minScale: PhotoViewComputedScale.contained * 0.8,
+            maxScale: PhotoViewComputedScale.covered * 2,
+            initialScale: PhotoViewComputedScale.contained,
+            backgroundDecoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+            ),
+          ),
         ),
       ),
     );
