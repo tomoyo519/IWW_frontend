@@ -17,18 +17,14 @@ class RenderPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var myRoomState = context.watch<MyRoomViewModel>();
+    var myRoomState = context.read<MyRoomViewModel>();
 
     return Expanded(
       child: Stack(
         fit: StackFit.expand,
         children: [
           // 배경, 가구 렌더링
-          Selector<MyRoomViewModel, List<Item>>(
-              selector: (_, myRoomViewModel) => myRoomViewModel.roomObjects,
-              builder: (_, roomObjects, __) {
-                return RenderMyRoom();
-              }),
+          RenderMyRoom(),
           // 펫 렌더링
           FutureBuilder<int>(
               future: UserRepository().getUserHealth(myRoomState.getRoomOwner),
@@ -83,8 +79,7 @@ class RenderMyRoom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     LOG.log('############## RenderMyRoom 시작 !!!!!!!!!!!!!!!!!!!!!!');
-
-    var roomState = context.watch<MyRoomViewModel>();
+    // var roomState = context.watch<MyRoomViewModel>();
 
     // Naviator를 통해서 argument를 전달할 경우 받는 방법
     // try {
@@ -94,54 +89,37 @@ class RenderMyRoom extends StatelessWidget {
     // }
 
     /* 1/3 step: 배경 지정 */
-    return Stack(
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // 상단 배경
-            Flexible(
-                flex: 2,
-                child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/bg/top_01.png'),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    child: TopObjects())),
-            // 하단 배경
-            Flexible(
-                flex: 1,
-                child:
-                    Image.asset('assets/bg/bottom_01.png', fit: BoxFit.fill)),
-          ],
-        ),
-        ...roomState.roomObjects.map((Item item) {
-          // 가구가 아니면 렌더링하지 않음.
-          if (item.itemType != 2) {
-            return SizedBox();
-          }
-
-          List<double> position =
-              item.metadata!.split('x').map((e) => double.parse(e)).toList();
-          double x = position[0];
-          double y = position[1];
-
-          // double imageWidth = MediaQuery.of(context).size.width * 0.2;
-
-          return Positioned(
-            top: MediaQuery.of(context).size.height * y,
-            left: MediaQuery.of(context).size.width * x,
-            // width: imageWidth,
-            // height: imageWidth,
-            child: Image.asset(
-              'assets/furniture/${item.path}',
-              fit: BoxFit.none,
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // 상단 배경
+          Expanded(
+            flex: 2,
+            child: Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/bg/top_01.png'),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                child: TopObjects(),
+              ),
             ),
-          );
-        }).toList()
-      ],
+          ),
+          // 하단 배경
+          Expanded(
+              flex: 1,
+              child: Container(
+                  child:
+                      Image.asset('assets/bg/bottom_01.png',
+                      fit: BoxFit.fill))),
+        ],
+      ),
     );
 
     // 유저의 펫 정보 불러오기
@@ -165,7 +143,33 @@ class TopObjects extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    var roomState = context.watch<MyRoomViewModel>();
+
+    return Stack(
+        children: roomState.roomObjects.map((Item item) {
+      // 가구가 아니면 렌더링하지 않음.
+      if (item.itemType != 2) {
+        return SizedBox();
+      }
+
+      List<double> position =
+          item.metadata!.split('x').map((e) => double.parse(e)).toList();
+      double x = position[0];
+      double y = position[1];
+
+      // double imageWidth = MediaQuery.of(context).size.width * 0.2;
+
+      return Positioned(
+        top: MediaQuery.of(context).size.height * y,
+        left: MediaQuery.of(context).size.width * x,
+        // width: imageWidth,
+        // height: imageWidth,
+        child: Image.asset(
+          'assets/furniture/${item.path}',
+          fit: BoxFit.none,
+        ),
+      );
+    }).toList());
   }
 }
 
