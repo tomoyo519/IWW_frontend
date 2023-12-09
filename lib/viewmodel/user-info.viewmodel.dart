@@ -152,6 +152,11 @@ class UserInfo extends ChangeNotifier {
 
     await fetchUser();
 
+    EventService.publish(Event(
+      type: EventType.onTodoApproved,
+      message: "인증을 완료했어요!",
+    ));
+
     _onTodoReward(prevUserCash);
     _onEvolution(prevPetId);
   }
@@ -186,6 +191,10 @@ class UserInfo extends ChangeNotifier {
   // 로그인되자마자 트리거되어야 하는 이벤트들
   void initEvents() {
     _onLoginReward(_reward);
+
+    // EventService.publish(Event(
+    //   type: EventType.onFirstTodoDone,
+    // ));
   }
 
   // 첫 투두 체크 이벤트
@@ -217,7 +226,6 @@ class UserInfo extends ChangeNotifier {
       message: message,
     ));
     // 앱 사용중 다시 뜨기 방지
-
     _reward = null;
   }
 }

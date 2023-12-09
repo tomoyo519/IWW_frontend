@@ -69,7 +69,6 @@ void main() async {
 
   // 3. 테스트유저 접속
   // await authService.testLogin();
-
   // authService.status = AuthStatus.initialized;
   // authService.waiting = false;
 

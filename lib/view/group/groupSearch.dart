@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
@@ -22,6 +23,7 @@ class _GroupSearchState extends State<GroupSearch> {
   var labelNum = 0;
   String keyword = "";
   List<Group>? groupList = [];
+  List<GroupCategory>? categories;
   bool isClicked = false;
   bool isLoading = true;
 
@@ -32,10 +34,18 @@ class _GroupSearchState extends State<GroupSearch> {
     final groupRepository =
         Provider.of<GroupRepository>(context, listen: false);
     LOG.log(
-        'userid, ${userInfo.userId} ,labelNum: ${labelNum}, keyword: ${keyword}');
+        'userid, ${userInfo.userId} ,labelNum: $labelNum, keyword: $keyword');
     var tempList = await groupRepository.getAllGroupList(
         userInfo.userId, labelNum, keyword);
     LOG.log('thisistmepLIst:$tempList');
+    // List<GroupCategory>
+    await RemoteDataSource.get('/category').then((res) {
+      if (res.statusCode == 200) {
+        List<dynamic> jsonList = jsonDecode(res.body);
+        categories = jsonList.map((e) => GroupCategory.fromJson(e)).toList();
+        isLoading = false;
+      }
+    });
     setState(() {
       groupList = tempList;
     });
@@ -247,7 +257,8 @@ class _GroupSearchState extends State<GroupSearch> {
                                       ],
                                       child: GroupDetail(
                                         getList: getList,
-                                        group: groupList![i],
+                                        groupId: groupList![i].groupId,
+                                        ownerName: groupList![i].ownerName,
                                       ),
                                     ),
                                   ),
