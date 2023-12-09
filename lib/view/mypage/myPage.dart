@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/auth/auth_status.dart';
 import 'package:iww_frontend/service/auth.service.dart';
-import 'package:iww_frontend/view/mypage/%08graph.dart';
+import 'package:iww_frontend/view/mypage/graph.dart';
 import 'package:iww_frontend/view/mypage/announcement.dart';
 import 'package:iww_frontend/view/mypage/myInfoEdit.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
@@ -13,7 +13,9 @@ import 'package:lottie/lottie.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/model/mypage/reward.model.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
-import 'package:iww_frontend/view/mypage/graph.dart';
+import 'package:iww_frontend/view/mypage/slider.dart';
+import 'package:iww_frontend/view/mypage/graph.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 
 class MyPage extends StatefulWidget {
   MyPage({super.key});
@@ -165,44 +167,86 @@ class _MyPageState extends State<MyPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start, // 추가된 부분
                         children: [
-                          Align(
-                            alignment: Alignment.centerLeft, // 추가된 부분
-                            child: Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Text(
-                                "유저 경험치",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Align(
+                                alignment: Alignment.centerLeft, // 추가된 부분
+                                child: Padding(
+                                  padding: const EdgeInsets.all(20.0),
+                                  child: Text(
+                                    "유저 경험치",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
+                              Row(
+                                children: [
+                                  Text(
+                                    "레벨업 조건",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                  IconButton(
+                                      alignment: Alignment.centerLeft,
+                                      onPressed: () {},
+                                      icon: Icon(
+                                          Icons.arrow_forward_ios_outlined),
+                                      iconSize: 15.0)
+                                ],
+                              ),
+                            ],
                           ),
+
                           // Lottie.asset("assets/star.json",
                           //     animate: true,
                           //     repeat: false,
                           //     width: 50,
                           //     height: 50),
 
-                          Center(
-                            child: Container(
-                              height: 100, // 또는 원하는 높이로 설정
-                              child: Column(
-                                children: [
-                                  Expanded(
-                                    child: CircleGauge(
-                                      percent: userInfo.userHp / 100,
-                                      width: 100,
-                                    ),
-                                  ),
-                                  Text(
-                                    userInfo.userHp.toString() + 'xp',
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  )
-                                ],
+                          // Center(
+                          //   child: Container(
+                          //     height: 100, // 또는 원하는 높이로 설정
+                          //     child: Column(
+                          //       children: [
+                          //         Expanded(
+                          //           child: CircleGauge(
+                          //             percent: userInfo.userHp / 100,
+                          //             width: 100,
+                          //           ),
+                          //         ),
+                          //         Text(
+                          //           userInfo.userHp.toString() + 'xp',
+                          //           style: TextStyle(
+                          //             fontSize: 15,
+                          //             fontWeight: FontWeight.w600,
+                          //           ),
+                          //         )
+                          //       ],
+                          //     ),
+                          //   ),
+                          // ),
+
+                          Padding(
+                            padding: EdgeInsets.all(15.0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(
+                                  10.0), // 여기에서 원하는 radius 값을 설정합니다.
+                              child: LinearPercentIndicator(
+                                width: MediaQuery.of(context).size.width - 50,
+                                animation: true,
+                                lineHeight: 20.0,
+                                animationDuration: 2500,
+                                percent: userInfo.userHp / 100,
+                                center: Text("${userInfo.userHp} / 100"),
+                                barRadius: Radius.circular(10),
+                                linearStrokeCap: LinearStrokeCap
+                                    .butt, // 이 속성을 추가하여 끝 부분이 둥글게 나오지 않도록 합니다.
+                                progressColor: Colors.orange,
                               ),
                             ),
                           ),
@@ -252,6 +296,7 @@ class _MyPageState extends State<MyPage> {
                     ],
                     if (rewards != null && rewards!.isNotEmpty) ...[
                       Container(
+                        color: (Colors.white),
                         padding: EdgeInsets.all(10),
                         child: SingleChildScrollView(
                           child: GridView.builder(
@@ -265,6 +310,8 @@ class _MyPageState extends State<MyPage> {
                               return Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Card(
+                                  color: Colors.transparent,
+                                  elevation: 0,
                                   child: Column(
                                     children: [
                                       Expanded(
@@ -287,7 +334,7 @@ class _MyPageState extends State<MyPage> {
                                           style: TextStyle(
                                               fontSize: 16,
                                               color: Colors.black,
-                                              fontWeight: FontWeight.w800),
+                                              fontWeight: FontWeight.w500),
                                         ),
                                       ),
                                     ],
@@ -311,8 +358,10 @@ class _MyPageState extends State<MyPage> {
                   ],
                 ),
               ),
-              Divider(
-                thickness: 10,
+              Container(
+                height: 150,
+                // width: MediaQuery.of(context).size.width * 0.9,
+                child: CarouselSliderDemo(),
               ),
               Container(
                 child: Padding(
