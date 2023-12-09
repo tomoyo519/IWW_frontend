@@ -7,6 +7,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/service/event.service.dart';
+import 'package:iww_frontend/style/button.dart';
+import 'package:iww_frontend/style/button.type.dart';
+import 'package:iww_frontend/utils/extension/string.ext.dart';
+import 'package:iww_frontend/utils/extension/timeofday.ext.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -99,12 +103,15 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.timer_outlined,
-                    size: 15,
+                  Padding(
+                    padding: const EdgeInsets.only(right: 3),
+                    child: Icon(
+                      Icons.timer_outlined,
+                      size: 15,
+                    ),
                   ),
                   Text(
-                    widget.todo.todoDate,
+                    toViewDate(widget.todo.todoDate, null),
                     style: TextStyle(
                       fontSize: 12,
                     ),
@@ -113,55 +120,38 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
               )
             ],
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              padding: EdgeInsets.all(0),
-              elevation: 0,
-              backgroundColor: Colors.transparent, // 버튼의 기본 색상을 투명하게 설정
-              shadowColor: Colors.transparent, // 그림자 효과 제거
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8), // 원하는 모서리 둥글기 적용
-              ),
-            ),
-
-            // * ===== 버튼 클릭시 투두 체크 ===== * //
-            onPressed: todoState == GroupTodoState.UNDONE
-                ? () => _onGrpTodoCheck(context, widget.todo)
-                : null,
-            child: Ink(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: const [Color(0x00FFFFFF), Color(0xFFFFFFFF)],
-                  begin: Alignment.topLeft, // 그라디언트 시작점
-                  end: Alignment.bottomRight, // 그라디언트 끝점
-                ),
-                borderRadius: BorderRadius.circular(8), // 컨테이너 모서리 둥글기
-              ),
-              child: Container(
-                constraints: BoxConstraints(
-                  minWidth: 88,
-                  minHeight: 36,
-                ), // 버튼 크기 조정
-                alignment: Alignment.center,
-                child: Text(
-                  // * ==== 투두 상태 ==== * //
-                  todoState == GroupTodoState.UNDONE
-                      ? "인증하기"
-                      : todoState == GroupTodoState.DONE
-                          ? "인증 대기중"
-                          : "✔ 인증 완료",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                  ), // 텍스트 색상
-                ),
-              ),
-            ),
-          )
+          MyButton(
+            type: MyButtonType.primary,
+            text: todoState == GroupTodoState.UNDONE
+                ? "인증하기"
+                : todoState == GroupTodoState.DONE
+                    ? "인증 대기중"
+                    : "✔ 인증 완료",
+            onpressed: (context) => _onGrpTodoCheck(context, widget.todo),
+            enabled: todoState == GroupTodoState.UNDONE,
+          ),
         ],
       ),
     );
+  }
+
+  String toViewDate(String dateString, String? timeString) {
+    String rtn = '';
+    DateTime date = dateString.toDateTime()!;
+    DateTime now = DateTime.now();
+
+    if (date.day != now.day) {
+      rtn += DateFormat('MM월 dd일 ').format(date);
+    } else {
+      rtn += '오늘 ';
+    }
+
+    if (timeString != null) {
+      TimeOfDay time = timeString.toTimeOfDay()!;
+      rtn += time.toViewString()!;
+    }
+
+    return rtn;
   }
 
   // ****************************** //

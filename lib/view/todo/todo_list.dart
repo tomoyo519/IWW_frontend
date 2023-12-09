@@ -94,45 +94,54 @@ class _ToDoListState extends State<ToDoList> with TickerProviderStateMixin {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       for (SubTodoList sub in _sublist) ...[
-                        if (sub.items.isNotEmpty)
-                          GestureDetector(
-                            onTap: () => _toggle(sub),
-                            child: SizedBox(
-                              width: double.infinity,
-                              height: 60,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(sub.title),
-                                  AnimatedBuilder(
-                                    animation: _animation,
-                                    builder: (context, child) {
-                                      if (sub.isOpen == false) {
-                                        return Transform.rotate(
-                                          angle: _animation.value * 1 * pi,
-                                          child:
-                                              Icon(Icons.keyboard_arrow_down),
-                                        );
-                                      } else {
-                                        return Icon(
-                                            Icons.keyboard_arrow_left_rounded);
-                                      }
-                                    },
+                        GestureDetector(
+                          onTap: () => _toggle(sub),
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 60,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  sub.title,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 20,
                                   ),
-                                ],
-                              ),
+                                ),
+                                if (sub.isOpen == true)
+                                  Icon(Icons.keyboard_arrow_down)
+                                else
+                                  Icon(Icons.keyboard_arrow_left)
+                                // AnimatedBuilder(
+                                //   animation: _animation,
+                                //   builder: (context, child) {
+                                //     if (sub.isOpen == false) {
+                                //       return Transform.rotate(
+                                //         angle: _animation.value * 1 * pi,
+                                //         child: Icon(Icons.keyboard_arrow_down),
+                                //       );
+                                //     } else {
+                                //       return Icon(
+                                //           Icons.keyboard_arrow_left_rounded);
+                                //     }
+                                //   },
+                                // ),
+                              ],
                             ),
                           ),
-                        AnimatedSize(
-                          duration: Duration(milliseconds: 300),
-                          child: sub.isOpen
-                              ? Column(children: [
-                                  for (Todo todo in sub.items)
-                                    sub.builder(todo, context)
-                                ])
-                              : SizedBox(width: double.infinity, height: 0),
-                        )
+                        ),
+                        if (sub.items.isNotEmpty) ...[
+                          AnimatedSize(
+                            duration: Duration(milliseconds: 300),
+                            child: sub.isOpen
+                                ? Column(children: [
+                                    for (Todo todo in sub.items)
+                                      sub.builder(todo, context)
+                                  ])
+                                : SizedBox(width: double.infinity, height: 0),
+                          )
+                        ]
                       ]
                     ],
                   ),

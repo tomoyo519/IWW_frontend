@@ -18,7 +18,10 @@ class MyButton extends StatelessWidget {
     this.type,
     this.full,
   }) {
-    type = type ?? MyButtonType.primary;
+    type = type ??
+        (enabled != null && enabled == false
+            ? MyButtonType.disabled
+            : MyButtonType.primary);
     full = full ?? false;
     enabled = enabled ?? true;
   }
@@ -27,7 +30,6 @@ class MyButton extends StatelessWidget {
   Widget build(BuildContext context) {
     Color txtColor = type!.text();
     Color bgColor = type!.background();
-    Size screen = MediaQuery.of(context).size;
 
     return SizedBox(
       width: full == true ? double.infinity : null,

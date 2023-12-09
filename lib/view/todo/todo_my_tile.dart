@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
-import 'package:iww_frontend/service/event.service.dart';
-import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/utils/extension/string.ext.dart';
+import 'package:iww_frontend/utils/extension/timeofday.ext.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
-import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
-import 'package:provider/provider.dart';
 
-// TodoList의 개별 타일
+// 개인 할일 타일
 class MyTodoTile extends StatefulWidget {
   final Todo todo;
   final TodoViewModel viewmodel;
@@ -40,16 +38,23 @@ class _MyTodoTileState extends State<MyTodoTile> {
       padding: EdgeInsets.symmetric(
         vertical: 5,
       ),
-      margin: EdgeInsets.only(bottom: 10),
+      // margin: EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        color: Color.fromARGB(255, 246, 246, 246),
-        borderRadius: BorderRadius.circular(10),
+        // color: Color.fromARGB(255, 246, 246, 246),
+        border: Border(
+          bottom: BorderSide(
+            width: 1,
+            color: Colors.grey.shade200,
+          ),
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Checkbox(
+            checkColor: Colors.white,
+            activeColor: Colors.orange,
             value: widget.todo.todoDone,
             onChanged: (bool? value) async {
               // * ==== 투두가 체크되었을 때의 콜백 ==== * //
@@ -78,10 +83,10 @@ class _MyTodoTileState extends State<MyTodoTile> {
                   ),
                 ),
                 Text(
-                  widget.todo.todoStart,
+                  toViewDate(widget.todo.todoDate, widget.todo.todoStart),
                   textAlign: TextAlign.start,
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 13,
                     color: widget.todo.todoDone
                         ? Colors.black26
                         : isDelayed
@@ -98,5 +103,21 @@ class _MyTodoTileState extends State<MyTodoTile> {
         ],
       ),
     );
+  }
+
+  String toViewDate(String dateString, String timeString) {
+    String rtn = '';
+    DateTime date = dateString.toDateTime()!;
+    DateTime now = DateTime.now();
+    TimeOfDay time = timeString.toTimeOfDay()!;
+
+    if (date.day != now.day) {
+      rtn += DateFormat('MM월 dd일 ').format(date);
+    } else {
+      rtn += '오늘 ';
+    }
+
+    rtn += time.toViewString()!;
+    return rtn;
   }
 }
