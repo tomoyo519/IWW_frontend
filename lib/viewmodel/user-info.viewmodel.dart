@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:iww_frontend/datasource/localStorage.dart';
 import 'package:iww_frontend/model/mypage/reward.model.dart';
 import 'package:iww_frontend/model/todo/todo_update.dto.dart';
+import 'package:iww_frontend/model/user/attendance.model.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
@@ -11,6 +12,7 @@ import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/service/reward.service.dart';
+import 'package:iww_frontend/view/home/attendance.dart';
 
 class UserInfo extends ChangeNotifier {
   final UserRepository _repository;
@@ -98,6 +100,8 @@ class UserInfo extends ChangeNotifier {
     _userCash = cash;
     notifyListeners();
   }
+
+  List<UserAttandance> attendances = [];
 
   // 유저 정보 갱신
   Future<void> fetchUser() async {
@@ -212,5 +216,16 @@ class UserInfo extends ChangeNotifier {
       type: EventType.show_login_achieve,
       message: message,
     ));
+  }
+
+  Future<List<UserAttandance>?> fetchAttandance() async {
+    List<UserAttandance>? fetched = await _repository.fetUserAtt(userId);
+    LOG.log('야홓호호ㅗㅗ호호호$fetched');
+    if (fetched != null) {
+      attendances = fetched;
+      return fetched;
+    } else {
+      return null;
+    }
   }
 }
