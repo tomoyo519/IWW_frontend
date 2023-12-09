@@ -80,7 +80,7 @@ class MyGroup extends StatelessWidget {
                       GroupList(),
                       // ==== Group Create Floating Button ==== //
                       Positioned(
-                        right: 20,
+                        right: 15,
                         bottom: 15,
                         child: IconButton(
                           onPressed: () async {
@@ -141,7 +141,7 @@ class MyGroup extends StatelessWidget {
                             shadowColor: Colors.black45,
                           ),
                           icon: Icon(
-                            size: 30,
+                            size: 40,
                             Icons.add,
                             color: Colors.white,
                           ),

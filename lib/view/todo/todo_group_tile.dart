@@ -274,9 +274,23 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
             Animation<double> secondaryAnimation,
           ) {
             return AlertDialog(
+              surfaceTintColor: Colors.white,
+              backgroundColor: Colors.white,
               actions: [
                 TextButton(
-                  child: Text('할일 완료!'),
+                  style: TextButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10))),
+                  child: Text(
+                    '할일 완료!',
+                    style: TextStyle(
+                      // 여기에서 스타일을 적용합니다.
+                      fontSize: 16, // 글자 크기
+                      color: Colors.white, // 글자 색상
+                      fontWeight: FontWeight.w500, // 글자 두께
+                    ),
+                  ),
                   onPressed: () async {
                     // * ==== 버튼 눌렀을때의 로직 ==== * //
                     final viewModel = context.read<TodoViewModel>();
