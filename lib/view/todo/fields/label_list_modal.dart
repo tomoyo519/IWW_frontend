@@ -1,30 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/view/_common/bottom_sheet_header.dart';
 
-class GroupCategory {
-  final int catId;
-  final String catName;
-  final String catImg;
-
-  GroupCategory({
-    required this.catId,
-    required this.catName,
-    required this.catImg,
-  });
-
-  factory GroupCategory.fromJson(Map<String, dynamic> data) {
-    return GroupCategory(
-      catId: data['cat_id'],
-      catName: data['cat_name'],
-      catImg: data['cat_img'],
-    );
-  }
-}
-
-class LabelListModal extends StatefulWidget {
+class LabelListModal extends StatelessWidget {
   final content;
   final Function(int) setLabel;
 
@@ -64,28 +41,6 @@ class LabelListModal extends StatefulWidget {
   ];
 
   @override
-  State<LabelListModal> createState() => _LabelListModalState();
-}
-
-class _LabelListModalState extends State<LabelListModal> {
-  List<GroupCategory>? categories;
-  bool isLoading = true;
-
-  @override
-  void initState() async {
-    super.initState();
-
-    await RemoteDataSource.get('/category').then((res) {
-      if (res.statusCode == 200) {
-        List<dynamic> jsonList = jsonDecode(res.body);
-        categories = jsonList.map((e) => GroupCategory.fromJson(e)).toList();
-        isLoading = false;
-      }
-    });
-  }
-
-  // static final List<String> labels = [
-  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
@@ -93,18 +48,18 @@ class _LabelListModalState extends State<LabelListModal> {
           title: "라벨 선택",
         ),
         Expanded(
-          child: !isLoading && categories != null
-              ? ListView.builder(
-                  itemCount: categories!.length,
-                  itemBuilder: (c, i) {
-                    return TextButton(
-                        onPressed: () {
-                          widget.setLabel(i);
-                          Navigator.pop(context);
-                        },
-                        child: Text(categories![i].catName));
-                  })
-              : SizedBox.shrink(),
+          child: ListView.builder(
+              itemCount: content == "label" ? labels.length : routines.length,
+              itemBuilder: (c, i) {
+                return TextButton(
+                    onPressed: () {
+                      setLabel(i);
+                      Navigator.pop(context);
+                    },
+                    child: content == "label"
+                        ? Text(labels[i])
+                        : Text(routines[i]));
+              }),
         ),
       ],
     );

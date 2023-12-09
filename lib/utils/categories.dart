@@ -14,13 +14,6 @@ class Category {
   });
 }
 
-// static final List<String> _routines = [
-//   '매일',
-//   '평일',
-//   '주말',
-//   '매주',
-// ];
-
 class Categories {
   static final Categories _inst = Categories();
 
