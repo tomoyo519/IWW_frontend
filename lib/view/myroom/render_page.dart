@@ -96,16 +96,14 @@ class RenderMyRoom extends StatelessWidget {
         // 상단 배경
         Expanded(
           flex: 2,
-          child: Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/bg/top_01.png'),
-                  fit: BoxFit.cover,
-                ),
+          child: Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/bg/top_01.png'),
+                fit: BoxFit.cover,
               ),
-              child: TopObjects(),
             ),
+            child: TopObjects(),
           ),
         ),
         // 하단 배경
