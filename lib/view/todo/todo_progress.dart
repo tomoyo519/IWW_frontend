@@ -45,6 +45,12 @@ class TodoProgress extends StatelessWidget {
       "구미호_01": "assets/pets/small_fox.glb",
       "구미호_02": "assets/pets/mid_fox.glb",
       "구미호_03": "assets/pets/kitsune.glb",
+      "용_01": "assets/pets/monitor_lizard.glb",
+      "용_02": "assets/pets/horned_lizard.glb",
+      "용_03": "assets/pets/chinese_dragon.glb",
+      "불사조_01": "assets/pets/pink_robin.glb",
+      "불사조_02": "assets/pets/archers_buzzard.glb",
+      "불사조_03": "assets/pets/pheonix.glb",
     };
 
     return SizedBox(

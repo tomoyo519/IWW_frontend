@@ -22,6 +22,7 @@ import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_exif_rotation/flutter_exif_rotation.dart';
 
 // Todo Extension으로 스타일 만들기
 enum GroupTodoState {
@@ -253,8 +254,11 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
     });
 
     if (pickedFile != null) {
+      File rotatedImage =
+          await FlutterExifRotation.rotateImage(path: pickedFile.path);
+
       setState(() {
-        _imageFile = File(pickedFile.path);
+        _imageFile = rotatedImage;
         LOG.log("image file ${_imageFile.toString()}");
       });
       final formatter = DateFormat('yyyy-MM-dd');

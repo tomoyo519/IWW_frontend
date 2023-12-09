@@ -4,70 +4,6 @@ import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:provider/provider.dart';
 
-// 인벤토리를 표시하는 함수
-// void showInventorySheet(BuildContext context) {
-//   showModalBottomSheet(
-//     context: context,
-//     builder: (BuildContext bc) {
-//       return InventoryBottomSheet();
-//     },
-//     isScrollControlled: true,
-//     backgroundColor: Colors.white54, // 투명 배경
-//   );
-// }
-
-// // 인벤토리 Bottom Sheet 위젯
-// class InventoryBottomSheet extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       height: 200,
-//       color: Colors.transparent, // 투명 배경
-//       child: _buildTabs(), // 탭 빌더
-//     );
-//   }
-
-//   Widget _buildTabs() {
-//     return DefaultTabController(
-//       length: 2,
-//       child: Column(
-//         children: <Widget>[
-//           TabBar(
-//             tabs: const <Widget>[
-//               Tab(child: Row(children: [Icon(Icons.pets), Text('펫')])),
-//               Tab(child: Row(children: [Icon(Icons.inventory), Text('아이템')])),
-//             ],
-//           ),
-//           Expanded(
-//             child: TabBarView(
-//               children: <Widget>[
-//                 PetTab(), // PET 탭 구현
-//                 ItemTab(), // Item 탭 구현
-//               ],
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-
-// class PetTab extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//   // 펫 탭 내용
-//     return Container();
-//   }
-// }
-
-// class ItemTab extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     // 아이템 탭 구현
-//     return Container(); // 아이템 탭 내용
-//   }
-// }
-
 Widget inventorySheet(BuildContext context, MyRoomViewModel myRoomViewModel) {
   return Positioned(
     top: 0,
@@ -251,3 +187,67 @@ class ItemTab extends StatelessWidget {
         }); // 펫 탭 내용/ 아이템 탭 내용
   }
 }
+
+// class BackgroundTab extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     // 아이템 탭 구현
+//     var myRoomViewModel = context.watch<MyRoomViewModel>();
+//     LOG.log('소유한 배경 개수 : ${myRoomViewModel.backgrounds.length}');
+//     return ListView.builder(
+//         scrollDirection: Axis.horizontal,
+//         itemCount: myRoomViewModel.backgrounds.length,
+//         itemBuilder: (context, index) {
+//           return GestureDetector(
+//               onTap: () async {
+//                 Item i = myRoomViewModel.backgrounds[index];
+//                 myRoomViewModel.toggleItem(i);
+//               },
+//               child: Container(
+//                 width: 90,
+//                 height: 100, // 각 펫 카드의 너비
+//                 margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+//                 decoration: BoxDecoration(
+//                   color: myRoomViewModel.roomObjects
+//                           .map((e) => e.id)
+//                           .contains(myRoomViewModel.backgrounds[index].id)
+//                       ? Colors.blue[100]
+//                       : Colors.white,
+//                   border: myRoomViewModel.roomObjects
+//                           .map((e) => e.id)
+//                           .contains(myRoomViewModel.backgrounds[index].id)
+//                       ? Border.all(color: Colors.blue.shade700, width: 2)
+//                       : null,
+//                   borderRadius: BorderRadius.circular(10),
+//                   boxShadow: myRoomViewModel.roomObjects
+//                           .map((e) => e.id)
+//                           .contains(myRoomViewModel.backgrounds[index].id)
+//                       ? [
+//                           BoxShadow(
+//                             color: Colors.blue.withOpacity(0.5),
+//                             spreadRadius: 3,
+//                             blurRadius: 5,
+//                             offset: Offset(0, 3),
+//                           ),
+//                         ]
+//                       : [],
+//                 ),
+//                 child: Column(
+//                   mainAxisAlignment: MainAxisAlignment.center,
+//                   children: [
+//                     Text(myRoomViewModel.items[index].name),
+//                     // 여기에 펫 이미지, 이름 등을 표시
+//                     ClipRRect(
+//                       borderRadius: BorderRadius.circular(10),
+//                       child: Image.asset(
+//                         'assets/thumbnail/${myRoomViewModel.items[index].path!}',
+//                         fit: BoxFit.cover,
+//                         height: 70,
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ));
+//         }); // 펫 탭 내용/ 아이템 탭 내용
+//   }
+// }
