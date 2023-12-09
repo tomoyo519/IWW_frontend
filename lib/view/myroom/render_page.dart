@@ -94,16 +94,16 @@ class RenderMyRoom extends StatelessWidget {
     // }
 
     // 1/3 step: 배경 지정
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: roomState.getBackgroundImage(),
-          fit: BoxFit.cover,
+    return Stack(
+      children: [
+        Column(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Flexible(flex: 2, child: Image.asset('assets/bg/top_01.png')),
+            Flexible(flex: 1, child: Image.asset('assets/bg/bottom_01.png')),
+          ],
         ),
-      ),
-      child: Stack(
-        // 1/2 step: 방안의 오브젝트 렌더링
-        children: roomState.roomObjects.map((Item item) {
+        ...roomState.roomObjects.map((Item item) {
           // 가구가 아니면 렌더링하지 않음.
           if (item.itemType != 2) {
             return SizedBox();
@@ -126,8 +126,8 @@ class RenderMyRoom extends StatelessWidget {
               fit: BoxFit.none,
             ),
           );
-        }).toList(),
-      ),
+        }).toList()
+      ],
     );
 
     // 유저의 펫 정보 불러오기
