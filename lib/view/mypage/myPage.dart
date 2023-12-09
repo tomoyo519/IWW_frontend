@@ -171,7 +171,7 @@ class _MyPageState extends State<MyPage> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(20.0),
                                   child: Text(
-                                    "유저 경험치",
+                                    "내 성취도",
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:iww_frontend/datasource/localStorage.dart';
 import 'package:iww_frontend/model/mypage/reward.model.dart';
 import 'package:iww_frontend/model/todo/todo_update.dto.dart';
 import 'package:iww_frontend/model/user/attendance.model.dart';
@@ -13,33 +12,30 @@ import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/service/reward.service.dart';
 import 'package:iww_frontend/view/home/attendance.dart';
+import 'package:path/path.dart';
 
 class UserInfo extends ChangeNotifier {
-  final UserRepository _repository;
-  UserModel _user;
   Item _mainPet;
   Rewards? _reward;
+  UserModel _user;
+  List<UserAttandance> _attendances;
+  final UserRepository _repository;
 
   UserInfo(
     this._user,
     this._mainPet,
     this._repository,
     this._reward,
+    this._attendances,
   ) {
-    _setUserState(_user, _mainPet, _reward);
-    // _setStateFromModels(_user, _mainPet);
-
-    // 초기 로그인 카운트 알림
-    // if (_user.login_cnt >= 30) {
-    //   EventService.publish(
-    //     Event(
-    //       type: EventType.show_login_achieve,
-    //       message: jsonEncode({
-    //         "title": "로그인 카운트 30회 달성!",
-    //       }),
-    //     ),
-    //   );
-    // }
+    // FIXME: 업적 달성 모달 항상 뜨도록 설정
+    _reward = Rewards(
+      achiName: '첫 로그인',
+      achiDesc: 'achiDesc',
+      isHidden: false,
+      achiImg: 'assets/achi/login.png',
+    );
+    _setUserState(_user, _mainPet, reward: _reward, attd: _attendances);
   }
 
   // === Status === //
@@ -56,6 +52,8 @@ class UserInfo extends ChangeNotifier {
   // === Getters === //
   Item get mainPet => _mainPet;
   UserModel get userModel => _user;
+  List<String> get attendance =>
+      _attendances.map((e) => e.day_of_week.toString()).toList();
 
   int get userId => _user.user_id;
   String get userName => _userName;
@@ -101,13 +99,11 @@ class UserInfo extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<UserAttandance> attendances = [];
-
-  // 유저 정보 갱신
+  // 유저 정보 갱신 (초기 로그인시 작동)
   Future<void> fetchUser() async {
     GetUserResult? fetched = await _repository.getUser();
     if (fetched != null) {
-      _setUserState(fetched.user, fetched.pet, null);
+      _setUserState(fetched.user, fetched.pet);
       LOG.log("Fetched user state.");
     }
   }
@@ -124,7 +120,7 @@ class UserInfo extends ChangeNotifier {
               body: jsonEncode(json))
           .then((res) {
         LOG.log('${res.statusCode}');
-        if (res.statusCode == 200 && res != null) {
+        if (res.statusCode == 200) {
           userName = myname;
           return true;
         } else {
@@ -156,12 +152,18 @@ class UserInfo extends ChangeNotifier {
 
     await fetchUser();
 
+    EventService.publish(Event(
+      type: EventType.onTodoApproved,
+      message: "인증을 완료했어요!",
+    ));
+
     _onTodoReward(prevUserCash);
     _onEvolution(prevPetId);
   }
 
   // Fetch해온 유저 정보를 상태로 세팅
-  void _setUserState(UserModel newUser, Item newPet, Rewards? reward) {
+  void _setUserState(UserModel newUser, Item newPet,
+      {Rewards? reward, List<UserAttandance>? attd}) {
     // * Set new user info * //
     _user = newUser;
     _userName = newUser.user_name;
@@ -176,8 +178,12 @@ class UserInfo extends ChangeNotifier {
     _itemName = newPet.name;
     _petName = newPet.petName ?? '';
 
-    // * Set reward info * //
+    // * Set other info * //
     _reward = reward;
+
+    if (attd != null) {
+      _attendances = attd;
+    }
 
     notifyListeners();
   }
@@ -186,18 +192,8 @@ class UserInfo extends ChangeNotifier {
   void initEvents() {
     _onLoginReward(_reward);
 
-    // 업적 달성 모달 테스트
-    // Rewards reward = Rewards(
-    //   achiName: '첫 로그인',
-    //   achiDesc: 'achiDesc',
-    //   isHidden: false,
-    //   achiImg: 'assets/achi/login.png',
-    // );
-
-    // var message = jsonEncode(reward.toMap());
     // EventService.publish(Event(
-    //   type: EventType.onAchieve,
-    //   message: message,
+    //   type: EventType.onFirstTodoDone,
     // ));
   }
 
@@ -229,16 +225,7 @@ class UserInfo extends ChangeNotifier {
       type: EventType.onAchieve,
       message: message,
     ));
-  }
-
-  Future<List<UserAttandance>?> fetchAttandance() async {
-    List<UserAttandance>? fetched = await _repository.fetUserAtt(userId);
-    LOG.log('야홓호호ㅗㅗ호호호$fetched');
-    if (fetched != null) {
-      attendances = fetched;
-      return fetched;
-    } else {
-      return null;
-    }
+    // 앱 사용중 다시 뜨기 방지
+    _reward = null;
   }
 }

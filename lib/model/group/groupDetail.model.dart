@@ -56,7 +56,7 @@ class GroupDetail {
       grpName: json['grp_name'],
       grpDesc: json['grp_desc'],
       regAt: json['reg_at'],
-      userName: json['user_name'],
+      userName: json['user_name'] ?? 'user',
       catName: json['cat_name'],
     );
   }

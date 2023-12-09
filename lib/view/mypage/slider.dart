@@ -10,7 +10,10 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:iww_frontend/view/_navigation/app_navigator.dart';
+import 'package:iww_frontend/view/_navigation/enum/app_route.dart';
 import 'package:iww_frontend/view/shop/shop_page.dart';
+import 'package:provider/provider.dart';
 
 class CarouselSliderDemo extends StatelessWidget {
   const CarouselSliderDemo({Key? key}) : super(key: key);
@@ -27,8 +30,9 @@ class CarouselSliderDemo extends StatelessWidget {
         .map(
           (item) => InkWell(
             onTap: () {
+              LOG.log('클릭되긴 하고요?');
+              context.read<AppNavigator>().navigate(AppRoute.shop);
               // TODO - no widget found....
-              //   LOG.log('클릭되긴 하고요?');
               //   Navigator.push(
               //     context,
               //     MaterialPageRoute(builder: (context) => ShopPage()),

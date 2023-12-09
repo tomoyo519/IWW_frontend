@@ -34,11 +34,11 @@ class _ShopItems extends State<ShopItems> {
   @override
   void initState() {
     super.initState();
+    fetchFriend();
     // 상점 신제품 알려주는 모달
-    Future.delayed(Duration.zero, () async {
-      WidgetsBinding.instance.addPostFrameCallback((_) => _showDialog(context));
-      await fetchFriend();
-    });
+    // Future.delayed(Duration.zero, () async {
+    //   WidgetsBinding.instance.addPostFrameCallback((_) => _showDialog(context));
+    // });
   }
 
   void purchase(idx) async {
@@ -102,7 +102,11 @@ class _ShopItems extends State<ShopItems> {
                       allpets: allpets,
                       purchase: purchase,
                       isLoading: isPetLoading),
-                if (allpets == null || allpets!.isEmpty) Container(),
+                if (isPetLoading == true)
+                  Lottie.asset('assets/spinner.json',
+                      repeat: true,
+                      animate: true,
+                      height: MediaQuery.of(context).size.height * 0.3),
                 if (allfuns != null && allfuns!.isEmpty)
                   Lottie.asset('assets/empty.json',
                       repeat: true,
@@ -113,7 +117,11 @@ class _ShopItems extends State<ShopItems> {
                       allpets: allfuns,
                       purchase: purchase,
                       isLoading: isPetLoading),
-                if (allfuns == null || allfuns!.isEmpty) Container(),
+                if (isFunLoading == true)
+                  Lottie.asset('assets/spinner.json',
+                      repeat: true,
+                      animate: true,
+                      height: MediaQuery.of(context).size.height * 0.3),
               ],
             ),
           )
@@ -125,57 +133,57 @@ class _ShopItems extends State<ShopItems> {
 
 // 상점에 들어오면 이벤트를 알리는 모달
 // TODO - css 추가 필요
-void _showDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return Container(
-        width: MediaQuery.of(context).size.width * 0.8, // 너비 지정
-        height: 100, // 높이를 지정합니다.
+// void _showDialog(BuildContext context) {
+//   showDialog(
+//     context: context,
+//     builder: (BuildContext context) {
+//       return Container(
+//         width: MediaQuery.of(context).size.width * 0.8, // 너비 지정
+//         height: 100, // 높이를 지정합니다.
 
-        child: AlertDialog(
-          surfaceTintColor: Colors.white,
-          backgroundColor: Colors.white,
-          title: Center(
-            child: Text('새로운 배경 출시!'),
-          ),
-          content: SingleChildScrollView(
-            // SingleChildScrollView를 사용합니다.
-            child: Container(
-              color: Colors.white,
-              width: MediaQuery.of(context).size.width * 0.8, // 너비 지정
-              height: 350, // 여기에서 높이를 지정합니다.
-              child: Column(
-                children: [
-                  Text(
-                    '이번달 한정판매',
-                    style: TextStyle(
-                      fontSize: 16, // 글자 크기를 16으로 설정합니다.
-                    ),
-                  ),
-                  Image.asset('assets/bg/bg1.png'),
-                  Text(
-                    '초원',
-                    style: TextStyle(
-                      fontSize: 16, // 글자 크기를 16으로 설정합니다.
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                // 다이얼로그 닫기
-                Navigator.of(context).pop();
-              },
-              child: Text('확인'),
-            ),
-          ],
-        ),
-      );
-      // return the Dialog here.
-    },
-  );
-}
+//         child: AlertDialog(
+//           surfaceTintColor: Colors.white,
+//           backgroundColor: Colors.white,
+//           title: Center(
+//             child: Text('새로운 배경 출시!'),
+//           ),
+//           content: SingleChildScrollView(
+//             // SingleChildScrollView를 사용합니다.
+//             child: Container(
+//               color: Colors.white,
+//               width: MediaQuery.of(context).size.width * 0.8, // 너비 지정
+//               height: 350, // 여기에서 높이를 지정합니다.
+//               child: Column(
+//                 children: [
+//                   Text(
+//                     '이번달 한정판매',
+//                     style: TextStyle(
+//                       fontSize: 16, // 글자 크기를 16으로 설정합니다.
+//                     ),
+//                   ),
+//                   Image.asset('assets/bg/bg1.png'),
+//                   Text(
+//                     '초원',
+//                     style: TextStyle(
+//                       fontSize: 16, // 글자 크기를 16으로 설정합니다.
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ),
+//           actions: <Widget>[
+//             TextButton(
+//               onPressed: () {
+//                 // 다이얼로그 닫기
+//                 Navigator.of(context).pop();
+//               },
+//               child: Text('확인'),
+//             ),
+//           ],
+//         ),
+//       );
+//       // return the Dialog here.
+//     },
+//   );
+// }
