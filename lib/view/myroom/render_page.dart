@@ -5,7 +5,6 @@ import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/friends/friendMain.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';
 import 'package:iww_frontend/view/myroom/mypet.dart';
-import 'package:iww_frontend/view/myroom/myroom.dart';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -26,32 +25,23 @@ class RenderPage extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           // 배경, 가구 렌더링
-          RenderMyRoom(),
+          RoomArea(),
           // 펫 렌더링
-          MyPetArea(),
+          PetArea(),
           // 상단 상태바
           Positioned(
               left: 0,
               right: 0,
               top: MediaQuery.of(context).size.height * 0.01,
               child: StatusBar()),
-          // 하단 버튼
-          // Positioned(
-          //   left: 0,
-          //   right: 0,
-          //   bottom: kBottomNavigationBarHeight +
-          //       MediaQuery.of(context).size.height * 0.14,
-          //   height: 50,
-          //   child: BottomButtons(),
-          // ),
         ],
       ),
     );
   }
 }
 
-class MyPetArea extends StatelessWidget {
-  const MyPetArea({
+class PetArea extends StatelessWidget {
+  const PetArea({
     super.key,
   });
 
@@ -87,12 +77,12 @@ class MyPetArea extends StatelessWidget {
 }
 
 // 방 렌더링
-class RenderMyRoom extends StatelessWidget {
-  const RenderMyRoom({super.key});
+class RoomArea extends StatelessWidget {
+  const RoomArea({super.key});
 
   @override
   Widget build(BuildContext context) {
-    LOG.log('############## RenderMyRoom 시작 !!!!!!!!!!!!!!!!!!!!!!');
+    LOG.log('############## RoomArea 시작 !!!!!!!!!!!!!!!!!!!!!!');
     var myRoomState = context.watch<MyRoomViewModel>();
 
     // Naviator를 통해서 argument를 전달할 경우 받는 방법
