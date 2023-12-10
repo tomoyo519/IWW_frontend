@@ -52,6 +52,12 @@ class MyRoomViewModel with ChangeNotifier {
   void toggleItem(Item target) {
     for (Item now in roomObjects) {
       if (now.id == target.id) {
+        // 펫과 배경화면은 삭제 불가능
+        if (now.itemType == itemTypeOfPet ||
+            now.itemType == itemTypeOfBackground) {
+          return;
+        }
+
         roomObjects.remove(now);
         notifyListeners();
         return;
