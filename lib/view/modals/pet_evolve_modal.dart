@@ -9,10 +9,10 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 // static method
-void showPetEvolveModal(BuildContext context) {
+Future<Object?> showPetEvolveModal(BuildContext context) {
   Item pet = context.read<UserInfo>().mainPet;
 
-  showCustomFullScreenModal(
+  return showCustomFullScreenModal(
     context: context,
     builder: (context) => EvolveLottie(
       pet: pet,

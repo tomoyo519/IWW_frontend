@@ -7,7 +7,7 @@ import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
-void showTodoDoneModal(BuildContext context) {
+Future<Object?> showTodoDoneModal(BuildContext context) {
   Size screen = MediaQuery.of(context).size;
   Item pet = context.read<UserInfo>().mainPet;
 
@@ -19,7 +19,7 @@ void showTodoDoneModal(BuildContext context) {
     ),
   );
 
-  showCustomFullScreenModal(
+  return showCustomFullScreenModal(
     context: context,
     builder: (context) => MyPetModal(
       pet: pet,
@@ -57,7 +57,7 @@ void showTodoDoneModal(BuildContext context) {
           ),
           MyButton(
             // full: true,
-            onpressed: (_) => Navigator.pop(context),
+            onpressed: (_) => Navigator.pop(context, true),
             text: "닫기",
           ),
         ],

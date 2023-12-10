@@ -36,8 +36,8 @@ class MainPage extends StatefulWidget implements PreferredSizeWidget {
 class _MainPageState extends State<MainPage> {
   bool waiting = false;
   StreamSubscription<Event>? sub;
-  final Queue<Event> _eventQueue = Queue<Event>();
-  bool _isProcessing = false;
+  final Queue<Event> _eventq = Queue<Event>();
+  bool _waiting = false;
 
   @override
   void initState() {
@@ -49,37 +49,44 @@ class _MainPageState extends State<MainPage> {
       (event) async {
         String? message = event.message;
         EventType type = event.type;
-        LOG.log("main_page event listen msg : ${message ?? ''} ${type.target}");
+        LOG.log("[Event]: ${message ?? ''}${type.target.toUpperCase()}");
+
+        // 초기 로딩시간 설정
+        await Future.delayed(Duration(seconds: 8));
 
         if (type.target == 'socket') {
+          // 소켓의 경우 즉시
+          // ignore: use_build_context_synchronously
           type.run(context, message: message);
         } else if (type.target == 'ui') {
-          _eventQueue.add(event);
-          if (!_isProcessing) {
-            _nextEvent();
+          // UI 렌더링은 큐에 쌓기
+          _eventq.add(event);
+          if (!_waiting) {
+            await _nextEvent();
           }
         }
       },
     );
   }
 
-  void _nextEvent() {
-    if (_eventQueue.isEmpty) {
-      _isProcessing = false;
-      return;
+  Future<void> _nextEvent() async {
+    while (_eventq.isNotEmpty) {
+      _waiting = true;
+      Event event = _eventq.removeFirst();
+      String? message = event.message;
+      EventType type = event.type;
+
+      try {
+        // ignore: use_build_context_synchronously
+        bool? completed = await type.show(context, message: message) as bool?;
+        await Future.delayed(Duration(seconds: 3)); // 이벤트 사이 간격 조정
+        LOG.log('event completed? $completed');
+      } catch (error) {
+        LOG.log('event error $error');
+      } finally {
+        _waiting = false;
+      }
     }
-
-    _isProcessing = true;
-    Event event = _eventQueue.removeFirst();
-    String? message = event.message;
-    EventType type = event.type;
-
-    Future.microtask(() async {
-      type.run(context, message: message);
-    }).then((_) {
-      _isProcessing = false;
-      _nextEvent();
-    });
   }
 
   @override
@@ -105,6 +112,9 @@ class _MainPageState extends State<MainPage> {
     final List<AppPage> appbars = nav.APPBAR_PAGES;
 
     final AppPage curr = nav.current;
+
+    // * ==== Trigger Login Event ==== * //
+    context.read<UserInfo>().initEvents();
 
     return Scaffold(
       resizeToAvoidBottomInset: false,

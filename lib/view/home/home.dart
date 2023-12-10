@@ -21,9 +21,6 @@ class TodoPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final UserInfo user = context.read<UserInfo>();
 
-    // * ==== Trigger Login Event ==== * //
-    context.read<UserInfo>().initEvents();
-
     return ChangeNotifierProvider<TodoViewModel>(
       create: (context) => TodoViewModel(
         Provider.of<TodoRepository>(context, listen: false),

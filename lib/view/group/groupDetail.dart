@@ -6,12 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
-import 'package:iww_frontend/model/group/group.model.dart';
 import 'package:iww_frontend/model/group/groupDetail.model.dart' as model;
 import 'package:iww_frontend/model/routine/routine.model.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/model/group/groupImg.model.dart';
-import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/style/button.dart';
@@ -21,11 +19,8 @@ import 'package:iww_frontend/utils/weekdays.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
 import 'dart:convert';
 import 'package:iww_frontend/utils/logger.dart';
-import 'package:iww_frontend/view/_common/bottom_sheet_header.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/_navigation/enum/app_route.dart';
-import 'package:iww_frontend/view/group/groupMain.dart';
-import 'package:iww_frontend/view/modals/custom_snackbar.dart';
 import 'package:iww_frontend/view/todo/todo_editor.dart';
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
@@ -637,22 +632,22 @@ class _GroupDetailState extends State<GroupDetail> {
                                                         groupRoutine[i].routId),
                                               ),
                                             ),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            Expanded(
-                                              child: MyButton(
-                                                type: MyButtonType.primary,
-                                                text:
-                                                    "인증하기", // TODO: 실제 정보가 아닙니다.
-                                                onpressed: (context) =>
-                                                    _onGrpRoutCheck(
-                                                  context,
-                                                  groupRoutine[i].grpId,
-                                                  userInfo.userId,
-                                                ),
-                                              ),
-                                            ),
+                                            // SizedBox(
+                                            //   width: 10,
+                                            // ),
+                                            // Expanded(
+                                            //   child: MyButton(
+                                            //     type: MyButtonType.primary,
+                                            //     text:
+                                            //         "인증하기", // TODO: 실제 정보가 아닙니다.
+                                            //     onpressed: (context) =>
+                                            //         _onGrpRoutCheck(
+                                            //       context,
+                                            //       groupRoutine[i].grpId,
+                                            //       userInfo.userId,
+                                            //     ),
+                                            //   ),
+                                            // ),
                                           ],
                                         ),
                                       ],
@@ -872,12 +867,12 @@ class _GroupDetailState extends State<GroupDetail> {
                       LOG.log('Error sending image');
                     });
                     // 여기서 todoId 찾기??
-                    // var data = {
-                    //   'userId': userId,
-                    //   'todoId': widget.todo.todoId,
-                    // };
+                    var data = {
+                      'userId': userId,
+                      'routId': routId,
+                    };
 
-                    // EventService.sendEvent('confirmRequest', data);
+                    EventService.sendEvent('routineConfirmRequest', data);
                     if (context.mounted) {
                       Navigator.pop(context, true);
                     }

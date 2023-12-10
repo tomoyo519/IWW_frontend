@@ -25,7 +25,10 @@ class MyRoom extends StatelessWidget {
     // 내비게이터 설정
     final nav = context.read<AppNavigator>();
     int roomOwner = nav.arg != null ? int.parse(nav.arg!) : userId;
-    nav.title = '친구의방';
+    if (roomOwner != userId) {
+      // 방 주인이 유저가 아니면 홈 라벨 지우기
+      nav.title = '';
+    }
 
     LOG.log('Room page: user id $userId, owner id $roomOwner');
 

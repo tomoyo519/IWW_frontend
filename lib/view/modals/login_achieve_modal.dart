@@ -11,8 +11,8 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 // static method
-void showLoginAchieveModal(BuildContext context, String message) {
-  showCustomFullScreenModal(
+Future<Object?> showLoginAchieveModal(BuildContext context, String message) {
+  return showCustomFullScreenModal(
     context: context,
     builder: (context) => LoginAchieveModal(message: message),
   );
@@ -76,7 +76,7 @@ class LoginAchieveModal extends StatelessWidget {
               MyButton(
                 text: "닫기",
                 type: MyButtonType.secondary,
-                onpressed: (context) => Navigator.pop(context),
+                onpressed: (context) => Navigator.pop(context, true),
               ),
               SizedBox(
                 width: 10,
@@ -84,7 +84,7 @@ class LoginAchieveModal extends StatelessWidget {
               MyButton(
                 text: "마이페이지",
                 onpressed: (context) {
-                  Navigator.pop(context);
+                  Navigator.pop(context, true);
                   context.read<AppNavigator>().navigate(AppRoute.mypage);
                 },
               )

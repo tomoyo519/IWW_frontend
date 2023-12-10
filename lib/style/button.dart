@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/style/app_theme.dart';
 
 import 'package:iww_frontend/style/button.style.dart';
 import 'package:iww_frontend/style/button.type.dart';
@@ -39,6 +40,7 @@ class MyButton extends StatelessWidget {
             textStyle: TextStyle(
               color: txtColor,
               fontWeight: FontWeight.w900,
+              fontFamily: AppTheme.FONT_FAMILY,
             ),
             foregroundColor: txtColor,
             backgroundColor: bgColor,
