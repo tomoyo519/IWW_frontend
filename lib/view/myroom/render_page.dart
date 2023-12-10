@@ -47,32 +47,19 @@ class PetArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final myRoomState = context.read<MyRoomViewModel>();
+    // final myRoomState = context.read<MyRoomViewModel>();
     final userInfo = context.read<UserInfo>();
 
-    return FutureBuilder<int>(
-        future: UserRepository().getUserHealth(myRoomState.getRoomOwner),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return SizedBox();
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            int health = snapshot.data!; // snapshot.data에서 비동기 작업 결과를 받아옴
 
-            return Selector<MyRoomViewModel, List<Item>>(
-                selector: (_, myRoomViewModel) => myRoomViewModel.roomObjects,
-                builder: (_, roomObjects, __) {
-                  return Positioned(
-                    bottom: MediaQuery.of(context).size.height * 0.05,
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.width,
-                    child:
-                        MyPet(newSrc: userInfo.itemName!, isDead: health == 0),
-                  );
-                });
-          }
-        });
+    // FIXME 현재 방 주인에 따라 다르게 렌더링
+    return Positioned(
+      bottom: MediaQuery.of(context).size.height * 0.05,
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.width,
+      child:
+          MyPet(newSrc: userInfo.itemName!, isDead: false),
+    );
+
   }
 }
 
