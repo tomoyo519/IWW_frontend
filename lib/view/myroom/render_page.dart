@@ -16,12 +16,13 @@ import 'package:flutter/services.dart' show rootBundle;
 class RenderPage extends StatelessWidget {
   const RenderPage({
     super.key,
+    required this.myRoomState,
   });
+
+  final MyRoomViewModel myRoomState;
 
   @override
   Widget build(BuildContext context) {
-    final myRoomState = context.watch<MyRoomViewModel>();
-
     return Expanded(
       child: Stack(
         fit: StackFit.expand,
@@ -52,13 +53,16 @@ class PetArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      bottom: MediaQuery.of(context).size.height * 0.05,
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.width,
-      child:
-          MyPet(myRoomState: myRoomState),
-    );
+    return Selector<MyRoomViewModel, List<Item>>(
+        selector: (_, myRoomViewModel) => myRoomViewModel.roomObjects,
+        builder: (_, roomObjects, __) {
+          return Positioned(
+            bottom: MediaQuery.of(context).size.height * 0.05,
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.width,
+            child: MyPet(myRoomState: myRoomState),
+          );
+        });
 
   }
 }
