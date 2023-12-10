@@ -58,6 +58,7 @@ dependencies:
   flutter_speed_dial: ^3.0.5
   flutter_exif_rotation: ^0.5.1
   photo_view: ^0.14.0
+  video_player: ^2.8.1
 
 dev_dependencies:
   flutter_lints: ^2.0.0
@@ -85,6 +86,7 @@ flutter:
     - assets/furniture/
     - assets/category/
     - assets/achi/
+    - assets/splash/DoWith_splash.mp4
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
   # For details regarding adding assets from package dependencies, see

@@ -21,6 +21,7 @@ import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/view/_common/loading.dart';
 import 'package:iww_frontend/view/_navigation/main_page.dart';
 import 'package:iww_frontend/view/signup/landing.dart';
+import 'package:iww_frontend/view/splash/splash.dart';
 import 'package:iww_frontend/view/todo/modals/todo_create_modal.dart';
 import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/todo_modal.viewmodel.dart';
@@ -94,7 +95,8 @@ void main() async {
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: getapptheme(),
-          home: RenderPage(),
+          // home: RenderPage(),
+          home: SplashScreen(),
         ),
       ),
     ),
