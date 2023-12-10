@@ -23,10 +23,7 @@ class Preset {
 }
 
 class MyPet extends StatefulWidget {
-  final MyRoomViewModel myRoomState;
-
-  const MyPet({Key? key, required this.myRoomState})
-      : super(key: key);
+  const MyPet({super.key});
 
   @override
   State<MyPet> createState() => _MyPetState();
@@ -155,7 +152,7 @@ class _MyPetState extends State<MyPet> {
 
   @override
   Widget build(BuildContext context) {
-    final myRoomState = widget.myRoomState;
+    final myRoomState = context.watch<MyRoomViewModel>();
 
     // 모델 및 프리셋 선택
     String petName = myRoomState.findPetAsset(); // not nickname
