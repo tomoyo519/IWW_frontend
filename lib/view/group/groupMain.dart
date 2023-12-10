@@ -33,151 +33,156 @@ class MyGroupPage extends StatelessWidget {
 }
 
 // ==== 페이지 내용 ==== //
-class MyGroup extends StatelessWidget {
-  const MyGroup({
-    super.key,
-    required this.groupRepository,
-  });
-
+class MyGroup extends StatefulWidget {
   final GroupRepository groupRepository;
+  const MyGroup({
+    Key? key,
+    required this.groupRepository,
+  }) : super(key: key);
+
+  @override
+  _MyGroupState createState() => _MyGroupState();
+}
+
+class _MyGroupState extends State<MyGroup> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _tabController = TabController(length: 2, vsync: this);
+
+    _tabController.addListener(() {
+      if (_tabController.indexIsChanging) {
+        // 효과음 재생 코드
+        final assetsAudioPlayer = AssetsAudioPlayer();
+        assetsAudioPlayer.open(Audio("assets/main.mp3"));
+        assetsAudioPlayer.play();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     var userInfo = context.read<UserInfo>();
+
     return DefaultTabController(
-      initialIndex: 0,
       length: 2,
-      child: DefaultTabController(
-        length: 2,
-        child: Column(
-          children: [
-            TabBar(
-              labelStyle: TextStyle(fontSize: 20),
-              labelColor: Colors.black,
-              indicatorColor: Colors.black,
-              indicatorSize: TabBarIndicatorSize.tab,
-              tabs: <Widget>[
-                GestureDetector(
-                  onTap: () async {
-                    // 효과음 재생 코드
-                    final assetsAudioPlayer = AssetsAudioPlayer();
-                    assetsAudioPlayer.open(Audio("assets/main.mp3"));
-                    assetsAudioPlayer.play();
-                  },
-                  child: Tab(text: "내 그룹"),
-                ),
-                GestureDetector(
-                  onTap: () async {
-                    // 효과음 재생 코드
-                    final assetsAudioPlayer = AssetsAudioPlayer();
-                    assetsAudioPlayer.open(Audio("assets/main.mp3"));
-                    assetsAudioPlayer.play();
-                  },
-                  child: Tab(text: "그룹 찾기"),
-                ),
-              ],
-            ),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  MultiProvider(
-                    providers: [
-                      ChangeNotifierProvider.value(
-                        value: context.read<MyGroupViewModel>(),
-                      ),
-                      ChangeNotifierProvider(
-                        create: (context) =>
-                            GroupDetailModel(groupRepository, userInfo.userId),
-                      ),
-                    ],
-                    child: Stack(children: [
-                      GroupList(),
-                      // ==== Group Create Floating Button ==== //
-                      Positioned(
-                        right: 15,
-                        bottom: 15,
-                        child: IconButton(
-                          onPressed: () async {
-                            var userInfo = context.read<UserInfo>();
+      child: Column(
+        children: [
+          TabBar(
+            controller: _tabController,
+            labelStyle: TextStyle(fontSize: 20),
+            labelColor: Colors.black,
+            indicatorColor: Colors.black,
+            indicatorSize: TabBarIndicatorSize.tab,
+            tabs: <Widget>[
+              Tab(text: "내 그룹"),
+              Tab(text: "그룹 찾기"),
+            ],
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                MultiProvider(
+                  providers: [
+                    ChangeNotifierProvider.value(
+                      value: context.read<MyGroupViewModel>(),
+                    ),
+                    ChangeNotifierProvider(
+                      create: (context) => GroupDetailModel(
+                          widget.groupRepository, userInfo.userId),
+                    ),
+                  ],
+                  child: Stack(children: [
+                    GroupList(),
+                    // ==== Group Create Floating Button ==== //
+                    Positioned(
+                      right: 15,
+                      bottom: 15,
+                      child: IconButton(
+                        onPressed: () async {
+                          var userInfo = context.read<UserInfo>();
 
-                            final assetsAudioPlayer = AssetsAudioPlayer();
+                          final assetsAudioPlayer = AssetsAudioPlayer();
 
-                            assetsAudioPlayer.open(
-                              Audio("assets/main.mp3"),
-                            );
+                          assetsAudioPlayer.open(
+                            Audio("assets/main.mp3"),
+                          );
 
-                            assetsAudioPlayer.play();
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (c) => MultiProvider(
-                                  providers: [
-                                    ChangeNotifierProvider.value(
-                                        value: context.read<UserInfo>()),
-                                    ChangeNotifierProvider(
-                                      create: (_) => GroupDetailModel(
-                                          Provider.of<GroupRepository>(context,
-                                              listen: false),
-                                          userInfo.userId),
-                                    ),
-                                    ChangeNotifierProvider.value(
-                                        value:
-                                            context.read<MyGroupViewModel>()),
-                                    // ChangeNotifierProvider.value(
-                                    //     value: context.read<UserInfo>())
-                                  ],
-                                  child: NewGroup(),
-                                ),
-
-                                // MultiProvider(
-                                //   providers: [
-                                //     // Provider(
-                                //     //   create: (context) =>
-                                //     //       Provider.of<UserInfo>(context,
-                                //     //           listen: false),
-                                //     // ),
-                                //     // ChangeNotifierProvider(
-                                //     //   create: (context) =>
-                                //     //       Provider.of<MyGroupViewModel>(
-                                //     //           context,
-                                //     //           listen: false),
-                                //     // ),
-                                //     ChangeNotifierProvider.value(
-                                //       value: context.read<MyGroupViewModel>(),
-                                //     )
-                                //   ],
-                                //   child: LoginWrapper(child: NewGroup()),
+                          assetsAudioPlayer.play();
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (c) => MultiProvider(
+                                providers: [
+                                  ChangeNotifierProvider.value(
+                                      value: context.read<UserInfo>()),
+                                  ChangeNotifierProvider(
+                                    create: (_) => GroupDetailModel(
+                                        Provider.of<GroupRepository>(context,
+                                            listen: false),
+                                        userInfo.userId),
+                                  ),
+                                  ChangeNotifierProvider.value(
+                                      value: context.read<MyGroupViewModel>()),
+                                  // ChangeNotifierProvider.value(
+                                  //     value: context.read<UserInfo>())
+                                ],
+                                child: NewGroup(),
                               ),
-                            );
-                            // if (context.mounted &&
-                            //     result != null &&
-                            //     result == true) {
-                            //   await context
-                            //       .read<MyGroupViewModel>()
-                            //       .fetchMyGroupList();
-                            // }
-                          },
-                          style: IconButton.styleFrom(
-                            elevation: 1,
-                            backgroundColor: Colors.orange,
-                            shadowColor: Colors.black45,
-                          ),
-                          icon: Icon(
-                            size: 40,
-                            Icons.add,
-                            color: Colors.white,
-                          ),
+
+                              // MultiProvider(
+                              //   providers: [
+                              //     // Provider(
+                              //     //   create: (context) =>
+                              //     //       Provider.of<UserInfo>(context,
+                              //     //           listen: false),
+                              //     // ),
+                              //     // ChangeNotifierProvider(
+                              //     //   create: (context) =>
+                              //     //       Provider.of<MyGroupViewModel>(
+                              //     //           context,
+                              //     //           listen: false),
+                              //     // ),
+                              //     ChangeNotifierProvider.value(
+                              //       value: context.read<MyGroupViewModel>(),
+                              //     )
+                              //   ],
+                              //   child: LoginWrapper(child: NewGroup()),
+                            ),
+                          );
+                          // if (context.mounted &&
+                          //     result != null &&
+                          //     result == true) {
+                          //   await context
+                          //       .read<MyGroupViewModel>()
+                          //       .fetchMyGroupList();
+                          // }
+                        },
+                        style: IconButton.styleFrom(
+                          elevation: 1,
+                          backgroundColor: Colors.orange,
+                          shadowColor: Colors.black45,
+                        ),
+                        icon: Icon(
+                          size: 40,
+                          Icons.add,
+                          color: Colors.white,
                         ),
                       ),
-                    ]),
-                  ),
-                  GroupSearch(),
-                ],
-              ),
+                    ),
+                  ]),
+                ),
+                GroupSearch(),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
+
       // bottomNavigationBar: MainPage(),
       //   floatingActionButton: FloatingActionButton(
       //     onPressed: () {

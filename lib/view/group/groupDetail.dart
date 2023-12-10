@@ -524,7 +524,6 @@ class _GroupDetailState extends State<GroupDetail> {
                   color: Colors.grey[200],
                   thickness: 10,
                   height: 30,
-                  color: Colors.black12,
                 ),
 
                 Padding(
@@ -700,12 +699,13 @@ class _GroupDetailState extends State<GroupDetail> {
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(3.0),
-                          child:    Text(
-                                "${groupMems.length}명",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          child: Text(
+                            "${groupMems.length}명",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
                       // ElevatedButton(
