@@ -16,13 +16,12 @@ import 'package:flutter/services.dart' show rootBundle;
 class RenderPage extends StatelessWidget {
   const RenderPage({
     super.key,
-    required this.myRoomState,
   });
-
-  final MyRoomViewModel myRoomState;
 
   @override
   Widget build(BuildContext context) {
+    final myRoomState = context.watch<MyRoomViewModel>();
+
     return Expanded(
       child: Stack(
         fit: StackFit.expand,
@@ -152,7 +151,7 @@ class TopObjects extends StatelessWidget {
       return Center(
         child: Transform.translate(
           // offset을 이동해서 정 중앙 기준으로 이동
-          offset: Offset(x, y),
+                  offset: Offset(x - areaWidth * 0.4, y),
           child: Image.asset(
             'assets/furniture/${item.path}',
             fit: BoxFit.none,
