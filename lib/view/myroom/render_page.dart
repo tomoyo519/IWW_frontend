@@ -149,8 +149,8 @@ class TopObjects extends StatelessWidget {
           item.metadata!.split('x').map((e) => double.parse(e)).toList();
     
       // 가로 전체, 세로 기준 2/3 지점까지만 배치 가능
-      double x = areaWidth * 0.2;
-      double y = areaHeight * 0.001;
+      double x = areaWidth * position[0];
+      double y = areaHeight * position[1];
 
       // double imageWidth = MediaQuery.of(context).size.width * 0.2;
     
