@@ -128,10 +128,10 @@ class _MainPageState extends State<MainPage> {
         title: Text(nav.title ?? curr.label),
         actions: appbars
             .map(
-              (each) => each.toAppbarIcon(
+              (each) => each.toAppbarWidget(
                 // 앱 바 아이콘 클릭시 해당 인덱스로 변경
                 onPressed: () => nav.push(each.idx),
-                icon: each.icon,
+                child: each.icon,
               ),
             )
             .toList(),
@@ -153,7 +153,7 @@ class _MainPageState extends State<MainPage> {
               },
               items: bottoms
                   .map((page) => BottomNavigationBarItem(
-                        icon: Icon(page.icon),
+                        icon: page.icon,
                         label: page.label,
                       ))
                   .toList(),
