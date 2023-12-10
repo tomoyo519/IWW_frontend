@@ -134,11 +134,13 @@ class MyRoomViewModel with ChangeNotifier {
   }
 
   String findPetNickName() {
-    for (var element in roomObjects) {
-      if (element.itemType == itemTypeOfPet) {
-        return element.petName!;
-      }
-    }
+    // FIXME 본인 뿐만 아니라 다른사람의 펫 정보도 가져올 수 있어야 함.
+    // for (var element in roomObjects) {
+    //   if (element.itemType == itemTypeOfPet) {
+    //     return element.petName!;
+    //   }
+    // }
+
     return '이름을 지어주세요!';
   }
 }

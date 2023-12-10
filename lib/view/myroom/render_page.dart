@@ -187,7 +187,6 @@ class StatusBar extends StatelessWidget {
     var userInfo = context.read<UserInfo>();
     // int totalExp = int.parse(userInfo.itemName!.split('_')[1]) * 1000;
     int totalExp = 1000;
-    String petName = context.read<MyRoomViewModel>().findPetNickName();
 
     return Container(
       height: 100,
@@ -203,7 +202,7 @@ class StatusBar extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Text(
-            petName,
+            userInfo.mainPetName ?? "메인 펫 이름이 비어있어요",
             style: TextStyle(
               fontSize: 20,
               color: Colors.white,
@@ -275,7 +274,7 @@ class StatusBar extends StatelessWidget {
               SizedBox(
                 width: 100,
                 child: Text(
-                  '${userInfo.petExp} / $totalExp',
+                  '${userInfo.petExp ?? 0} / $totalExp',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.white,
