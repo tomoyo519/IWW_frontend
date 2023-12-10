@@ -20,14 +20,16 @@ class RenderPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final myRoomState = context.watch<MyRoomViewModel>();
+
     return Expanded(
       child: Stack(
         fit: StackFit.expand,
         children: [
           // 배경, 가구 렌더링
-          RoomArea(),
+          RoomArea(myRoomState: myRoomState),
           // 펫 렌더링
-          PetArea(),
+          PetArea(myRoomState: myRoomState),
           // 상단 상태바
           Positioned(
               left: 0,
@@ -43,21 +45,19 @@ class RenderPage extends StatelessWidget {
 class PetArea extends StatelessWidget {
   const PetArea({
     super.key,
+    required this.myRoomState,
   });
+
+  final MyRoomViewModel myRoomState;
 
   @override
   Widget build(BuildContext context) {
-    // final myRoomState = context.read<MyRoomViewModel>();
-    final userInfo = context.read<UserInfo>();
-
-
-    // FIXME 현재 방 주인에 따라 다르게 렌더링
     return Positioned(
       bottom: MediaQuery.of(context).size.height * 0.05,
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.width,
       child:
-          MyPet(newSrc: userInfo.itemName!, isDead: false),
+          MyPet(myRoomState: myRoomState),
     );
 
   }
@@ -65,12 +65,13 @@ class PetArea extends StatelessWidget {
 
 // 방 렌더링
 class RoomArea extends StatelessWidget {
-  const RoomArea({super.key});
+  const RoomArea({super.key, required this.myRoomState});
+
+  final myRoomState;
 
   @override
   Widget build(BuildContext context) {
     LOG.log('############## RoomArea 시작 !!!!!!!!!!!!!!!!!!!!!!');
-    var myRoomState = context.watch<MyRoomViewModel>();
 
     // Naviator를 통해서 argument를 전달할 경우 받는 방법
     // try {
@@ -184,7 +185,7 @@ class StatusBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var userInfo = context.read<UserInfo>();
+    var userInfo = context.watch<UserInfo>();
     // int totalExp = int.parse(userInfo.itemName!.split('_')[1]) * 1000;
     int totalExp = 1000;
 
