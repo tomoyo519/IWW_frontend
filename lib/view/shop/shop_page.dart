@@ -69,12 +69,18 @@ class _ShopItems extends State<ShopItems> with SingleTickerProviderStateMixin {
               child: AlertDialog(
                 surfaceTintColor: Colors.white,
                 backgroundColor: Colors.white,
-                content: Text("아이템 구매가 완료 되었어요!"),
+                content: Text(
+                  "아이템 구매가 완료 되었어요!",
+                  style: TextStyle(fontSize: 17),
+                ),
                 actions: <Widget>[
                   TextButton(
-                    onPressed: () {
+                    onPressed: () async {
                       // 다이얼로그 닫기
                       Navigator.of(context).pop();
+                      final assetsAudioPlayer = AssetsAudioPlayer();
+                      assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                      assetsAudioPlayer.play();
                     },
                     child: Text('확인'),
                   ),
@@ -99,14 +105,35 @@ class _ShopItems extends State<ShopItems> with SingleTickerProviderStateMixin {
               child: AlertDialog(
                 surfaceTintColor: Colors.white,
                 backgroundColor: Colors.white,
-                content: Text("캐시가 부족합니다. \n 할일을 완료 하고 캐시를 획득 해볼까요?"),
+                title: Center(
+                  child: Text(
+                    "캐시가 부족합니다.\n할일 완료 후 캐시를 획득 해볼까요?",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      // 여기에서 스타일을 적용합니다.
+                      fontSize: 20, // 글자 크기
+                      color: Colors.black, // 글자 색상
+                      fontWeight: FontWeight.w500, // 글자 두께
+                    ),
+                  ),
+                ),
                 actions: <Widget>[
                   TextButton(
-                    onPressed: () {
+                    style: TextButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10))),
+                    onPressed: () async {
                       // 다이얼로그 닫기
                       Navigator.of(context).pop();
+                      final assetsAudioPlayer = AssetsAudioPlayer();
+                      assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                      assetsAudioPlayer.play();
                     },
-                    child: Text('확인'),
+                    child: Text(
+                      '확인',
+                      style: TextStyle(fontSize: 15, color: Colors.white),
+                    ),
                   ),
                 ],
               ),

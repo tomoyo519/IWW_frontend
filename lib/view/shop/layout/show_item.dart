@@ -51,6 +51,7 @@ class ShowItem extends StatelessWidget {
                                         child: TextButton(
                                           child: Text('예',
                                               style: TextStyle(
+                                                  fontSize: 17,
                                                   color: Colors.white)),
                                           style: TextButton.styleFrom(
                                               backgroundColor: Colors.orange,
@@ -73,6 +74,7 @@ class ShowItem extends StatelessWidget {
                                         child: TextButton(
                                           child: Text('아니요',
                                               style: TextStyle(
+                                                  fontSize: 17,
                                                   color: Colors.white)),
                                           style: TextButton.styleFrom(
                                               backgroundColor: Colors.grey,
