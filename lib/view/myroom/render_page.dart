@@ -8,6 +8,9 @@ import 'package:iww_frontend/view/myroom/mypet.dart';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+import 'package:flutter/services.dart' show rootBundle;
 
 // 마이홈 주요 구성 (펫, 배경, 하단 버튼)
 class RenderPage extends StatelessWidget {
@@ -17,18 +20,14 @@ class RenderPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var myRoomState = context.watch<MyRoomViewModel>();
+    var myRoomState = context.read<MyRoomViewModel>();
 
     return Expanded(
       child: Stack(
         fit: StackFit.expand,
         children: [
           // 배경, 가구 렌더링
-          Selector<MyRoomViewModel, List<Item>>(
-              selector: (_, myRoomViewModel) => myRoomViewModel.roomObjects,
-              builder: (_, roomObjects, __) {
-                return RenderMyRoom();
-              }),
+          RenderMyRoom(),
           // 펫 렌더링
           FutureBuilder<int>(
               future: UserRepository().getUserHealth(myRoomState.getRoomOwner),
@@ -83,8 +82,7 @@ class RenderMyRoom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     LOG.log('############## RenderMyRoom 시작 !!!!!!!!!!!!!!!!!!!!!!');
-
-    var roomState = context.watch<MyRoomViewModel>();
+    // var roomState = context.watch<MyRoomViewModel>();
 
     // Naviator를 통해서 argument를 전달할 경우 받는 방법
     // try {
@@ -93,42 +91,26 @@ class RenderMyRoom extends StatelessWidget {
     //   print("[log/myroom]: $e");
     // }
 
-    // 1/3 step: 배경 지정
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: roomState.getBackgroundImage(),
-          fit: BoxFit.cover,
-        ),
+    /* 1/3 step: 배경 지정 */
+    return Stack(children: [
+      // Background Image
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // 상단 배경
+          Expanded(
+            flex: 2,
+            child: Image.asset('assets/bg/top_01.png', fit: BoxFit.cover),
+          ),
+          // 하단 배경
+          Expanded(
+              flex: 1,
+              child: Image.asset('assets/bg/bottom_01.png', fit: BoxFit.fill)),
+        ],
       ),
-      child: Stack(
-        // 1/2 step: 방안의 오브젝트 렌더링
-        children: roomState.roomObjects.map((Item item) {
-          // 가구가 아니면 렌더링하지 않음.
-          if (item.itemType != 2) {
-            return SizedBox();
-          }
-
-          List<double> position =
-              item.metadata!.split('x').map((e) => double.parse(e)).toList();
-          double x = position[0];
-          double y = position[1];
-
-          // double imageWidth = MediaQuery.of(context).size.width * 0.2;
-
-          return Positioned(
-            top: MediaQuery.of(context).size.height * y,
-            left: MediaQuery.of(context).size.width * x,
-            // width: imageWidth,
-            // height: imageWidth,
-            child: Image.asset(
-              'assets/furniture/${item.path}',
-              fit: BoxFit.none,
-            ),
-          );
-        }).toList(),
-      ),
-    );
+      // Room Objects
+      TopObjects(),
+    ]);
 
     // 유저의 펫 정보 불러오기
 
@@ -145,23 +127,66 @@ class RenderMyRoom extends StatelessWidget {
   }
 }
 
-// status bar or chatting(빈칸)
-class UnderLayer extends StatelessWidget {
-  UnderLayer({Key? key}) : super(key: key);
+// 오브젝트 배치
+class TopObjects extends StatelessWidget {
+  const TopObjects({super.key});
 
-  // myroom: status bar, other's room: chatting
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).padding.top + 30,
-      color: Colors.transparent,
-      child: context.watch<MyRoomViewModel>().isMyRoom()
-          ? StatusBar()
-          : SizedBox(height: 110, width: 20), // TODO chatting으로 변경
-      // BottomButtons()
-    );
+    var roomState = context.watch<MyRoomViewModel>();
+    final areaWidth = MediaQuery.of(context).size.width;
+    final areaHeight = MediaQuery.of(context).size.height * 0.6;
+
+    return Stack(
+        children: roomState.roomObjects.map((Item item) {
+      // 가구가 아니면 렌더링하지 않음.
+      if (item.itemType != 2) {
+        return SizedBox();
+      }
+    
+      // [x, y] 형태로 상대좌표 획득
+      List<double> position =
+          item.metadata!.split('x').map((e) => double.parse(e)).toList();
+    
+      // 가로 전체, 세로 기준 2/3 지점까지만 배치 가능
+      double x = areaWidth * position[0];
+      double y = areaHeight * position[1];
+
+      // double imageWidth = MediaQuery.of(context).size.width * 0.2;
+    
+      return Center(
+        child: Transform.translate(
+          offset: Offset(x, y),
+
+          // width: imageWidth,
+          // height: imageWidth,
+          child: Image.asset(
+            'assets/furniture/${item.path}',
+            fit: BoxFit.none,
+          ),
+        ),
+      );
+    }).toList());
   }
 }
+
+Future<ui.Image> loadImage(String imagePath) async {
+  // 이미지 파일을 읽기 위해 경로에서 바이트 데이터를 가져옴
+  final ByteData data = await rootBundle.load(imagePath);
+  // 읽어온 바이트 데이터를 Uint8List로 변환
+  final Uint8List bytes = data.buffer.asUint8List();
+  // 이미지 데이터로 디코딩하여 이미지 객체 생성
+  final ui.Codec codec = await ui.instantiateImageCodec(bytes);
+  final ui.FrameInfo frameInfo = await codec.getNextFrame();
+  return frameInfo.image;
+}
+
+void getImageSize(String imagePath) async {
+  final ui.Image image = await loadImage(imagePath);
+  print('Image width: ${image.width}');
+  print('Image height: ${image.height}');
+}
+
 
 // 펫의 체력, 경험치 표시
 class StatusBar extends StatelessWidget {
@@ -177,7 +202,7 @@ class StatusBar extends StatelessWidget {
     return Container(
       height: 100,
       margin: EdgeInsets.all(20),
-      padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
       decoration: BoxDecoration(
         color: Color.fromRGBO(0, 0, 0, 0.3),
         borderRadius: BorderRadius.circular(10),
@@ -190,18 +215,18 @@ class StatusBar extends StatelessWidget {
           Text(
             petName,
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 20,
               color: Colors.white,
             ),
           ),
           Row(
             children: [
               SizedBox(
-                width: 45,
+                width: 60,
                 child: Text(
                   '체력',
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 18,
                     color: Colors.white,
                   ),
                   textAlign: TextAlign.left,
@@ -224,7 +249,7 @@ class StatusBar extends StatelessWidget {
                 child: Text(
                   '${userInfo.userHp} / 10',
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 16,
                     color: Colors.white,
                   ),
                   textAlign: TextAlign.left,
@@ -235,11 +260,11 @@ class StatusBar extends StatelessWidget {
           Row(
             children: [
               SizedBox(
-                width: 45,
+                width: 60,
                 child: Text(
                   '경험치 ',
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 18,
                     color: Colors.white,
                   ),
                   textAlign: TextAlign.left,
@@ -262,7 +287,7 @@ class StatusBar extends StatelessWidget {
                 child: Text(
                   '${userInfo.petExp} / $totalExp',
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 16,
                     color: Colors.white,
                   ),
                 ),

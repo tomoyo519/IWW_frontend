@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/shop/shop.model.dart';
 import 'package:iww_frontend/repository/shop.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/view/modals/custom_fullscreen_modal.dart';
 import 'package:lottie/lottie.dart';
 import 'package:iww_frontend/view/shop/layout/show_item.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
@@ -46,14 +47,64 @@ class _ShopItems extends State<ShopItems> {
     var result = await shopRepository.purchaseItem(idx, userInfo.userId);
     if (result == true) {
       await fetchFriend();
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: const Text("아이템 구매가 완료 되었어요!")));
-      Navigator.pop(context);
+      Navigator.of(context).pop();
+      if (context.mounted) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return Container(
+              width: MediaQuery.of(context).size.width * 0.8, // 너비 지정
+              height: MediaQuery.of(context).size.height * 0.3, // 높이를 지정합니다.
+
+              child: AlertDialog(
+                surfaceTintColor: Colors.white,
+                backgroundColor: Colors.white,
+                content: Text("아이템 구매가 완료 되었어요!"),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      // 다이얼로그 닫기
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('확인'),
+                  ),
+                ],
+              ),
+            );
+            // return the Dialog here.
+          },
+        );
+      }
       await userInfo.fetchUser();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: const Text("보유한 캐시가 부족해요. 할일을 더 수행해볼까요?")));
-      Navigator.pop(context);
+      if (context.mounted) {
+        Navigator.of(context).pop();
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return Container(
+              width: MediaQuery.of(context).size.width * 0.8, // 너비 지정
+              height: MediaQuery.of(context).size.height * 0.3, // 높이를 지정합니다.
+
+              child: AlertDialog(
+                surfaceTintColor: Colors.white,
+                backgroundColor: Colors.white,
+                content: Text("캐시가 부족합니다. \n 할일을 완료 하고 캐시를 획득 해볼까요?"),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      // 다이얼로그 닫기
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('확인'),
+                  ),
+                ],
+              ),
+            );
+            // return the Dialog here.
+          },
+        );
+      }
     }
   }
 

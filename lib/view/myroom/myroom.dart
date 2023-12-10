@@ -79,7 +79,6 @@ class _MyRoomPageState extends State<MyRoomPage> {
   @override
   Widget build(BuildContext context) {
     var myRoomViewModel = Provider.of<MyRoomViewModel>(context);
-    var userInfo = context.read<UserInfo>();
     var colorScheme = Theme.of(context).colorScheme;
 
     // 테마 컬러 적용 (배경색`)
@@ -95,22 +94,28 @@ class _MyRoomPageState extends State<MyRoomPage> {
       body: Stack(
         children: [
           mainArea,
+          // if (isSheetOpen)
+          //   GestureDetector(
+          //     onTap: () {
+          //       setState(() {
+          //         myRoomViewModel.applyChanges();
+          //         // myRoomState.toggleGrowth();
+          //         userInfo.fetchUser();
+          //         isSheetOpen = false; // 탭 시 인벤토리 시트 닫기
+          //       });
+          //     },
+          //     behavior: HitTestBehavior.opaque, // 전체 영역에서 탭 감지
+          //     child: Container(
+          //       color: Colors.transparent,
+          //     ),
+          //   ),
           if (isSheetOpen)
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  myRoomViewModel.applyChanges();
-                  // myRoomState.toggleGrowth();
-                  userInfo.fetchUser();
-                  isSheetOpen = false; // 탭 시 인벤토리 시트 닫기
-                });
-              },
-              behavior: HitTestBehavior.opaque, // 전체 영역에서 탭 감지
-              child: Container(
-                color: Colors.transparent,
-              ),
-            ),
-          if (isSheetOpen) inventorySheet(context, myRoomViewModel),
+            inventorySheet(context, myRoomViewModel, () {
+              setState(() {
+                isSheetOpen = false; // 인벤토리 시트 닫기
+              });
+            })
+          // if (isSheetOpen) inventorySheet(context, myRoomViewModel),
         ],
       ),
       floatingActionButton: buildSpeedDial(),
@@ -155,7 +160,7 @@ class _MyRoomPageState extends State<MyRoomPage> {
           onTap: _showInventorySheet,
           child: CircleAvatar(
             backgroundColor: (Colors.white),
-            child: Icon(Icons.backpack),
+            child: Icon(Icons.work_rounded),
           ),
           // label: '인벤토리',
         ),
@@ -163,7 +168,8 @@ class _MyRoomPageState extends State<MyRoomPage> {
           shape: CircleBorder(),
           // label: '방명록',
           onTap: _showComments,
-          child: Icon(Icons.local_post_office),
+          // child: Icon(Icons.local_post_office),
+          child: Icon(Icons.comment_rounded),
           // label: '방명록',
         ),
         SpeedDialChild(
