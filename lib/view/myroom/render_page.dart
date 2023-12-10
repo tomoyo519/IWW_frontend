@@ -5,6 +5,7 @@ import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/friends/friendMain.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';
 import 'package:iww_frontend/view/myroom/mypet.dart';
+import 'package:iww_frontend/view/myroom/myroom.dart';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -20,8 +21,6 @@ class RenderPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var myRoomState = context.read<MyRoomViewModel>();
-
     return Expanded(
       child: Stack(
         fit: StackFit.expand,
@@ -29,31 +28,7 @@ class RenderPage extends StatelessWidget {
           // 배경, 가구 렌더링
           RenderMyRoom(),
           // 펫 렌더링
-          FutureBuilder<int>(
-              future: UserRepository().getUserHealth(myRoomState.getRoomOwner),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return SizedBox();
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  int health = snapshot.data!; // snapshot.data에서 비동기 작업 결과를 받아옴
-
-                  return Selector<MyRoomViewModel, List<Item>>(
-                      selector: (_, myRoomViewModel) =>
-                          myRoomViewModel.roomObjects,
-                      builder: (_, roomObjects, __) {
-                        return Positioned(
-                          bottom: MediaQuery.of(context).size.height * 0.05,
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.width,
-                          child: MyPet(
-                              newSrc: myRoomState.findPetName(),
-                              isDead: health == 0),
-                        );
-                      });
-                }
-              }),
+          MyPetArea(),
           // 상단 상태바
           Positioned(
               left: 0,
@@ -75,6 +50,42 @@ class RenderPage extends StatelessWidget {
   }
 }
 
+class MyPetArea extends StatelessWidget {
+  const MyPetArea({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final myRoomState = context.read<MyRoomViewModel>();
+    final userInfo = context.read<UserInfo>();
+
+    return FutureBuilder<int>(
+        future: UserRepository().getUserHealth(myRoomState.getRoomOwner),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return SizedBox();
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            int health = snapshot.data!; // snapshot.data에서 비동기 작업 결과를 받아옴
+
+            return Selector<MyRoomViewModel, List<Item>>(
+                selector: (_, myRoomViewModel) => myRoomViewModel.roomObjects,
+                builder: (_, roomObjects, __) {
+                  return Positioned(
+                    bottom: MediaQuery.of(context).size.height * 0.05,
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.width,
+                    child:
+                        MyPet(newSrc: userInfo.itemName!, isDead: health == 0),
+                  );
+                });
+          }
+        });
+  }
+}
+
 // 방 렌더링
 class RenderMyRoom extends StatelessWidget {
   const RenderMyRoom({super.key});
@@ -82,7 +93,7 @@ class RenderMyRoom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     LOG.log('############## RenderMyRoom 시작 !!!!!!!!!!!!!!!!!!!!!!');
-    // var roomState = context.watch<MyRoomViewModel>();
+    var myRoomState = context.watch<MyRoomViewModel>();
 
     // Naviator를 통해서 argument를 전달할 경우 받는 방법
     // try {
@@ -109,7 +120,9 @@ class RenderMyRoom extends StatelessWidget {
         ],
       ),
       // Room Objects
-      TopObjects(),
+      TopObjects(
+        myRoomState: myRoomState,
+      ),
     ]);
 
     // 유저의 펫 정보 불러오기
@@ -129,16 +142,18 @@ class RenderMyRoom extends StatelessWidget {
 
 // 오브젝트 배치
 class TopObjects extends StatelessWidget {
-  const TopObjects({super.key});
+  const TopObjects({super.key, required this.myRoomState});
+
+  final myRoomState;
 
   @override
   Widget build(BuildContext context) {
-    var roomState = context.watch<MyRoomViewModel>();
     final areaWidth = MediaQuery.of(context).size.width;
     final areaHeight = MediaQuery.of(context).size.height * 0.6;
 
     return Stack(
-        children: roomState.roomObjects.map((Item item) {
+        children: myRoomState.roomObjects
+            .map((Item item) {
       // 가구가 아니면 렌더링하지 않음.
       if (item.itemType != 2) {
         return SizedBox();
@@ -162,7 +177,9 @@ class TopObjects extends StatelessWidget {
           ),
         ),
       );
-    }).toList());
+            })
+            .toList()
+            .cast<Widget>());
   }
 }
 
