@@ -36,6 +36,11 @@ class MyButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: enabled == false ? null : () => onpressed(context),
         style: ElevatedButton.styleFrom(
+            textStyle: TextStyle(
+              color: txtColor,
+              fontWeight: FontWeight.w900,
+            ),
+            foregroundColor: txtColor,
             backgroundColor: bgColor,
             padding: EdgeInsets.symmetric(
               horizontal: 10,
@@ -45,12 +50,7 @@ class MyButton extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             )),
-        child: Text(
-          text,
-          style: TextStyle(
-            color: txtColor,
-          ),
-        ),
+        child: Text(text),
       ),
     );
   }

@@ -65,12 +65,15 @@ class MyTodo extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(flex: 3, child: TodoProgress()),
-                    Expanded(
-                        child: Attendance(
-                      attDays: user.attendance,
-                    ))
                   ],
                 ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 15),
+                child: Expanded(
+                    child: Attendance(
+                  attDays: user.attendance,
+                )),
               ),
               Expanded(
                 child: ToDoList(),

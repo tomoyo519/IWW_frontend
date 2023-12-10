@@ -76,7 +76,7 @@ class _MainPageState extends State<MainPage> {
 
     Future.microtask(() async {
       type.run(context, message: message);
-    }).then((value) {
+    }).then((_) {
       _isProcessing = false;
       _nextEvent();
     });
@@ -129,7 +129,7 @@ class _MainPageState extends State<MainPage> {
       ),
       bottomNavigationBar: nav.isBottomSheetPage
           ? BottomNavigationBar(
-              iconSize: 30,
+              iconSize: 25,
               currentIndex: nav.current.idx.index,
               onTap: (idx) {
                 nav.navigate(idx.route);

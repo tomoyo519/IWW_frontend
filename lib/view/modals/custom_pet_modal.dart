@@ -76,7 +76,7 @@ class _MyPetModalState extends State<MyPetModal> {
               child: SizedBox(
                 width: widget.screen.width * 0.5,
                 child: Image.asset(
-                  'assets/pets/kitsune_jump.gif',
+                  'assets/pets/${widget.pet.path!.split('.')[0]}.gif',
                 ),
               ),
             ),

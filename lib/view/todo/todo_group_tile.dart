@@ -167,8 +167,10 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
               ),
             ),
           ),
-          Expanded(
-            flex: 2,
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              minWidth: 120,
+            ),
             child: MyButton(
               type: MyButtonType.primary,
               text: todoState == GroupTodoState.UNDONE

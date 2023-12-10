@@ -11,8 +11,6 @@ import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/service/reward.service.dart';
-import 'package:iww_frontend/view/home/attendance.dart';
-import 'package:path/path.dart';
 
 class UserInfo extends ChangeNotifier {
   Item _mainPet;
@@ -192,8 +190,11 @@ class UserInfo extends ChangeNotifier {
   void initEvents() {
     _onLoginReward(_reward);
 
+    EventService.publish(Event(
+      type: EventType.onPetEvolve,
+    ));
     // EventService.publish(Event(
-    //   type: EventType.onFirstTodoDone,
+    //   type: EventType.onPetEvolve,
     // ));
   }
 
