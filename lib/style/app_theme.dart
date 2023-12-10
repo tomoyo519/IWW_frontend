@@ -9,7 +9,8 @@ class AppTheme {
   static String FONT_FAMILY = 'NanumSquareRound';
 
   static Color PRI_COLOR = Colors.orange;
-  static Color SEC_COLOR = Colors.purple;
+  static Color SEC_COLOR = Color.fromARGB(255, 133, 39, 176);
+  static Color TER_COLOR = Color.fromARGB(255, 65, 204, 229);
 
   static ThemeData getapptheme() {
     return ThemeData(

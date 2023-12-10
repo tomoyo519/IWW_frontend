@@ -26,7 +26,7 @@ Future<Object?> showTodoDoneModal(BuildContext context) {
   return showCustomFullScreenModal(
     context: context,
     builder: (context) => MyPetModal(
-      pet: pet,
+      itemPath: pet.path!,
       screen: screen,
       title: '오늘의 첫 할일 달성!',
       backgroud: background,

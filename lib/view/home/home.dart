@@ -45,27 +45,21 @@ class MyTodo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size screen = MediaQuery.of(context).size;
-    // context.read<UserInfo>().fetchUser();
+    double fs = screen.width * 0.01;
 
     return Container(
       width: screen.width,
       height: screen.height,
-      padding: EdgeInsets.symmetric(
-        horizontal: 15,
+      padding: EdgeInsets.only(
+        top: 3 * fs,
+        left: 3 * fs,
+        right: 3 * fs,
       ),
       child: Stack(
         children: [
           Column(
             children: [
-              SizedBox(
-                height: 200,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(flex: 3, child: TodoProgress()),
-                  ],
-                ),
-              ),
+              SizedBox(height: 45 * fs, child: TodoProgress()),
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 15),
                 child: Expanded(
@@ -80,8 +74,8 @@ class MyTodo extends StatelessWidget {
           ),
           // ==== Floating Button ==== //
           Positioned(
-            right: 0,
-            bottom: 15,
+            right: 3 * fs,
+            bottom: 8 * fs,
             child: IconButton(
               onPressed: () async {
                 showTodoEditModal<TodoViewModel>(context);
@@ -100,7 +94,7 @@ class MyTodo extends StatelessWidget {
                 shadowColor: Colors.black45,
               ),
               icon: Icon(
-                size: 40,
+                size: 10 * fs,
                 Icons.add,
                 color: Colors.white,
               ),

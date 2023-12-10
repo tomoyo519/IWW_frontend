@@ -38,8 +38,8 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
           padding: const EdgeInsets.only(right: 1),
           child: Image.asset(
             'assets/cash.png',
-            width: 45,
-            height: 45,
+            width: 55,
+            height: 55,
           ),
         ),
         Text(

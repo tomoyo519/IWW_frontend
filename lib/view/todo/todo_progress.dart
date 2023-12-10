@@ -17,141 +17,111 @@ class TodoProgress extends StatefulWidget {
 class _TodoProgressState extends State<TodoProgress> {
   @override
   Widget build(BuildContext context) {
-    final screen = MediaQuery.of(context).size;
+    Size screen = MediaQuery.of(context).size;
+    double fs = screen.width * 0.01;
     final model = context.watch<TodoViewModel>();
     final userinfo = context.watch<UserInfo>();
 
     DateTime now = DateTime.now();
     String today = DateFormat('M월 d일 E요일', 'ko_KO').format(now);
+    String filepath = userinfo.mainPet.path!.split('.')[0];
 
     double progress =
         model.todayTotal == 0 ? 0 : model.todayDone / model.todayTotal;
 
-    // Map<String, String> assetPath = {
-    //   "기본펫": "assets/pets/small_fox.glb",
-    //   "구미호_01": "assets/pets/small_fox.glb",
-    //   "구미호_02": "assets/pets/mid_fox.glb",
-    //   "구미호_03": "assets/pets/kitsune.glb",
-    //   "용_01": "assets/pets/monitor_lizard.glb",
-    //   "용_02": "assets/pets/horned_lizard.glb",
-    //   "용_03": "assets/pets/chinese_dragon.glb",
-    //   "불사조_01": "assets/pets/pink_robin.glb",
-    //   "불사조_02": "assets/pets/archers_buzzard.glb",
-    //   "불사조_03": "assets/pets/pheonix.glb",
-    // };
-
-    return SizedBox(
-      width: screen.width,
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          vertical: 5,
-          horizontal: 10,
-        ),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Color.fromARGB(255, 241, 241, 241),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+    return Container(
+      padding: EdgeInsets.all(2 * fs),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: Color.fromARGB(255, 241, 241, 241),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                        RichText(
-                          text: TextSpan(
-                            style: TextStyle(
-                              color: Colors.black87,
-                              fontWeight: FontWeight.normal,
-                              fontFamily: AppTheme.FONT_FAMILY,
-                            ),
-                            children: [
-                              TextSpan(
-                                text: today,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: 26,
-                                ),
-                              ),
-                              TextSpan(
-                                text: "\n오늘의 할일은 무엇인가요?",
-                                style: TextStyle(
-                                  color: Colors.black54,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 18,
-                                  height: 1.5,
-                                ),
-                              ),
-                            ],
-                          ),
+                  Text(
+                    today,
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontSize: 5 * fs,
+                      fontWeight: FontWeight.w800,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Text(
+                    "오늘의 할일은 무엇인가요?",
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontSize: 3.5 * fs,
+                      fontWeight: FontWeight.normal,
+                      fontFamily: AppTheme.FONT_FAMILY,
+                    ),
+                  ),
+                  Container(
+                    width: 50 * fs,
+                    height: 18 * fs,
+                    margin: EdgeInsets.symmetric(vertical: 2 * fs),
+                    padding: EdgeInsets.symmetric(vertical: fs),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(2 * fs),
+                    ),
+                    child: Row(
+                      children: [
+                        _TodayBadge(
+                          title: "달성",
+                          data: model.todayDone,
+                          color: Colors.orange,
                         ),
-                        DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 10,
-                            ),
-                            child: Row(
-                              children: [
-                                _TodayBadge(
-                                  title: "달성",
-                                  data: model.todayDone,
-                                  color: Colors.orange,
-                                ),
-                                _TodayBadge(
-                                  title: "미달성",
-                                  data: model.todayTotal - model.todayDone,
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      ])),
-                  SizedBox(
-                    width: screen.width * 0.4,
-                    child: ModelViewer(
-                      interactionPrompt: InteractionPrompt.none,
-                      src:
-                          'assets/pets/${userinfo.mainPet.path!.split('.')[0]}.glb',
-                      animationName: 'Idle_A',
-                      autoPlay: true,
-                      cameraControls: false,
-                      cameraOrbit: '25deg 75deg 105%',
+                        _TodayBadge(
+                          title: "미달성",
+                          data: model.todayTotal - model.todayDone,
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
-            ),
-            Container(
-              margin: EdgeInsets.only(bottom: 5),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(100),
-                color: Colors.white,
-              ),
-              height: 10,
-              width: screen.width,
-              child: FractionallySizedBox(
-                alignment: Alignment.centerLeft,
-                widthFactor: progress,
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    color: const Color.fromARGB(255, 255, 128, 0),
-                  ),
+              SizedBox(
+                width: 30 * fs,
+                height: 35 * fs,
+                child: ModelViewer(
+                  interactionPrompt: InteractionPrompt.none,
+                  src: 'assets/pets/$filepath.glb',
+                  animationName: 'Idle_A',
+                  autoPlay: true,
+                  cameraControls: false,
+                  cameraOrbit: '25deg 75deg 105%',
                 ),
               ),
-            )
-          ],
-        ),
+            ],
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(vertical: fs),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(100),
+              color: Colors.white,
+            ),
+            height: 3 * fs,
+            width: screen.width,
+            child: FractionallySizedBox(
+              alignment: Alignment.centerLeft,
+              widthFactor: progress,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(100),
+                  color: const Color.fromARGB(255, 255, 128, 0),
+                ),
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
@@ -170,23 +140,25 @@ class _TodayBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double fs = MediaQuery.of(context).size.width * 0.01;
     return Expanded(
-      flex: 1,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             data.toString(),
             style: TextStyle(
-                fontSize: 28,
+                fontSize: 6 * fs,
                 fontWeight: FontWeight.w900,
-                color: color ?? Colors.black87),
+                color: color ?? Colors.black54),
           ),
           Text(
             title,
             style: TextStyle(
-              fontSize: 16,
-              color: color ?? Colors.black87,
+              fontSize: 3 * fs,
+              color: color ?? Colors.black54,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],

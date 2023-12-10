@@ -102,42 +102,46 @@ class AppNavigator extends ChangeNotifier {
   final AppPage _todo = AppPage(
     idx: AppRoute.todo,
     label: "할일",
-    icon: Icons.check_box_outlined,
+    icon: Icon(Icons.check_box_outlined),
     builder: (context) => TodoPage(),
   );
 
   final AppPage _group = AppPage(
     idx: AppRoute.group,
     label: "그룹",
-    icon: Icons.people_alt_outlined,
+    icon: Icon(Icons.people_alt_outlined),
     builder: (context) => MyGroupPage(),
   );
 
   final AppPage _room = AppPage(
     idx: AppRoute.room,
     label: "홈",
-    icon: Icons.home_outlined,
+    icon: Icon(Icons.home_outlined),
     builder: (context) => MyRoom(),
   );
 
   final AppPage _shop = AppPage(
     idx: AppRoute.shop,
     label: "상점",
-    icon: Icons.shopping_bag_outlined,
+    icon: Icon(Icons.shopping_bag_outlined),
     builder: (context) => ShopPage(),
   );
 
   final AppPage _mypage = AppPage(
     idx: AppRoute.mypage,
     label: "마이페이지",
-    icon: Icons.person_outline_rounded,
+    icon: Icon(Icons.person_outline_rounded),
     builder: (context) => MyPage(),
   );
 
   final AppPage _notification = AppPage(
     idx: AppRoute.notification,
     label: "알림 히스토리",
-    icon: Icons.notifications,
+    icon: Image.asset(
+      'assets/bell.png',
+      width: 45,
+      height: 45,
+    ),
     builder: (context) => MyNotification(),
   );
 }

@@ -75,22 +75,22 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
   @override
   Widget build(BuildContext context) {
     UserInfo userInfo = context.read<UserInfo>();
+    double fs = MediaQuery.of(context).size.width * 0.01;
 
     return Container(
       margin: EdgeInsets.only(bottom: 10),
       padding: EdgeInsets.symmetric(
-        horizontal: 15,
-        vertical: 10,
+        horizontal: 4 * fs,
+        vertical: 3 * fs,
       ),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(3 * fs),
         color: Color.fromARGB(255, 246, 246, 246),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
-            // flex: 8,
             child: GestureDetector(
               onTap: () {
                 //  클릭하면 그룹 상세화면으로 이동
@@ -127,38 +127,38 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    widget.todo.todoName,
-                    style: TextStyle(
-                      fontSize: 16,
-                      decoration: todoState == GroupTodoState.APPROVED
-                          ? TextDecoration.lineThrough // 완료된 경우
-                          : TextDecoration.none, // 아직 미완
-                      color: todoState == GroupTodoState.APPROVED
-                          ? Colors.black45
-                          : Colors.black87,
-                      fontWeight: FontWeight.w600,
-                      overflow: TextOverflow.ellipsis,
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 2 * fs),
+                    child: Text(
+                      widget.todo.todoName,
+                      style: TextStyle(
+                        fontSize: 4.5 * fs,
+                        decoration: todoState == GroupTodoState.APPROVED
+                            ? TextDecoration.lineThrough // 완료된 경우
+                            : TextDecoration.none, // 아직 미완
+                        color: todoState == GroupTodoState.APPROVED
+                            ? Colors.black45
+                            : Colors.black87,
+                        fontWeight: FontWeight.w600,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 7,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(right: 3),
+                        padding: EdgeInsets.only(right: fs),
                         child: Icon(
                           Icons.timer_outlined,
-                          size: 15,
+                          size: 4 * fs,
                         ),
                       ),
                       Text(
                         toViewDate(widget.todo.todoDate, null),
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 3.5 * fs,
                         ),
                       ),
                     ],

@@ -29,11 +29,16 @@ class Item {
         itemType = json['item_type'],
         metadata = json['metadata'];
 
-  // Map<String, dynamic> toMap() {
-  // return {
-  //   "item_id": id,
-  //   "item_name": name,
-  //   "descriptoin"
-  // }
-  // }
+  Map<String, dynamic> toMap() {
+    return {
+      "item_id": id,
+      "item_name": name,
+      "item_desc": description,
+      "item_path": path,
+      "pet_name": petName,
+      "pet_exp": petExp,
+      "item_type": itemType,
+      "metadata": metadata,
+    };
+  }
 }

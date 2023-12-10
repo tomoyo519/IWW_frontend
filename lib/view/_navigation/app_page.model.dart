@@ -5,7 +5,7 @@ import 'package:iww_frontend/view/_navigation/enum/app_route.dart';
 class AppPage<T> {
   final AppRoute idx;
   final String label;
-  final IconData icon;
+  final Widget icon;
   final T Function(BuildContext context) builder;
   final String type;
 
