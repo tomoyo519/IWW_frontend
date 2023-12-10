@@ -19,16 +19,18 @@ class MyRoomViewModel with ChangeNotifier {
   List<Item> _initialRoomObjects = [];
   bool _hasChanges = false; // 현재 방에 변경사항이 있는지 여부
 
+  // FIXME 생성자에서 비동기 작업은 안된다.
   MyRoomViewModel(this._userId, this._roomRepository, this._roomOwner) {
-    fetchMyRoom(_roomOwner);
-    fetchPet(_userId);
-    fetchItem(_userId);
+    // fetchMyRoom(_roomOwner);
+    // fetchPet(_userId);
+    // fetchItem(_userId);
   }
 
-  Future<void> fetchMyRoom(userId) async {
-    roomObjects = await _roomRepository.getItemsOfMyRoom(userId);
+  Future<int> fetchMyRoom() async {
+    roomObjects = await _roomRepository.getItemsOfMyRoom(_userId);
     setInitialRoomObjects();
-    notifyListeners();
+
+    return _userId;
   }
 
   Future<void> fetchPet(userId) async {
@@ -84,7 +86,7 @@ class MyRoomViewModel with ChangeNotifier {
 
   set roomOwner(int userId) {
     _roomOwner = userId;
-    fetchMyRoom(userId);
+    fetchMyRoom();
     notifyListeners();
   }
 

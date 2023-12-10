@@ -52,17 +52,29 @@ class PetArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Selector<MyRoomViewModel, List<Item>>(
-        selector: (_, myRoomViewModel) => myRoomViewModel.roomObjects,
-        builder: (_, roomObjects, __) {
-          return Positioned(
-            bottom: MediaQuery.of(context).size.height * 0.05,
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.width,
-            child: MyPet(myRoomState: myRoomState),
-          );
+    return FutureBuilder<int>(
+        future: myRoomState
+            .fetchMyRoom(), // NOTE 내부에서 notifyListeners() 호출하지 않도록 주의!!!
+        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator(); // 로딩 인디케이터 등
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            LOG.log(
+                '########## PetArea 시작 !!!!!!!!!!!: user_id: snapshot.data');
+            return Selector<MyRoomViewModel, List<Item>>(
+                selector: (_, myRoomViewModel) => myRoomViewModel.roomObjects,
+                builder: (_, roomObjects, __) {
+                  return Positioned(
+                    bottom: MediaQuery.of(context).size.height * 0.05,
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.width,
+                    child: MyPet(myRoomState: myRoomState),
+                  );
+                });
+          }
         });
-
   }
 }
 
