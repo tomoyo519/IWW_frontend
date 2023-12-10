@@ -217,8 +217,16 @@ class _MyRoomPageState extends State<MyRoomPage> {
           ),
           shape: CircleBorder(),
           // label: '방명록',
-          onTap: _showComments,
-          child: Icon(Icons.local_post_office),
+          // onTap: ,
+          onTap: () async {
+            final assetsAudioPlayer = AssetsAudioPlayer();
+            assetsAudioPlayer.open(Audio("assets/main.mp3"));
+            assetsAudioPlayer.play();
+            return _showComments();
+          },
+
+          // child: Icon(Icons.local_post_office),
+          child: Icon(Icons.comment_rounded),
           // label: '방명록',
         ),
         SpeedDialChild(
