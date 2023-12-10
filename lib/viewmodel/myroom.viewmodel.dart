@@ -27,17 +27,21 @@ class MyRoomViewModel with ChangeNotifier {
   }
 
   Future<int> fetchMyRoom() async {
-    roomObjects = await _roomRepository.getItemsOfMyRoom(_userId);
+    LOG.log('fetchMyRoom: $_roomOwner');
+    roomObjects = await _roomRepository.getItemsOfMyRoom(_roomOwner);
     setInitialRoomObjects();
     notifyListeners();
 
-    return _userId;
+    return _roomOwner;
   }
 
-  Future<void> fetchInventory() async {
+  Future<int> fetchInventory() async {
+    LOG.log('fetchInventory: $_userId');
     pets = await _roomRepository.getPetsOfInventory(_userId);
     items = await _roomRepository.getItemsOfInventory(_userId);
     notifyListeners();
+
+    return _userId;
   }
 
   // 현재 viewModel의 roomObject를 DB에 저장
@@ -79,6 +83,7 @@ class MyRoomViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  get getUserId => _userId;
   get getRoomOwner => _roomOwner;
 
   set roomOwner(int userId) {
