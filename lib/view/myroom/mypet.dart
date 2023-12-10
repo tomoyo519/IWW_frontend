@@ -95,15 +95,11 @@ class _MyPetState extends State<MyPet> {
   };
 
   final Map<String, Map<String, dynamic>> petModels = {
-    '기본펫': {
+    'small_fox': {
       'src': 'assets/pets/small_fox.glb',
       'motions': ['Idle', 'Walk', 'Jump']
     },
-    '구미호_01': {
-      'src': 'assets/pets/small_fox.glb',
-      'motions': ['Idle', 'Walk', 'Jump']
-    },
-    '사춘기 구미호': {
+    'mid_fox': {
       'src': 'assets/pets/mid_fox.glb',
       'motions': [
         'Idle',
@@ -116,7 +112,7 @@ class _MyPetState extends State<MyPet> {
         'Clicked'
       ]
     },
-    '구미호_03': {
+    'kitsune': {
       'src': 'assets/pets/kitsune.glb',
       'motions': [
         'Idle',
@@ -129,27 +125,27 @@ class _MyPetState extends State<MyPet> {
         'Clicked'
       ]
     },
-    '용_01': {
+    'monitor_lizard': {
       'src': 'assets/pets/monitor_lizard.glb',
       'motions': ['Idle', 'Walk', 'Jump']
     },
-    '용_02': {
+    'horned_lizard': {
       'src': 'assets/pets/horned_lizard.glb',
       'motions': ['Idle', 'Walk', 'Jump']
     },
-    '용_03': {
+    'chinese_dragon': {
       'src': 'assets/pets/chinese_dragon.glb',
       'motions': ['Idle', 'Walk', 'Jump']
     },
-    '불사조_01': {
+    'pink_robin': {
       'src': 'assets/pets/pink_robin.glb',
       'motions': ['Idle', 'Walk', 'Jump']
     },
-    '불사조_02': {
+    'archers_buzzard': {
       'src': 'assets/pets/archers_buzzard.glb',
       'motions': ['Idle', 'Walk', 'Jump']
     },
-    '불사조_03': {
+    'phoenix': {
       'src': 'assets/pets/pheonix.glb',
       'motions': ['Idle', 'Walk', 'Jump']
     },
@@ -162,7 +158,7 @@ class _MyPetState extends State<MyPet> {
     final myRoomState = widget.myRoomState;
 
     // 모델 및 프리셋 선택
-    String petName = myRoomState.findPetName(); // not nickname
+    String petName = myRoomState.findPetAsset(); // not nickname
     Map<String, dynamic> selectedModel = petModels[petName]!;
     Preset p = presets[selectedModel['motions']![_petActionIndex]]!;
     // FIXME 펫 체력상태 확인

@@ -132,14 +132,13 @@ class MyRoomViewModel with ChangeNotifier {
     );
   }
 
-  String findPetName() {
+  String findPetAsset() {
     for (var element in roomObjects) {
       if (element.itemType == itemTypeOfPet) {
-        return element.name;
+        return element.path!.split('.')[0];
       }
     }
-    LOG.log("NO PET MODEL. default: 구미호_01");
-    return '구미호_01';
+    return 'small_fox';
   }
 
   String findPetNickName() {
