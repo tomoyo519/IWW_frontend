@@ -25,7 +25,7 @@ class AppNavigator extends ChangeNotifier {
 
   // * ===== navigation status ===== * //
   List<int> _stack = [];
-  int _idx = 0;
+  int _idx = 2;
 
   // 현재 페이지
   String? _title; // 지정
@@ -140,29 +140,4 @@ class AppNavigator extends ChangeNotifier {
     icon: Icons.notifications,
     builder: (context) => MyNotification(),
   );
-
-  // final AppPage _wallet = AppPage(
-  //   idx: AppRoute.wallet,
-  //   label: "지갑",
-  //   icon: Icons.attach_money_rounded,
-  //   builder: (context) => Placeholder(),
-  //   pagetype: 'modal',
-  // );
-
-  String _getPageTitle() {
-    switch (ALL_PAGES[_idx].idx) {
-      case AppRoute.todo:
-        return _todo.label;
-      case AppRoute.group:
-        return _group.label;
-      case AppRoute.room:
-        return _room.label;
-      case AppRoute.shop:
-        return _shop.label;
-      case AppRoute.notification:
-        return _notification.label;
-      default:
-        return '';
-    }
-  }
 }

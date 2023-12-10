@@ -11,6 +11,7 @@ import 'package:lottie/lottie.dart';
 import 'package:iww_frontend/view/todo/fields/label_list_modal.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/model/group/group.model.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 class GroupSearch extends StatefulWidget {
   const GroupSearch({super.key});
@@ -27,25 +28,11 @@ class _GroupSearchState extends State<GroupSearch> {
   bool isLoading = true;
 
   getList() async {
-    LOG.log('왜되됫던ㄱ-[ 아ㅣㄴ되냐고 시부레]');
     final userInfo = context.read<UserInfo>();
-    // final viewModel = context.watch<MyGroupViewModel>();
     final groupRepository =
         Provider.of<GroupRepository>(context, listen: false);
-    LOG.log(
-        'userid, ${userInfo.userId} ,labelNum: $labelNum, keyword: $keyword');
     var tempList = await groupRepository.getAllGroupList(
         userInfo.userId, labelNum, keyword);
-    LOG.log('thisistmepLIst:$tempList');
-    // List<GroupCategory>
-    // TODO: 카테고리 정보
-    // await RemoteDataSource.get('/category').then((res) {
-    //   if (res.statusCode == 200) {
-    //     List<dynamic> jsonList = jsonDecode(res.body);
-    //     categories = jsonList.map((e) => GroupCategory.fromJson(e)).toList();
-    //     isLoading = false;
-    //   }
-    // });
     setState(() {
       groupList = tempList;
     });
@@ -87,7 +74,10 @@ class _GroupSearchState extends State<GroupSearch> {
                   getList();
                 },
                 elevation: MaterialStateProperty.all(0),
-                onSubmitted: (value) {
+                onSubmitted: (value) async {
+                  final assetsAudioPlayer = AssetsAudioPlayer();
+                  assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                  assetsAudioPlayer.play();
                   FocusManager.instance.primaryFocus?.unfocus();
                   getList();
                 },
@@ -95,6 +85,7 @@ class _GroupSearchState extends State<GroupSearch> {
                     const Color.fromARGB(255, 226, 225, 225)),
                 // backgroundColor: Color(Colors.grey),
                 hintText: "키워드 검색",
+                hintStyle: MaterialStateProperty.all(TextStyle(fontSize: 20)),
                 leading: Icon(Icons.search_outlined))),
         Row(
           children: [
@@ -117,7 +108,10 @@ class _GroupSearchState extends State<GroupSearch> {
                           padding: EdgeInsets.all(2), // 패딩을 조절
                           elevation: 0, shape: StadiumBorder(), // 모서리를 완전히 둥글게
                         ),
-                        onPressed: () {
+                        onPressed: () async {
+                          final assetsAudioPlayer = AssetsAudioPlayer();
+                          assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                          assetsAudioPlayer.play();
                           setState(() {
                             labelNum = index;
                           });
@@ -126,6 +120,7 @@ class _GroupSearchState extends State<GroupSearch> {
                         child: Text(
                           LabelListModal.labels[index],
                           style: TextStyle(
+                            fontSize: 18,
                             color: labelNum == index
                                 ? Colors.white
                                 : Colors.black, // 클릭된 버튼의 배경색을 회색 글자색을 흰색으로 변경
@@ -301,7 +296,7 @@ class _GroupSearchState extends State<GroupSearch> {
                                               groupList![i].grpName,
                                               textAlign: TextAlign.left,
                                               style: TextStyle(
-                                                  fontSize: 16,
+                                                  fontSize: 18,
                                                   color: Colors.black,
                                                   fontWeight: FontWeight.w800),
                                             ),
@@ -309,7 +304,7 @@ class _GroupSearchState extends State<GroupSearch> {
                                               groupList![i].grpDesc ??
                                                   "그룹에 대한 설명입니다.",
                                               style: TextStyle(
-                                                fontSize: 13,
+                                                fontSize: 16,
                                                 color: Colors.grey,
                                               ),
                                             ),
@@ -318,27 +313,28 @@ class _GroupSearchState extends State<GroupSearch> {
                                                 Container(
                                                   padding: EdgeInsets.symmetric(
                                                       horizontal: 6,
-                                                      vertical:
-                                                          2), // Container 위젯의 padding 속성 사용
-                                                  alignment: Alignment
-                                                      .center, // Container 위젯의 alignment 속성 사용
+                                                      vertical: 2),
+                                                  alignment: Alignment.center,
                                                   decoration: BoxDecoration(
-                                                    color: Colors.orange,
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                            20),
+                                                            30),
+                                                    border: Border.all(
+                                                        color: const Color
+                                                            .fromARGB(255, 171,
+                                                            169, 169)),
                                                   ),
                                                   child: Padding(
                                                     padding:
                                                         const EdgeInsets.all(
-                                                            5.0),
+                                                            3.0),
                                                     child: Text(
                                                       '${groupList![i].catName}',
                                                       textAlign:
                                                           TextAlign.center,
                                                       style: TextStyle(
-                                                        fontSize: 12,
-                                                        color: Colors.white,
+                                                        fontSize: 14,
+                                                        color: Colors.grey[800],
                                                       ),
                                                     ),
                                                   ),
@@ -346,7 +342,7 @@ class _GroupSearchState extends State<GroupSearch> {
                                                 Text(
                                                     ' 멤버 ${groupList![i].memCnt}명',
                                                     style:
-                                                        TextStyle(fontSize: 13))
+                                                        TextStyle(fontSize: 14))
                                               ],
                                             ),
                                           ],

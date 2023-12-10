@@ -20,69 +20,57 @@ class RenderPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var myRoomState = context.read<MyRoomViewModel>();
-
     return Expanded(
       child: Stack(
         fit: StackFit.expand,
         children: [
           // 배경, 가구 렌더링
-          RenderMyRoom(),
+          RoomArea(),
           // 펫 렌더링
-          FutureBuilder<int>(
-              future: UserRepository().getUserHealth(myRoomState.getRoomOwner),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return SizedBox();
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  int health = snapshot.data!; // snapshot.data에서 비동기 작업 결과를 받아옴
-
-                  return Selector<MyRoomViewModel, List<Item>>(
-                      selector: (_, myRoomViewModel) =>
-                          myRoomViewModel.roomObjects,
-                      builder: (_, roomObjects, __) {
-                        return Positioned(
-                          bottom: MediaQuery.of(context).size.height * 0.05,
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.width,
-                          child: MyPet(
-                              newSrc: myRoomState.findPetName(),
-                              isDead: health == 0),
-                        );
-                      });
-                }
-              }),
+          PetArea(),
           // 상단 상태바
           Positioned(
               left: 0,
               right: 0,
               top: MediaQuery.of(context).size.height * 0.01,
               child: StatusBar()),
-          // 하단 버튼
-          // Positioned(
-          //   left: 0,
-          //   right: 0,
-          //   bottom: kBottomNavigationBarHeight +
-          //       MediaQuery.of(context).size.height * 0.14,
-          //   height: 50,
-          //   child: BottomButtons(),
-          // ),
         ],
       ),
     );
   }
 }
 
-// 방 렌더링
-class RenderMyRoom extends StatelessWidget {
-  const RenderMyRoom({super.key});
+class PetArea extends StatelessWidget {
+  const PetArea({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    LOG.log('############## RenderMyRoom 시작 !!!!!!!!!!!!!!!!!!!!!!');
-    // var roomState = context.watch<MyRoomViewModel>();
+    // final myRoomState = context.read<MyRoomViewModel>();
+    final userInfo = context.read<UserInfo>();
+
+
+    // FIXME 현재 방 주인에 따라 다르게 렌더링
+    return Positioned(
+      bottom: MediaQuery.of(context).size.height * 0.05,
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.width,
+      child:
+          MyPet(newSrc: userInfo.itemName!, isDead: false),
+    );
+
+  }
+}
+
+// 방 렌더링
+class RoomArea extends StatelessWidget {
+  const RoomArea({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    LOG.log('############## RoomArea 시작 !!!!!!!!!!!!!!!!!!!!!!');
+    var myRoomState = context.watch<MyRoomViewModel>();
 
     // Naviator를 통해서 argument를 전달할 경우 받는 방법
     // try {
@@ -109,7 +97,9 @@ class RenderMyRoom extends StatelessWidget {
         ],
       ),
       // Room Objects
-      TopObjects(),
+      TopObjects(
+        myRoomState: myRoomState,
+      ),
     ]);
 
     // 유저의 펫 정보 불러오기
@@ -129,16 +119,18 @@ class RenderMyRoom extends StatelessWidget {
 
 // 오브젝트 배치
 class TopObjects extends StatelessWidget {
-  const TopObjects({super.key});
+  const TopObjects({super.key, required this.myRoomState});
+
+  final myRoomState;
 
   @override
   Widget build(BuildContext context) {
-    var roomState = context.watch<MyRoomViewModel>();
     final areaWidth = MediaQuery.of(context).size.width;
     final areaHeight = MediaQuery.of(context).size.height * 0.6;
 
     return Stack(
-        children: roomState.roomObjects.map((Item item) {
+        children: myRoomState.roomObjects
+            .map((Item item) {
       // 가구가 아니면 렌더링하지 않음.
       if (item.itemType != 2) {
         return SizedBox();
@@ -147,8 +139,6 @@ class TopObjects extends StatelessWidget {
       // [x, y] 형태로 상대좌표 획득
       List<double> position =
           item.metadata!.split('x').map((e) => double.parse(e)).toList();
-    
-      // 가로 전체, 세로 기준 2/3 지점까지만 배치 가능
       double x = areaWidth * position[0];
       double y = areaHeight * position[1];
 
@@ -156,17 +146,17 @@ class TopObjects extends StatelessWidget {
     
       return Center(
         child: Transform.translate(
+          // offset을 이동해서 정 중앙 기준으로 이동
           offset: Offset(x, y),
-
-          // width: imageWidth,
-          // height: imageWidth,
           child: Image.asset(
             'assets/furniture/${item.path}',
             fit: BoxFit.none,
           ),
         ),
       );
-    }).toList());
+            })
+            .toList()
+            .cast<Widget>());
   }
 }
 
@@ -197,7 +187,6 @@ class StatusBar extends StatelessWidget {
     var userInfo = context.read<UserInfo>();
     // int totalExp = int.parse(userInfo.itemName!.split('_')[1]) * 1000;
     int totalExp = 1000;
-    String petName = context.read<MyRoomViewModel>().findPetNickName();
 
     return Container(
       height: 100,
@@ -213,7 +202,7 @@ class StatusBar extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Text(
-            petName,
+            userInfo.mainPetName ?? "메인 펫 이름이 비어있어요",
             style: TextStyle(
               fontSize: 20,
               color: Colors.white,
@@ -285,7 +274,7 @@ class StatusBar extends StatelessWidget {
               SizedBox(
                 width: 100,
                 child: Text(
-                  '${userInfo.petExp} / $totalExp',
+                  '${userInfo.petExp ?? 0} / $totalExp',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.white,
