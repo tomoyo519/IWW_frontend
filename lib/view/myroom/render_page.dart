@@ -8,6 +8,9 @@ import 'package:iww_frontend/view/myroom/mypet.dart';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+import 'package:flutter/services.dart' show rootBundle;
 
 // 마이홈 주요 구성 (펫, 배경, 하단 버튼)
 class RenderPage extends StatelessWidget {
@@ -89,31 +92,25 @@ class RenderMyRoom extends StatelessWidget {
     // }
 
     /* 1/3 step: 배경 지정 */
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        // 상단 배경
-        Expanded(
-          flex: 2,
-          child: Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/bg/top_01.png'),
-                fit: BoxFit.cover,
-              ),
-            ),
-            child: TopObjects(),
+    return Stack(children: [
+      // Background Image
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // 상단 배경
+          Expanded(
+            flex: 2,
+            child: Image.asset('assets/bg/top_01.png', fit: BoxFit.cover),
           ),
-        ),
-        // 하단 배경
-        Expanded(
-            flex: 1,
-            child: Container(
-                child:
-                    Image.asset('assets/bg/bottom_01.png', fit: BoxFit.fill))),
-      ],
-    );
+          // 하단 배경
+          Expanded(
+              flex: 1,
+              child: Image.asset('assets/bg/bottom_01.png', fit: BoxFit.fill)),
+        ],
+      ),
+      // Room Objects
+      TopObjects(),
+    ]);
 
     // 유저의 펫 정보 불러오기
 
@@ -130,13 +127,15 @@ class RenderMyRoom extends StatelessWidget {
   }
 }
 
-// 상단 배경 부분을 차지하는 컨테이너
+// 오브젝트 배치
 class TopObjects extends StatelessWidget {
   const TopObjects({super.key});
 
   @override
   Widget build(BuildContext context) {
     var roomState = context.watch<MyRoomViewModel>();
+    final areaWidth = MediaQuery.of(context).size.width;
+    final areaHeight = MediaQuery.of(context).size.height * 0.6;
 
     return Stack(
         children: roomState.roomObjects.map((Item item) {
@@ -144,30 +143,50 @@ class TopObjects extends StatelessWidget {
       if (item.itemType != 2) {
         return SizedBox();
       }
-
+    
       // [x, y] 형태로 상대좌표 획득
       List<double> position =
           item.metadata!.split('x').map((e) => double.parse(e)).toList();
-
+    
       // 가로 전체, 세로 기준 2/3 지점까지만 배치 가능
-      double x = MediaQuery.of(context).size.width * position[0];
-      double y = (MediaQuery.of(context).size.height * 0.67) * position[1];
+      double x = areaWidth * position[0];
+      double y = areaHeight * position[1];
 
       // double imageWidth = MediaQuery.of(context).size.width * 0.2;
+    
+      return Center(
+        child: Transform.translate(
+          offset: Offset(x, y),
 
-      return Positioned(
-        top: y,
-        left: x,
-        // width: imageWidth,
-        // height: imageWidth,
-        child: Image.asset(
-          'assets/furniture/${item.path}',
-          fit: BoxFit.none,
+          // width: imageWidth,
+          // height: imageWidth,
+          child: Image.asset(
+            'assets/furniture/${item.path}',
+            fit: BoxFit.none,
+          ),
         ),
       );
     }).toList());
   }
 }
+
+Future<ui.Image> loadImage(String imagePath) async {
+  // 이미지 파일을 읽기 위해 경로에서 바이트 데이터를 가져옴
+  final ByteData data = await rootBundle.load(imagePath);
+  // 읽어온 바이트 데이터를 Uint8List로 변환
+  final Uint8List bytes = data.buffer.asUint8List();
+  // 이미지 데이터로 디코딩하여 이미지 객체 생성
+  final ui.Codec codec = await ui.instantiateImageCodec(bytes);
+  final ui.FrameInfo frameInfo = await codec.getNextFrame();
+  return frameInfo.image;
+}
+
+void getImageSize(String imagePath) async {
+  final ui.Image image = await loadImage(imagePath);
+  print('Image width: ${image.width}');
+  print('Image height: ${image.height}');
+}
+
 
 // 펫의 체력, 경험치 표시
 class StatusBar extends StatelessWidget {
