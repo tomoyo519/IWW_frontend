@@ -75,19 +75,19 @@ class LoginAchieveModal extends StatelessWidget {
             children: [
               MyButton(
                 text: "닫기",
-                type: MyButtonType.secondary,
+                // type: MyButtonType.secondary,
                 onpressed: (context) => Navigator.pop(context, true),
               ),
-              SizedBox(
-                width: 10,
-              ),
-              MyButton(
-                text: "마이페이지",
-                onpressed: (context) {
-                  Navigator.pop(context, true);
-                  context.read<AppNavigator>().navigate(AppRoute.mypage);
-                },
-              )
+              // SizedBox(
+              //   width: 10,
+              // ),
+              // MyButton(
+              //   text: "마이페이지",
+              //   onpressed: (context) {
+              //     Navigator.pop(context, true);
+              //     context.read<AppNavigator>().navigate(AppRoute.mypage);
+              //   },
+              // )
             ],
           )
         ],

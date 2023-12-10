@@ -95,10 +95,8 @@ extension EventTypeExtension on EventType {
       // case EventType.onAppLogin:
       //   return showGreetingModal(context);
       case EventType.onTodoApproved:
-        if (message != null) {
-          return showTodoApprovedModal(context, message: message);
-        }
-        return null;
+        LOG.log(emoji: 2, message ?? 'nulllllll');
+        return showTodoApprovedModal(context, message: message!);
 
       default:
         break;
@@ -173,7 +171,7 @@ class EventService {
       _handleConfirmRequest(data);
     });
     socket.on('confirmResponse', (data) {
-      if (filterEvents()) return;
+      if (filterEvents()) return; // 추가
       _handleConfirmResponse(data);
     });
     socket.on('newComment', (data) {
@@ -354,13 +352,12 @@ class EventService {
     //   payload: payload,
     // );
 
-    EventService.publish(Event(
-      type: EventType.onTodoApproved,
-      message: "인증을 완료했어요!",
-    ));
+    Map<String, dynamic> message = {
+      'message': data['message'],
+    };
 
     // 유저 정보 갱신
-    await userInfo.handleGroupCheck();
+    await userInfo.handleGroupCheck(message: message);
   }
 
   Future _handleNewComment(dynamic data) async {

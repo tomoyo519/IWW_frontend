@@ -5,6 +5,7 @@ import 'package:iww_frontend/model/item/item.model.dart';
 import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/style/button.dart';
 import 'package:iww_frontend/style/button.type.dart';
+import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/_navigation/enum/app_route.dart';
 import 'package:iww_frontend/view/modals/custom_fullscreen_modal.dart';
@@ -16,27 +17,30 @@ import 'package:provider/provider.dart';
 Future<Object?> showTodoApprovedModal(BuildContext context,
     {required String message}) {
   Size screen = MediaQuery.of(context).size;
-  Item pet = context.read<UserInfo>().mainPet;
+
+  Map<String, dynamic> data = jsonDecode(message);
+  String itemPath = data['item_path'];
+  String approveMessege = data['message']!;
 
   return showCustomFullScreenModal(
     context: context,
     builder: (context) => TodoApprovedModal(
-      pet: pet,
+      itemPath: itemPath,
       screen: screen,
-      approveMessege: message,
+      approveMessege: approveMessege,
     ),
   );
 }
 
 //
 class TodoApprovedModal extends StatelessWidget {
-  final Item pet;
+  final String itemPath;
   final Size screen;
   String approveMessege;
 
   TodoApprovedModal({
     super.key,
-    required this.pet,
+    required this.itemPath,
     required this.screen,
     required this.approveMessege,
   });
@@ -44,7 +48,7 @@ class TodoApprovedModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MyPetModal(
-      pet: pet,
+      itemPath: itemPath,
       screen: screen,
       title: "그룹 할일 인증 완료!",
       content: Column(
@@ -80,7 +84,7 @@ class TodoApprovedModal extends StatelessWidget {
                       desc: "캐시 보상",
                       icon: Icon(
                         Icons.monetization_on_outlined,
-                        color: Colors.orange,
+                        color: AppTheme.PRI_COLOR,
                         size: 18,
                       ),
                     ),
@@ -94,25 +98,11 @@ class TodoApprovedModal extends StatelessWidget {
               Expanded(
                 flex: 1,
                 child: MyButton(
-                  full: true,
                   text: "닫기",
                   type: MyButtonType.secondary,
                   onpressed: (_) => Navigator.pop(context, true),
                 ),
               ),
-              // SizedBox(
-              //   width: 10,
-              // ),
-              // Expanded(
-              //   flex: 1,
-              //   child: MyButton(
-              //     text: "상점 바로가기",
-              //     onpressed: (_) {
-              //       Navigator.pop(context);
-              //       context.read<AppNavigator>().navigate(AppRoute.shop);
-              //     },
-              //   ),
-              // )
             ],
           )
         ],
@@ -148,7 +138,7 @@ class _StateBadge extends StatelessWidget {
               fontSize: 20,
               fontFamily: 'IBMPlexSansKR',
               fontWeight: FontWeight.w900,
-              color: Color(0xfff08636),
+              color: AppTheme.TER_COLOR,
             ),
           ),
           Padding(
@@ -160,12 +150,7 @@ class _StateBadge extends StatelessWidget {
                   padding: const EdgeInsets.only(right: 5),
                   child: icon,
                 ),
-                Text(
-                  desc,
-                  style: TextStyle(
-                      // fontWeight: FontWeight.bold,
-                      ),
-                ),
+                Text(desc),
               ],
             ),
           ),

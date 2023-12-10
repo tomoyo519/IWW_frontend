@@ -31,6 +31,7 @@ class MyButton extends StatelessWidget {
   Widget build(BuildContext context) {
     Color txtColor = type!.text();
     Color bgColor = type!.background();
+    double fs = MediaQuery.of(context).size.width * 0.01;
 
     return SizedBox(
       width: full == true ? double.infinity : null,
@@ -38,6 +39,7 @@ class MyButton extends StatelessWidget {
         onPressed: enabled == false ? null : () => onpressed(context),
         style: ElevatedButton.styleFrom(
             textStyle: TextStyle(
+              fontSize: 4 * fs,
               color: txtColor,
               fontWeight: FontWeight.w900,
               fontFamily: AppTheme.FONT_FAMILY,
@@ -45,12 +47,12 @@ class MyButton extends StatelessWidget {
             foregroundColor: txtColor,
             backgroundColor: bgColor,
             padding: EdgeInsets.symmetric(
-              horizontal: 10,
-              vertical: 5,
+              horizontal: 3 * fs,
+              vertical: 2 * fs,
             ),
             elevation: 0,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(3 * fs),
             )),
         child: Text(text),
       ),

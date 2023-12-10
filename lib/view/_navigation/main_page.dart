@@ -76,16 +76,18 @@ class _MainPageState extends State<MainPage> {
       String? message = event.message;
       EventType type = event.type;
 
-      try {
-        // ignore: use_build_context_synchronously
-        bool? completed = await type.show(context, message: message) as bool?;
-        await Future.delayed(Duration(seconds: 3)); // 이벤트 사이 간격 조정
-        LOG.log('event completed? $completed');
-      } catch (error) {
-        LOG.log('event error $error');
-      } finally {
-        _waiting = false;
-      }
+      bool? completed = await type.show(context, message: message) as bool?;
+      await Future.delayed(Duration(seconds: 3)); // 이벤트 사이 간격 조정
+      LOG.log('event completed? $completed');
+      _waiting = false;
+      // try {
+      //   // ignore: use_build_context_synchronously
+
+      // } catch (error) {
+      //   LOG.log('event error $error');
+      // } finally {
+      //   _waiting = false;
+      // }
     }
   }
 
@@ -112,6 +114,7 @@ class _MainPageState extends State<MainPage> {
     final List<AppPage> appbars = nav.APPBAR_PAGES;
 
     final AppPage curr = nav.current;
+    double fs = MediaQuery.of(context).size.width * 0.01;
 
     // * ==== Trigger Login Event ==== * //
     context.read<UserInfo>().initEvents();
@@ -138,22 +141,28 @@ class _MainPageState extends State<MainPage> {
         builder: (context) => curr.builder(context),
       ),
       bottomNavigationBar: nav.isBottomSheetPage
-          ? BottomNavigationBar(
-              iconSize: 25,
-              currentIndex: nav.current.idx.index,
-              onTap: (idx) {
-                nav.navigate(idx.route);
-              },
-              items: bottoms
-                  .map((page) => BottomNavigationBarItem(
-                        icon: Icon(page.icon),
-                        label: page.label,
-                      ))
-                  .toList(),
-              type: BottomNavigationBarType.fixed,
-
-              // 선택된 페이지 컬러
-              selectedItemColor: Colors.orange)
+          ? SizedBox(
+              height: MediaQuery.of(context).size.height * 0.1,
+              child: BottomNavigationBar(
+                  iconSize: MediaQuery.of(context).size.width * 0.07,
+                  currentIndex: nav.current.idx.index,
+                  onTap: (idx) {
+                    nav.navigate(idx.route);
+                  },
+                  items: bottoms
+                      .map((page) => BottomNavigationBarItem(
+                            icon: Icon(page.icon),
+                            label: page.label,
+                          ))
+                      .toList(),
+                  type: BottomNavigationBarType.fixed,
+                  selectedFontSize: 3.5 * fs,
+                  unselectedFontSize: 3.5 * fs,
+                  selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+                  unselectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+                  // 선택된 페이지 컬러
+                  selectedItemColor: Colors.orange),
+            )
           : null,
     );
   }
