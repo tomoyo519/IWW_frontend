@@ -24,7 +24,7 @@ class ShopItems extends StatefulWidget {
   State<ShopItems> createState() => _ShopItems();
 }
 
-class _ShopItems extends State<ShopItems> {
+class _ShopItems extends State<ShopItems> with SingleTickerProviderStateMixin {
   List<ShopInfo>? allpets;
   List<dynamic>? allfuns;
   List<dynamic>? allemot;
@@ -32,7 +32,7 @@ class _ShopItems extends State<ShopItems> {
   bool isPetLoading = true;
   bool isFunLoading = true;
   final ShopRepository shopRepository = ShopRepository();
-
+  late TabController _tabController;
   @override
   void initState() {
     super.initState();
@@ -40,6 +40,15 @@ class _ShopItems extends State<ShopItems> {
     // 상점 신제품 알려주는 모달
     // Future.delayed(Duration.zero, () async {
     //   WidgetsBinding.instance.addPostFrameCallback((_) => _showDialog(context));
+    _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(() {
+      if (_tabController.indexIsChanging) {
+        // 효과음 재생 코드
+        final assetsAudioPlayer = AssetsAudioPlayer();
+        assetsAudioPlayer.open(Audio("assets/main.mp3"));
+        assetsAudioPlayer.play();
+      }
+    });
     // });
   }
 
@@ -132,33 +141,19 @@ class _ShopItems extends State<ShopItems> {
       child: Column(
         children: [
           TabBar(
+            controller: _tabController,
             labelStyle: TextStyle(fontSize: 20),
             labelColor: Colors.black,
             indicatorColor: Colors.black,
             indicatorSize: TabBarIndicatorSize.tab,
             tabs: <Widget>[
-              GestureDetector(
-                onTap: () async {
-                  // 효과음 재생 코드
-                  final assetsAudioPlayer = AssetsAudioPlayer();
-                  assetsAudioPlayer.open(Audio("assets/main.mp3"));
-                  assetsAudioPlayer.play();
-                },
-                child: Tab(text: "애완동물"),
-              ),
-              GestureDetector(
-                onTap: () async {
-                  // 효과음 재생 코드
-                  final assetsAudioPlayer = AssetsAudioPlayer();
-                  assetsAudioPlayer.open(Audio("assets/main.mp3"));
-                  assetsAudioPlayer.play();
-                },
-                child: Tab(text: "가구"),
-              ),
+              Tab(text: "애완동물"),
+              Tab(text: "가구"),
             ],
           ),
           Expanded(
             child: TabBarView(
+              controller: _tabController,
               children: <Widget>[
                 if (allpets != null && allpets!.isEmpty)
                   Lottie.asset('assets/empty.json',
