@@ -184,6 +184,7 @@ class AuthService extends ChangeNotifier {
     if (response.statusCode == 200) {
       // 유저 정보 초기화
       var jsonBody = jsonDecode(response.body);
+
       _user = UserModel.fromJson(jsonBody['result']['user']);
       _mainPet = Item.fromJson(jsonBody['result']['user_pet']);
 

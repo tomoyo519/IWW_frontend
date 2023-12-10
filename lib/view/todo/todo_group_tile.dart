@@ -91,7 +91,7 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
-            flex: 8,
+            // flex: 8,
             child: GestureDetector(
               onTap: () {
                 //  클릭하면 그룹 상세화면으로 이동
@@ -103,6 +103,11 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                       providers: [
                         ChangeNotifierProvider.value(
                             value: context.read<UserInfo>()),
+                        ChangeNotifierProvider(
+                            create: (_) => MyGroupViewModel(
+                                Provider.of<GroupRepository>(context,
+                                    listen: false),
+                                context.read<UserInfo>().userId)),
                         ChangeNotifierProvider(
                           create: (_) => GroupDetailModel(
                               Provider.of<GroupRepository>(context,
@@ -134,6 +139,7 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                           ? Colors.black45
                           : Colors.black87,
                       fontWeight: FontWeight.w600,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   SizedBox(
@@ -162,15 +168,14 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
               ),
             ),
           ),
-          Expanded(
-            flex: 2,
+          Container(
             child: MyButton(
               type: MyButtonType.primary,
               text: todoState == GroupTodoState.UNDONE
                   ? "인증하기"
                   : todoState == GroupTodoState.DONE
-                      ? "인증 대기중"
-                      : "✔ 인증 완료",
+                      ? "인증대기"
+                      : "✔ 인증완료",
               onpressed: (context) => _onGrpTodoCheck(context, widget.todo),
               enabled: todoState == GroupTodoState.UNDONE,
             ),

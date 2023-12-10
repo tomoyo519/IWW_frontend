@@ -93,7 +93,7 @@ void main() async {
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
-          theme: getapptheme(),
+          theme: AppTheme.getapptheme(),
           home: RenderPage(),
         ),
       ),
