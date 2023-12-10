@@ -22,6 +22,7 @@ import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_exif_rotation/flutter_exif_rotation.dart';
 
 // Todo Extension으로 스타일 만들기
 enum GroupTodoState {
@@ -90,7 +91,7 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
-            flex: 8,
+            // flex: 8,
             child: GestureDetector(
               onTap: () {
                 //  클릭하면 그룹 상세화면으로 이동
@@ -102,6 +103,11 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                       providers: [
                         ChangeNotifierProvider.value(
                             value: context.read<UserInfo>()),
+                        ChangeNotifierProvider(
+                            create: (_) => MyGroupViewModel(
+                                Provider.of<GroupRepository>(context,
+                                    listen: false),
+                                context.read<UserInfo>().userId)),
                         ChangeNotifierProvider(
                           create: (_) => GroupDetailModel(
                               Provider.of<GroupRepository>(context,
@@ -133,6 +139,7 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                           ? Colors.black45
                           : Colors.black87,
                       fontWeight: FontWeight.w600,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   SizedBox(
@@ -161,15 +168,14 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
               ),
             ),
           ),
-          Expanded(
-            flex: 2,
+          Container(
             child: MyButton(
               type: MyButtonType.primary,
               text: todoState == GroupTodoState.UNDONE
                   ? "인증하기"
                   : todoState == GroupTodoState.DONE
-                      ? "인증 대기중"
-                      : "✔ 인증 완료",
+                      ? "인증대기"
+                      : "✔ 인증완료",
               onpressed: (context) => _onGrpTodoCheck(context, widget.todo),
               enabled: todoState == GroupTodoState.UNDONE,
             ),
@@ -253,8 +259,11 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
     });
 
     if (pickedFile != null) {
+      File rotatedImage =
+          await FlutterExifRotation.rotateImage(path: pickedFile.path);
+
       setState(() {
-        _imageFile = File(pickedFile.path);
+        _imageFile = rotatedImage;
         LOG.log("image file ${_imageFile.toString()}");
       });
       final formatter = DateFormat('yyyy-MM-dd');

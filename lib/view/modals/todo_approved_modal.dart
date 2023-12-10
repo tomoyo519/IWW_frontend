@@ -2,40 +2,23 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
+import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/style/button.dart';
 import 'package:iww_frontend/style/button.type.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/_navigation/enum/app_route.dart';
 import 'package:iww_frontend/view/modals/custom_fullscreen_modal.dart';
-import 'package:iww_frontend/view/modals/todo_first_done.dart';
+import 'package:iww_frontend/view/modals/custom_pet_modal.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
-void showTodoApprovedModal(BuildContext context, {required String message}) {
-  final Map<String, Map<String, dynamic>> petModels = {
-    '비석_00': {
-      'src': 'assets/tomb.glb',
-      'motions': ['Idle']
-    },
-    '구미호_01': {
-      'src': 'assets/pets/small_fox.glb',
-      'motions': ['Idle', 'Walk', 'Jump']
-    },
-    '구미호_02': {
-      'src': 'assets/pets/mid_fox.glb',
-      'motions': ['Idle', 'Walk', 'Jump']
-    },
-    '구미호_03': {
-      'src': 'assets/pets/kitsune.glb',
-      'motions': ['Idle', 'Walk', 'Jump']
-    },
-  };
-
+Future<Object?> showTodoApprovedModal(BuildContext context,
+    {required String message}) {
   Size screen = MediaQuery.of(context).size;
   Item pet = context.read<UserInfo>().mainPet;
 
-  showCustomFullScreenModal(
+  return showCustomFullScreenModal(
     context: context,
     builder: (context) => TodoApprovedModal(
       pet: pet,
@@ -82,13 +65,13 @@ class TodoApprovedModal extends StatelessWidget {
                   vertical: 10,
                 ),
                 child: Row(
-                  children: const [
+                  children: [
                     _StateBadge(
                       title: "10",
                       desc: "경험치 상승",
                       icon: Icon(
                         Icons.keyboard_double_arrow_up_rounded,
-                        color: Colors.orange,
+                        color: AppTheme.SEC_COLOR,
                         size: 20,
                       ),
                     ),
@@ -114,22 +97,22 @@ class TodoApprovedModal extends StatelessWidget {
                   full: true,
                   text: "닫기",
                   type: MyButtonType.secondary,
-                  onpressed: (_) => Navigator.pop(context),
+                  onpressed: (_) => Navigator.pop(context, true),
                 ),
               ),
-              SizedBox(
-                width: 10,
-              ),
-              Expanded(
-                flex: 1,
-                child: MyButton(
-                  text: "상점 바로가기",
-                  onpressed: (_) {
-                    Navigator.pop(context);
-                    context.read<AppNavigator>().navigate(AppRoute.shop);
-                  },
-                ),
-              )
+              // SizedBox(
+              //   width: 10,
+              // ),
+              // Expanded(
+              //   flex: 1,
+              //   child: MyButton(
+              //     text: "상점 바로가기",
+              //     onpressed: (_) {
+              //       Navigator.pop(context);
+              //       context.read<AppNavigator>().navigate(AppRoute.shop);
+              //     },
+              //   ),
+              // )
             ],
           )
         ],

@@ -25,7 +25,10 @@ class MyRoom extends StatelessWidget {
     // 내비게이터 설정
     final nav = context.read<AppNavigator>();
     int roomOwner = nav.arg != null ? int.parse(nav.arg!) : userId;
-    nav.title = '친구의방';
+    if (roomOwner != userId) {
+      // 방 주인이 유저가 아니면 홈 라벨 지우기
+      nav.title = '';
+    }
 
     LOG.log('Room page: user id $userId, owner id $roomOwner');
 
@@ -87,90 +90,32 @@ class _MyRoomPageState extends State<MyRoomPage> {
       ),
     );
 
-    // return Scaffold(
-    //   body: mainArea,
-    //   // 페이지 중앙왼쪽 각종 버튼
-    //   floatingActionButtonLocation: FloatingActionButtonLocation.miniStartTop,
-    //   floatingActionButton: Column(
-    //     crossAxisAlignment: CrossAxisAlignment.end,
-    //     mainAxisAlignment: MainAxisAlignment.center,
-    //     children: <Widget>[
-    //       FloatingActionButton(
-
-    //           child: Column(
-    //             children: const [
-    //              ,
-    //               Text('마이홈'),
-    //             ],
-    //           ),
-    //           onPressed: () => setState(() {
-    //                 _selectedIndex = 0;
-    //               })),
-    //       const SizedBox(height: 10),
-
-    // return Scaffold(
-    //   floatingActionButtonLocation: FloatingActionButtonLocation.miniStartTop,
-    //   // 페이지 중앙왼쪽 각종 버튼
-    //   floatingActionButton: Column(
-    //     crossAxisAlignment: CrossAxisAlignment.end,
-    //     mainAxisAlignment: MainAxisAlignment.center,
-    //     children: <Widget>[
-    //       FloatingActionButton(
-    //           child: Column(
-    //             children: const [
-    //               Icon(Icons.note),
-    //               Text('마이홈'),
-    //             ],
-    //           ),
-    //           onPressed: () => setState(() {
-    //                 _selectedIndex = 0;
-    //               })),
-    //       const SizedBox(height: 10),
-    //       FloatingActionButton(
-    //         // onPressed: () => showInventorySheet(context),
-    //         onPressed: toggleSheet,
-    //         child: Column(
-    //             mainAxisAlignment: MainAxisAlignment.center,
-    //             children: const [
-    //               Icon(Icons.inventory_2_rounded),
-    //               Text('인벤토리')
-    //             ]),
-    //       ),
-    //       const SizedBox(height: 10),
-    //       FloatingActionButton(
-    //         onPressed: _showComments,
-    //         child: Column(
-    //           children: const [
-    //             Icon(Icons.note),
-    //             Text('방명록'),
-    //           ],
-    //         ),
-    //       ),
-    //       const SizedBox(height: 10),
-    //       FloatingActionButton(
-    //           child: Column(
-    //             children: const [
-    //               Icon(Icons.group),
-    //               Text('친구목록'),
-    //             ],
-    //           ),
-    //           onPressed: () => setState(() {
-    //                 _selectedIndex = 3;
-    //               })),
-    //     ],
-    //   ),
-  //     body: Stack(children: [
-  //       mainArea,
-  //       if (isSheetOpen) inventorySheet(context, myRoomViewModel),
-  //       ],
-  //     ),
-  //   );
-  // }
     return Scaffold(
       body: Stack(
         children: [
           mainArea,
-          if (isSheetOpen) inventorySheet(context, myRoomViewModel),
+          // if (isSheetOpen)
+          //   GestureDetector(
+          //     onTap: () {
+          //       setState(() {
+          //         myRoomViewModel.applyChanges();
+          //         // myRoomState.toggleGrowth();
+          //         userInfo.fetchUser();
+          //         isSheetOpen = false; // 탭 시 인벤토리 시트 닫기
+          //       });
+          //     },
+          //     behavior: HitTestBehavior.opaque, // 전체 영역에서 탭 감지
+          //     child: Container(
+          //       color: Colors.transparent,
+          //     ),
+          //   ),
+          if (isSheetOpen)
+            inventorySheet(context, myRoomViewModel, () {
+              setState(() {
+                isSheetOpen = false; // 인벤토리 시트 닫기
+              });
+            })
+          // if (isSheetOpen) inventorySheet(context, myRoomViewModel),
         ],
       ),
       floatingActionButton: buildSpeedDial(),
@@ -215,7 +160,7 @@ class _MyRoomPageState extends State<MyRoomPage> {
           onTap: _showInventorySheet,
           child: CircleAvatar(
             backgroundColor: (Colors.white),
-            child: Icon(Icons.backpack),
+            child: Icon(Icons.work_rounded),
           ),
           // label: '인벤토리',
         ),
@@ -223,7 +168,8 @@ class _MyRoomPageState extends State<MyRoomPage> {
           shape: CircleBorder(),
           // label: '방명록',
           onTap: _showComments,
-          child: Icon(Icons.local_post_office),
+          // child: Icon(Icons.local_post_office),
+          child: Icon(Icons.comment_rounded),
           // label: '방명록',
         ),
         SpeedDialChild(
@@ -238,54 +184,4 @@ class _MyRoomPageState extends State<MyRoomPage> {
       child: Icon(Icons.menu),
     );
   }
-
-  //       FloatingActionButton(
-  //           child: Column(
-  //               mainAxisAlignment: MainAxisAlignment.center,
-  //               children: const [
-  //               ,
-  //                 Text('인벤토리')
-  //               ]),
-  //           onPressed: () => setState(() {
-  //                 _selectedIndex = 1;
-  //               })),
-  //       const SizedBox(height: 10),
-  //       FloatingActionButton(
-  //           child: Column(
-  //             children: const [
-  //               Icon(Icons.note),
-  //               Text('방명록'),
-  //             ],
-  //           ),
-  //           onPressed: () => setState(() {
-  //                 _selectedIndex = 2;
-  //               })),
-  //       const SizedBox(height: 10),
-  //       FloatingActionButton(
-  //           child: Column(
-  //             children: const [
-  //               Icon(Icons.group),
-  //               Text('친구목록'),
-  //             ],
-  //           ),
-  //           onPressed: () => setState(() {
-  //                 _selectedIndex = 3;
-  //               })),
-  //     ],
-  //   ),
-  // );
 }
-
-// NOTE 페이지 인덱스에 따라서 페이지를 반환합니다.
-// Widget getPage(int index) {
-//   switch (index) {
-//     case 0:
-//       return RenderPage();
-//     // case 1:
-//     //   return InventoryPage();
-//     default:
-//       return Center(
-//           child: SizedBox(
-//               height: 300, width: 300, child: Text('페이지를 찾을 수 없습니다.')));
-//   }
-// }

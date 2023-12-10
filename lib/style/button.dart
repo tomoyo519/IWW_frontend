@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/style/app_theme.dart';
 
 import 'package:iww_frontend/style/button.style.dart';
 import 'package:iww_frontend/style/button.type.dart';
@@ -36,6 +37,12 @@ class MyButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: enabled == false ? null : () => onpressed(context),
         style: ElevatedButton.styleFrom(
+            textStyle: TextStyle(
+              color: txtColor,
+              fontWeight: FontWeight.w900,
+              fontFamily: AppTheme.FONT_FAMILY,
+            ),
+            foregroundColor: txtColor,
             backgroundColor: bgColor,
             padding: EdgeInsets.symmetric(
               horizontal: 10,
@@ -45,12 +52,7 @@ class MyButton extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             )),
-        child: Text(
-          text,
-          style: TextStyle(
-            color: txtColor,
-          ),
-        ),
+        child: Text(text),
       ),
     );
   }

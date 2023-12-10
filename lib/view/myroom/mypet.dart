@@ -105,7 +105,7 @@ class _MyPetState extends State<MyPet> {
       'src': 'assets/pets/small_fox.glb',
       'motions': ['Idle', 'Walk', 'Jump']
     },
-    '구미호_02': {
+    '사춘기 구미호': {
       'src': 'assets/pets/mid_fox.glb',
       'motions': [
         'Idle',
@@ -135,10 +135,10 @@ class _MyPetState extends State<MyPet> {
       'src': 'assets/pets/monitor_lizard.glb',
       'motions': ['Idle', 'Walk', 'Jump']
     },
-    // '용_02': {
-    //   'src': 'assets/pets/monitor_lizard.glb',
-    //   'motions': ['Idle', 'Walk', 'Jump']
-    // },
+    '용_02': {
+      'src': 'assets/pets/horned_lizard.glb',
+      'motions': ['Idle', 'Walk', 'Jump']
+    },
     '용_03': {
       'src': 'assets/pets/chinese_dragon.glb',
       'motions': ['Idle', 'Walk', 'Jump']

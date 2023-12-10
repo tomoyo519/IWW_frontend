@@ -16,6 +16,8 @@ class MyRoomViewModel with ChangeNotifier {
   List<Item> pets = [];
   int _roomOwner; // 현재 있는 방의 주인 (기본값은 로그인한 사용자의 id)
   List<Item> roomObjects = []; // 현재 방에 존재하는 오브젝트 리스트
+  List<Item> _initialRoomObjects = [];
+  bool _hasChanges = false; // 현재 방에 변경사항이 있는지 여부
 
   MyRoomViewModel(this._userId, this._roomRepository, this._roomOwner) {
     fetchMyRoom(_roomOwner);
@@ -25,6 +27,7 @@ class MyRoomViewModel with ChangeNotifier {
 
   Future<void> fetchMyRoom(userId) async {
     roomObjects = await _roomRepository.getItemsOfMyRoom(userId);
+    setInitialRoomObjects();
     notifyListeners();
   }
 
@@ -42,6 +45,7 @@ class MyRoomViewModel with ChangeNotifier {
   Future<void> applyChanges() async {
     await _roomRepository.applyChanges(
         _userId, roomObjects.map((e) => e.id).toList());
+    setInitialRoomObjects();
   }
 
   // 선택한 아이템을 myroom에 넣거나 빼는 함수
@@ -142,5 +146,25 @@ class MyRoomViewModel with ChangeNotifier {
     // }
 
     return '이름을 지어주세요!';
+  }
+
+  bool get hasChanges => _hasChanges;
+
+  void setInitialRoomObjects() {
+    _initialRoomObjects = List.from(roomObjects);
+  }
+
+  bool checkForChanges() {
+    if (_initialRoomObjects.length != roomObjects.length) {
+      return true;
+    }
+
+    for (var item in _initialRoomObjects) {
+      if (!roomObjects.any((element) => element.id == item.id)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 }

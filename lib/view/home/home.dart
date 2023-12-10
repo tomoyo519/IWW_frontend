@@ -21,9 +21,6 @@ class TodoPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final UserInfo user = context.read<UserInfo>();
 
-    // * ==== Trigger Login Event ==== * //
-    context.read<UserInfo>().initEvents();
-
     return ChangeNotifierProvider<TodoViewModel>(
       create: (context) => TodoViewModel(
         Provider.of<TodoRepository>(context, listen: false),
@@ -65,12 +62,15 @@ class MyTodo extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(flex: 3, child: TodoProgress()),
-                    Expanded(
-                        child: Attendance(
-                      attDays: user.attendance,
-                    ))
                   ],
                 ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 15),
+                child: Expanded(
+                    child: Attendance(
+                  attDays: user.attendance,
+                )),
               ),
               Expanded(
                 child: ToDoList(),

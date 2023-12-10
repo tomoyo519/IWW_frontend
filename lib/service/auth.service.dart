@@ -49,8 +49,8 @@ class AuthService extends ChangeNotifier {
     if (val == AuthStatus.initialized) {
       String now = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
       LOG.log('[$now] ${_user!.user_id} logged in.');
+      notifyListeners();
     }
-    notifyListeners();
   }
 
   bool _waiting = true;
@@ -184,6 +184,7 @@ class AuthService extends ChangeNotifier {
     if (response.statusCode == 200) {
       // 유저 정보 초기화
       var jsonBody = jsonDecode(response.body);
+
       _user = UserModel.fromJson(jsonBody['result']['user']);
       _mainPet = Item.fromJson(jsonBody['result']['user_pet']);
 
@@ -283,7 +284,7 @@ class AuthService extends ChangeNotifier {
 
   Future<void> _initialize() async {
     await _initializeTodos();
-    await _initializeItems();
+    // await _initializeItems();
     await _initializedAttd();
 
     status = AuthStatus.initialized;
