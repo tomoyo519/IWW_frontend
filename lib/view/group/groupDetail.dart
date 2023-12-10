@@ -367,7 +367,7 @@ class _GroupDetailState extends State<GroupDetail> {
                     height: screen.height * 0.25,
                   ),
                   child: Image.asset(
-                    'assets/category/${groupDetail!.catId!}.jpg',
+                    'assets/category/${groupDetail!.catImg}',
                     fit: BoxFit.cover,
                     alignment: Alignment.center,
                     errorBuilder: (context, error, stackTrace) => Image.asset(

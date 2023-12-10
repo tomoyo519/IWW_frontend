@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
+import 'package:iww_frontend/utils/categories.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
@@ -33,6 +34,7 @@ class _GroupSearchState extends State<GroupSearch> {
         Provider.of<GroupRepository>(context, listen: false);
     var tempList = await groupRepository.getAllGroupList(
         userInfo.userId, labelNum, keyword);
+
     setState(() {
       groupList = tempList;
     });
@@ -96,7 +98,7 @@ class _GroupSearchState extends State<GroupSearch> {
                 padding: EdgeInsets.all(1),
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: LabelListModal.labels.length,
+                  itemCount: TodoCategory.category!.length,
                   itemBuilder: (context, index) {
                     return Container(
                       padding: EdgeInsets.symmetric(horizontal: 3),
@@ -118,7 +120,7 @@ class _GroupSearchState extends State<GroupSearch> {
                           getList();
                         },
                         child: Text(
-                          LabelListModal.labels[index],
+                          TodoCategory.category![index].name,
                           style: TextStyle(
                             fontSize: 18,
                             color: labelNum == index
