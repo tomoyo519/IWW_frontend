@@ -36,13 +36,6 @@ class _MyPetState extends State<MyPet> {
   int _petActionIndex = 1;
 
   final Map<String, Preset> presets = {
-    '비석': Preset(
-      animationName: 'Idle',
-      cameraOrbit: '30deg 80deg 8m',
-      cameraTarget: '0.3m 0.9m 0.4m',
-      autoRotate: false,
-      rotationPerSecond: '0rad',
-    ),
     // 움직임
     'Walk': Preset(
       animationName: 'Walk',
@@ -104,10 +97,6 @@ class _MyPetState extends State<MyPet> {
   };
 
   final Map<String, Map<String, dynamic>> petModels = {
-    '비석_00': {
-      'src': 'assets/tomb.glb',
-      'motions': ['Idle']
-    },
     '기본펫': {
       'src': 'assets/pets/small_fox.glb',
       'motions': ['Idle', 'Walk', 'Jump']
@@ -175,44 +164,66 @@ class _MyPetState extends State<MyPet> {
     Map<String, dynamic> selectedModel = petModels[widget.newSrc]!;
     Preset p = presets[selectedModel['motions']![_petActionIndex]]!;
 
-    // 체력이 0이면 비석으로 변경
-    if (widget.isDead) {
-      targetResouce = '비석_00_0';
-      selectedModel = petModels['비석_00']!;
-      p = presets['비석']!;
-    }
+    // FIXME log 확인용
     LOG.log('[마이펫 렌더링] key: $targetResouce');
 
-    return GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () {
-          LOG.log('아니 왜 안바뀌는데 $_petActionIndex');
-          setState(() {
-            _petActionIndex = (_petActionIndex + 1) %
-                (selectedModel['motions']!.length as int);
-          });
-        },
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.5,
-          child: IgnorePointer(
-            ignoring: true,
-            child: ModelViewer(
-              key: ValueKey(targetResouce),
-              src: selectedModel['src'],
-              animationName: p.animationName,
-              cameraTarget: p.cameraTarget,
-              cameraOrbit: p.cameraOrbit,
-              autoRotate: p.autoRotate,
-              rotationPerSecond: p.rotationPerSecond,
-              // 이하 고정값
-              interactionPrompt: InteractionPrompt.none,
-              cameraControls: false,
-              autoPlay: true,
-              shadowIntensity: 1,
-              disableZoom: true,
-              autoRotateDelay: 0,
-            ),
+    // 펫이 죽었으므로 비석 렌더링
+    if (widget.isDead) {
+      return SizedBox(
+        height: MediaQuery.of(context).size.height * 0.5,
+        child: IgnorePointer(
+          ignoring: true,
+          child: ModelViewer(
+            key: ValueKey('비석'),
+            src: 'assets/tomb.glb',
+            animationName: 'Idle',
+            cameraTarget: '0.3m 0.9m 0.4m',
+            cameraOrbit: '30deg 80deg 8m',
+            autoRotate: false,
+            rotationPerSecond: '0rad',
+            // 이하 고정값
+            interactionPrompt: InteractionPrompt.none,
+            cameraControls: false,
+            autoPlay: true,
+            shadowIntensity: 1,
+            disableZoom: true,
+            autoRotateDelay: 0,
           ),
-        ));
+        ),
+      );
+      // 펫이 잘 살아 있으면 펫 렌더링
+    } else {
+      return GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            LOG.log('아니 왜 안바뀌는데 $_petActionIndex');
+            setState(() {
+              _petActionIndex = (_petActionIndex + 1) %
+                  (selectedModel['motions']!.length as int);
+            });
+          },
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.5,
+            child: IgnorePointer(
+              ignoring: true,
+              child: ModelViewer(
+                key: ValueKey(targetResouce),
+                src: selectedModel['src'],
+                animationName: p.animationName,
+                cameraTarget: p.cameraTarget,
+                cameraOrbit: p.cameraOrbit,
+                autoRotate: p.autoRotate,
+                rotationPerSecond: p.rotationPerSecond,
+                // 이하 고정값
+                interactionPrompt: InteractionPrompt.none,
+                cameraControls: false,
+                autoPlay: true,
+                shadowIntensity: 1,
+                disableZoom: true,
+                autoRotateDelay: 0,
+              ),
+            ),
+          ));
+    }
   }
 }
