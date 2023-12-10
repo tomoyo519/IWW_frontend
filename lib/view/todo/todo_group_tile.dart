@@ -1,8 +1,6 @@
 // ignore_for_file: constant_identifier_names
-
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -23,7 +21,9 @@ import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_exif_rotation/flutter_exif_rotation.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
+// 출처: https://islet4you.tistory.com/entry/Flutter-Sound-재생하기 [hoony's web study:티스토리]
 // Todo Extension으로 스타일 만들기
 enum GroupTodoState {
   DONE,
@@ -53,7 +53,6 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
   late File _imageFile;
   late GroupTodoState todoState;
   late Group group;
-
   final _picker = ImagePicker();
   final scroll = ScrollController();
 
@@ -171,7 +170,17 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                   : todoState == GroupTodoState.DONE
                       ? "인증 대기중"
                       : "✔ 인증 완료",
-              onpressed: (context) => _onGrpTodoCheck(context, widget.todo),
+              onpressed: (context) async {
+                _onGrpTodoCheck(context, widget.todo);
+
+                final assetsAudioPlayer = AssetsAudioPlayer();
+
+                assetsAudioPlayer.open(
+                  Audio("assets/main.mp3"),
+                );
+
+                assetsAudioPlayer.play();
+              },
               enabled: todoState == GroupTodoState.UNDONE,
             ),
           ),

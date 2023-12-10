@@ -11,6 +11,7 @@ import 'package:iww_frontend/view/modals/custom_pet_modal.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 void showTodoApprovedModal(BuildContext context, {required String message}) {
   Size screen = MediaQuery.of(context).size;
@@ -95,7 +96,12 @@ class TodoApprovedModal extends StatelessWidget {
                   full: true,
                   text: "닫기",
                   type: MyButtonType.secondary,
-                  onpressed: (_) => Navigator.pop(context),
+                  onpressed: (_) async {
+                    Navigator.pop(context);
+                    final assetsAudioPlayer = AssetsAudioPlayer();
+                    assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                    assetsAudioPlayer.play();
+                  },
                 ),
               ),
               SizedBox(
@@ -105,7 +111,10 @@ class TodoApprovedModal extends StatelessWidget {
                 flex: 1,
                 child: MyButton(
                   text: "상점 바로가기",
-                  onpressed: (_) {
+                  onpressed: (_) async {
+                    final assetsAudioPlayer = AssetsAudioPlayer();
+                    assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                    assetsAudioPlayer.play();
                     Navigator.pop(context);
                     context.read<AppNavigator>().navigate(AppRoute.shop);
                   },

@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:iww_frontend/view/myroom/render_page.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 class MyRoom extends StatelessWidget {
   const MyRoom({super.key});
@@ -132,8 +133,25 @@ class _MyRoomPageState extends State<MyRoomPage> {
     return SpeedDial(
       overlayOpacity: 0.0,
       animatedIcon: AnimatedIcons.view_list,
+      onOpen: () async {
+        final assetsAudioPlayer = AssetsAudioPlayer();
+        assetsAudioPlayer.open(Audio("assets/main.mp3"));
+        assetsAudioPlayer.play();
+      },
       children: [
         SpeedDialChild(
+          elevation: 0.0,
+          labelWidget: Container(
+            padding: EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Text(
+              "마이홈",
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
           shape: CircleBorder(),
           child: CircleAvatar(
             // 원형 아이콘
@@ -143,13 +161,34 @@ class _MyRoomPageState extends State<MyRoomPage> {
           // label: '마이홈',
           // labelBackgroundColor: Colors.green, // 투
 
-          onTap: () => setState(() {
-            _selectedIndex = 0;
-          }),
+          onTap: () async {
+            setState(() {
+              _selectedIndex = 0;
+            });
+            final assetsAudioPlayer = AssetsAudioPlayer();
+            assetsAudioPlayer.open(Audio("assets/main.mp3"));
+            assetsAudioPlayer.play();
+          },
         ),
         SpeedDialChild(
           shape: CircleBorder(),
-          onTap: _showInventorySheet,
+          labelWidget: Container(
+            padding: EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Text(
+              "인벤토리",
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+          onTap: () async {
+            final assetsAudioPlayer = AssetsAudioPlayer();
+            assetsAudioPlayer.open(Audio("assets/main.mp3"));
+            assetsAudioPlayer.play();
+            return _showInventorySheet();
+          },
           child: CircleAvatar(
             backgroundColor: (Colors.white),
             child: Icon(Icons.backpack),
@@ -157,19 +196,52 @@ class _MyRoomPageState extends State<MyRoomPage> {
           // label: '인벤토리',
         ),
         SpeedDialChild(
+          labelWidget: Container(
+            padding: EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Text(
+              "방명록",
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
           shape: CircleBorder(),
           // label: '방명록',
-          onTap: _showComments,
+          // onTap: ,
+          onTap: () async {
+            final assetsAudioPlayer = AssetsAudioPlayer();
+            assetsAudioPlayer.open(Audio("assets/main.mp3"));
+            assetsAudioPlayer.play();
+            return _showComments();
+          },
           child: Icon(Icons.local_post_office),
           // label: '방명록',
         ),
         SpeedDialChild(
           shape: CircleBorder(),
           child: Icon(Icons.group),
+          labelWidget: Container(
+            padding: EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Text(
+              "친구목록",
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
           // label: '친구목록',
-          onTap: () => setState(() {
-            _selectedIndex = 3;
-          }),
+          onTap: () async {
+            setState(() {
+              _selectedIndex = 3;
+            });
+            final assetsAudioPlayer = AssetsAudioPlayer();
+            assetsAudioPlayer.open(Audio("assets/main.mp3"));
+            assetsAudioPlayer.play();
+          },
         ),
       ],
       child: Icon(Icons.menu),

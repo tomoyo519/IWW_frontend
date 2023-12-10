@@ -31,6 +31,7 @@ import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 final List<String> labels = [
   '전체',
@@ -395,11 +396,14 @@ class _GroupDetailState extends State<GroupDetail> {
                           alignment: Alignment.center,
                           decoration: BoxDecoration(),
                           child: Padding(
-                            padding: EdgeInsets.symmetric(vertical: 10),
-                            child: Text(
-                              widget.ownerName ?? '운영자',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
+                            padding: EdgeInsets.all(10),
+                            child: Container(
+                              alignment: Alignment.centerRight, // 왼쪽 정렬
+                              child: Text(
+                                widget.ownerName ?? '운영자',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
@@ -428,24 +432,27 @@ class _GroupDetailState extends State<GroupDetail> {
                             ),
                           ),
                         ),
-                        Expanded(
-                          flex: 3,
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
-                              border: Border.all(
-                                color: Colors.black45,
-                                width: 0.5,
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.2,
+                          child: Expanded(
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100),
+                                border: Border.all(
+                                    color: const Color.fromARGB(
+                                        255, 171, 169, 169)),
                               ),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(groupDetail!.catName),
-                                ],
+                              child: Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(groupDetail!.catName,
+                                        style:
+                                            TextStyle(color: Colors.grey[800])),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -610,22 +617,44 @@ class _GroupDetailState extends State<GroupDetail> {
                           ),
                         ],
                       ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          // 스타일 설정 추가
-                          backgroundColor: Colors.orange, // 버튼 배경색을 오렌지색으로 설정
+
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.2,
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2), // Container 위젯의 padding 속성 사용
+                        alignment:
+                            Alignment.center, // Container 위젯의 alignment 속성 사용
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.all(
+                              color: const Color.fromARGB(255, 171, 169, 169)),
                         ),
-                        onPressed: () {},
-                        child: Container(
-                          width: MediaQuery.of(context).size.width * 0.15,
-                          alignment: Alignment.center,
+                        child: Padding(
+                          padding: const EdgeInsets.all(3.0),
                           child: Text(
                             '${groupMems.length}명',
                             style:
-                                TextStyle(color: Colors.white), // 글자색을 흰색으로 설정
+                                TextStyle(color: Colors.black), // 글자색을 흰색으로 설정
                           ),
                         ),
                       ),
+                      // ElevatedButton(
+                      //   style: ElevatedButton.styleFrom(
+                      //     // 스타일 설정 추가
+                      //     backgroundColor: Colors.orange, // 버튼 배경색을 오렌지색으로 설정
+                      //   ),
+                      //   onPressed: () {},
+                      //   child: Container(
+                      //   5,
+                      //     alignment: Alignment.center,
+                      //     child: Text(
+                      //       '${groupMems.length}명',
+                      //       style:
+                      //           TextStyle(color: Colors.white), // 글자색을 흰색으로 설정
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
@@ -641,8 +670,11 @@ class _GroupDetailState extends State<GroupDetail> {
                         itemCount: groupMems.isEmpty ? 0 : groupMems.length,
                         itemBuilder: (context, index) {
                           return InkWell(
-                            onTap: () {
+                            onTap: () async {
                               // 사용자 화면으로 이동해야 합니다.
+                              final assetsAudioPlayer = AssetsAudioPlayer();
+                              assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                              assetsAudioPlayer.play();
                               nav.push(AppRoute.room,
                                   argument:
                                       groupMems[index]["user_id"].toString());
@@ -655,8 +687,7 @@ class _GroupDetailState extends State<GroupDetail> {
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
-                                          color: Colors.orangeAccent,
-                                          width: 5)),
+                                          color: Colors.grey, width: 1)),
                                   alignment: Alignment.center,
                                   margin: EdgeInsets.all(2),
                                   padding: EdgeInsets.all(2),
@@ -691,6 +722,9 @@ class _GroupDetailState extends State<GroupDetail> {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10)))),
                         onPressed: () async {
+                          final assetsAudioPlayer = AssetsAudioPlayer();
+                          assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                          assetsAudioPlayer.play();
                           await joinGroup(widget.groupId);
                         },
                         child:
@@ -712,6 +746,9 @@ class _GroupDetailState extends State<GroupDetail> {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10)))),
                         onPressed: () async {
+                          final assetsAudioPlayer = AssetsAudioPlayer();
+                          assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                          assetsAudioPlayer.play();
                           await exitGroup(widget.groupId);
                         },
                         child:

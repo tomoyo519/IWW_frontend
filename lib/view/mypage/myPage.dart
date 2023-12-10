@@ -91,7 +91,7 @@ class _MyPageState extends State<MyPage> {
                                       userInfo.userName,
                                       textAlign: TextAlign.left,
                                       style: TextStyle(
-                                        fontSize: 15,
+                                        fontSize: 17,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -103,7 +103,7 @@ class _MyPageState extends State<MyPage> {
                                       formattedNumber,
                                       textAlign: TextAlign.left,
                                       style: TextStyle(
-                                        fontSize: 15,
+                                        fontSize: 17,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -119,7 +119,7 @@ class _MyPageState extends State<MyPage> {
                                   child: Text(
                                     "프로필 관리",
                                     style: TextStyle(
-                                      fontSize: 15,
+                                      fontSize: 17,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
@@ -184,7 +184,7 @@ class _MyPageState extends State<MyPage> {
                                   Text(
                                     "레벨업 조건",
                                     style: TextStyle(
-                                      fontSize: 15,
+                                      fontSize: 17,
                                     ),
                                   ),
                                   IconButton(
@@ -328,7 +328,7 @@ class _MyPageState extends State<MyPage> {
                                                   .toString()
                                               : '업적',
                                           style: TextStyle(
-                                              fontSize: 16,
+                                              fontSize: 17,
                                               color: Colors.black,
                                               fontWeight: FontWeight.w500),
                                         ),
@@ -368,11 +368,15 @@ class _MyPageState extends State<MyPage> {
                     children: [
                       Padding(
                         padding: EdgeInsets.only(right: 5.0), // 오른쪽에만 패딩 적용
-                        child: Icon(Icons.campaign_outlined),
+                        child: Icon(
+                          Icons.campaign_outlined,
+                          size: 35.0,
+                        ),
                       ),
                       TextButton(
-                        child:
-                            Text("공지사항", style: TextStyle(color: Colors.black)),
+                        child: Text("공지사항",
+                            style:
+                                TextStyle(color: Colors.black, fontSize: 17)),
                         onPressed: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
@@ -397,7 +401,10 @@ class _MyPageState extends State<MyPage> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(right: 5.0),
-                        child: Icon(Icons.info_outline),
+                        child: Icon(
+                          Icons.info_outline,
+                          size: 35.0,
+                        ),
                       ),
                       Expanded(
                         child: TextButton(
@@ -405,10 +412,14 @@ class _MyPageState extends State<MyPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("앱 관리 버전",
-                                  style: TextStyle(color: Colors.black)),
+                              Text(
+                                "앱 관리 버전",
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 17),
+                              ),
                               Text("V1.0.0",
-                                  style: TextStyle(color: Colors.black))
+                                  style: TextStyle(
+                                      color: Colors.black, fontSize: 17))
                             ],
                           ),
                         ),
@@ -426,14 +437,18 @@ class _MyPageState extends State<MyPage> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(right: 5.0),
-                        child: Icon(Icons.logout_outlined),
+                        child: Icon(
+                          Icons.logout_outlined,
+                          size: 35.0,
+                        ),
                       ),
                       TextButton(
                         onPressed: () async {
                           await context.read<AuthService>().logout();
                         },
                         child: Text("로그아웃하기",
-                            style: TextStyle(color: Colors.black)),
+                            style:
+                                TextStyle(color: Colors.black, fontSize: 17)),
                       )
                     ],
                   ),
@@ -448,7 +463,10 @@ class _MyPageState extends State<MyPage> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(right: 5.0),
-                        child: Icon(Icons.exit_to_app_outlined),
+                        child: Icon(
+                          Icons.exit_to_app_outlined,
+                          size: 35.0,
+                        ),
                       ),
                       TextButton(
                         onPressed: () async {
@@ -489,8 +507,9 @@ class _MyPageState extends State<MyPage> {
                                 );
                               });
                         },
-                        child:
-                            Text("탈퇴하기", style: TextStyle(color: Colors.black)),
+                        child: Text("탈퇴하기",
+                            style:
+                                TextStyle(color: Colors.black, fontSize: 17)),
                       )
                     ],
                   ),

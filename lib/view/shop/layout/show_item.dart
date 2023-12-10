@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:lottie/lottie.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 class ShowItem extends StatelessWidget {
   ShowItem({super.key, this.allpets, this.purchase, required this.isLoading});
@@ -21,7 +22,10 @@ class ShowItem extends StatelessWidget {
                     itemCount: allpets?.length,
                     itemBuilder: (context, idx) {
                       return GestureDetector(
-                        onTap: () {
+                        onTap: () async {
+                          final assetsAudioPlayer = AssetsAudioPlayer();
+                          assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                          assetsAudioPlayer.play();
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -54,7 +58,12 @@ class ShowItem extends StatelessWidget {
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           10))),
-                                          onPressed: () {
+                                          onPressed: () async {
+                                            final assetsAudioPlayer =
+                                                AssetsAudioPlayer();
+                                            assetsAudioPlayer
+                                                .open(Audio("assets/main.mp3"));
+                                            assetsAudioPlayer.play();
                                             purchase(allpets?[idx].item_id);
                                           },
                                         ),
@@ -71,7 +80,12 @@ class ShowItem extends StatelessWidget {
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           10))),
-                                          onPressed: () {
+                                          onPressed: () async {
+                                            final assetsAudioPlayer =
+                                                AssetsAudioPlayer();
+                                            assetsAudioPlayer
+                                                .open(Audio("assets/main.mp3"));
+                                            assetsAudioPlayer.play();
                                             Navigator.of(context).pop();
                                           },
                                         ),
@@ -116,7 +130,7 @@ class ShowItem extends StatelessWidget {
                                             allpets?[idx].item_name ?? "",
                                             style: TextStyle(
                                               fontWeight: FontWeight.w700,
-                                              fontSize: 16,
+                                              fontSize: 17,
                                             ),
                                           ),
                                           Text(
