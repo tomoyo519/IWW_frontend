@@ -29,17 +29,14 @@ class MyRoomViewModel with ChangeNotifier {
   Future<int> fetchMyRoom() async {
     roomObjects = await _roomRepository.getItemsOfMyRoom(_userId);
     setInitialRoomObjects();
+    notifyListeners();
 
     return _userId;
   }
 
-  Future<void> fetchPet(userId) async {
-    pets = await _roomRepository.getPetsOfInventory(userId);
-    notifyListeners();
-  }
-
-  Future<void> fetchItem(userId) async {
-    items = await _roomRepository.getItemsOfInventory(userId);
+  Future<void> fetchInventory() async {
+    pets = await _roomRepository.getPetsOfInventory(_userId);
+    items = await _roomRepository.getItemsOfInventory(_userId);
     notifyListeners();
   }
 
