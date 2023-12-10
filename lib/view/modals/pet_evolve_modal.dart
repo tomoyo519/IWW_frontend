@@ -7,6 +7,7 @@ import 'package:iww_frontend/view/modals/custom_fullscreen_modal.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 // static method
 Future<Object?> showPetEvolveModal(BuildContext context) {
@@ -26,7 +27,7 @@ class EvolveLottie extends StatelessWidget {
   final Item pet;
 
   EvolveLottie({super.key, required this.pet});
-
+  final assetsAudioPlayer = AssetsAudioPlayer();
   Future<void> playLottieAnimation(BuildContext context) async {
     await Future.delayed(Duration(seconds: 3)).then((_) {
       Size screen = MediaQuery.of(context).size;
@@ -45,7 +46,8 @@ class EvolveLottie extends StatelessWidget {
   Widget build(BuildContext context) {
     // 위젯이 빌드될 때 애니메이션 재생 메소드 호출
     playLottieAnimation(context);
-
+    assetsAudioPlayer.open(Audio("assets/evolve.mp3"));
+    assetsAudioPlayer.play();
     return Center(
       child: Lottie.asset(
         'assets/todo/evolve.json',

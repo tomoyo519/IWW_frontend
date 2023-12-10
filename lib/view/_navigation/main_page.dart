@@ -14,6 +14,7 @@ import 'package:iww_frontend/view/modals/pet_evolve_modal.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 class MainPage extends StatefulWidget implements PreferredSizeWidget {
   MainPage({super.key});
@@ -141,28 +142,25 @@ class _MainPageState extends State<MainPage> {
         builder: (context) => curr.builder(context),
       ),
       bottomNavigationBar: nav.isBottomSheetPage
-          ? SizedBox(
-              height: MediaQuery.of(context).size.height * 0.1,
-              child: BottomNavigationBar(
-                  iconSize: MediaQuery.of(context).size.width * 0.07,
-                  currentIndex: nav.current.idx.index,
-                  onTap: (idx) {
-                    nav.navigate(idx.route);
-                  },
-                  items: bottoms
-                      .map((page) => BottomNavigationBarItem(
-                            icon: Icon(page.icon),
-                            label: page.label,
-                          ))
-                      .toList(),
-                  type: BottomNavigationBarType.fixed,
-                  selectedFontSize: 3.5 * fs,
-                  unselectedFontSize: 3.5 * fs,
-                  selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
-                  unselectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
-                  // 선택된 페이지 컬러
-                  selectedItemColor: Colors.orange),
-            )
+          ? BottomNavigationBar(
+              iconSize: 25,
+              currentIndex: nav.current.idx.index,
+              onTap: (idx) async {
+                final assetsAudioPlayer = AssetsAudioPlayer();
+                assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                assetsAudioPlayer.play();
+                nav.navigate(idx.route);
+              },
+              items: bottoms
+                  .map((page) => BottomNavigationBarItem(
+                        icon: Icon(page.icon),
+                        label: page.label,
+                      ))
+                  .toList(),
+              type: BottomNavigationBarType.fixed,
+
+              // 선택된 페이지 컬러
+              selectedItemColor: Colors.orange)
           : null,
     );
   }

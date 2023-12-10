@@ -12,6 +12,7 @@ import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/view/home/attendance.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 // 홈 레이아웃 및 의존성 주입
 class TodoPage extends StatelessWidget {
@@ -76,7 +77,17 @@ class MyTodo extends StatelessWidget {
             right: 3 * fs,
             bottom: 8 * fs,
             child: IconButton(
-              onPressed: () => showTodoEditModal<TodoViewModel>(context),
+              onPressed: () async {
+                showTodoEditModal<TodoViewModel>(context);
+
+                final assetsAudioPlayer = AssetsAudioPlayer();
+
+                assetsAudioPlayer.open(
+                  Audio("assets/main.mp3"),
+                );
+
+                assetsAudioPlayer.play();
+              },
               style: IconButton.styleFrom(
                 elevation: 1,
                 backgroundColor: Colors.orange,
