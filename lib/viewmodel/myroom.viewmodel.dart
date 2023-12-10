@@ -27,20 +27,21 @@ class MyRoomViewModel with ChangeNotifier {
   }
 
   Future<int> fetchMyRoom() async {
-    roomObjects = await _roomRepository.getItemsOfMyRoom(_userId);
+    LOG.log('fetchMyRoom: $_roomOwner');
+    roomObjects = await _roomRepository.getItemsOfMyRoom(_roomOwner);
     setInitialRoomObjects();
+    notifyListeners();
+
+    return _roomOwner;
+  }
+
+  Future<int> fetchInventory() async {
+    LOG.log('fetchInventory: $_userId');
+    pets = await _roomRepository.getPetsOfInventory(_userId);
+    items = await _roomRepository.getItemsOfInventory(_userId);
+    notifyListeners();
 
     return _userId;
-  }
-
-  Future<void> fetchPet(userId) async {
-    pets = await _roomRepository.getPetsOfInventory(userId);
-    notifyListeners();
-  }
-
-  Future<void> fetchItem(userId) async {
-    items = await _roomRepository.getItemsOfInventory(userId);
-    notifyListeners();
   }
 
   // 현재 viewModel의 roomObject를 DB에 저장
@@ -82,6 +83,7 @@ class MyRoomViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  get getUserId => _userId;
   get getRoomOwner => _roomOwner;
 
   set roomOwner(int userId) {
@@ -135,14 +137,13 @@ class MyRoomViewModel with ChangeNotifier {
     );
   }
 
-  String findPetName() {
+  String findPetAsset() {
     for (var element in roomObjects) {
       if (element.itemType == itemTypeOfPet) {
-        return element.name;
+        return element.path!.split('.')[0];
       }
     }
-    LOG.log("NO PET MODEL. default: 구미호_01");
-    return '구미호_01';
+    return 'small_fox';
   }
 
   String findPetNickName() {
