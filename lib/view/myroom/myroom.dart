@@ -146,6 +146,11 @@ class _MyRoomPageState extends State<MyRoomPage> {
         assetsAudioPlayer.open(Audio("assets/main.mp3"));
         assetsAudioPlayer.play();
       },
+      onClose: () async {
+        final assetsAudioPlayer = AssetsAudioPlayer();
+        assetsAudioPlayer.open(Audio("assets/main.mp3"));
+        assetsAudioPlayer.play();
+      },
       children: [
         SpeedDialChild(
           elevation: 0.0,
