@@ -41,10 +41,6 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   List<Todo> _groupTodos = [];
   List<Todo> get groupTodos => _groupTodos;
 
-  // 4. 기한이 지난 개인투두
-  List<Todo> _prevTodos = [];
-  List<Todo> get prevTodos => _prevTodos;
-
   bool _waiting = true;
   bool get waiting => _waiting;
   set waiting(bool val) {
@@ -79,9 +75,9 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
     Map<String, List<Todo>> data = await _repository.getTodos(_userId);
 
     // 분리해서 가져오기
-    _todos = data['total']!;
     _normalTodos = data['normal']!;
     _groupTodos = data['group']!;
+    _todos = _normalTodos + _groupTodos;
 
     LOG.log("Fetched data group todo ${data.length}");
     waiting = false;

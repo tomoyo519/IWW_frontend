@@ -118,7 +118,7 @@ class _MyPetState extends State<MyPet> {
         'Clicked'
       ]
     },
-    '구미호_03': {
+    '어른 구미호': {
       'src': 'assets/pets/kitsune.glb',
       'motions': [
         'Idle',

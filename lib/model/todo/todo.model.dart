@@ -105,7 +105,7 @@ class Todo {
       todoName: body['todo_name'],
       todoDesc: body['todo_desc'],
       todoLabel: body['todo_label'],
-      todoDate: body['todo_date'],
+      todoDate: body['todo_date'].split('T')[0],
       todoDone: body['todo_done'],
       todoStart: body['todo_start'],
       todoEnd: body['todo_end'],

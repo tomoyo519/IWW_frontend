@@ -22,6 +22,7 @@ class GroupList extends StatefulWidget {
 class _GroupListState extends State<GroupList> {
   List<Group> groups = [];
   bool isClicked = false;
+
   getList() async {
     UserInfo userInfo = Provider.of<UserInfo>(context, listen: false);
     int userId = userInfo.userId;
