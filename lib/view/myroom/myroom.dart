@@ -42,14 +42,8 @@ class MyRoom extends StatelessWidget {
               )),
       ChangeNotifierProvider<MyRoomViewModel>(
           create: (_) => MyRoomViewModel(userId, roomRepository, roomOwner)),
-      ChangeNotifierProvider(create: (_) => MyRoomState()),
     ], child: MyRoomPage());
   }
-}
-
-// 인벤토리 뷰 토글을 위한 상태관리
-class MyRoomState extends ChangeNotifier {
-  // TODO 필요에 따라서 사용
 }
 
 // 마이룸 기본 페이지

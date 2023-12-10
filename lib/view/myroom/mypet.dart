@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:provider/provider.dart';
 
@@ -22,10 +23,9 @@ class Preset {
 }
 
 class MyPet extends StatefulWidget {
-  final String newSrc;
-  final bool isDead;
+  final MyRoomViewModel myRoomState;
 
-  const MyPet({Key? key, required this.newSrc, required this.isDead})
+  const MyPet({Key? key, required this.myRoomState})
       : super(key: key);
 
   @override
@@ -33,8 +33,6 @@ class MyPet extends StatefulWidget {
 }
 
 class _MyPetState extends State<MyPet> {
-  int _petActionIndex = 1;
-
   final Map<String, Preset> presets = {
     // 움직임
     'Walk': Preset(
@@ -157,18 +155,24 @@ class _MyPetState extends State<MyPet> {
     },
   };
 
+  int _petActionIndex = 1;
+
   @override
   Widget build(BuildContext context) {
+    final myRoomState = widget.myRoomState;
+
     // 모델 및 프리셋 선택
-    String targetResouce = '${widget.newSrc}_$_petActionIndex';
-    Map<String, dynamic> selectedModel = petModels[widget.newSrc]!;
+    String petName = myRoomState.findPetName(); // not nickname
+    Map<String, dynamic> selectedModel = petModels[petName]!;
     Preset p = presets[selectedModel['motions']![_petActionIndex]]!;
+    // FIXME 펫 체력상태 확인
+    bool isDead = false;
 
     // FIXME log 확인용
-    LOG.log('[마이펫 렌더링] key: $targetResouce');
+    LOG.log('[마이펫 렌더링]');
 
     // 펫이 죽었으므로 비석 렌더링
-    if (widget.isDead) {
+    if (isDead) {
       return SizedBox(
         height: MediaQuery.of(context).size.height * 0.5,
         child: IgnorePointer(
@@ -207,7 +211,7 @@ class _MyPetState extends State<MyPet> {
             child: IgnorePointer(
               ignoring: true,
               child: ModelViewer(
-                key: ValueKey(targetResouce),
+                key: ValueKey('$petName - $_petActionIndex'),
                 src: selectedModel['src'],
                 animationName: p.animationName,
                 cameraTarget: p.cameraTarget,

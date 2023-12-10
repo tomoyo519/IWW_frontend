@@ -20,14 +20,16 @@ class RenderPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final myRoomState = context.watch<MyRoomViewModel>();
+
     return Expanded(
       child: Stack(
         fit: StackFit.expand,
         children: [
           // 배경, 가구 렌더링
-          RoomArea(),
+          RoomArea(myRoomState: myRoomState),
           // 펫 렌더링
-          PetArea(),
+          PetArea(myRoomState: myRoomState),
           // 상단 상태바
           Positioned(
               left: 0,
@@ -43,34 +45,48 @@ class RenderPage extends StatelessWidget {
 class PetArea extends StatelessWidget {
   const PetArea({
     super.key,
+    required this.myRoomState,
   });
+
+  final MyRoomViewModel myRoomState;
 
   @override
   Widget build(BuildContext context) {
-    // final myRoomState = context.read<MyRoomViewModel>();
-    final userInfo = context.read<UserInfo>();
-
-
-    // FIXME 현재 방 주인에 따라 다르게 렌더링
-    return Positioned(
-      bottom: MediaQuery.of(context).size.height * 0.05,
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.width,
-      child:
-          MyPet(newSrc: userInfo.itemName!, isDead: false),
-    );
-
+    return FutureBuilder<int>(
+        future: myRoomState
+            .fetchMyRoom(), // NOTE 내부에서 notifyListeners() 호출하지 않도록 주의!!!
+        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator(); // 로딩 인디케이터 등
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            LOG.log(
+                '########## PetArea 시작 !!!!!!!!!!!: user_id: snapshot.data');
+            return Selector<MyRoomViewModel, List<Item>>(
+                selector: (_, myRoomViewModel) => myRoomViewModel.roomObjects,
+                builder: (_, roomObjects, __) {
+                  return Positioned(
+                    bottom: MediaQuery.of(context).size.height * 0.05,
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.width,
+                    child: MyPet(myRoomState: myRoomState),
+                  );
+                });
+          }
+        });
   }
 }
 
 // 방 렌더링
 class RoomArea extends StatelessWidget {
-  const RoomArea({super.key});
+  const RoomArea({super.key, required this.myRoomState});
+
+  final myRoomState;
 
   @override
   Widget build(BuildContext context) {
     LOG.log('############## RoomArea 시작 !!!!!!!!!!!!!!!!!!!!!!');
-    var myRoomState = context.watch<MyRoomViewModel>();
 
     // Naviator를 통해서 argument를 전달할 경우 받는 방법
     // try {
@@ -147,7 +163,7 @@ class TopObjects extends StatelessWidget {
       return Center(
         child: Transform.translate(
           // offset을 이동해서 정 중앙 기준으로 이동
-          offset: Offset(x, y),
+                  offset: Offset(x - areaWidth * 0.4, y),
           child: Image.asset(
             'assets/furniture/${item.path}',
             fit: BoxFit.none,
@@ -184,7 +200,7 @@ class StatusBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var userInfo = context.read<UserInfo>();
+    var userInfo = context.watch<UserInfo>();
     // int totalExp = int.parse(userInfo.itemName!.split('_')[1]) * 1000;
     int totalExp = 1000;
 
