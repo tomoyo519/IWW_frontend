@@ -7,6 +7,7 @@ import 'package:lottie/lottie.dart';
 import 'package:iww_frontend/view/shop/layout/show_item.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 class ShopPage extends StatelessWidget {
   const ShopPage({super.key});
@@ -131,13 +132,29 @@ class _ShopItems extends State<ShopItems> {
       child: Column(
         children: [
           TabBar(
+            labelStyle: TextStyle(fontSize: 20),
             labelColor: Colors.black,
             indicatorColor: Colors.black,
             indicatorSize: TabBarIndicatorSize.tab,
             tabs: <Widget>[
-              Tab(text: ("애완동물")),
-              Tab(text: "가구"),
-              // Tab(text: "이모티콘"),
+              GestureDetector(
+                onTap: () async {
+                  // 효과음 재생 코드
+                  final assetsAudioPlayer = AssetsAudioPlayer();
+                  assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                  assetsAudioPlayer.play();
+                },
+                child: Tab(text: "애완동물"),
+              ),
+              GestureDetector(
+                onTap: () async {
+                  // 효과음 재생 코드
+                  final assetsAudioPlayer = AssetsAudioPlayer();
+                  assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                  assetsAudioPlayer.play();
+                },
+                child: Tab(text: "가구"),
+              ),
             ],
           ),
           Expanded(

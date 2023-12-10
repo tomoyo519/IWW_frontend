@@ -14,6 +14,7 @@ import 'package:iww_frontend/view/modals/pet_evolve_modal.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 class MainPage extends StatefulWidget implements PreferredSizeWidget {
   MainPage({super.key});
@@ -141,7 +142,10 @@ class _MainPageState extends State<MainPage> {
           ? BottomNavigationBar(
               iconSize: 25,
               currentIndex: nav.current.idx.index,
-              onTap: (idx) {
+              onTap: (idx) async {
+                final assetsAudioPlayer = AssetsAudioPlayer();
+                assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                assetsAudioPlayer.play();
                 nav.navigate(idx.route);
               },
               items: bottoms

@@ -1,8 +1,6 @@
 // ignore_for_file: constant_identifier_names
-
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -23,7 +21,9 @@ import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_exif_rotation/flutter_exif_rotation.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
+// 출처: https://islet4you.tistory.com/entry/Flutter-Sound-재생하기 [hoony's web study:티스토리]
 // Todo Extension으로 스타일 만들기
 enum GroupTodoState {
   DONE,
@@ -53,7 +53,6 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
   late File _imageFile;
   late GroupTodoState todoState;
   late Group group;
-
   final _picker = ImagePicker();
   final scroll = ScrollController();
 
@@ -176,7 +175,17 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                   : todoState == GroupTodoState.DONE
                       ? "인증대기"
                       : "✔ 인증완료",
-              onpressed: (context) => _onGrpTodoCheck(context, widget.todo),
+              onpressed: (context) async {
+                _onGrpTodoCheck(context, widget.todo);
+
+                final assetsAudioPlayer = AssetsAudioPlayer();
+
+                assetsAudioPlayer.open(
+                  Audio("assets/main.mp3"),
+                );
+
+                assetsAudioPlayer.play();
+              },
               enabled: todoState == GroupTodoState.UNDONE,
             ),
           ),
@@ -279,9 +288,23 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
             Animation<double> secondaryAnimation,
           ) {
             return AlertDialog(
+              surfaceTintColor: Colors.white,
+              backgroundColor: Colors.white,
               actions: [
                 TextButton(
-                  child: Text('할일 완료!'),
+                  style: TextButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10))),
+                  child: Text(
+                    '할일 완료!',
+                    style: TextStyle(
+                      // 여기에서 스타일을 적용합니다.
+                      fontSize: 16, // 글자 크기
+                      color: Colors.white, // 글자 색상
+                      fontWeight: FontWeight.w500, // 글자 두께
+                    ),
+                  ),
                   onPressed: () async {
                     // * ==== 버튼 눌렀을때의 로직 ==== * //
                     final viewModel = context.read<TodoViewModel>();

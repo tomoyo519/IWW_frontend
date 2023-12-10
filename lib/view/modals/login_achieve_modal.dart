@@ -21,7 +21,7 @@ Future<Object?> showLoginAchieveModal(BuildContext context, String message) {
 class LoginAchieveModal extends StatelessWidget {
   final String message;
 
-  const LoginAchieveModal({
+  LoginAchieveModal({
     super.key,
     required this.message,
   });

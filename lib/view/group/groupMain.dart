@@ -9,6 +9,7 @@ import 'package:iww_frontend/view/group/newGroup.dart';
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 // ==== 종속성 주입을 위한 페이지 위젯 ==== //
 class MyGroupPage extends StatelessWidget {
@@ -51,16 +52,29 @@ class MyGroup extends StatelessWidget {
         child: Column(
           children: [
             TabBar(
+              labelStyle: TextStyle(fontSize: 20),
               labelColor: Colors.black,
-              unselectedLabelColor: Colors.black,
               indicatorColor: Colors.black,
-              indicatorPadding: EdgeInsets.only(left: 8.0, right: 8.0),
               indicatorSize: TabBarIndicatorSize.tab,
-              tabs: const <Widget>[
-                Tab(
-                  text: "내 그룹",
+              tabs: <Widget>[
+                GestureDetector(
+                  onTap: () async {
+                    // 효과음 재생 코드
+                    final assetsAudioPlayer = AssetsAudioPlayer();
+                    assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                    assetsAudioPlayer.play();
+                  },
+                  child: Tab(text: "내 그룹"),
                 ),
-                Tab(text: "그룹 찾기"),
+                GestureDetector(
+                  onTap: () async {
+                    // 효과음 재생 코드
+                    final assetsAudioPlayer = AssetsAudioPlayer();
+                    assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                    assetsAudioPlayer.play();
+                  },
+                  child: Tab(text: "그룹 찾기"),
+                ),
               ],
             ),
             Expanded(
@@ -80,11 +94,19 @@ class MyGroup extends StatelessWidget {
                       GroupList(),
                       // ==== Group Create Floating Button ==== //
                       Positioned(
-                        right: 20,
+                        right: 15,
                         bottom: 15,
                         child: IconButton(
                           onPressed: () async {
                             var userInfo = context.read<UserInfo>();
+
+                            final assetsAudioPlayer = AssetsAudioPlayer();
+
+                            assetsAudioPlayer.open(
+                              Audio("assets/main.mp3"),
+                            );
+
+                            assetsAudioPlayer.play();
                             await Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -141,7 +163,7 @@ class MyGroup extends StatelessWidget {
                             shadowColor: Colors.black45,
                           ),
                           icon: Icon(
-                            size: 30,
+                            size: 40,
                             Icons.add,
                             color: Colors.white,
                           ),
