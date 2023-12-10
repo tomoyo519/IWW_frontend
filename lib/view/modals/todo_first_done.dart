@@ -6,11 +6,14 @@ import 'package:iww_frontend/view/modals/custom_pet_modal.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 Future<Object?> showTodoDoneModal(BuildContext context) {
   Size screen = MediaQuery.of(context).size;
   Item pet = context.read<UserInfo>().mainPet;
-
+  final assetsAudioPlayer = AssetsAudioPlayer();
+  assetsAudioPlayer.open(Audio("assets/coin.mp3"));
+  assetsAudioPlayer.play();
   Widget background = SizedBox(
     width: double.infinity,
     height: double.infinity,
@@ -19,6 +22,7 @@ Future<Object?> showTodoDoneModal(BuildContext context) {
     ),
   );
 
+// TODO - 투두 완료 소리 넣기.
   return showCustomFullScreenModal(
     context: context,
     builder: (context) => MyPetModal(

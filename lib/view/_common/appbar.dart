@@ -35,11 +35,11 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Padding(
-          padding: const EdgeInsets.only(right: 10),
+          padding: const EdgeInsets.only(right: 1),
           child: Image.asset(
             'assets/cash.png',
-            width: 25,
-            height: 25,
+            width: 45,
+            height: 45,
           ),
         ),
         Text(
