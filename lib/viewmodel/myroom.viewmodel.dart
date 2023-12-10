@@ -40,7 +40,7 @@ class MyRoomViewModel with ChangeNotifier {
 
   // 현재 viewModel의 roomObject를 DB에 저장
   Future<void> applyChanges() async {
-    _roomRepository.applyChanges(
+    await _roomRepository.applyChanges(
         _userId, roomObjects.map((e) => e.id).toList());
   }
 
