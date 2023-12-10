@@ -11,8 +11,6 @@ import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/service/reward.service.dart';
-import 'package:iww_frontend/view/home/attendance.dart';
-import 'package:path/path.dart';
 
 class UserInfo extends ChangeNotifier {
   Item _mainPet;
@@ -29,12 +27,12 @@ class UserInfo extends ChangeNotifier {
     this._attendances,
   ) {
     // FIXME: 업적 달성 모달 항상 뜨도록 설정
-    _reward = Rewards(
-      achiName: '첫 로그인',
-      achiDesc: 'achiDesc',
-      isHidden: false,
-      achiImg: 'assets/achi/login.png',
-    );
+    // _reward = Rewards(
+    //   achiName: '첫 로그인',
+    //   achiDesc: 'achiDesc',
+    //   isHidden: false,
+    //   achiImg: 'assets/achi/login.png',
+    // );
     _setUserState(_user, _mainPet, reward: _reward, attd: _attendances);
   }
 
@@ -152,11 +150,6 @@ class UserInfo extends ChangeNotifier {
 
     await fetchUser();
 
-    EventService.publish(Event(
-      type: EventType.onTodoApproved,
-      message: "인증을 완료했어요!",
-    ));
-
     _onTodoReward(prevUserCash);
     _onEvolution(prevPetId);
   }
@@ -191,10 +184,6 @@ class UserInfo extends ChangeNotifier {
   // 로그인되자마자 트리거되어야 하는 이벤트들
   void initEvents() {
     _onLoginReward(_reward);
-
-    // EventService.publish(Event(
-    //   type: EventType.onFirstTodoDone,
-    // ));
   }
 
   // 첫 투두 체크 이벤트

@@ -1,5 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/auth/auth_status.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
@@ -91,7 +93,7 @@ void main() async {
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
-          theme: getapptheme(),
+          theme: AppTheme.getapptheme(),
           home: RenderPage(),
         ),
       ),

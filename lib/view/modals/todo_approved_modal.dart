@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
+import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/style/button.dart';
 import 'package:iww_frontend/style/button.type.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
@@ -13,11 +14,12 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
 
-void showTodoApprovedModal(BuildContext context, {required String message}) {
+Future<Object?> showTodoApprovedModal(BuildContext context,
+    {required String message}) {
   Size screen = MediaQuery.of(context).size;
   Item pet = context.read<UserInfo>().mainPet;
 
-  showCustomFullScreenModal(
+  return showCustomFullScreenModal(
     context: context,
     builder: (context) => TodoApprovedModal(
       pet: pet,
@@ -64,13 +66,13 @@ class TodoApprovedModal extends StatelessWidget {
                   vertical: 10,
                 ),
                 child: Row(
-                  children: const [
+                  children: [
                     _StateBadge(
                       title: "10",
                       desc: "경험치 상승",
                       icon: Icon(
                         Icons.keyboard_double_arrow_up_rounded,
-                        color: Colors.orange,
+                        color: AppTheme.SEC_COLOR,
                         size: 20,
                       ),
                     ),

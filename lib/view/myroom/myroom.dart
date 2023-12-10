@@ -26,7 +26,10 @@ class MyRoom extends StatelessWidget {
     // 내비게이터 설정
     final nav = context.read<AppNavigator>();
     int roomOwner = nav.arg != null ? int.parse(nav.arg!) : userId;
-    nav.title = '친구의방';
+    if (roomOwner != userId) {
+      // 방 주인이 유저가 아니면 홈 라벨 지우기
+      nav.title = '';
+    }
 
     LOG.log('Room page: user id $userId, owner id $roomOwner');
 
@@ -77,7 +80,6 @@ class _MyRoomPageState extends State<MyRoomPage> {
   @override
   Widget build(BuildContext context) {
     var myRoomViewModel = Provider.of<MyRoomViewModel>(context);
-    var userInfo = context.read<UserInfo>();
     var colorScheme = Theme.of(context).colorScheme;
 
     // 테마 컬러 적용 (배경색`)
@@ -93,22 +95,28 @@ class _MyRoomPageState extends State<MyRoomPage> {
       body: Stack(
         children: [
           mainArea,
+          // if (isSheetOpen)
+          //   GestureDetector(
+          //     onTap: () {
+          //       setState(() {
+          //         myRoomViewModel.applyChanges();
+          //         // myRoomState.toggleGrowth();
+          //         userInfo.fetchUser();
+          //         isSheetOpen = false; // 탭 시 인벤토리 시트 닫기
+          //       });
+          //     },
+          //     behavior: HitTestBehavior.opaque, // 전체 영역에서 탭 감지
+          //     child: Container(
+          //       color: Colors.transparent,
+          //     ),
+          //   ),
           if (isSheetOpen)
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  myRoomViewModel.applyChanges();
-                  // myRoomState.toggleGrowth();
-                  userInfo.fetchUser();
-                  isSheetOpen = false; // 탭 시 인벤토리 시트 닫기
-                });
-              },
-              behavior: HitTestBehavior.opaque, // 전체 영역에서 탭 감지
-              child: Container(
-                color: Colors.transparent,
-              ),
-            ),
-          if (isSheetOpen) inventorySheet(context, myRoomViewModel),
+            inventorySheet(context, myRoomViewModel, () {
+              setState(() {
+                isSheetOpen = false; // 인벤토리 시트 닫기
+              });
+            })
+          // if (isSheetOpen) inventorySheet(context, myRoomViewModel),
         ],
       ),
       floatingActionButton: buildSpeedDial(),
@@ -191,7 +199,7 @@ class _MyRoomPageState extends State<MyRoomPage> {
           },
           child: CircleAvatar(
             backgroundColor: (Colors.white),
-            child: Icon(Icons.backpack),
+            child: Icon(Icons.work_rounded),
           ),
           // label: '인벤토리',
         ),
@@ -209,13 +217,7 @@ class _MyRoomPageState extends State<MyRoomPage> {
           ),
           shape: CircleBorder(),
           // label: '방명록',
-          // onTap: ,
-          onTap: () async {
-            final assetsAudioPlayer = AssetsAudioPlayer();
-            assetsAudioPlayer.open(Audio("assets/main.mp3"));
-            assetsAudioPlayer.play();
-            return _showComments();
-          },
+          onTap: _showComments,
           child: Icon(Icons.local_post_office),
           // label: '방명록',
         ),

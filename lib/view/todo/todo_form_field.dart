@@ -1,6 +1,5 @@
 // 폼 필드 레이아웃
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/style/colors.dart';
 
 class TodoFormFieldLayout extends StatelessWidget {
   final IconData icon;
@@ -18,7 +17,7 @@ class TodoFormFieldLayout extends StatelessWidget {
       children: [
         DecoratedBox(
           decoration: BoxDecoration(
-            color: MyColors.light,
+            color: Colors.grey[50],
             borderRadius: BorderRadius.circular(15),
           ),
           child: Padding(

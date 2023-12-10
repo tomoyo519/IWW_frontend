@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/style/colors.dart';
 import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -31,7 +30,7 @@ class TodoNameField extends StatelessWidget {
       decoration: InputDecoration(
           hintText: "할일",
           filled: true,
-          fillColor: MyColors.light,
+          fillColor: Colors.grey[50],
           border: borderOption,
           focusedBorder: borderOption,
           errorBorder: borderOption,

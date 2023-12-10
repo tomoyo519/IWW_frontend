@@ -40,6 +40,7 @@ class GroupDetail {
   final String regAt;
   final String userName;
   final String catName;
+  final int? catId;
 
   GroupDetail({
     required this.grpId,
@@ -48,6 +49,7 @@ class GroupDetail {
     required this.regAt,
     required this.userName,
     required this.catName,
+    this.catId,
   });
 
   factory GroupDetail.fromJson(Map<String, dynamic> json) {
@@ -58,6 +60,7 @@ class GroupDetail {
       regAt: json['reg_at'],
       userName: json['user_name'] ?? 'user',
       catName: json['cat_name'],
+      catId: json['cat_id'] ?? 0, // TODO: 수정
     );
   }
 

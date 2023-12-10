@@ -2,60 +2,97 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 
-Widget inventorySheet(BuildContext context, MyRoomViewModel myRoomViewModel) {
-  return Positioned(
-    top: 0,
-    left: 0,
-    right: 0,
-    child: Container(
-      height: 160,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        // borderRadius: BorderRadius.vertical(bottoom: Radius.circular(20)),
-      ),
-      child: DefaultTabController(
-        length: 2, // 탭의 수
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(0),
-              child: TabBar(
-                labelPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                tabs: const <Widget>[
-                  // Tab(child: Row(children: [Icon(Icons.pets), Text('펫')])),
-                  // Tab(child: Row(children: [Icon(Icons.inventory), Text('아이템')])),
-                  Tab(
-                    child: Padding(
-                      // 각 Tab의 내부 패딩 조정
-                      padding: EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Row(children: [Icon(Icons.pets), Text('펫')]),
-                    ),
-                  ),
-                  Tab(
-                    child: Padding(
-                      // 각 Tab의 내부 패딩 조정
-                      padding: EdgeInsets.symmetric(horizontal: 8.0),
-                      child:
-                          Row(children: [Icon(Icons.inventory), Text('아이템')]),
-                    ),
-                  ),
-                ],
-              ),
+Widget inventorySheet(BuildContext context, MyRoomViewModel myRoomViewModel,
+    VoidCallback onClose) {
+  var userInfo = context.read<UserInfo>();
+  bool hasChanges = myRoomViewModel.checkForChanges();
+
+  return Stack(
+    children: [
+      Positioned(
+        top: 0,
+        left: 0,
+        right: 0,
+        child: Container(
+          height: 160,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            // borderRadius: BorderRadius.vertical(bottoom: Radius.circular(20)),
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(20),
+              bottomRight: Radius.circular(20),
             ),
-            Expanded(
-              child: TabBarView(
-                children: <Widget>[
-                  PetTab(), // PET 탭 구현
-                  ItemTab(), // Item 탭 구현
-                ],
-              ),
+          ),
+          child: DefaultTabController(
+            length: 2, // 탭의 수
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.all(0),
+                  child: TabBar(
+                    labelPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                    tabs: const <Widget>[
+                      // Tab(child: Row(children: [Icon(Icons.pets), Text('펫')])),
+                      // Tab(child: Row(children: [Icon(Icons.inventory), Text('아이템')])),
+                      Tab(
+                        child: Padding(
+                          // 각 Tab의 내부 패딩 조정
+                          padding: EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Row(children: [Icon(Icons.pets), Text('펫')]),
+                        ),
+                      ),
+                      Tab(
+                        child: Padding(
+                          // 각 Tab의 내부 패딩 조정
+                          padding: EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Row(
+                              children: [Icon(Icons.inventory), Text('아이템')]),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: TabBarView(
+                    children: <Widget>[
+                      PetTab(), // PET 탭 구현
+                      ItemTab(), // Item 탭 구현
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
-    ),
+      Positioned(
+        top: 170,
+        left: 20,
+        child: ElevatedButton(
+          onPressed: hasChanges
+              ? () async {
+                  await myRoomViewModel.applyChanges();
+                  userInfo.fetchUser();
+                  onClose();
+                }
+              : () {
+                  onClose();
+                },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: hasChanges ? Colors.blue : Colors.grey[300],
+            shape: CircleBorder(),
+            padding: EdgeInsets.all(15), // 버튼의 크기 조정
+          ),
+          child: Icon(
+            hasChanges ? Icons.check : Icons.close,
+            color: hasChanges ? Colors.white : Colors.grey[800],
+          ),
+        ),
+      ),
+    ],
   );
 }
 
