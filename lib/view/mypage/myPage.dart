@@ -33,7 +33,6 @@ class _MyPageState extends State<MyPage> {
   }
 
   getRewards() async {
-    LOG.log('여보세요 나야');
     final userId = context.read<UserInfo>().userId;
     var result =
         await RemoteDataSource.get('/achievements/${userId}').then((res) {
@@ -44,10 +43,12 @@ class _MyPageState extends State<MyPage> {
         List<Rewards> result = (json["result"] as List)
             .map((item) => Rewards.fromJson(item))
             .toList();
-        setState(() {
-          rewards = result;
-          isLoading = false;
-        });
+        if (mounted) {
+          setState(() {
+            rewards = result;
+            isLoading = false;
+          });
+        }
       }
     });
   }
