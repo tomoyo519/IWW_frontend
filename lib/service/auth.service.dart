@@ -283,7 +283,7 @@ class AuthService extends ChangeNotifier {
 
   Future<void> _initialize() async {
     await _initializeTodos();
-    await _initializeItems();
+    // await _initializeItems();
     await _initializedAttd();
 
     status = AuthStatus.initialized;
