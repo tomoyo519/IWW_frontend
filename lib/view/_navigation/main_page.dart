@@ -48,10 +48,12 @@ class _MainPageState extends State<MainPage> {
       (event) async {
         String? message = event.message;
         EventType type = event.type;
-        LOG.log("[Event]: ${message ?? ''}${type.target.toUpperCase()}");
+        LOG.log("[Event]: ${message ?? ' '}${type.target.toUpperCase()}");
 
-        // 초기 로딩시간 설정
-        await Future.delayed(Duration(seconds: 8));
+        if (event.background == true) {
+          // 업적 등의 앱 진입 시 생성도는 이벤트에 한해 초기 로딩시간 설정
+          await Future.delayed(Duration(seconds: 5));
+        }
 
         if (type.target == 'socket') {
           // 소켓의 경우 즉시
@@ -75,6 +77,7 @@ class _MainPageState extends State<MainPage> {
       String? message = event.message;
       EventType type = event.type;
 
+      // ignore: use_build_context_synchronously
       bool? completed = await type.show(context, message: message) as bool?;
       await Future.delayed(Duration(seconds: 3)); // 이벤트 사이 간격 조정
       LOG.log('event completed? $completed');

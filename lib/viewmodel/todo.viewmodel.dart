@@ -37,10 +37,18 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   // 2. 개인 투두
   List<Todo> _normalTodos = [];
   List<Todo> get normalTodos => _normalTodos;
+  set normalTodos(List<Todo> val) {
+    _normalTodos = val;
+    notifyListeners();
+  }
 
   // 3. 그룹 투두
   List<Todo> _groupTodos = [];
   List<Todo> get groupTodos => _groupTodos;
+  set groupTodos(List<Todo> val) {
+    _groupTodos = val;
+    notifyListeners();
+  }
 
   bool _waiting = true;
   bool get waiting => _waiting;
@@ -52,43 +60,14 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   }
 
   int _todayDone = 0;
-  int get todayDone {
-    // return _todayDone;
-    var normalLen = _normalTodos.where((todo) {
-      return todo.isDone && todo.todoDate == getToday();
-    }).length;
-    var groupLen = _groupTodos.where((todo) {
-      return todo.isDone && todo.todoDate == getToday();
-    }).length;
-
-    return normalLen + groupLen;
-    // return _todos.where((todo) {
-    //     return todo.isDone && todo.todoDate == getToday();
-    //   }).length;
-  }
-
+  int get todayDone => _todayDone;
   set todayDone(int val) {
     _todayDone = val;
     notifyListeners();
   }
 
   int _todayTotal = 0;
-  int get todayTotal {
-    // return _todayTotal;
-    // return _todos.where((todo) {
-    //   return todo.todoDate == getToday();
-    // }).length;
-
-    var normalLen = _normalTodos.where((todo) {
-      return todo.todoDate == getToday();
-    }).length;
-    var groupLen = _groupTodos.where((todo) {
-      return todo.todoDate == getToday();
-    }).length;
-
-    return normalLen + groupLen;
-  }
-
+  int get todayTotal => _todayTotal;
   set todayTotal(int val) {
     _todayTotal = val;
     notifyListeners();
@@ -115,7 +94,6 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
       return todo.todoDate == getToday();
     });
 
-    // TODO 수정필요
     _todayTotal = todayTodo.length;
     _todayDone = todayTodo.where((todo) => todo.todoDone == true).length;
 
@@ -133,7 +111,7 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
     bool result = false;
 
     if (todo != null) {
-      _normalTodos.add(todo);
+      normalTodos.add(todo);
       todayTotal++;
       result = true;
       waiting = false;
@@ -147,14 +125,19 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   // ****************************** //
 
   Future<bool> deleteTodo(Todo delTodo) async {
-    if (delTodo.todoDone == true) {
-      todayDone--;
-    }
     todayTotal--;
-    _todos = _todos.where((todo) => todo.todoId != delTodo.todoId).toList();
+    todayDone -= delTodo.todoDone ? 1 : -1;
+    if (delTodo.grpId == null) {
+      normalTodos = _normalTodos.where((todo) {
+        return todo.todoId != delTodo.todoId;
+      }).toList();
+    } else {
+      groupTodos = _groupTodos.where((todo) {
+        return todo.todoId != delTodo.todoId;
+      }).toList();
+    }
 
     waiting = false; // 상태부터 변경합니다
-
     return await _repository
         .deleteTodo(delTodo.todoId.toString())
         .then((value) => value == true);
@@ -176,7 +159,7 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
       // 개인 투두인 경우
       _todos[idx].todoDone = value;
       if (todo.todoDate == getToday()) {
-        todayDone += value ? -1 : 1;
+        todayDone += value ? 1 : -1;
       }
 
       // 달성하면 이벤트

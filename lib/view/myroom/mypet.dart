@@ -118,24 +118,24 @@ class _MyPetState extends State<MyPet> {
   final Map<String, List<String>> motions = {
     'small_fox': ['Idle', 'Walk', 'Jump', 'Spin', 'Clicked'],
     'mid_fox': [
-        'Idle',
-        'Walk',
-        'Jump',
-        'Roll',
-        'Swim',
-        'Spin',
-        'Bounce',
-        'Clicked'
+      'Idle',
+      'Walk',
+      'Jump',
+      'Roll',
+      'Swim',
+      'Spin',
+      'Bounce',
+      'Clicked'
     ],
     'kitsune': [
-        'Idle',
-        'Walk',
-        'Jump',
-        'Roll',
-        'Swim',
-        'Spin',
-        'Bounce',
-        'Clicked'
+      'Idle',
+      'Walk',
+      'Jump',
+      'Roll',
+      'Swim',
+      'Spin',
+      'Bounce',
+      'Clicked'
     ],
     'monitor_lizard': ['Idle', 'Walk', 'Jump'],
     'horned_lizard': ['Idle', 'Walk', 'Jump'],
@@ -214,7 +214,7 @@ class _MyPetState extends State<MyPet> {
         ),
       ),
     );
-      
+
     int time = 0;
     bool isOverlayAdded = false;
 
@@ -241,7 +241,6 @@ class _MyPetState extends State<MyPet> {
     });
   }
 
-
   int _petActionIndex = 1;
 
   @override
@@ -254,7 +253,6 @@ class _MyPetState extends State<MyPet> {
     Preset p = presets[motions[petName]![_petActionIndex]]!;
     bool isDead = false; // FIXME 펫 체력상태 확인
 
-    
     LOG.log('[마이펫 렌더링]'); // FIXME log 확인용
 
     // 펫이 죽었으므로 비석 렌더링
@@ -288,8 +286,8 @@ class _MyPetState extends State<MyPet> {
           onTap: () {
             LOG.log('아니 왜 안바뀌는데 $_petActionIndex');
             setState(() {
-              _petActionIndex = (_petActionIndex + 1) %
-                  (motions[petName]!.length);
+              _petActionIndex =
+                  (_petActionIndex + 1) % (motions[petName]!.length);
             });
           },
           child: SizedBox(
