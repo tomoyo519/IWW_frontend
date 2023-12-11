@@ -55,7 +55,14 @@ class _MyPetState extends State<MyPet> {
       autoRotate: true,
       rotationPerSecond: '0.6rad',
     ),
-    // 이하 제자리
+    'Run': Preset(
+      animationName: 'Walk',
+      cameraOrbit: '0deg 70deg 8m',
+      cameraTarget: '0.7m 0.7m 0m',
+      autoRotate: true,
+      rotationPerSecond: '0.6rad',
+    ),
+    // 제자리
     'Idle': Preset(
       animationName: 'Idle',
       cameraOrbit: '30deg 80deg 0m',
@@ -65,6 +72,13 @@ class _MyPetState extends State<MyPet> {
     ),
     'Jump': Preset(
       animationName: 'Jump',
+      cameraOrbit: '30deg 80deg 0m',
+      cameraTarget: '0.5m 0.8m 0.8m',
+      autoRotate: false,
+      rotationPerSecond: '0rad',
+    ),
+    'Sit': Preset(
+      animationName: 'Bounce',
       cameraOrbit: '30deg 80deg 0m',
       cameraTarget: '0.5m 0.8m 0.8m',
       autoRotate: false,
@@ -91,11 +105,18 @@ class _MyPetState extends State<MyPet> {
       autoRotate: false,
       rotationPerSecond: '0rad',
     ),
+    'Eat': Preset(
+      animationName: 'Clicked',
+      cameraOrbit: '30deg 80deg 0m',
+      cameraTarget: '0.5m 0.8m 0.8m',
+      autoRotate: false,
+      rotationPerSecond: '0rad',
+    ),
   };
 
   // NOTE 모든 모델 파일은 .glb 포맷 사용
   final Map<String, List<String>> motions = {
-    'small_fox': ['Idle', 'Walk', 'Jump'],
+    'small_fox': ['Idle', 'Walk', 'Jump', 'Spin', 'Clicked'],
     'mid_fox': [
         'Idle',
         'Walk',
@@ -120,8 +141,32 @@ class _MyPetState extends State<MyPet> {
     'horned_lizard': ['Idle', 'Walk', 'Jump'],
     'chinese_dragon': ['Idle', 'Walk', 'Jump'],
     'pink_robin': ['Idle', 'Walk', 'Jump'],
-    'archers_buzzard': ['Idle', 'Walk', 'Jump'],
-    'phoenix': ['Idle', 'Walk', 'Jump'],
+    'archers_buzzard': [
+      'Idle',
+      'Walk',
+      'Jump',
+      'Spin',
+      'Bounce',
+      'Eat',
+      'Clicked',
+      'Fly',
+      'Roll',
+      'Sit',
+    ],
+    'phoenix': [
+      'Idle',
+      'Walk',
+      'Jump',
+      'Clicked',
+      'Spin',
+      'Fly',
+      'Swim',
+      'Run',
+      'Roll',
+      'Bounce',
+      'Eat',
+      'Sit',
+    ],
   };
 
   void happyMotion() {
