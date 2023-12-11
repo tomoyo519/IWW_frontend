@@ -43,9 +43,9 @@ class RoomRepository {
           .map((item) => Item.fromJson(item))
           .toList();
 
-      for (var element in items) {
-        LOG.log('[Inventory item]: ${element.name}, ${element.itemType}}');
-      }
+      // for (var element in items) {
+      //   LOG.log('[Inventory item]: ${element.name}, ${element.itemType}');
+      // }
 
       return items;
     });

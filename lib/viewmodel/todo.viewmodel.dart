@@ -115,6 +115,7 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
       return todo.todoDate == getToday();
     });
 
+    // TODO 수정필요
     _todayTotal = todayTodo.length;
     _todayDone = todayTodo.where((todo) => todo.todoDone == true).length;
 

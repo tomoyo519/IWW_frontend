@@ -42,7 +42,7 @@ class TodoApprovedModal extends StatelessWidget {
   final String itemPath;
   final Size screen;
   String approveMessege;
-
+  final assetsAudioPlayer = AssetsAudioPlayer();
   TodoApprovedModal({
     super.key,
     required this.itemPath,
@@ -52,6 +52,8 @@ class TodoApprovedModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    assetsAudioPlayer.open(Audio("assets/coin.mp3"));
+    assetsAudioPlayer.play();
     double fs = MediaQuery.of(context).size.width * 0.01;
 
     return MyPetModal(
