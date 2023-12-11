@@ -25,11 +25,15 @@ class AppTheme {
       useMaterial3: true,
       fontFamily: font,
       scaffoldBackgroundColor: Colors.white,
+      primaryColor: primary,
       textTheme: TextTheme(
-        titleLarge: TextStyle(fontSize: 22, color: Colors.black, fontWeight: FontWeight.bold),
-        titleMedium: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w700),
+        titleLarge: TextStyle(
+            fontSize: 22, color: Colors.black, fontWeight: FontWeight.bold),
+        titleMedium: TextStyle(
+            fontSize: 20, color: Colors.black, fontWeight: FontWeight.w700),
         titleSmall: TextStyle(fontSize: 18, color: Colors.black),
-        headlineLarge: TextStyle(fontSize: 24, color: Colors.black, fontWeight: FontWeight.w800),
+        headlineLarge: TextStyle(
+            fontSize: 24, color: Colors.black, fontWeight: FontWeight.w800),
         headlineMedium: TextStyle(fontSize: 22, color: Colors.black),
         headlineSmall: TextStyle(fontSize: 20, color: Colors.black),
         bodyLarge: TextStyle(fontSize: 18, color: Colors.black87),

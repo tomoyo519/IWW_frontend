@@ -189,8 +189,6 @@ class UserInfo extends ChangeNotifier {
     _petExp = newPet.petExp;
     _itemName = newPet.name;
     _petName = newPet.petName ?? '';
-
-    LOG.log(emoji: 1, 'main pet 갱신? ${mainPet.name}');
     _authService.mainPet = newPet;
 
     // * Set other info * //

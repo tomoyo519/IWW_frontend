@@ -113,6 +113,8 @@ class _MainPageState extends State<MainPage> {
     // * ==== Trigger Login Event ==== * //
     context.read<UserInfo>().initEvents();
 
+    // LOG.log("${RemoteDataSource.baseHeaders['Authorization']}");
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       // * ======= APPBAR ======= * //

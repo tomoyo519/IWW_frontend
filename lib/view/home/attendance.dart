@@ -14,19 +14,31 @@ class Attendance extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double fs = MediaQuery.of(context).size.width * 0.01;
     return Container(
         width: double.infinity,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Padding(
+              padding: EdgeInsets.only(bottom: 3 * fs),
+              child: Text(
+                "출석 체크",
+                style: TextStyle(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 5 * fs,
+                ),
+              ),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Wrap(
-                  children: [
-                    Text("출석 체크"),
-                  ],
-                ),
+                // Wrap(
+                //   children: const [
+                //     Text("출석 체크"),
+                //   ],
+                // ),
                 Center(
                   child: Wrap(
                     spacing: -22.0, // 각 자식 사이의 수평 간격. 음수로 설정하면 자식들이 겹치게 됩니다.
@@ -34,14 +46,14 @@ class Attendance extends StatelessWidget {
                       return attDays.contains(index.toString())
                           ? ElevatedButton(
                               onPressed: () {},
-                              child: Icon(
-                                Icons.check,
-                                color: Colors.white, // 아이콘 색상
-                              ),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
                                     Colors.green, // 버튼 배경색을 초록색으로 설정
                                 shape: CircleBorder(),
+                              ),
+                              child: Icon(
+                                Icons.check,
+                                color: Colors.white, // 아이콘 색상
                               ),
                             )
                           // Container(
@@ -55,6 +67,10 @@ class Attendance extends StatelessWidget {
                           //   )
                           : TextButton(
                               onPressed: () {},
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.grey[100],
+                                shape: CircleBorder(),
+                              ),
                               child: Text(
                                 index == 0
                                     ? "일"
@@ -69,11 +85,9 @@ class Attendance extends StatelessWidget {
                                                     : index == 5
                                                         ? "금"
                                                         : "토",
-                                style: TextStyle(color: Colors.black),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.grey[100],
-                                shape: CircleBorder(),
+                                style: TextStyle(
+                                  color: Colors.black,
+                                ),
                               ),
                             );
                     }),

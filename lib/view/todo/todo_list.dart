@@ -6,6 +6,7 @@ import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/model/todo/todo_update.dto.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_common/spinner.dart';
+import 'package:iww_frontend/view/home/attendance.dart';
 import 'package:iww_frontend/view/modals/todo_editor.dart';
 import 'package:iww_frontend/view/todo/todo_empty.dart';
 import 'package:iww_frontend/view/todo/todo_my_tile.dart';
@@ -79,6 +80,7 @@ class _ToDoListState extends State<ToDoList> with TickerProviderStateMixin {
     _sublist[1].items = viewModel.normalTodos;
 
     double fs = MediaQuery.of(context).size.width * 0.01;
+    UserInfo userinfo = context.read<UserInfo>();
 
     return viewModel.waiting
         ? Spinner()
@@ -89,6 +91,13 @@ class _ToDoListState extends State<ToDoList> with TickerProviderStateMixin {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5 * fs),
+                      child: Expanded(
+                          child: Attendance(
+                        attDays: userinfo.attendance,
+                      )),
+                    ),
                     for (SubTodoList sub in _sublist) ...[
                       GestureDetector(
                         onTap: () => _toggle(sub),
@@ -123,10 +132,13 @@ class _ToDoListState extends State<ToDoList> with TickerProviderStateMixin {
                         AnimatedSize(
                           duration: Duration(milliseconds: 300),
                           child: sub.isOpen
-                              ? Column(children: [
-                                  for (Todo todo in sub.items)
-                                    sub.builder(todo, context)
-                                ])
+                              ? Padding(
+                                  padding: EdgeInsets.only(bottom: 3 * fs),
+                                  child: Column(children: [
+                                    for (Todo todo in sub.items)
+                                      sub.builder(todo, context)
+                                  ]),
+                                )
                               : SizedBox(width: double.infinity, height: 0),
                         )
                       ]
