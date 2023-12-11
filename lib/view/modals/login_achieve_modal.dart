@@ -92,7 +92,17 @@ class LoginAchieveModal extends StatelessWidget {
             children: [
               MyButton(
                 text: "닫기",
-                onpressed: (context) => Navigator.pop(context, true),
+                onpressed: (context) async {
+                  Navigator.pop(context, true);
+
+                  final assetsAudioPlayer = AssetsAudioPlayer();
+
+                  assetsAudioPlayer.open(
+                    Audio("assets/main.mp3"),
+                  );
+
+                  assetsAudioPlayer.play();
+                },
               ),
             ],
           )

@@ -6,6 +6,7 @@ import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 void showTodoConfirmModal(BuildContext context, String? message) {
   if (message == null) return;
@@ -78,9 +79,8 @@ void showTodoConfirmModal(BuildContext context, String? message) {
         titlePadding: EdgeInsets.all(0),
         title: Container(
           decoration: BoxDecoration(
-            color: Color.fromARGB(255, 254, 204, 129),
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20))
-          ),
+              color: Color.fromARGB(255, 254, 204, 129),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
           padding: EdgeInsets.all(10),
           child: Text(
             '그룹 할일 인증',
@@ -109,14 +109,14 @@ void showTodoConfirmModal(BuildContext context, String? message) {
                       '${Secrets.REMOTE_SERVER_URL}/group-image/' + todoImg),
                 ));
               },
-              child:  ClipRRect(
+              child: ClipRRect(
                 borderRadius: BorderRadius.circular(8), // 모서리 반경 설정
                 child: Image.network(
                   '${Secrets.REMOTE_SERVER_URL}/group-image/' + todoImg,
                   fit: BoxFit.cover,
                 ),
               ),
-            ),        
+            ),
             SizedBox(height: 10),
             Text(
               "$senderName님의 \"$todoName\"",
@@ -128,11 +128,21 @@ void showTodoConfirmModal(BuildContext context, String? message) {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () async {
+              Navigator.of(context).pop();
+              final assetsAudioPlayer = AssetsAudioPlayer();
+
+              assetsAudioPlayer.open(
+                Audio("assets/main.mp3"),
+              );
+
+              assetsAudioPlayer.play();
+            },
             style: TextButton.styleFrom(
               backgroundColor: Colors.grey[350],
               foregroundColor: Colors.grey[800],
-              shape: RoundedRectangleBorder( // 모서리 둥글기 조절
+              shape: RoundedRectangleBorder(
+                // 모서리 둥글기 조절
                 borderRadius: BorderRadius.circular(8), // 모서리 반경 조절
               ),
             ),
@@ -155,13 +165,14 @@ void showTodoConfirmModal(BuildContext context, String? message) {
               foregroundColor: Colors.white,
               // backgroundColor: Color.fromARGB(255, 254, 204, 129),
               // foregroundColor: Colors.grey[900],
-              shape: RoundedRectangleBorder( // 모서리 둥글기 조절
+              shape: RoundedRectangleBorder(
+                // 모서리 둥글기 조절
                 borderRadius: BorderRadius.circular(8), // 모서리 반경 조절
-              ),              
-            ),            
+              ),
+            ),
             child: Text('인증 완료'),
           ),
-        ],        
+        ],
       );
     },
   );

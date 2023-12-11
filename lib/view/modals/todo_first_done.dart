@@ -61,7 +61,17 @@ Future<Object?> showTodoDoneModal(BuildContext context) {
           ),
           MyButton(
             // full: true,
-            onpressed: (_) => Navigator.pop(context, true),
+            onpressed: (_) async {
+              Navigator.pop(context, true);
+              final assetsAudioPlayer = AssetsAudioPlayer();
+
+              assetsAudioPlayer.open(
+                Audio("assets/main.mp3"),
+              );
+
+              assetsAudioPlayer.play();
+              ;
+            },
             text: "닫기",
           ),
         ],
