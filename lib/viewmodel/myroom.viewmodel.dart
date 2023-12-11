@@ -157,6 +157,26 @@ class MyRoomViewModel with ChangeNotifier {
     return '이름을 지어주세요!';
   }
 
+
+  Item getPetItem() {
+    for (Item element in roomObjects) {
+      if (element.itemType == itemTypeOfPet) {
+        LOG.log('[Pet Item]: ${element.toString()}');
+        return element;
+      }
+    }
+
+    return Item(
+      id: -1,
+      name: 'none',
+      path: 'small_fox.png',
+      itemType: 1,
+      petExp: 123,
+      totalExp: 987,
+      petName: 'error',
+    );
+  }
+
   bool get hasChanges => _hasChanges;
 
   void setInitialRoomObjects() {
