@@ -24,6 +24,7 @@ class MyPage extends StatefulWidget {
 class _MyPageState extends State<MyPage> {
   List<Rewards>? rewards;
   bool isLoading = true;
+  Map<String, dynamic>? staticData;
   @override
   void initState() {
     LOG.log('야호?');
@@ -51,6 +52,38 @@ class _MyPageState extends State<MyPage> {
         }
       }
     });
+    var statistics =
+        await RemoteDataSource.get('/user/${userId}/statistics').then((res) {
+      if (res.statusCode == 200) {
+        var json = jsonDecode(res.body);
+        LOG.log('${res.body}');
+        setState(() {
+          if (mounted) {
+            staticData = json["result"];
+          }
+        });
+      }
+    });
+  }
+
+  getLevel() {
+    if (staticData != null && staticData!.isNotEmpty) {
+      switch (staticData!["tier_name"]) {
+        case "Bronze":
+          return Image.asset(
+            'assets/1.png',
+            width: 150,
+          );
+        case "Silver":
+          return Image.asset('assets/2.png');
+        case "Gold":
+          return Image.asset('assets/3.png');
+        case "Platinum":
+          return Image.asset('assets/4.png');
+        case "Diamond":
+          return Image.asset('assets/5.png');
+      }
+    }
   }
 
   @override
@@ -173,77 +206,88 @@ class _MyPageState extends State<MyPage> {
                         ],
                       ),
                     ),
-                    Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment.start, // 추가된 부분
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Align(
-                                      alignment: Alignment.centerLeft, // 추가된 부분
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(20.0),
-                                        child: Text(
-                                          "내 성취도",
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
+                    if (staticData != null && staticData!.isNotEmpty) ...[
+                      Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.start, // 추가된 부분
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Align(
+                                        alignment:
+                                            Alignment.centerLeft, // 추가된 부분
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(20.0),
+                                          child: Text(
+                                            "내 성취도",
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          "레벨업 조건",
-                                          style: TextStyle(
-                                            fontSize: 17,
+                                      Padding(
+                                        padding: EdgeInsets.only(right: 10.0),
+                                        child: getLevel(),
+                                      )
+                                    ],
+                                  ),
+                                  Column(
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.all(15.0),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                              10.0), // 여기에서 원하는 radius 값을 설정합니다.
+                                          child: LinearPercentIndicator(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width -
+                                                50,
+                                            animation: true,
+                                            lineHeight: 20.0,
+                                            animationDuration: 2500,
+                                            percent: staticData!["tier_score"] /
+                                                staticData!["tier_max"],
+                                            center: Text(
+                                                "${staticData!["tier_score"]}xp / ${staticData!["tier_max"]}xp"),
+                                            barRadius: Radius.circular(10),
+                                            linearStrokeCap: LinearStrokeCap
+                                                .butt, // 이 속성을 추가하여 끝 부분이 둥글게 나오지 않도록 합니다.
+                                            progressColor: Colors.orange,
                                           ),
                                         ),
-                                        IconButton(
-                                            alignment: Alignment.centerLeft,
-                                            onPressed: () {},
-                                            icon: Icon(Icons
-                                                .arrow_forward_ios_outlined),
-                                            iconSize: 15.0)
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(15.0),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(
-                                        10.0), // 여기에서 원하는 radius 값을 설정합니다.
-                                    child: LinearPercentIndicator(
-                                      width: MediaQuery.of(context).size.width -
-                                          50,
-                                      animation: true,
-                                      lineHeight: 20.0,
-                                      animationDuration: 2500,
-                                      percent: userInfo.userHp / 100,
-                                      center: Text("${userInfo.userHp} / 100"),
-                                      barRadius: Radius.circular(10),
-                                      linearStrokeCap: LinearStrokeCap
-                                          .butt, // 이 속성을 추가하여 끝 부분이 둥글게 나오지 않도록 합니다.
-                                      progressColor: Colors.orange,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                right: 20.0),
+                                            child: Text(
+                                                "레벨업까지 ${staticData!["tier_max"] - staticData!["tier_score"] + 1}xp"),
+                                          )
+                                        ],
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
+                    ],
                     Container(
                       child: Column(
                         children: [

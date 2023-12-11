@@ -10,6 +10,7 @@ import 'package:iww_frontend/view/_navigation/enum/app_route.dart';
 import 'package:iww_frontend/view/modals/custom_fullscreen_modal.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 // static method
 Future<Object?> showLoginAchieveModal(BuildContext context, String message) {
@@ -21,7 +22,7 @@ Future<Object?> showLoginAchieveModal(BuildContext context, String message) {
 
 class LoginAchieveModal extends StatelessWidget {
   final String message;
-
+  final assetsAudioPlayer = AssetsAudioPlayer();
   LoginAchieveModal({
     super.key,
     required this.message,
@@ -29,6 +30,8 @@ class LoginAchieveModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    assetsAudioPlayer.open(Audio("assets/happy.mp3"));
+    assetsAudioPlayer.play();
     var jsonMessage = jsonDecode(message);
     Rewards reward = Rewards.fromJson(jsonMessage);
 
@@ -89,7 +92,17 @@ class LoginAchieveModal extends StatelessWidget {
             children: [
               MyButton(
                 text: "닫기",
-                onpressed: (context) => Navigator.pop(context, true),
+                onpressed: (context) async {
+                  Navigator.pop(context, true);
+
+                  final assetsAudioPlayer = AssetsAudioPlayer();
+
+                  assetsAudioPlayer.open(
+                    Audio("assets/main.mp3"),
+                  );
+
+                  assetsAudioPlayer.play();
+                },
               ),
             ],
           )

@@ -22,9 +22,6 @@ class ShowItem extends StatelessWidget {
                     itemBuilder: (context, idx) {
                       return GestureDetector(
                         onTap: () async {
-                          final assetsAudioPlayer = AssetsAudioPlayer();
-                          assetsAudioPlayer.open(Audio("assets/main.mp3"));
-                          assetsAudioPlayer.play();
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -97,6 +94,9 @@ class ShowItem extends StatelessWidget {
                               );
                             },
                           );
+                          final assetsAudioPlayer = AssetsAudioPlayer();
+                          assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                          assetsAudioPlayer.play();
                         },
                         child: Padding(
                             padding: const EdgeInsets.all(10.0),

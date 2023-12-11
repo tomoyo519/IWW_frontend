@@ -89,7 +89,7 @@ class _RoomAreaState extends State<RoomArea> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(milliseconds: 3000), () {
+    Future.delayed(Duration(milliseconds: 2000), () {
       context.read<MyRoomViewModel>().fetchInventory();
     });
   }
