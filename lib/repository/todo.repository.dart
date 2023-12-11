@@ -13,41 +13,18 @@ class TodoRepository {
   Future<Map<String, List<Todo>>> getTodos(int userId) async {
     return await RemoteDataSource.get("/todo/user/$userId").then((response) {
       if (response.statusCode == 200) {
-        List<dynamic> jsonData = jsonDecode(response.body);
-
-        // 만약 할일이 없으면
-        if (jsonData.isEmpty) {
-          return {
-            "normal": [],
-            "group": [],
-            "total": [],
-          };
-        }
-
-        List<Todo>? data = jsonData.map((data) => Todo.fromJson(data)).toList();
-        // 오늘
-        DateTime yesterday = DateTime.now().subtract(Duration(days: 1));
-        List<Todo> normal = data
-            .where((e) => (e.grpId == null &&
-                (DateTime.parse(e.todoDate).isAfter(yesterday) ||
-                    e.todoDone == false)))
-            .toList();
-
-        List<Todo> group = data
-            .where((e) => (e.grpId != null &&
-                DateTime.parse(e.todoDate).isAfter(yesterday)))
-            .toList();
+        Map<String, dynamic> jsonData = jsonDecode(response.body);
+        List<dynamic> todoList = jsonData['result']['todos'];
+        List<dynamic> routList = jsonData['result']['routs'];
 
         return {
-          "normal": normal,
-          "group": group,
-          "total": data,
+          'normal': todoList.map((e) => Todo.fromJson(e)).toList(),
+          'group': routList.map((e) => Todo.fromJson(e)).toList(),
         };
       }
       return {
         "normal": [],
         "group": [],
-        "total": [],
       };
     });
   }

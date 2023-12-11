@@ -33,6 +33,10 @@ Future<Object?> showTodoApprovedModal(BuildContext context,
   );
 }
 
+extension DoubleExt on double {
+  double x(double mul) => this * mul;
+}
+
 //
 class TodoApprovedModal extends StatelessWidget {
   final String itemPath;
@@ -50,6 +54,8 @@ class TodoApprovedModal extends StatelessWidget {
   Widget build(BuildContext context) {
     assetsAudioPlayer.open(Audio("assets/coin.mp3"));
     assetsAudioPlayer.play();
+    double fs = MediaQuery.of(context).size.width * 0.01;
+
     return MyPetModal(
       itemPath: itemPath,
       screen: screen,
@@ -58,7 +64,13 @@ class TodoApprovedModal extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(bottom: 10),
-            child: Text(approveMessege),
+            child: Text(
+              approveMessege,
+              style: TextStyle(
+                fontSize: 3.5 * fs,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.only(bottom: 10),
@@ -79,7 +91,7 @@ class TodoApprovedModal extends StatelessWidget {
                       icon: Icon(
                         Icons.keyboard_double_arrow_up_rounded,
                         color: AppTheme.SEC_COLOR,
-                        size: 20,
+                        size: 6 * fs,
                       ),
                     ),
                     _StateBadge(
@@ -88,7 +100,7 @@ class TodoApprovedModal extends StatelessWidget {
                       icon: Icon(
                         Icons.monetization_on_outlined,
                         color: AppTheme.PRI_COLOR,
-                        size: 18,
+                        size: 6 * fs,
                       ),
                     ),
                   ],
@@ -137,13 +149,14 @@ class _StateBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double fs = MediaQuery.of(context).size.width * 0.01;
     return Expanded(
       child: Column(
         children: [
           Text(
             title,
             style: TextStyle(
-              fontSize: 20,
+              fontSize: 7 * fs,
               fontFamily: 'IBMPlexSansKR',
               fontWeight: FontWeight.w900,
               color: AppTheme.TER_COLOR,
@@ -158,7 +171,10 @@ class _StateBadge extends StatelessWidget {
                   padding: const EdgeInsets.only(right: 5),
                   child: icon,
                 ),
-                Text(desc),
+                Text(
+                  desc,
+                  style: TextStyle(fontSize: 4 * fs),
+                ),
               ],
             ),
           ),
