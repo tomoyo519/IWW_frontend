@@ -30,6 +30,8 @@ class _MyPageState extends State<MyPage> {
     LOG.log('야호?');
     // TODO: implement initState
     super.initState();
+    staticData = context.read<UserInfo>().tier;
+    LOG.log(emoji: 2, staticData.toString());
     getRewards();
   }
 
@@ -52,18 +54,19 @@ class _MyPageState extends State<MyPage> {
         }
       }
     });
-    var statistics =
-        await RemoteDataSource.get('/user/${userId}/statistics').then((res) {
-      if (res.statusCode == 200) {
-        var json = jsonDecode(res.body);
-        LOG.log('${res.body}');
-        setState(() {
-          if (mounted) {
-            staticData = json["result"];
-          }
-        });
-      }
-    });
+
+    // var statistics =
+    //     await RemoteDataSource.get('/user/${userId}/statistics').then((res) {
+    //   if (res.statusCode == 200) {
+    //     var json = jsonDecode(res.body);
+    //     LOG.log('${res.body}');
+    //     setState(() {
+    //       if (mounted) {
+    //         staticData = json["result"];
+    //       }
+    //     });
+    //   }
+    // });
   }
 
   getLevel() {
