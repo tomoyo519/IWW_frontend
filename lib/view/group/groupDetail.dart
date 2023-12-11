@@ -614,7 +614,7 @@ class _GroupDetailState extends State<GroupDetail> {
                                           children: [
                                             Expanded(
                                               child: MyButton(
-                                                type: MyButtonType.secondary,
+                                                type: MyButtonType.shaded,
                                                 text: "인증 현황 보기",
                                                 onpressed: (context) =>
                                                     _setRoutinePicture(

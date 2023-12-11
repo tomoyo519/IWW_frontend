@@ -75,8 +75,8 @@ class MyTodo extends StatelessWidget {
           ),
           // ==== Floating Button ==== //
           Positioned(
-            right: 3 * fs,
-            bottom: 8 * fs,
+            right: 2 * fs,
+            bottom: 5 * fs,
             child: IconButton(
               onPressed: () async {
                 showTodoEditModal<TodoViewModel>(context);
@@ -90,8 +90,8 @@ class MyTodo extends StatelessWidget {
                 assetsAudioPlayer.play();
               },
               style: IconButton.styleFrom(
-                elevation: 10.0,
-                backgroundColor: AppTheme.PRI_COLOR,
+                elevation: 8.0,
+                backgroundColor: AppTheme.tertiary,
                 shadowColor: Colors.black45,
               ),
               icon: Icon(

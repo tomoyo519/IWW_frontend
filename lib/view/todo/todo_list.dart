@@ -106,23 +106,15 @@ class _ToDoListState extends State<ToDoList> with TickerProviderStateMixin {
                                 ),
                               ),
                               if (sub.isOpen == true)
-                                Icon(Icons.keyboard_arrow_down)
+                                Icon(
+                                  Icons.keyboard_arrow_down,
+                                  size: 6 * fs,
+                                )
                               else
-                                Icon(Icons.keyboard_arrow_left)
-                              // AnimatedBuilder(
-                              //   animation: _animation,
-                              //   builder: (context, child) {
-                              //     if (sub.isOpen == false) {
-                              //       return Transform.rotate(
-                              //         angle: _animation.value * 1 * pi,
-                              //         child: Icon(Icons.keyboard_arrow_down),
-                              //       );
-                              //     } else {
-                              //       return Icon(
-                              //           Icons.keyboard_arrow_left_rounded);
-                              //     }
-                              //   },
-                              // ),
+                                Icon(
+                                  Icons.keyboard_arrow_left,
+                                  size: 6 * fs,
+                                )
                             ],
                           ),
                         ),

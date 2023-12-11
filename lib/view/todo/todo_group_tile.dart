@@ -4,9 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/group/group.model.dart';
-import 'package:iww_frontend/model/group/groupDetail.model.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/service/event.service.dart';
@@ -167,27 +165,25 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
               ),
             ),
           ),
-          Container(
-            child: MyButton(
-              type: MyButtonType.primary,
-              text: todoState == GroupTodoState.UNDONE
-                  ? "인증요청"
-                  : todoState == GroupTodoState.DONE
-                      ? "인증대기"
-                      : "✔ 인증완료",
-              onpressed: (context) async {
-                _onGrpTodoCheck(context, widget.todo);
+          MyButton(
+            type: MyButtonType.primary,
+            text: todoState == GroupTodoState.UNDONE
+                ? "인증요청"
+                : todoState == GroupTodoState.DONE
+                    ? "인증대기"
+                    : "✔ 인증완료",
+            onpressed: (context) async {
+              _onGrpTodoCheck(context, widget.todo);
 
-                final assetsAudioPlayer = AssetsAudioPlayer();
+              final assetsAudioPlayer = AssetsAudioPlayer();
 
-                assetsAudioPlayer.open(
-                  Audio("assets/main.mp3"),
-                );
+              assetsAudioPlayer.open(
+                Audio("assets/main.mp3"),
+              );
 
-                assetsAudioPlayer.play();
-              },
-              enabled: todoState == GroupTodoState.UNDONE,
-            ),
+              assetsAudioPlayer.play();
+            },
+            enabled: todoState == GroupTodoState.UNDONE,
           ),
         ],
       ),

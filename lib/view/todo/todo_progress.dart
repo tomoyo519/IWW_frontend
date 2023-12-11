@@ -64,7 +64,7 @@ class _TodoProgressState extends State<TodoProgress> {
                       color: Colors.black87,
                       fontSize: 3.5 * fs,
                       fontWeight: FontWeight.normal,
-                      fontFamily: AppTheme.FONT_FAMILY,
+                      fontFamily: AppTheme.font,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),

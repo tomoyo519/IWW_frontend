@@ -1,38 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/style/button.type.dart';
 
 extension MyButtonStyle on MyButtonType {
-  static Color primary = Color(0xfff08636);
-  static Color secondary = Colors.grey.shade300;
-  static Color onPrimary = Colors.white;
-  static Color onSecondary = Colors.black;
-  static Color disabled = Colors.grey.shade200;
-  static Color onDisabled = Colors.black;
-  // static Color tertiary = Colo
-
   Color background() {
     switch (this) {
       case MyButtonType.primary:
-        return primary;
+        return AppTheme.primary;
       case MyButtonType.secondary:
-        return secondary;
+        return AppTheme.secondary;
+      case MyButtonType.shaded:
+        return AppTheme.shaded;
+      case MyButtonType.tertiary:
+        return AppTheme.tertiary;
+
       case MyButtonType.disabled:
-        return disabled;
+        return AppTheme.disabled;
       default:
-        return primary;
+        return AppTheme.primary;
     }
   }
 
   Color text() {
     switch (this) {
       case MyButtonType.primary:
-        return onPrimary;
+        return AppTheme.onPrimary;
       case MyButtonType.secondary:
-        return onSecondary;
+        return AppTheme.onSecondary;
+      case MyButtonType.shaded:
+        return AppTheme.onShaded;
+      case MyButtonType.tertiary:
+        return AppTheme.onTertiary;
       case MyButtonType.disabled:
-        return onDisabled;
+        return AppTheme.onDisabled;
       default:
-        return onPrimary;
+        return AppTheme.primary;
     }
   }
 }

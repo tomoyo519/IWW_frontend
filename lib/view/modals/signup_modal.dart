@@ -58,7 +58,7 @@ class SignUpModal extends StatelessWidget {
           child: MyButton(
             text: "취소하기",
             full: true,
-            type: MyButtonType.secondary,
+            type: MyButtonType.shaded,
             onpressed: (context) {
               context.read<AuthService>().status = AuthStatus.failed;
               Navigator.pop(context);
