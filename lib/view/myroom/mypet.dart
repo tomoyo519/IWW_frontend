@@ -200,7 +200,7 @@ class _MyPetState extends State<MyPet> {
         left: MediaQuery.of(context).size.width / 2 - 150,
         child: Material(
           color: Colors.transparent,
-          child: Image.asset('assets/happy.png', height: 80, width: 80),
+          child: Image.asset('assets/happy.png', height: 100, width: 100),
         ),
       ),
     );
@@ -216,7 +216,7 @@ class _MyPetState extends State<MyPet> {
         _petActionIndex = 0; // SPIN
       });
 
-      if (!isOverlayAdded) {
+      if (!isOverlayAdded && time >= 0.8) {
         Overlay.of(context)?.insert(overlayEntry);
         isOverlayAdded = true;
       }
