@@ -214,7 +214,7 @@ class StatusBar extends StatelessWidget {
   Widget build(BuildContext context) {
     var userInfo = context.watch<UserInfo>();
     // int totalExp = int.parse(userInfo.itemName!.split('_')[1]) * 1000;
-    int totalExp = 1000;
+    Item petStatus = context.read<MyRoomViewModel>().getPetItem();
 
     return Container(
       height: 100,
@@ -290,7 +290,7 @@ class StatusBar extends StatelessWidget {
               SizedBox(width: 10),
               Expanded(
                 child: LinearProgressIndicator(
-                  value: (userInfo.petExp ?? 0) / totalExp,
+                  value: (petStatus.petExp! / petStatus.totalExp!),
                   minHeight: 6,
                   valueColor: AlwaysStoppedAnimation<Color>(
                       Color.fromARGB(255, 155, 239, 110)),
@@ -302,7 +302,7 @@ class StatusBar extends StatelessWidget {
               SizedBox(
                 width: 100,
                 child: Text(
-                  '${userInfo.petExp ?? 0} / $totalExp',
+                  '${userInfo.petExp} / ${petStatus.totalExp}',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.white,
