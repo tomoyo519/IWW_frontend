@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
@@ -147,6 +149,25 @@ class _MyPetState extends State<MyPet> {
       'motions': ['Idle', 'Walk', 'Jump']
     },
   };
+
+  void happyMotion() {
+    int time = 0;
+
+    Timer.periodic(Duration(seconds: 2), (timer) {
+      time += 1;
+      setState(() {
+        _petActionIndex = 2; // JUMP
+      });
+
+      if (time >= 3) {
+        timer.cancel();
+        setState(() {
+          _petActionIndex = 0; // IDLE
+        });
+      }
+    });
+  }
+
 
   int _petActionIndex = 1;
 
