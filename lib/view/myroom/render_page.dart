@@ -54,7 +54,7 @@ class PetArea extends StatelessWidget {
             .fetchMyRoom(), // NOTE 내부에서 notifyListeners() 호출하면 무한루프
         builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator(); // 로딩 인디케이터 등
+            return SizedBox(); // 로딩 중 빈칸
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else {
@@ -154,7 +154,7 @@ class TopObjects extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final areaWidth = MediaQuery.of(context).size.width;
-    final areaHeight = MediaQuery.of(context).size.height * 0.6;
+    final areaHeight = MediaQuery.of(context).size.height;
 
     return Stack(
         children: myRoomState.roomObjects
@@ -167,18 +167,22 @@ class TopObjects extends StatelessWidget {
       // [x, y] 형태로 상대좌표 획득
       List<double> position =
           item.metadata!.split('x').map((e) => double.parse(e)).toList();
-      double x = areaWidth * position[0];
-      double y = areaHeight * position[1];
+              double x = (areaWidth / 2) * position[0];
+              double y = (areaHeight / 2) * position[1];
 
       // double imageWidth = MediaQuery.of(context).size.width * 0.2;
     
       return Center(
         child: Transform.translate(
           // offset을 이동해서 정 중앙 기준으로 이동
-                  offset: Offset(x - areaWidth * 0.4, y),
-          child: Image.asset(
-            'assets/furniture/${item.path}',
-            fit: BoxFit.none,
+                  offset: Offset(x, y),
+                  child: SizedBox(
+                    width: areaWidth,
+                    height: areaWidth,
+                    child: Image.asset(
+                      'assets/furniture/${item.path}',
+                      fit: BoxFit.none,
+                    ),
           ),
         ),
       );
@@ -214,7 +218,7 @@ class StatusBar extends StatelessWidget {
   Widget build(BuildContext context) {
     var userInfo = context.watch<UserInfo>();
     // int totalExp = int.parse(userInfo.itemName!.split('_')[1]) * 1000;
-    int totalExp = 1000;
+    Item petStatus = context.read<MyRoomViewModel>().getPetItem();
 
     return Container(
       height: 100,
@@ -290,7 +294,7 @@ class StatusBar extends StatelessWidget {
               SizedBox(width: 10),
               Expanded(
                 child: LinearProgressIndicator(
-                  value: (userInfo.petExp ?? 0) / totalExp,
+                  value: (petStatus.petExp! / petStatus.totalExp!),
                   minHeight: 6,
                   valueColor: AlwaysStoppedAnimation<Color>(
                       Color.fromARGB(255, 155, 239, 110)),
@@ -302,7 +306,7 @@ class StatusBar extends StatelessWidget {
               SizedBox(
                 width: 100,
                 child: Text(
-                  '${userInfo.petExp ?? 0} / $totalExp',
+                  '${userInfo.petExp} / ${petStatus.totalExp}',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.white,
