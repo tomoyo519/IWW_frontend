@@ -138,7 +138,7 @@ class PetEvolveModal extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 30,
                         fontWeight: FontWeight.w900,
-                        fontFamily: 'IBMPlexSans',
+                        fontFamily: 'IBMPlexSansKR',
                       ),
                     ),
                   ),

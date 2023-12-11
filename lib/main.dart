@@ -120,7 +120,7 @@ class RenderPage extends StatelessWidget {
       Rewards? reward = authService.reward;
       List<UserAttandance> attd = authService.attendance ?? [];
       UserRepository repo = Provider.of<UserRepository>(context, listen: false);
-      userInfo = UserInfo(user, mainPet, repo, reward, attd);
+      userInfo = UserInfo(user, mainPet, repo, reward, attd, authService);
 
       // 이벤트 서비스 초기화
       EventService.setUserId(user.user_id);

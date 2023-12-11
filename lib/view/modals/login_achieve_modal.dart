@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/mypage/reward.model.dart';
+import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/style/button.dart';
 import 'package:iww_frontend/style/button.type.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
@@ -32,6 +33,7 @@ class LoginAchieveModal extends StatelessWidget {
     Rewards reward = Rewards.fromJson(jsonMessage);
 
     Size screen = MediaQuery.of(context).size;
+    double fs = screen.width * 0.01;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -41,8 +43,8 @@ class LoginAchieveModal extends StatelessWidget {
             "업적 달성!",
             style: TextStyle(
               color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+              fontSize: 6 * fs,
+              fontWeight: FontWeight.w900,
             ),
           ),
           Padding(
@@ -51,7 +53,6 @@ class LoginAchieveModal extends StatelessWidget {
             ),
             child: SizedBox(
               width: screen.width * 0.5,
-              // height: 50,
               child: Stack(children: [
                 Image.asset(
                   reward.achiImg!,
@@ -62,32 +63,34 @@ class LoginAchieveModal extends StatelessWidget {
               ]),
             ),
           ),
-          Text(
-            reward.achiName,
-            style: TextStyle(
-                color: Colors.orange,
-                fontSize: 19,
-                fontWeight: FontWeight.bold),
+          Padding(
+            padding: EdgeInsets.only(bottom: 3 * fs),
+            child: Text(
+              reward.achiName,
+              style: TextStyle(
+                  fontSize: 4.5 * fs,
+                  color: AppTheme.primary,
+                  fontWeight: FontWeight.bold),
+            ),
           ),
-          Text(reward.achiDesc!),
+          Padding(
+            padding: EdgeInsets.only(bottom: 10 * fs),
+            child: Text(
+              reward.achiDesc!,
+              style: TextStyle(
+                fontSize: 3 * fs,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               MyButton(
                 text: "닫기",
-                // type: MyButtonType.secondary,
                 onpressed: (context) => Navigator.pop(context, true),
               ),
-              // SizedBox(
-              //   width: 10,
-              // ),
-              // MyButton(
-              //   text: "마이페이지",
-              //   onpressed: (context) {
-              //     Navigator.pop(context, true);
-              //     context.read<AppNavigator>().navigate(AppRoute.mypage);
-              //   },
-              // )
             ],
           )
         ],

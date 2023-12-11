@@ -31,6 +31,10 @@ class AuthService extends ChangeNotifier {
 
   Item? _mainPet;
   Item? get mainPet => _mainPet;
+  set mainPet(Item? val) {
+    _mainPet = val;
+    // notifyListeners();
+  }
 
   Rewards? _reward;
   Rewards? get reward => _reward;
