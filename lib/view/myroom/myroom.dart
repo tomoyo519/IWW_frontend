@@ -163,7 +163,10 @@ class _MyRoomPageState extends State<MyRoomPage> {
           child: CircleAvatar(
             // 원형 아이콘
             backgroundColor: Colors.white,
-            child: Icon(Icons.home),
+            child: Icon(
+              Icons.home,
+              color: Colors.black,
+            ),
           ),
           // label: '마이홈',
           // labelBackgroundColor: Colors.green, // 투
@@ -198,7 +201,10 @@ class _MyRoomPageState extends State<MyRoomPage> {
           },
           child: CircleAvatar(
             backgroundColor: (Colors.white),
-            child: Icon(Icons.work_rounded),
+            child: Icon(
+              Icons.work_rounded,
+              color: Colors.black,
+            ),
           ),
           // label: '인벤토리',
         ),
@@ -225,12 +231,18 @@ class _MyRoomPageState extends State<MyRoomPage> {
           },
 
           // child: Icon(Icons.local_post_office),
-          child: Icon(Icons.comment_rounded),
+          child: Icon(
+            Icons.comment_rounded,
+            color: Colors.black,
+          ),
           // label: '방명록',
         ),
         SpeedDialChild(
           shape: CircleBorder(),
-          child: Icon(Icons.group),
+          child: Icon(
+            Icons.group,
+            color: Colors.black,
+          ),
           labelWidget: Container(
             padding: EdgeInsets.all(8.0),
             decoration: BoxDecoration(
