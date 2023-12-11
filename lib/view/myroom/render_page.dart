@@ -50,8 +50,8 @@ class PetArea extends StatelessWidget {
     final myRoomState = context.read<MyRoomViewModel>();
 
     return FutureBuilder<int>(
-        future: myRoomState
-            .fetchMyRoom(), // NOTE 내부에서 notifyListeners() 호출하면 무한루프
+        future:
+            myRoomState.fetchMyRoom(), // NOTE 내부에서 notifyListeners() 호출하면 무한루프
         builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return SizedBox(); // 로딩 중 빈칸
@@ -66,7 +66,7 @@ class PetArea extends StatelessWidget {
                 selector: (_, myRoomViewModel) => myRoomViewModel.roomObjects,
                 builder: (_, roomObjects, __) {
                   return Positioned(
-                    bottom: MediaQuery.of(context).size.height * 0.05,
+                    bottom: MediaQuery.of(context).size.height * 0.01 - 30,
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.width,
                     child: MyPet(),
@@ -86,14 +86,13 @@ class RoomArea extends StatefulWidget {
 }
 
 class _RoomAreaState extends State<RoomArea> {
-
   @override
   void initState() {
     super.initState();
     Future.delayed(Duration(milliseconds: 3000), () {
       context.read<MyRoomViewModel>().fetchInventory();
     });
-  } 
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -159,22 +158,24 @@ class TopObjects extends StatelessWidget {
     return Stack(
         children: myRoomState.roomObjects
             .map((Item item) {
-      // 가구가 아니면 렌더링하지 않음.
-      if (item.itemType != 2) {
-        return SizedBox();
-      }
-    
-      // [x, y] 형태로 상대좌표 획득
-      List<double> position =
-          item.metadata!.split('x').map((e) => double.parse(e)).toList();
+              // 가구가 아니면 렌더링하지 않음.
+              if (item.itemType != 2) {
+                return SizedBox();
+              }
+
+              // [x, y] 형태로 상대좌표 획득
+              List<double> position = item.metadata!
+                  .split('x')
+                  .map((e) => double.parse(e))
+                  .toList();
               double x = (areaWidth / 2) * position[0];
               double y = (areaHeight / 2) * position[1];
 
-      // double imageWidth = MediaQuery.of(context).size.width * 0.2;
-    
-      return Center(
-        child: Transform.translate(
-          // offset을 이동해서 정 중앙 기준으로 이동
+              // double imageWidth = MediaQuery.of(context).size.width * 0.2;
+
+              return Center(
+                child: Transform.translate(
+                  // offset을 이동해서 정 중앙 기준으로 이동
                   offset: Offset(x, y),
                   child: SizedBox(
                     width: areaWidth,
@@ -183,9 +184,9 @@ class TopObjects extends StatelessWidget {
                       'assets/furniture/${item.path}',
                       fit: BoxFit.none,
                     ),
-          ),
-        ),
-      );
+                  ),
+                ),
+              );
             })
             .toList()
             .cast<Widget>());
@@ -208,7 +209,6 @@ void getImageSize(String imagePath) async {
   print('Image width: ${image.width}');
   print('Image height: ${image.height}');
 }
-
 
 // 펫의 체력, 경험치 표시
 class StatusBar extends StatelessWidget {
