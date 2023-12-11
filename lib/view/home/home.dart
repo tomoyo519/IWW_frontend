@@ -61,13 +61,6 @@ class MyTodo extends StatelessWidget {
           Column(
             children: [
               SizedBox(height: 45 * fs, child: TodoProgress()),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 15),
-                child: Expanded(
-                    child: Attendance(
-                  attDays: user.attendance,
-                )),
-              ),
               Expanded(
                 child: ToDoList(),
               )

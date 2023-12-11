@@ -29,8 +29,6 @@ class TodoProgress extends StatelessWidget {
 
     DateTime now = DateTime.now();
     String today = DateFormat('M월 d일 E요일', 'ko_KO').format(now);
-
-    LOG.log(emoji: 2, '위젯 재빌드? ${userinfo.mainPet.path}');
     String filepath = userinfo.mainPet.path!.split('.')[0];
 
     int todayTotal = model.todayTotal;
@@ -122,10 +120,13 @@ class TodoProgress extends StatelessWidget {
             child: pi.LinearPercentIndicator(
               width: MediaQuery.of(context).size.width - 10 * fs,
               animation: true,
-              lineHeight: 20.0,
-              animationDuration: 2500,
+              lineHeight: 5 * fs,
+              animationDuration: 800,
               percent: progress,
-              center: Text("달성률 $todayDone / $todayTotal"),
+              center: Text(
+                "달성률 $todayDone / $todayTotal",
+                style: TextStyle(fontSize: 3.5 * fs),
+              ),
               barRadius: Radius.circular(10),
               progressColor: Colors.orange,
               backgroundColor: Colors.white,

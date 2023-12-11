@@ -27,7 +27,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
     final status = context.read<AuthService>().status;
     bool isUser = status == AuthStatus.initialized;
 
-    int userCash = context.read<UserInfo>().userCash;
+    int userCash = context.watch<UserInfo>().userCash;
     String formattedCash = NumberFormat('#,###').format(userCash);
 
     Widget cash = Row(

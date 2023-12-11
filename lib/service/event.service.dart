@@ -76,11 +76,11 @@ extension EventTypeExtension on EventType {
         return showTodoDoneModal(context);
 
       case EventType.onTodoDone:
-        showCustomSnackBar(
-          context,
-          text: message ?? "",
-          icon: Lottie.asset("assets/star.json"),
-        );
+        // showCustomSnackBar(
+        //   context,
+        //   text: message ?? "",
+        //   icon: Lottie.asset("assets/star.json"),
+        // );
         break;
       case EventType.onSnsAuth:
         showCustomSnackBar(
