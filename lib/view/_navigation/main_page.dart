@@ -77,16 +77,18 @@ class _MainPageState extends State<MainPage> {
       String? message = event.message;
       EventType type = event.type;
 
-      try {
-        // ignore: use_build_context_synchronously
-        bool? completed = await type.show(context, message: message) as bool?;
-        await Future.delayed(Duration(seconds: 3)); // 이벤트 사이 간격 조정
-        LOG.log('event completed? $completed');
-      } catch (error) {
-        LOG.log('event error $error');
-      } finally {
-        _waiting = false;
-      }
+      bool? completed = await type.show(context, message: message) as bool?;
+      await Future.delayed(Duration(seconds: 3)); // 이벤트 사이 간격 조정
+      LOG.log('event completed? $completed');
+      _waiting = false;
+      // try {
+      //   // ignore: use_build_context_synchronously
+
+      // } catch (error) {
+      //   LOG.log('event error $error');
+      // } finally {
+      //   _waiting = false;
+      // }
     }
   }
 
@@ -113,6 +115,7 @@ class _MainPageState extends State<MainPage> {
     final List<AppPage> appbars = nav.APPBAR_PAGES;
 
     final AppPage curr = nav.current;
+    double fs = MediaQuery.of(context).size.width * 0.01;
 
     // * ==== Trigger Login Event ==== * //
     context.read<UserInfo>().initEvents();
@@ -125,10 +128,10 @@ class _MainPageState extends State<MainPage> {
         title: Text(nav.title ?? curr.label),
         actions: appbars
             .map(
-              (each) => each.toAppbarIcon(
+              (each) => each.toAppbarWidget(
                 // 앱 바 아이콘 클릭시 해당 인덱스로 변경
                 onPressed: () => nav.push(each.idx),
-                icon: each.icon,
+                child: each.icon,
               ),
             )
             .toList(),
@@ -150,7 +153,7 @@ class _MainPageState extends State<MainPage> {
               },
               items: bottoms
                   .map((page) => BottomNavigationBarItem(
-                        icon: Icon(page.icon),
+                        icon: page.icon,
                         label: page.label,
                       ))
                   .toList(),

@@ -80,73 +80,70 @@ class _ToDoListState extends State<ToDoList> with TickerProviderStateMixin {
     _sublist[0].items = viewModel.groupTodos;
     _sublist[1].items = viewModel.normalTodos;
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: viewModel.waiting
-          ? Spinner()
-          : viewModel.groupTodos.isEmpty && viewModel.todos.isEmpty
-              ? TodoListEmpty()
-              : SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      for (SubTodoList sub in _sublist) ...[
-                        GestureDetector(
-                          onTap: () => _toggle(sub),
-                          child: SizedBox(
-                            width: double.infinity,
-                            height: 60,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  sub.title,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 20,
-                                  ),
+    double fs = MediaQuery.of(context).size.width * 0.01;
+
+    return viewModel.waiting
+        ? Spinner()
+        : viewModel.groupTodos.isEmpty && viewModel.todos.isEmpty
+            ? TodoListEmpty()
+            : SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    for (SubTodoList sub in _sublist) ...[
+                      GestureDetector(
+                        onTap: () => _toggle(sub),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 10 * fs,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                sub.title,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 5 * fs,
                                 ),
-                                if (sub.isOpen == true)
-                                  Icon(Icons.keyboard_arrow_down)
-                                else
-                                  Icon(Icons.keyboard_arrow_left)
-                                // AnimatedBuilder(
-                                //   animation: _animation,
-                                //   builder: (context, child) {
-                                //     if (sub.isOpen == false) {
-                                //       return Transform.rotate(
-                                //         angle: _animation.value * 1 * pi,
-                                //         child: Icon(Icons.keyboard_arrow_down),
-                                //       );
-                                //     } else {
-                                //       return Icon(
-                                //           Icons.keyboard_arrow_left_rounded);
-                                //     }
-                                //   },
-                                // ),
-                              ],
-                            ),
+                              ),
+                              if (sub.isOpen == true)
+                                Icon(Icons.keyboard_arrow_down)
+                              else
+                                Icon(Icons.keyboard_arrow_left)
+                              // AnimatedBuilder(
+                              //   animation: _animation,
+                              //   builder: (context, child) {
+                              //     if (sub.isOpen == false) {
+                              //       return Transform.rotate(
+                              //         angle: _animation.value * 1 * pi,
+                              //         child: Icon(Icons.keyboard_arrow_down),
+                              //       );
+                              //     } else {
+                              //       return Icon(
+                              //           Icons.keyboard_arrow_left_rounded);
+                              //     }
+                              //   },
+                              // ),
+                            ],
                           ),
                         ),
-                        if (sub.items.isNotEmpty) ...[
-                          AnimatedSize(
-                            duration: Duration(milliseconds: 300),
-                            child: sub.isOpen
-                                ? Column(children: [
-                                    for (Todo todo in sub.items)
-                                      sub.builder(todo, context)
-                                  ])
-                                : SizedBox(width: double.infinity, height: 0),
-                          )
-                        ]
+                      ),
+                      if (sub.items.isNotEmpty) ...[
+                        AnimatedSize(
+                          duration: Duration(milliseconds: 300),
+                          child: sub.isOpen
+                              ? Column(children: [
+                                  for (Todo todo in sub.items)
+                                    sub.builder(todo, context)
+                                ])
+                              : SizedBox(width: double.infinity, height: 0),
+                        )
                       ]
-                    ],
-                  ),
+                    ]
+                  ],
                 ),
-    );
+              );
   }
 
   // ****************************** //

@@ -5,14 +5,14 @@ class MyPetModal extends StatefulWidget {
   MyPetModal({
     super.key,
     required this.screen,
-    required this.pet,
+    required this.itemPath,
     required this.content,
     required this.title,
     this.backgroud,
   });
 
   final Size screen;
-  final Item pet;
+  final String itemPath;
   final Widget content;
   final Widget? backgroud;
   final String? title;
@@ -76,7 +76,7 @@ class _MyPetModalState extends State<MyPetModal> {
               child: SizedBox(
                 width: widget.screen.width * 0.5,
                 child: Image.asset(
-                  'assets/pets/${widget.pet.path!.split('.')[0]}.gif',
+                  'assets/pets/${widget.itemPath.split('.')[0]}.gif',
                 ),
               ),
             ),

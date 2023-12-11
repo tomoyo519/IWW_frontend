@@ -35,11 +35,11 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Padding(
-          padding: const EdgeInsets.only(right: 10),
+          padding: const EdgeInsets.only(right: 1),
           child: Image.asset(
             'assets/cash.png',
-            width: 25,
-            height: 25,
+            width: 55,
+            height: 55,
           ),
         ),
         Text(
@@ -75,7 +75,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
         actions: isUser
             ? defaultAppbar
                 .map((e) => Padding(
-                      padding: EdgeInsets.only(right: 20),
+                      padding: EdgeInsets.only(right: 5),
                       child: e,
                     ))
                 .toList()

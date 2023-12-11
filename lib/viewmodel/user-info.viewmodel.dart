@@ -144,9 +144,17 @@ class UserInfo extends ChangeNotifier {
   }
 
   // 다른 유저에 의해 그룹 인증이 체크 완료된 경우
-  Future<void> handleGroupCheck() async {
+  Future<void> handleGroupCheck({Map<String, dynamic>? message}) async {
     int prevPetId = _itemId;
     int prevUserCash = _userCash;
+
+    LOG.log(
+        emoji: 1, "이게 널일까?????? ${message.toString()} ${message!['message']}");
+
+    if (message != null) {
+      message['item_path'] = _mainPet.path;
+      _onGroupApproved(jsonEncode(message));
+    }
 
     await fetchUser();
 
@@ -184,6 +192,14 @@ class UserInfo extends ChangeNotifier {
   // 로그인되자마자 트리거되어야 하는 이벤트들
   void initEvents() {
     _onLoginReward(_reward);
+  }
+
+  // 그룹 인증이 완료된 경우
+  void _onGroupApproved(String message) {
+    EventService.publish(Event(
+      type: EventType.onTodoApproved,
+      message: message,
+    ));
   }
 
   // 첫 투두 체크 이벤트
