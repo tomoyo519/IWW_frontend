@@ -55,18 +55,20 @@ class CarouselSliderDemo extends StatelessWidget {
     return Scaffold(
       body: Builder(builder: (context) {
         return Container(
+            height: 150,
             child: Column(
-          children: <Widget>[
-            CarouselSlider(
-              options: CarouselOptions(
-                autoPlayInterval: Duration(seconds: 5),
-                viewportFraction: 1.0,
-                autoPlay: true,
-              ),
-              items: imageSliders,
-            ),
-          ],
-        ));
+              children: <Widget>[
+                CarouselSlider(
+                  options: CarouselOptions(
+                    height: 150,
+                    autoPlayInterval: Duration(seconds: 5),
+                    viewportFraction: 1.0,
+                    autoPlay: true,
+                  ),
+                  items: imageSliders,
+                ),
+              ],
+            ));
       }),
     );
   }
