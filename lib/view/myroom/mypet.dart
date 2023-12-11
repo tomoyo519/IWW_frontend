@@ -138,11 +138,13 @@ class _MyPetState extends State<MyPet> {
     'kitsune': [
       'Spin',
       'Walk',
+      'Spin',
       'Jump',
       'Sit',
       'Roll',
-      'Idle',
+      'Swim',
       'Bounce',
+      'Clicked'
     ],
     'monitor_lizard': ['Spin', 'Walk', 'Jump', 'Idle', 'Bounce', 'Sit'],
     'horned_lizard': ['Spin', 'Walk', 'Jump', 'Idle', 'Bounce', 'Run', 'Roll'],

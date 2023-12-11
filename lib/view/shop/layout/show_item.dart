@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:lottie/lottie.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
 
