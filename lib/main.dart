@@ -1,7 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'dart:convert';
-
+import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/auth/auth_status.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
@@ -74,13 +74,27 @@ void main() async {
 
   // authService.status = AuthStatus.initialized;
   // authService.waiting = false;
+
+  // exception error 가 발생하는 경우, 앱이 꺼지지않고 아래 화면 보이도록 설정
   ErrorWidget.builder = (FlutterErrorDetails details) {
     return Scaffold(
       appBar: AppBar(title: Text('Error')),
       body: Center(
-        child: Text(
-          'Something wrong happened.',
-        ),
+        child: Expanded(
+            child: Column(
+          children: [
+            Expanded(
+              child: Lottie.asset(
+                'assets/wrong.json',
+                repeat: true,
+                animate: true,
+              ),
+            ),
+            Text(
+              '문제가 발생했어요! 뒤로 가볼까요?',
+            )
+          ],
+        )),
       ),
     );
   };
