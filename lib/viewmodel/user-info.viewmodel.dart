@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:iww_frontend/model/mypage/reward.model.dart';
 import 'package:iww_frontend/model/todo/todo_update.dto.dart';
 import 'package:iww_frontend/model/user/attendance.model.dart';
+import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
@@ -17,6 +18,7 @@ class UserInfo extends ChangeNotifier {
   Rewards? _reward;
   UserModel _user;
   List<UserAttandance> _attendances;
+  final AuthService _authService;
   final UserRepository _repository;
 
   UserInfo(
@@ -25,6 +27,7 @@ class UserInfo extends ChangeNotifier {
     this._repository,
     this._reward,
     this._attendances,
+    this._authService,
   ) {
     // FIXME: 업적 달성 모달 항상 뜨도록 설정
     // _reward = Rewards(
@@ -65,6 +68,11 @@ class UserInfo extends ChangeNotifier {
   String? get mainPetName => _petName;
 
   // === Setters === //
+  set mainPet(Item val) {
+    _mainPet = val;
+    notifyListeners();
+  }
+
   bool _waiting = true;
   bool get waiting => _waiting;
   set waiting(bool val) {
@@ -99,11 +107,12 @@ class UserInfo extends ChangeNotifier {
 
   // 유저 정보 갱신 (초기 로그인시 작동)
   Future<void> fetchUser() async {
-    GetUserResult? fetched = await _repository.getUser();
-    if (fetched != null) {
-      _setUserState(fetched.user, fetched.pet);
-      LOG.log("Fetched user state.");
-    }
+    await _repository.getUser().then((fetched) {
+      if (fetched != null) {
+        _setUserState(fetched.user, fetched.pet);
+        LOG.log("Fetched user state.");
+      }
+    });
   }
 
   Future<bool> reNameUser(myname, userInfo) async {
@@ -157,11 +166,11 @@ class UserInfo extends ChangeNotifier {
 
     // 2. 새로운 유저 정보 fetch for 진화 확인
     //    TODO: 펫 및 업적 정보만 fetch해오도록 변경
-    await fetchUser();
-
-    // 3. 업적 또는 진화 이벤트 확인
-    _onTodoReward(prevUserCash);
-    _onEvolution(prevPetId);
+    await fetchUser().then((_) {
+      // 3. 업적 또는 진화 이벤트 확인 후 발행
+      _onTodoReward(prevUserCash);
+      _onEvolution(prevPetId);
+    });
   }
 
   // Fetch해온 유저 정보를 상태로 세팅
@@ -180,6 +189,9 @@ class UserInfo extends ChangeNotifier {
     _petExp = newPet.petExp;
     _itemName = newPet.name;
     _petName = newPet.petName ?? '';
+
+    LOG.log(emoji: 1, 'main pet 갱신? ${mainPet.name}');
+    _authService.mainPet = newPet;
 
     // * Set other info * //
     _reward = reward;

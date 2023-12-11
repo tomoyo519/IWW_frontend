@@ -42,7 +42,7 @@ class MyButton extends StatelessWidget {
               fontSize: 4 * fs,
               color: txtColor,
               fontWeight: FontWeight.w900,
-              fontFamily: AppTheme.FONT_FAMILY,
+              fontFamily: AppTheme.font,
             ),
             foregroundColor: txtColor,
             backgroundColor: bgColor,

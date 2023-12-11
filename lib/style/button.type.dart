@@ -3,6 +3,7 @@
 enum MyButtonType {
   primary,
   secondary,
+  tertiary,
+  shaded,
   disabled,
-  primary_reverse,
 }

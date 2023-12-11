@@ -25,7 +25,7 @@ class AppNavigator extends ChangeNotifier {
 
   // * ===== navigation status ===== * //
   List<int> _stack = [];
-  int _idx = 2;
+  int _idx = 0;
 
   // 현재 페이지
   String? _title; // 지정

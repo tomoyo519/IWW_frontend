@@ -90,7 +90,7 @@ class TodoApprovedModal extends StatelessWidget {
                       desc: "경험치 상승",
                       icon: Icon(
                         Icons.keyboard_double_arrow_up_rounded,
-                        color: AppTheme.SEC_COLOR,
+                        color: AppTheme.secondary,
                         size: 6 * fs,
                       ),
                     ),
@@ -99,7 +99,7 @@ class TodoApprovedModal extends StatelessWidget {
                       desc: "캐시 보상",
                       icon: Icon(
                         Icons.monetization_on_outlined,
-                        color: AppTheme.PRI_COLOR,
+                        color: AppTheme.primary,
                         size: 6 * fs,
                       ),
                     ),
@@ -114,7 +114,7 @@ class TodoApprovedModal extends StatelessWidget {
                 flex: 1,
                 child: MyButton(
                   text: "닫기",
-                  type: MyButtonType.secondary,
+                  type: MyButtonType.shaded,
                   onpressed: (_) async {
                     Navigator.pop(context);
                     final assetsAudioPlayer = AssetsAudioPlayer();
@@ -159,7 +159,7 @@ class _StateBadge extends StatelessWidget {
               fontSize: 7 * fs,
               fontFamily: 'IBMPlexSansKR',
               fontWeight: FontWeight.w900,
-              color: AppTheme.TER_COLOR,
+              color: AppTheme.tertiary,
             ),
           ),
           Padding(

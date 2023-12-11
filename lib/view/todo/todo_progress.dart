@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/style/app_theme.dart';
+import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
@@ -9,23 +10,27 @@ import 'package:provider/provider.dart';
 import 'package:percent_indicator/percent_indicator.dart' as pi;
 
 // 할일 상태 바
-class TodoProgress extends StatefulWidget {
-  TodoProgress({super.key});
+// class TodoProgress extends StatefulWidget {
+//   TodoProgress({super.key});
 
-  @override
-  State<TodoProgress> createState() => _TodoProgressState();
-}
+//   @override
+//   State<TodoProgress> createState() => _TodoProgressState();
+// }
 
-class _TodoProgressState extends State<TodoProgress> {
+class TodoProgress extends StatelessWidget {
+  const TodoProgress({super.key});
+
   @override
   Widget build(BuildContext context) {
     Size screen = MediaQuery.of(context).size;
     double fs = screen.width * 0.01;
-    final model = context.watch<TodoViewModel>();
-    final userinfo = context.watch<UserInfo>();
+    TodoViewModel model = context.watch<TodoViewModel>();
+    UserInfo userinfo = context.watch<UserInfo>();
 
     DateTime now = DateTime.now();
     String today = DateFormat('M월 d일 E요일', 'ko_KO').format(now);
+
+    LOG.log(emoji: 2, '위젯 재빌드? ${userinfo.mainPet.path}');
     String filepath = userinfo.mainPet.path!.split('.')[0];
 
     int todayTotal = model.todayTotal;
@@ -64,7 +69,7 @@ class _TodoProgressState extends State<TodoProgress> {
                       color: Colors.black87,
                       fontSize: 3.5 * fs,
                       fontWeight: FontWeight.normal,
-                      fontFamily: AppTheme.FONT_FAMILY,
+                      fontFamily: AppTheme.font,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -97,12 +102,18 @@ class _TodoProgressState extends State<TodoProgress> {
                 width: 30 * fs,
                 height: 35 * fs,
                 child: ModelViewer(
+                  key: ValueKey(filepath),
                   interactionPrompt: InteractionPrompt.none,
                   src: 'assets/pets/$filepath.glb',
                   animationName: 'Idle_A',
                   autoPlay: true,
                   cameraControls: false,
-                  cameraOrbit: '25deg 75deg 105%',
+                  disableZoom: true,
+                  disablePan: true,
+                  touchAction: TouchAction.none,
+                  shadowIntensity: 1,
+                  shadowSoftness: 1,
+                  cameraOrbit: '25deg 75deg 2.5m', // TODO: 확인
                 ),
               ),
             ],
