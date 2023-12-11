@@ -7,6 +7,7 @@ class Item {
   String? petName;
   int? petExp;
   String? metadata;
+  int? totalExp;
 
   Item({
     required this.id,
@@ -17,6 +18,7 @@ class Item {
     this.petName,
     this.petExp,
     this.metadata,
+    this.totalExp,
   });
 
   Item.fromJson(Map<String, dynamic> json)
@@ -27,6 +29,7 @@ class Item {
         petName = json['pet_name'],
         petExp = json['pet_exp'],
         itemType = json['item_type'],
+        totalExp = json['total_pet_exp'],
         metadata = json['metadata'];
 
   Map<String, dynamic> toMap() {
@@ -39,6 +42,12 @@ class Item {
       "pet_exp": petExp,
       "item_type": itemType,
       "metadata": metadata,
+      "total_exp": totalExp
     };
+  }
+
+  @override
+  String toString() {
+    return 'Item{id: $id, name: $name, itemType: $itemType, path: $path, description: $description, petName: $petName, petExp: $petExp, metadata: $metadata, totalExp: $totalExp}';
   }
 }
