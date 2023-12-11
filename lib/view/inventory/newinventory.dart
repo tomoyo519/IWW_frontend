@@ -6,7 +6,6 @@ import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:lottie/lottie.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
-import 'package:assets_audio_player/assets_audio_player.dart';
 
 Widget inventorySheet(BuildContext context, MyRoomViewModel myRoomViewModel,
     VoidCallback onClose) {

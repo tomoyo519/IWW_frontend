@@ -1,6 +1,7 @@
 // ignore_for_file: constant_identifier_names, non_constant_identifier_names
 
 import 'package:flutter/material.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 // 커스텀 Bottom Sheet Header
 class BottomSheetModalHeader extends StatelessWidget {
@@ -37,7 +38,16 @@ class BottomSheetModalHeader extends StatelessWidget {
           children: [
             if (onCancel != null) ...[
               TextButton(
-                  onPressed: () => onCancel!(context),
+                  onPressed: () async {
+                    onCancel!(context);
+                    final assetsAudioPlayer = AssetsAudioPlayer();
+
+                    assetsAudioPlayer.open(
+                      Audio("assets/main.mp3"),
+                    );
+
+                    assetsAudioPlayer.play();
+                  },
                   child: Text(
                     "취소",
                     style: TextStyle(
@@ -56,7 +66,16 @@ class BottomSheetModalHeader extends StatelessWidget {
             ],
             if (onSave != null) ...[
               TextButton(
-                onPressed: () => onSave!(context),
+                onPressed: () async {
+                  onSave!(context);
+                  final assetsAudioPlayer = AssetsAudioPlayer();
+
+                  assetsAudioPlayer.open(
+                    Audio("assets/main.mp3"),
+                  );
+
+                  assetsAudioPlayer.play();
+                },
                 child: Text(
                   "저장",
                   style: TextStyle(

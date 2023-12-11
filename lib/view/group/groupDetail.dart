@@ -560,11 +560,21 @@ class _GroupDetailState extends State<GroupDetail> {
                                               ),
                                               icon: Icon(
                                                 Icons.edit_outlined,
-                                                color: Colors.white,
+                                                color: Colors.black54,
                                                 size: 20,
                                               ),
-                                              onPressed: () => _showTodoEditor(
-                                                  context, groupRoutine[i]),
+                                              onPressed: () async {
+                                                _showTodoEditor(
+                                                    context, groupRoutine[i]);
+                                                final assetsAudioPlayer =
+                                                    AssetsAudioPlayer();
+
+                                                assetsAudioPlayer.open(
+                                                  Audio("assets/main.mp3"),
+                                                );
+
+                                                assetsAudioPlayer.play();
+                                              },
                                             ),
                                           )
                                         : SizedBox.shrink(),
@@ -616,9 +626,18 @@ class _GroupDetailState extends State<GroupDetail> {
                                               child: MyButton(
                                                 type: MyButtonType.primary,
                                                 text: "인증 현황 보기",
-                                                onpressed: (context) =>
-                                                    _setRoutinePicture(
-                                                        groupRoutine[i].routId),
+                                                onpressed: (context) async {
+                                                  _setRoutinePicture(
+                                                      groupRoutine[i].routId);
+                                                  final assetsAudioPlayer =
+                                                      AssetsAudioPlayer();
+
+                                                  assetsAudioPlayer.open(
+                                                    Audio("assets/main.mp3"),
+                                                  );
+
+                                                  assetsAudioPlayer.play();
+                                                },
                                               ),
                                             ),
                                             // SizedBox(
@@ -896,6 +915,13 @@ class _GroupDetailState extends State<GroupDetail> {
                     if (context.mounted) {
                       Navigator.pop(context, true);
                     }
+                    final assetsAudioPlayer = AssetsAudioPlayer();
+
+                    assetsAudioPlayer.open(
+                      Audio("assets/main.mp3"),
+                    );
+
+                    assetsAudioPlayer.play();
                   },
                 )
               ],

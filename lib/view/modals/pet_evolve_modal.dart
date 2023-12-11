@@ -153,9 +153,17 @@ class PetEvolveModal extends StatelessWidget {
                   ),
                   MyButton(
                       text: "닫기",
-                      onpressed: (_) {
+                      onpressed: (_) async {
                         Navigator.pop(context, true);
                         Navigator.pop(context, true);
+
+                        final assetsAudioPlayer = AssetsAudioPlayer();
+
+                        assetsAudioPlayer.open(
+                          Audio("assets/main.mp3"),
+                        );
+
+                        assetsAudioPlayer.play();
                       })
                 ],
               ),
