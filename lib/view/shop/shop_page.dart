@@ -71,21 +71,42 @@ class _ShopItems extends State<ShopItems> with SingleTickerProviderStateMixin {
               child: AlertDialog(
                 surfaceTintColor: Colors.white,
                 backgroundColor: Colors.white,
-                content: Text(
-                  "아이템 구매가 완료 되었어요!",
-                  style: TextStyle(fontSize: 17),
+                title: Center(
+                  child: Text(
+                    "아이템 구매가 완료 되었어요!",
+                    style: TextStyle(
+                      // 여기에서 스타일을 적용합니다.
+                      fontSize: 20, // 글자 크기
+                      color: Colors.black, // 글자 색상
+                      fontWeight: FontWeight.w500, // 글자 두께
+                    ),
+                  ),
                 ),
                 actions: <Widget>[
                   TextButton(
+                    child: Text('확인',
+                        style: TextStyle(fontSize: 17, color: Colors.white)),
+                    style: TextButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10))),
                     onPressed: () async {
-                      // 다이얼로그 닫기
                       Navigator.of(context).pop();
                       final assetsAudioPlayer = AssetsAudioPlayer();
                       assetsAudioPlayer.open(Audio("assets/main.mp3"));
                       assetsAudioPlayer.play();
                     },
-                    child: Text('확인'),
                   ),
+                  // TextButton(
+                  //   onPressed: () async {
+                  //     // 다이얼로그 닫기
+                  //     Navigator.of(context).pop();
+                  //     final assetsAudioPlayer = AssetsAudioPlayer();
+                  //     assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                  //     assetsAudioPlayer.play();
+                  //   },
+                  //   child: Text('확인'),
+                  // ),
                 ],
               ),
             );
