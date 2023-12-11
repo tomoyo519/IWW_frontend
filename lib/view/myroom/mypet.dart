@@ -169,8 +169,56 @@ class _MyPetState extends State<MyPet> {
     ],
   };
 
-  void happyMotion() {
+  void _showOverlay(BuildContext context) {
+    OverlayEntry overlayEntry;
+
+    overlayEntry = OverlayEntry(
+      builder: (BuildContext context) => Positioned(
+        top: MediaQuery.of(context).size.height / 2 - 50, // 화면 중앙으로 위치 지정
+        left: MediaQuery.of(context).size.width / 2 - 50,
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            width: 100,
+            height: 100,
+            color: Colors.blue,
+            child: Center(
+              child: Text(
+                'Overlay',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    Overlay.of(context)?.insert(overlayEntry);
+
+    // 일정 시간이 지난 후에 오버레이를 제거할 수 있도록 설정
+    Future.delayed(Duration(seconds: 2), () {
+      overlayEntry.remove();
+    });
+  }
+
+  void happyMotion(BuildContext context) {
+    OverlayEntry overlayEntry;
+
+    overlayEntry = OverlayEntry(
+      builder: (BuildContext context) => Positioned(
+        top: MediaQuery.of(context).size.height / 2, // 화면 중앙으로 위치 지정
+        left: MediaQuery.of(context).size.width / 2 - 150,
+        child: Material(
+          color: Colors.transparent,
+          child: Image.asset('assets/happy.png', height: 80, width: 80),
+        ),
+      ),
+    );
+      
     int time = 0;
+    bool isOverlayAdded = false;
+
+    LOG.log('#### 펫이 통통 튑니다! ####');
 
     Timer.periodic(Duration(seconds: 2), (timer) {
       time += 1;
@@ -178,11 +226,17 @@ class _MyPetState extends State<MyPet> {
         _petActionIndex = 2; // JUMP
       });
 
-      if (time >= 3) {
+      if (!isOverlayAdded) {
+        Overlay.of(context)?.insert(overlayEntry);
+        isOverlayAdded = true;
+      }
+
+      if (time >= 2) {
         timer.cancel();
         setState(() {
-          _petActionIndex = 0; // IDLE
+          _petActionIndex = 1; // WALK
         });
+        overlayEntry.remove();
       }
     });
   }
@@ -193,6 +247,7 @@ class _MyPetState extends State<MyPet> {
   @override
   Widget build(BuildContext context) {
     final myRoomState = context.watch<MyRoomViewModel>();
+    myRoomState.happyMotion = () => happyMotion(context);
 
     // 모델 및 프리셋 선택
     String petName = myRoomState.findPetAsset();
