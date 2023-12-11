@@ -30,18 +30,6 @@ import 'package:provider/provider.dart';
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
 
-final List<String> labels = [
-  '전체',
-  '운동',
-  '식단',
-  '회사업무',
-  '가족행사',
-  '저녁약속',
-  '청첩장모임',
-  '루틴',
-  '개발공부'
-];
-
 class GroupDetail extends StatefulWidget {
   final int groupId;
   final String? ownerName;

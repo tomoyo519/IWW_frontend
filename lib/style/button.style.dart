@@ -17,6 +17,8 @@ extension MyButtonStyle on MyButtonType {
         return secondary;
       case MyButtonType.disabled:
         return disabled;
+      default:
+        return primary;
     }
   }
 
@@ -28,6 +30,8 @@ extension MyButtonStyle on MyButtonType {
         return onSecondary;
       case MyButtonType.disabled:
         return onDisabled;
+      default:
+        return onPrimary;
     }
   }
 }

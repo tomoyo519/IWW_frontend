@@ -4,7 +4,9 @@ import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
+import 'package:percent_indicator/percent_indicator.dart' as pi;
 
 // 할일 상태 바
 class TodoProgress extends StatefulWidget {
@@ -26,8 +28,10 @@ class _TodoProgressState extends State<TodoProgress> {
     String today = DateFormat('M월 d일 E요일', 'ko_KO').format(now);
     String filepath = userinfo.mainPet.path!.split('.')[0];
 
-    double progress =
-        model.todayTotal == 0 ? 0 : model.todayDone / model.todayTotal;
+    int todayTotal = model.todayTotal;
+    int todayDone = model.todayDone;
+
+    double progress = todayTotal == 0 ? 0 : todayDone / todayTotal;
 
     return Container(
         padding: EdgeInsets.all(2 * fs),
@@ -103,33 +107,49 @@ class _TodoProgressState extends State<TodoProgress> {
                   ),
                 ],
               ),
-              // Row(
-              //   children: [
+              Expanded(
+                  child: Row(
+                children: [
+                  // Text("달성률"),
+
+                  pi.LinearPercentIndicator(
+                    width: MediaQuery.of(context).size.width - 10 * fs,
+                    animation: true,
+                    lineHeight: 20.0,
+                    animationDuration: 2500,
+                    percent: progress,
+                    center: Text("달성률 $todayDone / $todayTotal"),
+                    barRadius: Radius.circular(10),
+                    progressColor: Colors.orange,
+                  ),
+                  // Container(
+                  //   margin: EdgeInsets.symmetric(vertical: fs),
+                  //   decoration: BoxDecoration(
+                  //     borderRadius: BorderRadius.circular(100),
+                  //     color: Colors.white,
+                  //   ),
+                  //   height: 3 * fs,
+                  //   // width: screen.width,
+                  //   child: FractionallySizedBox(
+                  //     alignment: Alignment.centerLeft,
+                  //     widthFactor: progress,
+                  //     child: Container(
+                  //       decoration: BoxDecoration(
+                  //         borderRadius: BorderRadius.circular(100),
+                  //         color: AppTheme.PRI_COLOR,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                ],
+              )),
+              // Row(children: [
               //   Text(
               //     "달성률",
               //     style: Theme.of(context).textTheme.headlineLarge,
               //   ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: fs),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(100),
-                  color: Colors.white,
-                ),
-                height: 3 * fs,
-                // width: screen.width,
-                child: FractionallySizedBox(
-                  alignment: Alignment.centerLeft,
-                  widthFactor: progress,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
-                      color: AppTheme.PRI_COLOR,
-                    ),
-                  ),
-                ),
-              ),
             ])
-        // ],
+        //   ],
         // ),
         );
   }
