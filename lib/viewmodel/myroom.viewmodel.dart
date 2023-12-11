@@ -19,6 +19,14 @@ class MyRoomViewModel with ChangeNotifier {
   List<Item> _initialRoomObjects = [];
   bool _hasChanges = false; // 현재 방에 변경사항이 있는지 여부
 
+  VoidCallback? happyMotion;
+
+  set setHappyMotion(VoidCallback action) {
+    happyMotion = action;
+    notifyListeners();
+  }
+
+
   // FIXME 생성자에서 비동기 작업은 안된다.
   MyRoomViewModel(this._userId, this._roomRepository, this._roomOwner) {
     // fetchMyRoom(_roomOwner);
