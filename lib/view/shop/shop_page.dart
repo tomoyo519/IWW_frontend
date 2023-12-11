@@ -36,7 +36,9 @@ class _ShopItems extends State<ShopItems> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    fetchFriend();
+    if (mounted) {
+      fetchFriend();
+    }
     // 상점 신제품 알려주는 모달
     // Future.delayed(Duration.zero, () async {
     //   WidgetsBinding.instance.addPostFrameCallback((_) => _showDialog(context));

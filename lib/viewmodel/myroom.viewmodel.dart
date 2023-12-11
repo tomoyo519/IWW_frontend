@@ -26,7 +26,6 @@ class MyRoomViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-
   // FIXME 생성자에서 비동기 작업은 안된다.
   MyRoomViewModel(this._userId, this._roomRepository, this._roomOwner) {
     // fetchMyRoom(_roomOwner);
@@ -87,7 +86,12 @@ class MyRoomViewModel with ChangeNotifier {
     }
 
     // 중복되는 경우가 하나도 없을경우 -> 아이템 삽입
-    roomObjects.add(target);
+    if (target.id == 105) {
+      roomObjects.insert(0, target);
+    } else {
+      roomObjects.add(target);
+    }
+
     notifyListeners();
   }
 
@@ -164,7 +168,6 @@ class MyRoomViewModel with ChangeNotifier {
 
     return '이름을 지어주세요!';
   }
-
 
   Item getPetItem() {
     for (Item element in roomObjects) {
