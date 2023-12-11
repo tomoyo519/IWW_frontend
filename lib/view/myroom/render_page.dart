@@ -176,9 +176,13 @@ class TopObjects extends StatelessWidget {
         child: Transform.translate(
           // offset을 이동해서 정 중앙 기준으로 이동
                   offset: Offset(x, y),
-          child: Image.asset(
-            'assets/furniture/${item.path}',
-            fit: BoxFit.none,
+                  child: SizedBox(
+                    width: areaWidth,
+                    height: areaWidth,
+                    child: Image.asset(
+                      'assets/furniture/${item.path}',
+                      fit: BoxFit.none,
+                    ),
           ),
         ),
       );
