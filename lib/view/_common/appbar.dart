@@ -75,7 +75,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
         actions: isUser
             ? defaultAppbar
                 .map((e) => Padding(
-                      padding: EdgeInsets.only(right: 20),
+                      padding: EdgeInsets.only(right: 5),
                       child: e,
                     ))
                 .toList()
