@@ -210,8 +210,8 @@ class _MyPetState extends State<MyPet> {
 
     LOG.log('#### 펫이 통통 튑니다! ####');
 
-    Timer.periodic(Duration(milliseconds: 100), (timer) {
-      time += 0.1;
+    Timer.periodic(Duration(milliseconds: 600), (timer) {
+      time += 0.6;
       setState(() {
         _petActionIndex = 0; // SPIN
       });
@@ -221,7 +221,7 @@ class _MyPetState extends State<MyPet> {
         isOverlayAdded = true;
       }
 
-      if (time >= 2.8) {
+      if (time >= 2.4) {
         timer.cancel();
         setState(() {
           _petActionIndex = 1; // WALK
