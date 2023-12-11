@@ -127,7 +127,7 @@ class PetEvolveModal extends StatelessWidget {
                   Text(
                     "펫이 진화했어요!",
                     style: TextStyle(
-                      fontSize: 22,
+                      fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -138,7 +138,7 @@ class PetEvolveModal extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 30,
                         fontWeight: FontWeight.w900,
-                        // fontFamily: 'IBMPlexSansKR',
+                        fontFamily: 'IBMPlexSans',
                       ),
                     ),
                   ),
