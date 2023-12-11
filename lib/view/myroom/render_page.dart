@@ -154,7 +154,7 @@ class TopObjects extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final areaWidth = MediaQuery.of(context).size.width;
-    final areaHeight = MediaQuery.of(context).size.height * 0.6;
+    final areaHeight = MediaQuery.of(context).size.height;
 
     return Stack(
         children: myRoomState.roomObjects
