@@ -555,12 +555,12 @@ class _GroupDetailState extends State<GroupDetail> {
                                             right: 0,
                                             child: IconButton(
                                               style: IconButton.styleFrom(
-                                                backgroundColor: Colors.black12,
+                                                backgroundColor: Colors.orange,
                                                 padding: EdgeInsets.all(0),
                                               ),
                                               icon: Icon(
                                                 Icons.edit_outlined,
-                                                color: Colors.black54,
+                                                color: Colors.white,
                                                 size: 20,
                                               ),
                                               onPressed: () => _showTodoEditor(
@@ -614,7 +614,7 @@ class _GroupDetailState extends State<GroupDetail> {
                                           children: [
                                             Expanded(
                                               child: MyButton(
-                                                type: MyButtonType.secondary,
+                                                type: MyButtonType.primary,
                                                 text: "인증 현황 보기",
                                                 onpressed: (context) =>
                                                     _setRoutinePicture(

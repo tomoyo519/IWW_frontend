@@ -7,6 +7,7 @@ import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 class Preset {
   final String animationName;
@@ -118,24 +119,24 @@ class _MyPetState extends State<MyPet> {
   final Map<String, List<String>> motions = {
     'small_fox': ['Idle', 'Walk', 'Jump', 'Spin', 'Clicked'],
     'mid_fox': [
-        'Idle',
-        'Walk',
-        'Jump',
-        'Roll',
-        'Swim',
-        'Spin',
-        'Bounce',
-        'Clicked'
+      'Idle',
+      'Walk',
+      'Jump',
+      'Roll',
+      'Swim',
+      'Spin',
+      'Bounce',
+      'Clicked'
     ],
     'kitsune': [
-        'Idle',
-        'Walk',
-        'Jump',
-        'Roll',
-        'Swim',
-        'Spin',
-        'Bounce',
-        'Clicked'
+      'Idle',
+      'Walk',
+      'Jump',
+      'Roll',
+      'Swim',
+      'Spin',
+      'Bounce',
+      'Clicked'
     ],
     'monitor_lizard': ['Idle', 'Walk', 'Jump'],
     'horned_lizard': ['Idle', 'Walk', 'Jump'],
@@ -169,8 +170,61 @@ class _MyPetState extends State<MyPet> {
     ],
   };
 
-  void happyMotion() {
+  void _showOverlay(BuildContext context) {
+    OverlayEntry overlayEntry;
+
+    overlayEntry = OverlayEntry(
+      builder: (BuildContext context) => Positioned(
+        top: MediaQuery.of(context).size.height / 2 - 50, // 화면 중앙으로 위치 지정
+        left: MediaQuery.of(context).size.width / 2 - 50,
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            width: 100,
+            height: 100,
+            color: Colors.blue,
+            child: Center(
+              child: Text(
+                'Overlay',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    Overlay.of(context)?.insert(overlayEntry);
+
+    // 일정 시간이 지난 후에 오버레이를 제거할 수 있도록 설정
+    Future.delayed(Duration(seconds: 2), () {
+      overlayEntry.remove();
+    });
+  }
+
+  void happyMotion(BuildContext context) {
+    OverlayEntry overlayEntry;
+    final assetsAudioPlayer = AssetsAudioPlayer();
+
+    // 효과음 재생
+    assetsAudioPlayer.open(Audio("assets/happy.mp3"));
+    assetsAudioPlayer.play();
+
+    overlayEntry = OverlayEntry(
+      builder: (BuildContext context) => Positioned(
+        top: MediaQuery.of(context).size.height / 2, // 화면 중앙으로 위치 지정
+        left: MediaQuery.of(context).size.width / 2 - 150,
+        child: Material(
+          color: Colors.transparent,
+          child: Image.asset('assets/happy.png', height: 80, width: 80),
+        ),
+      ),
+    );
+
     int time = 0;
+    bool isOverlayAdded = false;
+
+    LOG.log('#### 펫이 통통 튑니다! ####');
 
     Timer.periodic(Duration(seconds: 2), (timer) {
       time += 1;
@@ -178,28 +232,33 @@ class _MyPetState extends State<MyPet> {
         _petActionIndex = 2; // JUMP
       });
 
-      if (time >= 3) {
+      if (!isOverlayAdded) {
+        Overlay.of(context)?.insert(overlayEntry);
+        isOverlayAdded = true;
+      }
+
+      if (time >= 2) {
         timer.cancel();
         setState(() {
-          _petActionIndex = 0; // IDLE
+          _petActionIndex = 1; // WALK
         });
+        overlayEntry.remove();
       }
     });
   }
-
 
   int _petActionIndex = 1;
 
   @override
   Widget build(BuildContext context) {
     final myRoomState = context.watch<MyRoomViewModel>();
+    myRoomState.happyMotion = () => happyMotion(context);
 
     // 모델 및 프리셋 선택
     String petName = myRoomState.findPetAsset();
     Preset p = presets[motions[petName]![_petActionIndex]]!;
     bool isDead = false; // FIXME 펫 체력상태 확인
 
-    
     LOG.log('[마이펫 렌더링]'); // FIXME log 확인용
 
     // 펫이 죽었으므로 비석 렌더링
@@ -233,8 +292,8 @@ class _MyPetState extends State<MyPet> {
           onTap: () {
             LOG.log('아니 왜 안바뀌는데 $_petActionIndex');
             setState(() {
-              _petActionIndex = (_petActionIndex + 1) %
-                  (motions[petName]!.length);
+              _petActionIndex =
+                  (_petActionIndex + 1) % (motions[petName]!.length);
             });
           },
           child: SizedBox(

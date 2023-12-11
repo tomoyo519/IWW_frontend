@@ -13,6 +13,7 @@ Widget inventorySheet(BuildContext context, MyRoomViewModel myRoomViewModel,
   var userInfo = context.read<UserInfo>();
   bool hasChanges = myRoomViewModel.checkForChanges();
   final assetsAudioPlayer = AssetsAudioPlayer();
+  final myRoomState = context.read<MyRoomViewModel>();
 
   void playSound() {
     assetsAudioPlayer.open(Audio("assets/main.mp3"));
@@ -92,6 +93,7 @@ Widget inventorySheet(BuildContext context, MyRoomViewModel myRoomViewModel,
         child: ElevatedButton(
           onPressed: hasChanges
               ? () async {
+                  myRoomState.happyMotion!();
                   final assetsAudioPlayer = AssetsAudioPlayer();
                   assetsAudioPlayer.open(Audio("assets/main.mp3"));
                   assetsAudioPlayer.play();

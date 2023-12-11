@@ -284,7 +284,6 @@ class AuthService extends ChangeNotifier {
 
   Future<void> _initialize() async {
     await _initializeTodos();
-    // await _initializeItems();
     await _initializedAttd();
 
     status = AuthStatus.initialized;
@@ -307,21 +306,6 @@ class AuthService extends ChangeNotifier {
           if (jsonBody['user_achi'] != null) {
             _reward = Rewards.fromJson(jsonBody['user_achi']);
           }
-        } else {
-          LOG.log("Error: ${response.body}");
-          status = AuthStatus.failed;
-        }
-      },
-    );
-  }
-
-  // 할일 및 펫 정보 가져와서 초기 세팅
-  Future<void> _initializeItems() async {
-    await RemoteDataSource.get("/item-inventory/${_user!.user_id}/pet").then(
-      (response) {
-        if (response.statusCode == 200) {
-          var jsonBody = jsonDecode(response.body);
-          _mainPet = Item.fromJson(jsonBody['result']);
         } else {
           LOG.log("Error: ${response.body}");
           status = AuthStatus.failed;
