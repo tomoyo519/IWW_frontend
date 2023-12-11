@@ -7,6 +7,7 @@ import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 class Preset {
   final String animationName;
@@ -203,6 +204,11 @@ class _MyPetState extends State<MyPet> {
 
   void happyMotion(BuildContext context) {
     OverlayEntry overlayEntry;
+    final assetsAudioPlayer = AssetsAudioPlayer();
+
+    // 효과음 재생
+    assetsAudioPlayer.open(Audio("assets/happy.mp3"));
+    assetsAudioPlayer.play();
 
     overlayEntry = OverlayEntry(
       builder: (BuildContext context) => Positioned(
