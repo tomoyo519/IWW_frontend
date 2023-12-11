@@ -193,6 +193,13 @@ class UserInfo extends ChangeNotifier {
   void initEvents() {
     _onLoginReward(_reward);
 
+    // var message = jsonEncode(_reward?.toMap());
+    // EventService.publish(Event(
+    //   type: EventType.onAchieve,
+    //   message: message,
+    //   background: true,
+    // ));
+
     // Map<String, dynamic> json = {
     //   'message': '인증이 완료되었어요',
     //   'item_path': 'chinese_dragon.gif',
@@ -235,8 +242,9 @@ class UserInfo extends ChangeNotifier {
     EventService.publish(Event(
       type: EventType.onAchieve,
       message: message,
+      background: true,
     ));
-    // 앱 사용중 다시 뜨기 방지
-    _reward = null;
+
+    _reward = null; // 앱 사용중 다시 뜨기 방지
   }
 }

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/_navigation/enum/app_route.dart';
-import 'package:iww_frontend/view/modals/greeting.dart';
 import 'package:iww_frontend/view/modals/login_achieve_modal.dart';
 import 'package:iww_frontend/view/modals/todo_approved_modal.dart';
 import 'package:iww_frontend/view/modals/todo_confirm_modal.dart';
@@ -22,10 +21,12 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 class Event {
   final EventType type;
   final String? message;
+  bool? background;
 
   Event({
     required this.type,
     this.message,
+    this.background,
   });
 }
 
@@ -56,7 +57,6 @@ extension EventTypeExtension on EventType {
       case EventType.confirmResponse:
       case EventType.newComment:
         return "socket";
-      case EventType.onAppLogin:
       case EventType.onSnsAuth:
       case EventType.onAchieve:
       case EventType.onTodoDone:
@@ -93,12 +93,8 @@ extension EventTypeExtension on EventType {
       case EventType.onPetEvolve:
         //TODO - 진화 시 소리넣기
         return showPetEvolveModal(context);
-      // case EventType.onAppLogin:
-      //   return showGreetingModal(context);
       case EventType.onTodoApproved:
-        LOG.log(emoji: 2, message ?? 'nulllllll');
         return showTodoApprovedModal(context, message: message!);
-
       default:
         break;
     }

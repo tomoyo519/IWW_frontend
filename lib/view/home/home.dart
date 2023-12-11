@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
+import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/style/button.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/home/attendance.dart';
@@ -89,8 +90,8 @@ class MyTodo extends StatelessWidget {
                 assetsAudioPlayer.play();
               },
               style: IconButton.styleFrom(
-                elevation: 1,
-                backgroundColor: Colors.orange,
+                elevation: 10.0,
+                backgroundColor: AppTheme.PRI_COLOR,
                 shadowColor: Colors.black45,
               ),
               icon: Icon(
