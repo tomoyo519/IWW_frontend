@@ -17,25 +17,6 @@ class MyPetModal extends StatefulWidget {
   final Widget? backgroud;
   final String? title;
 
-  final Map<String, Map<String, dynamic>> petModels = {
-    '비석_00': {
-      'src': 'assets/tomb.glb',
-      'motions': ['Idle']
-    },
-    '구미호_01': {
-      'src': 'assets/pets/small_fox.glb',
-      'motions': ['Idle', 'Walk', 'Jump']
-    },
-    '구미호_02': {
-      'src': 'assets/pets/mid_fox.glb',
-      'motions': ['Idle', 'Walk', 'Jump']
-    },
-    '구미호_03': {
-      'src': 'assets/pets/kitsune.glb',
-      'motions': ['Idle', 'Walk', 'Jump']
-    },
-  };
-
   @override
   State<MyPetModal> createState() => _MyPetModalState();
 }

@@ -171,7 +171,7 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
             child: MyButton(
               type: MyButtonType.primary,
               text: todoState == GroupTodoState.UNDONE
-                  ? "인증하기"
+                  ? "인증요청"
                   : todoState == GroupTodoState.DONE
                       ? "인증대기"
                       : "✔ 인증완료",

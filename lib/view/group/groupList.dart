@@ -22,6 +22,7 @@ class GroupList extends StatefulWidget {
 class _GroupListState extends State<GroupList> {
   List<Group> groups = [];
   bool isClicked = false;
+
   getList() async {
     UserInfo userInfo = Provider.of<UserInfo>(context, listen: false);
     int userId = userInfo.userId;
@@ -68,7 +69,7 @@ class _GroupListState extends State<GroupList> {
                       itemCount: myGroups.length,
                       itemBuilder: (c, i) {
                         String picturePath =
-                            myGroups[i].catImg ?? 'assets/category/etc.jpg';
+                            'assets/category/${myGroups[i].catImg}';
                         return TextButton(
                             onPressed: () async {
                               var userInfo = context.read<UserInfo>();

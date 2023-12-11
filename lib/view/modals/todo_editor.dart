@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
+import 'package:iww_frontend/utils/categories.dart';
 import 'package:iww_frontend/view/todo/modals/todo_create_modal.dart';
 import 'package:iww_frontend/viewmodel/todo_modal.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
@@ -12,32 +13,34 @@ import 'package:provider/provider.dart';
 void showTodoEditModal<T extends ChangeNotifier>(
   BuildContext context, {
   Todo? todo,
-}) {
+}) async {
   FocusNode focusNode = FocusNode();
   UserInfo userInfo = context.read<UserInfo>();
   T viewmodel = context.read<T>();
 
-  showModalBottomSheet(
-    isScrollControlled: true,
-    context: context,
-    builder: (c) {
-      double keyboardHeight = MediaQuery.of(c).viewInsets.bottom;
+  await TodoCategory.initialize().then((_) {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (c) {
+        double keyboardHeight = MediaQuery.of(c).viewInsets.bottom;
 
-      return MultiProvider(
-        providers: [
-          ChangeNotifierProvider.value(value: userInfo),
-          ChangeNotifierProvider<T>.value(value: viewmodel),
-          ChangeNotifierProvider(
-              create: (_) => TodoModalViewModel<T>(
-                    mode: TodoModalMode.normal,
-                    todo: todo,
-                  ))
-        ],
-        child: TodoCreateModal<T>(
-          focusNode: focusNode,
-          keyboardHeight: keyboardHeight,
-        ),
-      );
-    },
-  );
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(value: userInfo),
+            ChangeNotifierProvider<T>.value(value: viewmodel),
+            ChangeNotifierProvider(
+                create: (_) => TodoModalViewModel<T>(
+                      mode: TodoModalMode.normal,
+                      todo: todo,
+                    ))
+          ],
+          child: TodoCreateModal<T>(
+            focusNode: focusNode,
+            keyboardHeight: keyboardHeight,
+          ),
+        );
+      },
+    );
+  });
 }

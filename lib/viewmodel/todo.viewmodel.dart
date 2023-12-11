@@ -6,6 +6,7 @@ import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/model/todo/todo_update.dto.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/service/event.service.dart';
+import 'package:iww_frontend/utils/categories.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
 
@@ -41,10 +42,6 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   List<Todo> _groupTodos = [];
   List<Todo> get groupTodos => _groupTodos;
 
-  // 4. 기한이 지난 개인투두
-  List<Todo> _prevTodos = [];
-  List<Todo> get prevTodos => _prevTodos;
-
   bool _waiting = true;
   bool get waiting => _waiting;
   set waiting(bool val) {
@@ -54,16 +51,47 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
     }
   }
 
+  int _todayDone = 0;
   int get todayDone {
-    return _todos.where((todo) {
+    // return _todayDone;
+    var normalLen = _normalTodos.where((todo) {
       return todo.isDone && todo.todoDate == getToday();
     }).length;
+    var groupLen = _groupTodos.where((todo) {
+      return todo.isDone && todo.todoDate == getToday();
+    }).length;
+
+    return normalLen + groupLen;
+    // return _todos.where((todo) {
+    //     return todo.isDone && todo.todoDate == getToday();
+    //   }).length;
   }
 
+  set todayDone(int val) {
+    _todayDone = val;
+    notifyListeners();
+  }
+
+  int _todayTotal = 0;
   int get todayTotal {
-    return _todos.where((todo) {
+    // return _todayTotal;
+    // return _todos.where((todo) {
+    //   return todo.todoDate == getToday();
+    // }).length;
+
+    var normalLen = _normalTodos.where((todo) {
       return todo.todoDate == getToday();
     }).length;
+    var groupLen = _groupTodos.where((todo) {
+      return todo.todoDate == getToday();
+    }).length;
+
+    return normalLen + groupLen;
+  }
+
+  set todayTotal(int val) {
+    _todayTotal = val;
+    notifyListeners();
   }
 
   bool _isDisposed = false;
@@ -79,9 +107,17 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
     Map<String, List<Todo>> data = await _repository.getTodos(_userId);
 
     // 분리해서 가져오기
-    _todos = data['total']!;
     _normalTodos = data['normal']!;
     _groupTodos = data['group']!;
+    _todos = _normalTodos + _groupTodos;
+
+    var todayTodo = _todos.where((todo) {
+      return todo.todoDate == getToday();
+    });
+
+    // TODO 수정필요
+    _todayTotal = todayTodo.length;
+    _todayDone = todayTodo.where((todo) => todo.todoDone == true).length;
 
     LOG.log("Fetched data group todo ${data.length}");
     waiting = false;
@@ -98,6 +134,7 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
 
     if (todo != null) {
       _normalTodos.add(todo);
+      todayTotal++;
       result = true;
       waiting = false;
     }
@@ -110,7 +147,12 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   // ****************************** //
 
   Future<bool> deleteTodo(Todo delTodo) async {
+    if (delTodo.todoDone == true) {
+      todayDone--;
+    }
+    todayTotal--;
     _todos = _todos.where((todo) => todo.todoId != delTodo.todoId).toList();
+
     waiting = false; // 상태부터 변경합니다
 
     return await _repository
@@ -128,10 +170,14 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
     if (idx == -1) {
       // 투두가 없는 경우
       LOG.log("Failed to find todo by id in todos list");
+
       waiting = false;
     } else {
       // 개인 투두인 경우
       _todos[idx].todoDone = value;
+      if (todo.todoDate == getToday()) {
+        todayDone += value ? -1 : 1;
+      }
 
       // 달성하면 이벤트
       if (value == true) {

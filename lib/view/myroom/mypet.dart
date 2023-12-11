@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
@@ -91,14 +93,10 @@ class _MyPetState extends State<MyPet> {
     ),
   };
 
-  final Map<String, Map<String, dynamic>> petModels = {
-    'small_fox': {
-      'src': 'assets/pets/small_fox.glb',
-      'motions': ['Idle', 'Walk', 'Jump']
-    },
-    'mid_fox': {
-      'src': 'assets/pets/mid_fox.glb',
-      'motions': [
+  // NOTE 모든 모델 파일은 .glb 포맷 사용
+  final Map<String, List<String>> motions = {
+    'small_fox': ['Idle', 'Walk', 'Jump'],
+    'mid_fox': [
         'Idle',
         'Walk',
         'Jump',
@@ -107,11 +105,8 @@ class _MyPetState extends State<MyPet> {
         'Spin',
         'Bounce',
         'Clicked'
-      ]
-    },
-    'kitsune': {
-      'src': 'assets/pets/kitsune.glb',
-      'motions': [
+    ],
+    'kitsune': [
         'Idle',
         'Walk',
         'Jump',
@@ -120,33 +115,33 @@ class _MyPetState extends State<MyPet> {
         'Spin',
         'Bounce',
         'Clicked'
-      ]
-    },
-    'monitor_lizard': {
-      'src': 'assets/pets/monitor_lizard.glb',
-      'motions': ['Idle', 'Walk', 'Jump']
-    },
-    'horned_lizard': {
-      'src': 'assets/pets/horned_lizard.glb',
-      'motions': ['Idle', 'Walk', 'Jump']
-    },
-    'chinese_dragon': {
-      'src': 'assets/pets/chinese_dragon.glb',
-      'motions': ['Idle', 'Walk', 'Jump']
-    },
-    'pink_robin': {
-      'src': 'assets/pets/pink_robin.glb',
-      'motions': ['Idle', 'Walk', 'Jump']
-    },
-    'archers_buzzard': {
-      'src': 'assets/pets/archers_buzzard.glb',
-      'motions': ['Idle', 'Walk', 'Jump']
-    },
-    'phoenix': {
-      'src': 'assets/pets/pheonix.glb',
-      'motions': ['Idle', 'Walk', 'Jump']
-    },
+    ],
+    'monitor_lizard': ['Idle', 'Walk', 'Jump'],
+    'horned_lizard': ['Idle', 'Walk', 'Jump'],
+    'chinese_dragon': ['Idle', 'Walk', 'Jump'],
+    'pink_robin': ['Idle', 'Walk', 'Jump'],
+    'archers_buzzard': ['Idle', 'Walk', 'Jump'],
+    'phoenix': ['Idle', 'Walk', 'Jump'],
   };
+
+  void happyMotion() {
+    int time = 0;
+
+    Timer.periodic(Duration(seconds: 2), (timer) {
+      time += 1;
+      setState(() {
+        _petActionIndex = 2; // JUMP
+      });
+
+      if (time >= 3) {
+        timer.cancel();
+        setState(() {
+          _petActionIndex = 0; // IDLE
+        });
+      }
+    });
+  }
+
 
   int _petActionIndex = 1;
 
@@ -155,14 +150,12 @@ class _MyPetState extends State<MyPet> {
     final myRoomState = context.watch<MyRoomViewModel>();
 
     // 모델 및 프리셋 선택
-    String petName = myRoomState.findPetAsset(); // not nickname
-    Map<String, dynamic> selectedModel = petModels[petName]!;
-    Preset p = presets[selectedModel['motions']![_petActionIndex]]!;
-    // FIXME 펫 체력상태 확인
-    bool isDead = false;
+    String petName = myRoomState.findPetAsset();
+    Preset p = presets[motions[petName]![_petActionIndex]]!;
+    bool isDead = false; // FIXME 펫 체력상태 확인
 
-    // FIXME log 확인용
-    LOG.log('[마이펫 렌더링]');
+    
+    LOG.log('[마이펫 렌더링]'); // FIXME log 확인용
 
     // 펫이 죽었으므로 비석 렌더링
     if (isDead) {
@@ -196,7 +189,7 @@ class _MyPetState extends State<MyPet> {
             LOG.log('아니 왜 안바뀌는데 $_petActionIndex');
             setState(() {
               _petActionIndex = (_petActionIndex + 1) %
-                  (selectedModel['motions']!.length as int);
+                  (motions[petName]!.length);
             });
           },
           child: SizedBox(
@@ -205,7 +198,7 @@ class _MyPetState extends State<MyPet> {
               ignoring: true,
               child: ModelViewer(
                 key: ValueKey('$petName - $_petActionIndex'),
-                src: selectedModel['src'],
+                src: 'assets/pets/$petName.glb',
                 animationName: p.animationName,
                 cameraTarget: p.cameraTarget,
                 cameraOrbit: p.cameraOrbit,
