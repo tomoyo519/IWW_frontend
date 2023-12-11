@@ -167,15 +167,15 @@ class TopObjects extends StatelessWidget {
       // [x, y] 형태로 상대좌표 획득
       List<double> position =
           item.metadata!.split('x').map((e) => double.parse(e)).toList();
-      double x = areaWidth * position[0];
-      double y = areaHeight * position[1];
+              double x = (areaWidth / 2) * position[0];
+              double y = (areaHeight / 2) * position[1];
 
       // double imageWidth = MediaQuery.of(context).size.width * 0.2;
     
       return Center(
         child: Transform.translate(
           // offset을 이동해서 정 중앙 기준으로 이동
-                  offset: Offset(x - areaWidth * 0.4, y),
+                  offset: Offset(x, y),
           child: Image.asset(
             'assets/furniture/${item.path}',
             fit: BoxFit.none,
