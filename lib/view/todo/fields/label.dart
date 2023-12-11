@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/utils/categories.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/todo/fields/label_list_modal.dart';
 import 'package:iww_frontend/view/todo/todo_form_field.dart';
@@ -37,8 +38,9 @@ class TodoLabelField extends StatelessWidget {
           child: Consumer<EditorModalViewModel>(
             builder: (context, viewModel, child) {
               return Text((viewModel.todoData['todo_label'] != null)
-                  ? LabelListModal.labels[(viewModel.todoData['todo_label'])]
-                  : LabelListModal.labels[0]);
+                  ? TodoCategory
+                      .category![(viewModel.todoData['todo_label'])].name
+                  : TodoCategory.category![0].name);
             },
           )),
     );

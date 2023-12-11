@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/style/button.dart';
+import 'package:iww_frontend/utils/categories.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
 import 'package:iww_frontend/view/modals/custom_snackbar.dart';
 import 'package:iww_frontend/view/modals/todo_editor.dart';
@@ -251,10 +252,13 @@ class _NewGroupState extends State<NewGroup> {
                           child: Container(
                             width: MediaQuery.of(context).size.width * 0.15,
                             alignment: Alignment.center,
-                            child: Text((viewModel.groupData['cat_id'] != null)
-                                ? LabelListModal
-                                    .labels[(viewModel.groupData['cat_id'])]
-                                : LabelListModal.labels[0]),
+                            child: Text(
+                              (viewModel.groupData['cat_id'] != null)
+                                  ? TodoCategory
+                                      .category![viewModel.groupData['cat_id']]
+                                      .name
+                                  : TodoCategory.category![0].name,
+                            ),
                           ),
                         ),
                       ],

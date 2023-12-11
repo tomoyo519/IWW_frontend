@@ -9,10 +9,8 @@ import 'package:iww_frontend/view/_common/spinner.dart';
 import 'package:iww_frontend/view/modals/todo_editor.dart';
 import 'package:iww_frontend/view/todo/todo_empty.dart';
 import 'package:iww_frontend/view/todo/todo_my_tile.dart';
-import 'package:iww_frontend/view/todo/todo_editor.dart';
 import 'package:iww_frontend/view/todo/todo_group_tile.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
-import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 

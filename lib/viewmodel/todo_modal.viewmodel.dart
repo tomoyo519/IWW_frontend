@@ -15,6 +15,7 @@ class TodoModalViewModel<T extends ChangeNotifier> extends ChangeNotifier {
   final Todo? todo;
   late bool isNewTodo;
   final TodoModalMode mode;
+  List<Category>? cats = TodoCategory.category;
 
   TodoModalViewModel({
     this.todo,
@@ -49,8 +50,7 @@ class TodoModalViewModel<T extends ChangeNotifier> extends ChangeNotifier {
     }
   }
 
-  // * === send request to create/update === * //\
-
+  // * === send request to create/update === * //
   Future<bool> onSave(BuildContext context) async {
     final userId = context.read<UserInfo>().userId;
     final parent = Provider.of<T>(context, listen: false) as BaseTodoViewModel;
@@ -107,7 +107,7 @@ class TodoModalViewModel<T extends ChangeNotifier> extends ChangeNotifier {
   }
 
   String get catName {
-    return (_todoCate != null) ? cats[_todoCate!].name : cats[0].name;
+    return (_todoCate != null) ? cats![_todoCate!].name : cats![0].name;
   }
 
   // 4. 할일 완료여부
@@ -177,9 +177,6 @@ class TodoModalViewModel<T extends ChangeNotifier> extends ChangeNotifier {
     label: "반복",
     icon: Icons.repeat_rounded,
   );
-
-  // * ==== common ==== * //
-  List<Category> cats = Categories.categories;
 }
 
 class ButtonFieldData {

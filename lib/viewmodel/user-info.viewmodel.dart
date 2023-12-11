@@ -148,16 +148,18 @@ class UserInfo extends ChangeNotifier {
     int prevPetId = _itemId;
     int prevUserCash = _userCash;
 
-    LOG.log(
-        emoji: 1, "이게 널일까?????? ${message.toString()} ${message!['message']}");
-
+    // 1. 인증 정보가 있는 경우
+    //    현재 펫의 정보를 담아서 그룹 인증 완료 이벤트 발행
     if (message != null) {
       message['item_path'] = _mainPet.path;
-      _onGroupApproved(jsonEncode(message));
+      _onTodoApproved(jsonEncode(message));
     }
 
+    // 2. 새로운 유저 정보 fetch for 진화 확인
+    //    TODO: 펫 및 업적 정보만 fetch해오도록 변경
     await fetchUser();
 
+    // 3. 업적 또는 진화 이벤트 확인
     _onTodoReward(prevUserCash);
     _onEvolution(prevPetId);
   }
@@ -181,21 +183,25 @@ class UserInfo extends ChangeNotifier {
 
     // * Set other info * //
     _reward = reward;
-
     if (attd != null) {
       _attendances = attd;
     }
-
     notifyListeners();
   }
 
   // 로그인되자마자 트리거되어야 하는 이벤트들
   void initEvents() {
     _onLoginReward(_reward);
+
+    // Map<String, dynamic> json = {
+    //   'message': '인증이 완료되었어요',
+    //   'item_path': 'chinese_dragon.gif',
+    // };
+    // _onTodoApproved(jsonEncode(json));
   }
 
   // 그룹 인증이 완료된 경우
-  void _onGroupApproved(String message) {
+  void _onTodoApproved(String message) {
     EventService.publish(Event(
       type: EventType.onTodoApproved,
       message: message,
