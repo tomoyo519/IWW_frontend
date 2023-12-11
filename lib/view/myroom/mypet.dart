@@ -109,7 +109,7 @@ class _MyPetState extends State<MyPet> {
         'Clicked'
       ]
     },
-    '어른 구미호': {
+    'kitsune': {
       'src': 'assets/pets/kitsune.glb',
       'motions': [
         'Idle',
@@ -156,6 +156,7 @@ class _MyPetState extends State<MyPet> {
 
     // 모델 및 프리셋 선택
     String petName = myRoomState.findPetAsset(); // not nickname
+    LOG.log(petName);
     Map<String, dynamic> selectedModel = petModels[petName]!;
     Preset p = presets[selectedModel['motions']![_petActionIndex]]!;
     // FIXME 펫 체력상태 확인

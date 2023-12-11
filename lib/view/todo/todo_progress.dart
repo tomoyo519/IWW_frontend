@@ -121,37 +121,11 @@ class _TodoProgressState extends State<TodoProgress> {
                     center: Text("달성률 $todayDone / $todayTotal"),
                     barRadius: Radius.circular(10),
                     progressColor: Colors.orange,
+                    backgroundColor: Colors.white,
                   ),
-                  // Container(
-                  //   margin: EdgeInsets.symmetric(vertical: fs),
-                  //   decoration: BoxDecoration(
-                  //     borderRadius: BorderRadius.circular(100),
-                  //     color: Colors.white,
-                  //   ),
-                  //   height: 3 * fs,
-                  //   // width: screen.width,
-                  //   child: FractionallySizedBox(
-                  //     alignment: Alignment.centerLeft,
-                  //     widthFactor: progress,
-                  //     child: Container(
-                  //       decoration: BoxDecoration(
-                  //         borderRadius: BorderRadius.circular(100),
-                  //         color: AppTheme.PRI_COLOR,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
                 ],
               )),
-              // Row(children: [
-              //   Text(
-              //     "달성률",
-              //     style: Theme.of(context).textTheme.headlineLarge,
-              //   ),
-            ])
-        //   ],
-        // ),
-        );
+            ]));
   }
 }
 
