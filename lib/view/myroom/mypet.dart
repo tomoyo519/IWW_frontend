@@ -7,6 +7,7 @@ import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 class Preset {
   final String animationName;
@@ -56,11 +57,18 @@ class _MyPetState extends State<MyPet> {
       rotationPerSecond: '0.6rad',
     ),
     'Run': Preset(
-      animationName: 'Walk',
+      animationName: 'Run',
       cameraOrbit: '0deg 70deg 8m',
       cameraTarget: '0.7m 0.7m 0m',
       autoRotate: true,
-      rotationPerSecond: '0.6rad',
+      rotationPerSecond: '1.2rad',
+    ),
+    'Fly': Preset(
+      animationName: 'Fly',
+      cameraOrbit: '0deg 70deg 8m',
+      cameraTarget: '0.7m 0.7m 0m',
+      autoRotate: true,
+      rotationPerSecond: '1.2rad',
     ),
     // 제자리
     'Idle': Preset(
@@ -78,7 +86,7 @@ class _MyPetState extends State<MyPet> {
       rotationPerSecond: '0rad',
     ),
     'Sit': Preset(
-      animationName: 'Bounce',
+      animationName: 'Sit',
       cameraOrbit: '30deg 80deg 0m',
       cameraTarget: '0.5m 0.8m 0.8m',
       autoRotate: false,
@@ -106,7 +114,7 @@ class _MyPetState extends State<MyPet> {
       rotationPerSecond: '0rad',
     ),
     'Eat': Preset(
-      animationName: 'Clicked',
+      animationName: 'Eat',
       cameraOrbit: '30deg 80deg 0m',
       cameraTarget: '0.5m 0.8m 0.8m',
       autoRotate: false,
@@ -116,36 +124,43 @@ class _MyPetState extends State<MyPet> {
 
   // NOTE 모든 모델 파일은 .glb 포맷 사용
   final Map<String, List<String>> motions = {
-    'small_fox': ['Idle', 'Walk', 'Jump', 'Spin', 'Clicked'],
+    'small_fox': ['Spin', 'Walk', 'Jump', 'Sit', 'Bounce', 'Idle'],
     'mid_fox': [
-      'Idle',
+      'Spin',
       'Walk',
       'Jump',
       'Roll',
       'Swim',
-      'Spin',
+      'Idle',
       'Bounce',
       'Clicked'
     ],
     'kitsune': [
-      'Idle',
+      'Spin',
       'Walk',
       'Jump',
+      'Sit',
       'Roll',
-      'Swim',
-      'Spin',
-      'Bounce',
-      'Clicked'
-    ],
-    'monitor_lizard': ['Idle', 'Walk', 'Jump'],
-    'horned_lizard': ['Idle', 'Walk', 'Jump'],
-    'chinese_dragon': ['Idle', 'Walk', 'Jump'],
-    'pink_robin': ['Idle', 'Walk', 'Jump'],
-    'archers_buzzard': [
       'Idle',
+      'Bounce',
+    ],
+    'monitor_lizard': ['Spin', 'Walk', 'Jump', 'Idle', 'Bounce', 'Sit'],
+    'horned_lizard': ['Spin', 'Walk', 'Jump', 'Idle', 'Bounce', 'Run', 'Roll'],
+    'chinese_dragon': ['Spin', 'Walk', 'Jump', 'Idle', 'Bounce'],
+    'pink_robin': [
+      'Spin',
       'Walk',
       'Jump',
+      'Fly',
+      'Clicked',
+      'Eat',
+      'Sit',
+    ],
+    'archers_buzzard': [
       'Spin',
+      'Walk',
+      'Jump',
+      'Idle',
       'Bounce',
       'Eat',
       'Clicked',
@@ -154,11 +169,11 @@ class _MyPetState extends State<MyPet> {
       'Sit',
     ],
     'phoenix': [
-      'Idle',
+      'Spin',
       'Walk',
       'Jump',
       'Clicked',
-      'Spin',
+      'Idle',
       'Fly',
       'Swim',
       'Run',
@@ -169,40 +184,13 @@ class _MyPetState extends State<MyPet> {
     ],
   };
 
-  void _showOverlay(BuildContext context) {
-    OverlayEntry overlayEntry;
-
-    overlayEntry = OverlayEntry(
-      builder: (BuildContext context) => Positioned(
-        top: MediaQuery.of(context).size.height / 2 - 50, // 화면 중앙으로 위치 지정
-        left: MediaQuery.of(context).size.width / 2 - 50,
-        child: Material(
-          color: Colors.transparent,
-          child: Container(
-            width: 100,
-            height: 100,
-            color: Colors.blue,
-            child: Center(
-              child: Text(
-                'Overlay',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-
-    Overlay.of(context)?.insert(overlayEntry);
-
-    // 일정 시간이 지난 후에 오버레이를 제거할 수 있도록 설정
-    Future.delayed(Duration(seconds: 2), () {
-      overlayEntry.remove();
-    });
-  }
-
   void happyMotion(BuildContext context) {
     OverlayEntry overlayEntry;
+    final assetsAudioPlayer = AssetsAudioPlayer();
+
+    // 효과음 재생
+    assetsAudioPlayer.open(Audio("assets/happy.mp3"));
+    assetsAudioPlayer.play();
 
     overlayEntry = OverlayEntry(
       builder: (BuildContext context) => Positioned(
@@ -215,15 +203,15 @@ class _MyPetState extends State<MyPet> {
       ),
     );
 
-    int time = 0;
+    double time = 0;
     bool isOverlayAdded = false;
 
     LOG.log('#### 펫이 통통 튑니다! ####');
 
-    Timer.periodic(Duration(seconds: 2), (timer) {
-      time += 1;
+    Timer.periodic(Duration(milliseconds: 100), (timer) {
+      time += 0.1;
       setState(() {
-        _petActionIndex = 2; // JUMP
+        _petActionIndex = 0; // SPIN
       });
 
       if (!isOverlayAdded) {
@@ -231,7 +219,7 @@ class _MyPetState extends State<MyPet> {
         isOverlayAdded = true;
       }
 
-      if (time >= 2) {
+      if (time >= 2.8) {
         timer.cancel();
         setState(() {
           _petActionIndex = 1; // WALK
@@ -246,12 +234,13 @@ class _MyPetState extends State<MyPet> {
   @override
   Widget build(BuildContext context) {
     final myRoomState = context.watch<MyRoomViewModel>();
+    final userInfo = context.read<UserInfo>();
     myRoomState.happyMotion = () => happyMotion(context);
 
     // 모델 및 프리셋 선택
-    String petName = myRoomState.findPetAsset();
-    Preset p = presets[motions[petName]![_petActionIndex]]!;
-    bool isDead = false; // FIXME 펫 체력상태 확인
+    String petAsset = myRoomState.findPetAsset();
+    Preset p = presets[motions[petAsset]![_petActionIndex]]!;
+    bool isDead = (userInfo.userHp == 0); // NOTE 현재는 본인의 체력상태만 가져옵니다.
 
     LOG.log('[마이펫 렌더링]'); // FIXME log 확인용
 
@@ -286,8 +275,8 @@ class _MyPetState extends State<MyPet> {
           onTap: () {
             LOG.log('아니 왜 안바뀌는데 $_petActionIndex');
             setState(() {
-              _petActionIndex =
-                  (_petActionIndex + 1) % (motions[petName]!.length);
+              _petActionIndex = (_petActionIndex + 1) %
+                  (motions[petAsset]!.length);
             });
           },
           child: SizedBox(
@@ -295,8 +284,8 @@ class _MyPetState extends State<MyPet> {
             child: IgnorePointer(
               ignoring: true,
               child: ModelViewer(
-                key: ValueKey('$petName - $_petActionIndex'),
-                src: 'assets/pets/$petName.glb',
+                key: ValueKey('$petAsset - $_petActionIndex'),
+                src: 'assets/pets/$petAsset.glb',
                 animationName: p.animationName,
                 cameraTarget: p.cameraTarget,
                 cameraOrbit: p.cameraOrbit,
