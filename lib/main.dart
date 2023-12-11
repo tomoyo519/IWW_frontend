@@ -74,6 +74,16 @@ void main() async {
 
   // authService.status = AuthStatus.initialized;
   // authService.waiting = false;
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Error')),
+      body: Center(
+        child: Text(
+          'Something wrong happened.',
+        ),
+      ),
+    );
+  };
 
   runApp(
     MultiProvider(
