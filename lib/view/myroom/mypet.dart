@@ -131,10 +131,10 @@ class _MyPetState extends State<MyPet> {
     'kitsune': [
       'Idle',
       'Walk',
+      'Spin',
       'Jump',
       'Roll',
       'Swim',
-      'Spin',
       'Bounce',
       'Clicked'
     ],
