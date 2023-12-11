@@ -54,7 +54,7 @@ class PetArea extends StatelessWidget {
             .fetchMyRoom(), // NOTE 내부에서 notifyListeners() 호출하면 무한루프
         builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator(); // 로딩 인디케이터 등
+            return SizedBox(); // 로딩 중 빈칸
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else {
