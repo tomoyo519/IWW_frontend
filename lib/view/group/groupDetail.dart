@@ -519,7 +519,10 @@ class _GroupDetailState extends State<GroupDetail> {
                 ),
 
                 Padding(
-                  padding: const EdgeInsets.all(20.0),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
+                  ),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -533,116 +536,46 @@ class _GroupDetailState extends State<GroupDetail> {
                 ),
 
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   child: Expanded(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: groupRoutine.length,
-                      itemBuilder: (c, i) {
-                        WeekRepeat repeat =
-                            groupRoutine[i].routRepeat.toWeekRepeat();
-
-                        return groupRoutine.isNotEmpty
-                            ? Container(
-                                margin: EdgeInsets.all(10),
-                                padding: EdgeInsets.all(15),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                      color: Colors.black26, width: 1),
-                                ),
-                                child: Stack(
-                                  children: [
-                                    myGroup == true // 내가 가입한 그룹인 경우 수정버튼 표시
-                                        ? Positioned(
-                                            top: 0,
-                                            right: 0,
-                                            child: IconButton(
-                                              style: IconButton.styleFrom(
-                                                backgroundColor:
-                                                    AppTheme.primary,
-                                                padding: EdgeInsets.all(0),
-                                              ),
-                                              icon: Icon(
-                                                Icons.edit_outlined,
-                                                color: Colors.black54,
-                                                size: 20,
-                                              ),
-                                              onPressed: () async {
-                                                _showTodoEditor(
-                                                    context, groupRoutine[i]);
-                                                final assetsAudioPlayer =
-                                                    AssetsAudioPlayer();
-
-                                                assetsAudioPlayer.open(
-                                                  Audio("assets/main.mp3"),
-                                                );
-
-                                                assetsAudioPlayer.play();
-                                              },
-                                            ),
-                                          )
-                                        : SizedBox.shrink(),
-                                    Column(
-                                      children: [
-                                        ConstrainedBox(
-                                          constraints: BoxConstraints(
-                                            minHeight: 50,
-                                            minWidth: double.infinity,
-                                          ),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                groupRoutine[i].routName,
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.w900,
-                                                  fontSize: 18,
+                    child: Column(
+                      children: [
+                        if (groupRoutine.isNotEmpty)
+                          for (int i = 0; i < groupRoutine.length; i++) ...[
+                            Builder(builder: (context) {
+                              WeekRepeat repeat =
+                                  groupRoutine[i].routRepeat.toWeekRepeat();
+                              return Container(
+                                  margin: EdgeInsets.all(10),
+                                  padding: EdgeInsets.all(15),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                        color: Colors.black26, width: 1),
+                                  ),
+                                  child: Stack(
+                                    children: [
+                                      myGroup == true // 내가 가입한 그룹인 경우 수정버튼 표시
+                                          ? Positioned(
+                                              top: 0,
+                                              right: 0,
+                                              child: IconButton(
+                                                style: IconButton.styleFrom(
+                                                  backgroundColor:
+                                                      AppTheme.primary,
+                                                  padding: EdgeInsets.all(0),
                                                 ),
-                                              ),
-                                              Row(
-                                                children: [
-                                                  _RoutineBadge(
-                                                    content:
-                                                        '${repeat.name} 반복',
-                                                  ),
-                                                  if (repeat.count != 7) ...[
-                                                    SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    _RoutineBadge(
-                                                      content: repeat.weekday
-                                                          .where((element) =>
-                                                              element
-                                                                  .selected ==
-                                                              true)
-                                                          .map((e) => e.name)
-                                                          .join('・')
-                                                          .toString(),
-                                                    ),
-                                                  ]
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            Expanded(
-                                              child: MyButton(
-                                                type: MyButtonType.primary,
-                                                text: "그룹원들의 달성 현황",
-                                                onpressed: (context) async {
-                                                  _setRoutinePicture(
-                                                    groupRoutine[i].routId,
-                                                    groupRoutine[i]
-                                                        .routRepeat
-                                                        .toWeekRepeat()
-                                                        .name,
-                                                  );
+                                                icon: Icon(
+                                                  Icons.edit_outlined,
+                                                  color: Colors.black54,
+                                                  size: 20,
+                                                ),
+                                                onPressed: () async {
+                                                  _showTodoEditor(
+                                                      context, groupRoutine[i]);
                                                   final assetsAudioPlayer =
                                                       AssetsAudioPlayer();
 
@@ -653,31 +586,106 @@ class _GroupDetailState extends State<GroupDetail> {
                                                   assetsAudioPlayer.play();
                                                 },
                                               ),
+                                            )
+                                          : SizedBox.shrink(),
+                                      Column(
+                                        children: [
+                                          ConstrainedBox(
+                                            constraints: BoxConstraints(
+                                              minHeight: 50,
+                                              minWidth: double.infinity,
                                             ),
-                                            // SizedBox(
-                                            //   width: 10,
-                                            // ),
-                                            // Expanded(
-                                            //   child: MyButton(
-                                            //     type: MyButtonType.primary,
-                                            //     text:
-                                            //         "인증하기", // TODO: 실제 정보가 아닙니다.
-                                            //     onpressed: (context) =>
-                                            //         _onGrpRoutCheck(
-                                            //       context,
-                                            //       groupRoutine[i].grpId,
-                                            //       userInfo.userId,
-                                            //     ),
-                                            //   ),
-                                            // ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ))
-                            : Text("조회된 그룹이 없습니다.");
-                      },
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  groupRoutine[i].routName,
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w900,
+                                                    fontSize: 18,
+                                                  ),
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    _RoutineBadge(
+                                                      content:
+                                                          '${repeat.name} 반복',
+                                                    ),
+                                                    if (repeat.count != 7) ...[
+                                                      SizedBox(
+                                                        width: 10,
+                                                      ),
+                                                      _RoutineBadge(
+                                                        content: repeat.weekday
+                                                            .where((element) =>
+                                                                element
+                                                                    .selected ==
+                                                                true)
+                                                            .map((e) => e.name)
+                                                            .join('・')
+                                                            .toString(),
+                                                      ),
+                                                    ]
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              Expanded(
+                                                child: MyButton(
+                                                  type: MyButtonType.primary,
+                                                  text: "그룹원들의 달성 현황",
+                                                  onpressed: (context) async {
+                                                    _setRoutinePicture(
+                                                      groupRoutine[i].routId,
+                                                      groupRoutine[i]
+                                                          .routRepeat
+                                                          .toWeekRepeat()
+                                                          .name,
+                                                    );
+                                                    final assetsAudioPlayer =
+                                                        AssetsAudioPlayer();
+
+                                                    assetsAudioPlayer.open(
+                                                      Audio("assets/main.mp3"),
+                                                    );
+
+                                                    assetsAudioPlayer.play();
+                                                  },
+                                                ),
+                                              ),
+                                              // SizedBox(
+                                              //   width: 10,
+                                              // ),
+                                              // Expanded(
+                                              //   child: MyButton(
+                                              //     type: MyButtonType.primary,
+                                              //     text:
+                                              //         "인증하기", // TODO: 실제 정보가 아닙니다.
+                                              //     onpressed: (context) =>
+                                              //         _onGrpRoutCheck(
+                                              //       context,
+                                              //       groupRoutine[i].grpId,
+                                              //       userInfo.userId,
+                                              //     ),
+                                              //   ),
+                                              // ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ));
+                            })
+                          ]
+                        else
+                          Text("조회된 그룹이 없습니다.")
+                      ],
                     ),
                   ),
                 ),
