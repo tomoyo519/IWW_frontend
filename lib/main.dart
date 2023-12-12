@@ -1,7 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'dart:convert';
-
+import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/auth/auth_status.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
@@ -70,11 +70,32 @@ void main() async {
   // 2. 카카오로 로그인 시도
   // authService.oauthLogin(signup: false);
 
-  // 3. 테스트유저 접속
-  // await authService.testLogin();
-
   // authService.status = AuthStatus.initialized;
   // authService.waiting = false;
+
+  // exception error 가 발생하는 경우, 앱이 꺼지지않고 아래 화면 보이도록 설정
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Error')),
+      body: Center(
+        child: Expanded(
+            child: Column(
+          children: [
+            Expanded(
+              child: Lottie.asset(
+                'assets/wrong.json',
+                repeat: true,
+                animate: true,
+              ),
+            ),
+            Text(
+              '문제가 발생했어요! 뒤로 가볼까요?',
+            )
+          ],
+        )),
+      ),
+    );
+  };
 
   runApp(
     MultiProvider(
@@ -94,9 +115,9 @@ void main() async {
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
-          theme: getapptheme(),
           // home: RenderPage(),
           home: SplashScreen(),
+          theme: AppTheme.getapptheme(),
         ),
       ),
     ),
@@ -118,11 +139,8 @@ class RenderPage extends StatelessWidget {
     if (authService.status == AuthStatus.initialized) {
       // 사용자 전역 상태관리 객체 초기화
       UserModel user = authService.user!;
-      Item mainPet = authService.mainPet!;
-      Rewards? reward = authService.reward;
-      List<UserAttandance> attd = authService.attendance ?? [];
       UserRepository repo = Provider.of<UserRepository>(context, listen: false);
-      userInfo = UserInfo(user, mainPet, repo, reward, attd);
+      userInfo = UserInfo(repo, authService);
 
       // 이벤트 서비스 초기화
       EventService.setUserId(user.user_id);

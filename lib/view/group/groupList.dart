@@ -10,6 +10,7 @@ import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:lottie/lottie.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 class GroupList extends StatefulWidget {
   const GroupList({super.key});
@@ -21,6 +22,7 @@ class GroupList extends StatefulWidget {
 class _GroupListState extends State<GroupList> {
   List<Group> groups = [];
   bool isClicked = false;
+
   getList() async {
     UserInfo userInfo = Provider.of<UserInfo>(context, listen: false);
     int userId = userInfo.userId;
@@ -67,10 +69,13 @@ class _GroupListState extends State<GroupList> {
                       itemCount: myGroups.length,
                       itemBuilder: (c, i) {
                         String picturePath =
-                            myGroups[i].catImg ?? 'assets/category/etc.jpg';
+                            'assets/category/${myGroups[i].catImg}';
                         return TextButton(
-                            onPressed: () {
+                            onPressed: () async {
                               var userInfo = context.read<UserInfo>();
+                              final assetsAudioPlayer = AssetsAudioPlayer();
+                              assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                              assetsAudioPlayer.play();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -133,53 +138,70 @@ class _GroupListState extends State<GroupList> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            myGroups[i].grpName,
-                                            textAlign: TextAlign.left,
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.w800),
-                                          ),
-                                          Text(
-                                            myGroups[i].grpDesc ??
-                                                "그룹에 대한 설명입니다.",
-                                            style: TextStyle(
-                                              fontSize: 13,
-                                              color: Colors.grey,
+                                          Padding(
+                                            padding: EdgeInsets.all(3),
+                                            child: Text(
+                                              myGroups[i].grpName,
+                                              textAlign: TextAlign.left,
+                                              style: TextStyle(
+                                                  fontSize: 18,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w800),
                                             ),
                                           ),
-                                          Row(
-                                            children: [
-                                              Container(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 6,
-                                                    vertical:
-                                                        2), // Container 위젯의 padding 속성 사용
-                                                alignment: Alignment
-                                                    .center, // Container 위젯의 alignment 속성 사용
-                                                decoration: BoxDecoration(
-                                                  color: Colors.orange,
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
-                                                ),
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: Text(
-                                                    '${myGroups[i].catName}',
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-                                                      color: Colors.white,
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                left: 3, top: 3, bottom: 3),
+                                            child: Text(
+                                              myGroups[i].grpDesc ??
+                                                  "그룹에 대한 설명입니다.",
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.all(3),
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 6,
+                                                      vertical:
+                                                          2), // Container 위젯의 padding 속성 사용
+                                                  alignment: Alignment
+                                                      .center, // Container 위젯의 alignment 속성 사용
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            30),
+                                                    border: Border.all(
+                                                        color: const Color
+                                                            .fromARGB(255, 171,
+                                                            169, 169)),
+                                                  ),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            3.0),
+                                                    child: Text(
+                                                      '${myGroups[i].catName}',
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.grey[800],
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                              Text(' 멤버 ${myGroups[i].memCnt}명',
-                                                  style:
-                                                      TextStyle(fontSize: 13))
-                                            ],
+                                                Text(
+                                                    ' 멤버 ${myGroups[i].memCnt}명',
+                                                    style:
+                                                        TextStyle(fontSize: 14))
+                                              ],
+                                            ),
                                           ),
                                         ],
                                       ),

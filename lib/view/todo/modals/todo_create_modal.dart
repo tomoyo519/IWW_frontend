@@ -3,6 +3,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/utils/extension/int.ext.dart';
 import 'package:iww_frontend/utils/extension/timeofday.ext.dart';
 import 'package:iww_frontend/utils/logger.dart';
@@ -155,7 +156,7 @@ class TodoCreateModal<T extends ChangeNotifier> extends StatelessWidget {
                             IconButton(
                               style: IconButton.styleFrom(
                                   backgroundColor: model.isValid
-                                      ? Colors.orange
+                                      ? AppTheme.primary
                                       : Colors.grey),
                               onPressed: model.isValid
                                   // * ===== 버튼을 눌러 create
@@ -261,10 +262,6 @@ class _DayPicker<T extends ChangeNotifier> extends StatelessWidget {
 
     DateTime now = DateTime.now();
     String today = DateFormat('M월 y일 aaa 요일', 'ko_KO').format(now);
-    // String today = DateFormat('M월 d일 E요일', 'ko_KO').format(now);
-    // // 이번 주의 첫째 날(월요일) 계산
-    // int daysToMonday = now.weekday - DateTime.monday;
-    // DateTime monday = now.subtract(Duration(days: daysToMonday));
 
     return SizedBox(
       width: double.infinity,
@@ -281,7 +278,8 @@ class _DayPicker<T extends ChangeNotifier> extends StatelessWidget {
                 for (int i = 0; i < 7; i++)
                   Container(
                     decoration: BoxDecoration(
-                      color: today == week[i] ? Colors.black12 : Colors.orange,
+                      color:
+                          today == week[i] ? Colors.black12 : AppTheme.primary,
                       borderRadius: BorderRadius.circular(100),
                     ),
                     width: 40,
@@ -315,40 +313,42 @@ class _LabelPicker<T extends ChangeNotifier> extends StatelessWidget {
         scrollDirection: Axis.vertical,
         child: Wrap(
           children: [
-            for (int idx = 0; idx < viewmodel.cats.length; idx++)
-              Padding(
-                padding: const EdgeInsets.only(right: 10),
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    // * ====== 선택된 라벨의 색 설정
-                    // TODO: Type으로 빼기
-                    backgroundColor:
-                        (currLabel == idx) ? Colors.orange : Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      side: BorderSide(
-                        color: Colors.grey,
-                        width: (currLabel == idx) ? 0 : 0.5,
+            if (viewmodel.cats != null && viewmodel.cats!.isNotEmpty)
+              for (int idx = 0; idx < viewmodel.cats!.length; idx++)
+                Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      // * ====== 선택된 라벨의 색 설정
+                      // TODO: Type으로 빼기
+                      backgroundColor:
+                          (currLabel == idx) ? AppTheme.primary : Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        side: BorderSide(
+                          color: Colors.grey,
+                          width: (currLabel == idx) ? 0 : 0.5,
+                        ),
+                      ),
+                    ),
+                    // * ====== 클릭하면 상태변경
+                    onPressed: () => viewmodel.cate = idx,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10,
+                      ),
+                      child: Text(
+                        viewmodel.cats![idx].name,
+                        style: TextStyle(
+                          // * ====== 선택된 라벨의 색 설정
+                          color: (currLabel == idx)
+                              ? Colors.white
+                              : Colors.black54,
+                        ),
                       ),
                     ),
                   ),
-                  // * ====== 클릭하면 상태변경
-                  onPressed: () => viewmodel.cate = idx,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 10,
-                    ),
-                    child: Text(
-                      viewmodel.cats[idx].name,
-                      style: TextStyle(
-                        // * ====== 선택된 라벨의 색 설정
-                        color:
-                            (currLabel == idx) ? Colors.white : Colors.black54,
-                      ),
-                    ),
-                  ),
-                ),
-              )
+                )
           ],
         ),
       ),

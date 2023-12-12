@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:iww_frontend/model/auth/auth_status.dart';
 import 'package:iww_frontend/service/auth.service.dart';
+import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -25,24 +27,32 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
     final status = context.read<AuthService>().status;
     bool isUser = status == AuthStatus.initialized;
 
-    List<Widget> defaultAppbar = <Widget>[
-      Row(
-        children: [
-          // 로그인된 페이지인 경우에만 캐시 노출
-          if (isUser == true) ...[
-            Padding(
-              padding: const EdgeInsets.only(right: 5.0),
-              child: Image.asset(
-                'assets/cash.png',
-                width: 25,
-                height: 25,
-              ),
-            ),
-            Text(context.read<UserInfo>().userCash.toString())
-          ]
-        ],
-      ),
-    ];
+    int userCash = context.watch<UserInfo>().userCash;
+    String formattedCash = NumberFormat('#,###').format(userCash);
+
+    Widget cash = Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: 1),
+          child: Image.asset(
+            'assets/cash.png',
+            width: 55,
+            height: 55,
+          ),
+        ),
+        Text(
+          formattedCash,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        )
+      ],
+    );
+
+    List<Widget> defaultAppbar = <Widget>[cash];
 
     if (actions != null) {
       defaultAppbar.addAll(actions!);
@@ -60,14 +70,16 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       child: AppBar(
         title: title,
         leading: leading,
-        titleTextStyle: TextStyle(
-          color: Colors.black,
-          fontSize: 15,
-          fontWeight: FontWeight.w600,
-        ),
         backgroundColor: Colors.white,
         elevation: 0,
-        actions: defaultAppbar,
+        actions: isUser
+            ? defaultAppbar
+                .map((e) => Padding(
+                      padding: EdgeInsets.only(right: 5),
+                      child: e,
+                    ))
+                .toList()
+            : null,
       ),
     );
   }

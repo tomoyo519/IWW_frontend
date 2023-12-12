@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
+import 'package:iww_frontend/style/app_theme.dart';
+import 'package:iww_frontend/utils/categories.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
@@ -11,6 +13,7 @@ import 'package:lottie/lottie.dart';
 import 'package:iww_frontend/view/todo/fields/label_list_modal.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/model/group/group.model.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 class GroupSearch extends StatefulWidget {
   const GroupSearch({super.key});
@@ -27,25 +30,12 @@ class _GroupSearchState extends State<GroupSearch> {
   bool isLoading = true;
 
   getList() async {
-    LOG.log('왜되됫던ㄱ-[ 아ㅣㄴ되냐고 시부레]');
     final userInfo = context.read<UserInfo>();
-    // final viewModel = context.watch<MyGroupViewModel>();
     final groupRepository =
         Provider.of<GroupRepository>(context, listen: false);
-    LOG.log(
-        'userid, ${userInfo.userId} ,labelNum: $labelNum, keyword: $keyword');
     var tempList = await groupRepository.getAllGroupList(
         userInfo.userId, labelNum, keyword);
-    LOG.log('thisistmepLIst:$tempList');
-    // List<GroupCategory>
-    // TODO: 카테고리 정보
-    // await RemoteDataSource.get('/category').then((res) {
-    //   if (res.statusCode == 200) {
-    //     List<dynamic> jsonList = jsonDecode(res.body);
-    //     categories = jsonList.map((e) => GroupCategory.fromJson(e)).toList();
-    //     isLoading = false;
-    //   }
-    // });
+
     setState(() {
       groupList = tempList;
     });
@@ -87,7 +77,10 @@ class _GroupSearchState extends State<GroupSearch> {
                   getList();
                 },
                 elevation: MaterialStateProperty.all(0),
-                onSubmitted: (value) {
+                onSubmitted: (value) async {
+                  final assetsAudioPlayer = AssetsAudioPlayer();
+                  assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                  assetsAudioPlayer.play();
                   FocusManager.instance.primaryFocus?.unfocus();
                   getList();
                 },
@@ -95,6 +88,7 @@ class _GroupSearchState extends State<GroupSearch> {
                     const Color.fromARGB(255, 226, 225, 225)),
                 // backgroundColor: Color(Colors.grey),
                 hintText: "키워드 검색",
+                hintStyle: MaterialStateProperty.all(TextStyle(fontSize: 20)),
                 leading: Icon(Icons.search_outlined))),
         Row(
           children: [
@@ -105,27 +99,31 @@ class _GroupSearchState extends State<GroupSearch> {
                 padding: EdgeInsets.all(1),
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: LabelListModal.labels.length,
+                  itemCount: TodoCategory.category!.length,
                   itemBuilder: (context, index) {
                     return Container(
                       padding: EdgeInsets.symmetric(horizontal: 3),
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: labelNum == index
-                              ? Colors.orange
+                              ? AppTheme.primary
                               : Colors.transparent, //회색으로, 그 외의 버튼은 흰색으로 변경
                           padding: EdgeInsets.all(2), // 패딩을 조절
                           elevation: 0, shape: StadiumBorder(), // 모서리를 완전히 둥글게
                         ),
-                        onPressed: () {
+                        onPressed: () async {
+                          final assetsAudioPlayer = AssetsAudioPlayer();
+                          assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                          assetsAudioPlayer.play();
                           setState(() {
                             labelNum = index;
                           });
                           getList();
                         },
                         child: Text(
-                          LabelListModal.labels[index],
+                          TodoCategory.category![index].name,
                           style: TextStyle(
+                            fontSize: 18,
                             color: labelNum == index
                                 ? Colors.white
                                 : Colors.black, // 클릭된 버튼의 배경색을 회색 글자색을 흰색으로 변경
@@ -151,89 +149,10 @@ class _GroupSearchState extends State<GroupSearch> {
                     child: ListView.builder(
                         itemCount: groupList!.length,
                         itemBuilder: (c, i) {
-                          String picturePath = 'assets/category/etc.jpg';
-                          switch (groupList![i].catName) {
-                            case "전체":
-                              picturePath = 'assets/category/etc.jpg';
-                              break;
-
-                            case "요가":
-                              picturePath = 'assets/category/yoga.jpg';
-                              break;
-
-                            case "공부":
-                              picturePath = 'assets/category/study.jpg';
-                              break;
-
-                            case "운동":
-                              picturePath = 'assets/category/exercise.jpg';
-                              break;
-
-                            case "코딩":
-                              picturePath = 'assets/category/coding.jpg';
-                              break;
-
-                            case "게임":
-                              picturePath = 'assets/category/game.jpg';
-                              break;
-
-                            case "명상":
-                              picturePath = 'assets/category/meditation.jpg';
-                              break;
-
-                            case "모임":
-                              picturePath = 'assets/category/group.jpg';
-                              break;
-
-                            case "학업":
-                              picturePath = 'assets/category/academy.jpg';
-                              break;
-
-                            case "자유시간":
-                              picturePath = 'assets/category/freetime.jpg';
-                              break;
-
-                            case "자기관리":
-                              picturePath = 'assets/category/selfcontrol.jpg';
-                              break;
-
-                            case "독서":
-                              picturePath = 'assets/category/reading.jpg';
-                              break;
-
-                            case "여행":
-                              picturePath = 'assets/category/travel.jpg';
-                              break;
-
-                            case "유튜브":
-                              picturePath = 'assets/category/youtube.jpg';
-                              break;
-
-                            case "약속":
-                              picturePath = 'assets/category/appointment.jpg';
-                              break;
-
-                            case "산책":
-                              picturePath = 'assets/category/walking.jpg';
-                              break;
-
-                            case "집안일":
-                              picturePath = 'assets/category/housework.jpg';
-                              break;
-
-                            case "취미":
-                              picturePath = 'assets/category/hobby.jpg';
-                              break;
-
-                            case "기타":
-                              picturePath = 'assets/category/etc.jpg';
-                              break;
-                            default:
-                              picturePath = 'assets/category/etc.jpg';
-                              break;
-                          }
+                          String picturePath =
+                              'assets/category/${groupList![i].catImg}';
                           return TextButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 var userInfo = context.read<UserInfo>();
 
                                 Navigator.push(
@@ -263,6 +182,10 @@ class _GroupSearchState extends State<GroupSearch> {
                                     ),
                                   ),
                                 );
+                                final assetsAudioPlayer = AssetsAudioPlayer();
+                                assetsAudioPlayer
+                                    .open(Audio("assets/main.mp3"));
+                                assetsAudioPlayer.play();
                               },
                               child: Container(
                                 alignment: Alignment.center,
@@ -297,57 +220,70 @@ class _GroupSearchState extends State<GroupSearch> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Text(
-                                              groupList![i].grpName,
-                                              textAlign: TextAlign.left,
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w800),
-                                            ),
-                                            Text(
-                                              groupList![i].grpDesc ??
-                                                  "그룹에 대한 설명입니다.",
-                                              style: TextStyle(
-                                                fontSize: 13,
-                                                color: Colors.grey,
+                                            Padding(
+                                              padding: EdgeInsets.all(3),
+                                              child: Text(
+                                                groupList![i].grpName,
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    color: Colors.black,
+                                                    fontWeight:
+                                                        FontWeight.w800),
                                               ),
                                             ),
-                                            Row(
-                                              children: [
-                                                Container(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 6,
-                                                      vertical:
-                                                          2), // Container 위젯의 padding 속성 사용
-                                                  alignment: Alignment
-                                                      .center, // Container 위젯의 alignment 속성 사용
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.orange,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20),
-                                                  ),
-                                                  child: Padding(
+                                            Padding(
+                                              padding: EdgeInsets.all(3),
+                                              child: Text(
+                                                groupList![i].grpDesc ??
+                                                    "그룹에 대한 설명입니다.",
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.all(3),
+                                              child: Row(
+                                                children: [
+                                                  Container(
                                                     padding:
-                                                        const EdgeInsets.all(
-                                                            5.0),
-                                                    child: Text(
-                                                      '${groupList![i].catName}',
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: TextStyle(
-                                                        fontSize: 12,
-                                                        color: Colors.white,
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 6,
+                                                            vertical: 2),
+                                                    alignment: Alignment.center,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              30),
+                                                      border: Border.all(
+                                                          color: const Color
+                                                              .fromARGB(255,
+                                                              171, 169, 169)),
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              3.0),
+                                                      child: Text(
+                                                        '${groupList![i].catName}',
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          color:
+                                                              Colors.grey[800],
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
-                                                ),
-                                                Text(
-                                                    ' 멤버 ${groupList![i].memCnt}명',
-                                                    style:
-                                                        TextStyle(fontSize: 13))
-                                              ],
+                                                  Text(
+                                                      ' 멤버 ${groupList![i].memCnt}명',
+                                                      style: TextStyle(
+                                                          fontSize: 14))
+                                                ],
+                                              ),
                                             ),
                                           ],
                                         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:iww_frontend/repository/group.repository.dart';
+import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/utils/logger.dart';
 
 import 'package:iww_frontend/view/group/groupList.dart';
@@ -9,6 +10,7 @@ import 'package:iww_frontend/view/group/newGroup.dart';
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 // ==== 종속성 주입을 위한 페이지 위젯 ==== //
 class MyGroupPage extends StatelessWidget {
@@ -32,39 +34,68 @@ class MyGroupPage extends StatelessWidget {
 }
 
 // ==== 페이지 내용 ==== //
-class MyGroup extends StatelessWidget {
-  const MyGroup({
-    super.key,
-    required this.groupRepository,
-  });
-
+class MyGroup extends StatefulWidget {
   final GroupRepository groupRepository;
+  const MyGroup({
+    Key? key,
+    required this.groupRepository,
+  }) : super(key: key);
+
+  @override
+  _MyGroupState createState() => _MyGroupState();
+}
+
+class _MyGroupState extends State<MyGroup> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _tabController = TabController(length: 2, vsync: this);
+
+    _tabController.addListener(() {
+      if (_tabController.indexIsChanging) {
+        // 효과음 재생 코드
+        final assetsAudioPlayer = AssetsAudioPlayer();
+        assetsAudioPlayer.open(Audio("assets/main.mp3"));
+        assetsAudioPlayer.play();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     var userInfo = context.read<UserInfo>();
-    return DefaultTabController(
-      initialIndex: 0,
-      length: 2,
+    Size screen = MediaQuery.of(context).size;
+    double fs = screen.width * 0.01;
+
+    return Container(
+      width: screen.width,
+      height: screen.height,
+      padding: EdgeInsets.only(
+        top: 3 * fs,
+        left: 3 * fs,
+        right: 3 * fs,
+      ),
       child: DefaultTabController(
         length: 2,
         child: Column(
           children: [
             TabBar(
+              controller: _tabController,
+              labelStyle: TextStyle(fontSize: 20),
               labelColor: Colors.black,
-              unselectedLabelColor: Colors.black,
               indicatorColor: Colors.black,
-              indicatorPadding: EdgeInsets.only(left: 8.0, right: 8.0),
               indicatorSize: TabBarIndicatorSize.tab,
               tabs: const <Widget>[
-                Tab(
-                  text: "내 그룹",
-                ),
+                Tab(text: "내 그룹"),
                 Tab(text: "그룹 찾기"),
               ],
             ),
             Expanded(
               child: TabBarView(
+                controller: _tabController,
                 children: [
                   MultiProvider(
                     providers: [
@@ -72,19 +103,27 @@ class MyGroup extends StatelessWidget {
                         value: context.read<MyGroupViewModel>(),
                       ),
                       ChangeNotifierProvider(
-                        create: (context) =>
-                            GroupDetailModel(groupRepository, userInfo.userId),
+                        create: (context) => GroupDetailModel(
+                            widget.groupRepository, userInfo.userId),
                       ),
                     ],
                     child: Stack(children: [
                       GroupList(),
                       // ==== Group Create Floating Button ==== //
                       Positioned(
-                        right: 20,
-                        bottom: 15,
+                        right: 2 * fs,
+                        bottom: 5 * fs,
                         child: IconButton(
                           onPressed: () async {
                             var userInfo = context.read<UserInfo>();
+
+                            final assetsAudioPlayer = AssetsAudioPlayer();
+
+                            assetsAudioPlayer.open(
+                              Audio("assets/main.mp3"),
+                            );
+
+                            assetsAudioPlayer.play();
                             await Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -136,12 +175,12 @@ class MyGroup extends StatelessWidget {
                             // }
                           },
                           style: IconButton.styleFrom(
-                            elevation: 1,
-                            backgroundColor: Colors.orange,
+                            elevation: 8.0,
+                            backgroundColor: AppTheme.tertiary,
                             shadowColor: Colors.black45,
                           ),
                           icon: Icon(
-                            size: 30,
+                            size: 10 * fs,
                             Icons.add,
                             color: Colors.white,
                           ),
@@ -155,31 +194,32 @@ class MyGroup extends StatelessWidget {
             ),
           ],
         ),
+
+        // bottomNavigationBar: MainPage(),
+        //   floatingActionButton: FloatingActionButton(
+        //     onPressed: () {
+        //       Navigator.push(
+        //         context,
+        //         MaterialPageRoute(
+        //           builder: (c) => MultiProvider(
+        //             providers: [
+        //               Provider(
+        //                 create: (context) =>
+        //                     Provider.of<UserInfo>(context, listen: false),
+        //               ),
+        //               ChangeNotifierProvider(
+        //                   create: (context) =>
+        //                       MyGroupViewModel(_groupRepository, _userInfo)),
+        //             ],
+        //             child: LoginWrapper(child: NewGroup()),
+        //           ),
+        //         ),
+        //       );
+        //     },
+        //     child: Icon(Icons.add),
+        //   ),
+        // ),
       ),
-      // bottomNavigationBar: MainPage(),
-      //   floatingActionButton: FloatingActionButton(
-      //     onPressed: () {
-      //       Navigator.push(
-      //         context,
-      //         MaterialPageRoute(
-      //           builder: (c) => MultiProvider(
-      //             providers: [
-      //               Provider(
-      //                 create: (context) =>
-      //                     Provider.of<UserInfo>(context, listen: false),
-      //               ),
-      //               ChangeNotifierProvider(
-      //                   create: (context) =>
-      //                       MyGroupViewModel(_groupRepository, _userInfo)),
-      //             ],
-      //             child: LoginWrapper(child: NewGroup()),
-      //           ),
-      //         ),
-      //       );
-      //     },
-      //     child: Icon(Icons.add),
-      //   ),
-      // ),
     );
   }
 }

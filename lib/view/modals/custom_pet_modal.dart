@@ -5,36 +5,17 @@ class MyPetModal extends StatefulWidget {
   MyPetModal({
     super.key,
     required this.screen,
-    required this.pet,
+    required this.itemPath,
     required this.content,
     required this.title,
     this.backgroud,
   });
 
   final Size screen;
-  final Item pet;
+  final String itemPath;
   final Widget content;
   final Widget? backgroud;
   final String? title;
-
-  final Map<String, Map<String, dynamic>> petModels = {
-    '비석_00': {
-      'src': 'assets/tomb.glb',
-      'motions': ['Idle']
-    },
-    '구미호_01': {
-      'src': 'assets/pets/small_fox.glb',
-      'motions': ['Idle', 'Walk', 'Jump']
-    },
-    '구미호_02': {
-      'src': 'assets/pets/mid_fox.glb',
-      'motions': ['Idle', 'Walk', 'Jump']
-    },
-    '구미호_03': {
-      'src': 'assets/pets/kitsune.glb',
-      'motions': ['Idle', 'Walk', 'Jump']
-    },
-  };
 
   @override
   State<MyPetModal> createState() => _MyPetModalState();
@@ -76,7 +57,7 @@ class _MyPetModalState extends State<MyPetModal> {
               child: SizedBox(
                 width: widget.screen.width * 0.5,
                 child: Image.asset(
-                  'assets/pets/kitsune_jump.gif',
+                  'assets/pets/${widget.itemPath.split('.')[0]}.gif',
                 ),
               ),
             ),

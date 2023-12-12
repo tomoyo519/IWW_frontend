@@ -1,160 +1,138 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:iww_frontend/utils/extension/int.ext.dart';
+import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
-import 'package:lottie/lottie.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
-import 'package:path/path.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
+import 'package:percent_indicator/percent_indicator.dart' as pi;
 
 // 할일 상태 바
+// class TodoProgress extends StatefulWidget {
+//   TodoProgress({super.key});
+
+//   @override
+//   State<TodoProgress> createState() => _TodoProgressState();
+// }
+
 class TodoProgress extends StatelessWidget {
-  TodoProgress({super.key});
+  const TodoProgress({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final screen = MediaQuery.of(context).size;
-    final model = context.watch<TodoViewModel>();
-    final userinfo = context.watch<UserInfo>();
-
-    final cash = NumberFormat('#,##0').format(
-      userinfo.userCash,
-    );
+    Size screen = MediaQuery.of(context).size;
+    double fs = screen.width * 0.01;
+    TodoViewModel model = context.watch<TodoViewModel>();
+    UserInfo userinfo = context.watch<UserInfo>();
 
     DateTime now = DateTime.now();
     String today = DateFormat('M월 d일 E요일', 'ko_KO').format(now);
+    String filepath = userinfo.mainPet.path!.split('.')[0];
 
-    // 이번 주의 첫째 날(월요일) 계산
-    int daysToMonday = now.weekday - DateTime.monday;
-    DateTime monday = now.subtract(Duration(days: daysToMonday));
+    int todayTotal = model.todayTotal;
+    int todayDone = model.todayDone;
 
-    // 이번 주의 마지막 날(일요일) 계산
-    // int daysToSunday = DateTime.sunday - now.weekday;
-    // DateTime sunday = now.add(Duration(days: daysToSunday));
+    double progress = todayTotal == 0 ? 0 : todayDone / todayTotal;
 
-    // print('이번 주의 시작일: $monday');
-    // print('이번 주의 종료일: $sunday');
-
-    double progress =
-        model.todayTotal == 0 ? 0 : model.todayDone / model.todayTotal;
-
-    Map<String, String> assetPath = {
-      "기본펫": "assets/pets/small_fox.glb",
-      "구미호_01": "assets/pets/small_fox.glb",
-      "구미호_02": "assets/pets/mid_fox.glb",
-      "구미호_03": "assets/pets/kitsune.glb",
-      "용_01": "assets/pets/monitor_lizard.glb",
-      "용_02": "assets/pets/horned_lizard.glb",
-      "용_03": "assets/pets/chinese_dragon.glb",
-      "불사조_01": "assets/pets/pink_robin.glb",
-      "불사조_02": "assets/pets/archers_buzzard.glb",
-      "불사조_03": "assets/pets/pheonix.glb",
-    };
-
-    return SizedBox(
-      width: screen.width,
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          vertical: 5,
-          horizontal: 10,
-        ),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Color.fromARGB(255, 241, 241, 241),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+    return Container(
+      padding: EdgeInsets.all(2 * fs),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: Color.fromARGB(255, 241, 241, 241),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                        RichText(
-                          text: TextSpan(
-                            style: TextStyle(
-                              color: Colors.black87,
-                              fontSize: 22,
-                              fontWeight: FontWeight.normal,
-                            ),
-                            children: [
-                              TextSpan(
-                                text: today,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              TextSpan(
-                                text: "\n오늘의 할일은 무엇인가요",
-                                style: TextStyle(
-                                  color: Colors.black54,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
+                  Text(
+                    today,
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontSize: 5 * fs,
+                      fontWeight: FontWeight.w800,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Text(
+                    "오늘의 할일은 무엇인가요?",
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontSize: 3.5 * fs,
+                      fontWeight: FontWeight.normal,
+                      fontFamily: AppTheme.font,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Container(
+                    width: 50 * fs,
+                    height: 18 * fs,
+                    margin: EdgeInsets.symmetric(vertical: 2 * fs),
+                    padding: EdgeInsets.symmetric(vertical: fs),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(2 * fs),
+                    ),
+                    child: Row(
+                      children: [
+                        _TodayBadge(
+                          title: "달성",
+                          data: model.todayDone,
+                          color: AppTheme.primary,
                         ),
-                        DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: Color(0xffeeeeee),
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          child: Row(
-                            children: [
-                              _TodayBadge(
-                                title: "달성",
-                                data: model.todayDone,
-                              ),
-                              _TodayBadge(
-                                title: "미달성",
-                                data: model.todayTotal - model.todayDone,
-                              ),
-                            ],
-                          ),
-                        )
-                      ])),
-                  SizedBox(
-                    width: screen.width * 0.3,
-                    child: ModelViewer(
-                      interactionPrompt: InteractionPrompt.none,
-                      src: assetPath[userinfo.itemName]!,
-                      animationName: 'Idle_A',
-                      autoPlay: true,
-                      cameraControls: false,
-                      cameraOrbit: '25deg 75deg 105%',
+                        _TodayBadge(
+                          title: "미달성",
+                          data: model.todayTotal - model.todayDone,
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
-            ),
-            Container(
-              margin: EdgeInsets.only(bottom: 5),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(100),
-                color: Colors.white,
-              ),
-              height: 5,
-              width: screen.width,
-              child: FractionallySizedBox(
-                alignment: Alignment.centerLeft,
-                widthFactor: progress,
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    color: const Color.fromARGB(255, 255, 128, 0),
-                  ),
+              SizedBox(
+                width: 30 * fs,
+                height: 35 * fs,
+                child: ModelViewer(
+                  key: ValueKey(filepath),
+                  interactionPrompt: InteractionPrompt.none,
+                  src: 'assets/pets/$filepath.glb',
+                  animationName: 'Idle_A',
+                  autoPlay: true,
+                  cameraControls: false,
+                  disableZoom: true,
+                  disablePan: true,
+                  touchAction: TouchAction.none,
+                  shadowIntensity: 1,
+                  shadowSoftness: 1,
+                  cameraOrbit: '25deg 75deg 2.5m', // TODO: 확인
                 ),
               ),
-            )
-          ],
-        ),
+            ],
+          ),
+          Expanded(
+            child: pi.LinearPercentIndicator(
+              width: MediaQuery.of(context).size.width - 10 * fs,
+              animation: true,
+              lineHeight: 5 * fs,
+              animationDuration: 800,
+              percent: progress,
+              center: Text(
+                "달성률 $todayDone / $todayTotal",
+                style: TextStyle(fontSize: 3.5 * fs),
+              ),
+              barRadius: Radius.circular(10),
+              progressColor: AppTheme.primary,
+              backgroundColor: Colors.white,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -163,67 +141,39 @@ class TodoProgress extends StatelessWidget {
 class _TodayBadge extends StatelessWidget {
   final String title;
   final int? data;
+  Color? color;
 
-  const _TodayBadge({
+  _TodayBadge({
     required this.title,
     required this.data,
+    this.color,
   });
 
   @override
   Widget build(BuildContext context) {
+    double fs = MediaQuery.of(context).size.width * 0.01;
     return Expanded(
-        flex: 1,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              data.toString(),
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 12,
-              ),
-            ),
-          ],
-        ));
-  }
-}
-
-class CashBadge extends StatelessWidget {
-  const CashBadge({
-    super.key,
-    required this.cash,
-  });
-
-  final String cash;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        SizedBox(
-          width: 25,
-          height: 25,
-          child: Lottie.asset(
-            "assets/todo/coin.json",
-            animate: false,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            data.toString(),
+            style: TextStyle(
+                fontSize: 6 * fs,
+                fontWeight: FontWeight.w900,
+                color: color ?? Colors.black54),
           ),
-        ),
-        Text(
-          cash,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.bold,
-            color: Colors.orange,
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 3 * fs,
+              color: color ?? Colors.black54,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        )
-      ],
+        ],
+      ),
     );
   }
 }

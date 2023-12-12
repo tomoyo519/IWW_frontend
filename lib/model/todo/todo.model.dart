@@ -1,6 +1,7 @@
 import "dart:convert";
 import "package:http/http.dart" as http;
 import "package:intl/intl.dart";
+import "package:iww_frontend/utils/logger.dart";
 
 class Todo {
   int todoId;
@@ -99,13 +100,19 @@ class Todo {
   }
 
   factory Todo.fromJson(Map<String, dynamic> body) {
+    String date = body['todo_date'];
+    date = date.replaceAll('-', '');
+    String year = date.substring(0, 4);
+    String month = date.substring(4, 6);
+    String day = date.substring(6, 8);
+
     return Todo(
       todoId: body['todo_id'],
       userId: body['user_id'],
       todoName: body['todo_name'],
       todoDesc: body['todo_desc'],
       todoLabel: body['todo_label'],
-      todoDate: body['todo_date'],
+      todoDate: '$year-$month-$day',
       todoDone: body['todo_done'],
       todoStart: body['todo_start'],
       todoEnd: body['todo_end'],

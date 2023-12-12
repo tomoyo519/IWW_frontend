@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:iww_frontend/secrets/secrets.dart';
+import 'package:iww_frontend/style/app_theme.dart';
 import 'package:lottie/lottie.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 class ShowItem extends StatelessWidget {
   ShowItem({super.key, this.allpets, this.purchase, required this.isLoading});
@@ -21,7 +22,7 @@ class ShowItem extends StatelessWidget {
                     itemCount: allpets?.length,
                     itemBuilder: (context, idx) {
                       return GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -47,14 +48,20 @@ class ShowItem extends StatelessWidget {
                                         child: TextButton(
                                           child: Text('예',
                                               style: TextStyle(
+                                                  fontSize: 17,
                                                   color: Colors.white)),
                                           style: TextButton.styleFrom(
-                                              backgroundColor: Colors.orange,
+                                              backgroundColor: AppTheme.primary,
                                               shape: RoundedRectangleBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           10))),
-                                          onPressed: () {
+                                          onPressed: () async {
+                                            final assetsAudioPlayer =
+                                                AssetsAudioPlayer();
+                                            assetsAudioPlayer
+                                                .open(Audio("assets/main.mp3"));
+                                            assetsAudioPlayer.play();
                                             purchase(allpets?[idx].item_id);
                                           },
                                         ),
@@ -64,6 +71,7 @@ class ShowItem extends StatelessWidget {
                                         child: TextButton(
                                           child: Text('아니요',
                                               style: TextStyle(
+                                                  fontSize: 17,
                                                   color: Colors.white)),
                                           style: TextButton.styleFrom(
                                               backgroundColor: Colors.grey,
@@ -71,7 +79,12 @@ class ShowItem extends StatelessWidget {
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           10))),
-                                          onPressed: () {
+                                          onPressed: () async {
+                                            final assetsAudioPlayer =
+                                                AssetsAudioPlayer();
+                                            assetsAudioPlayer
+                                                .open(Audio("assets/main.mp3"));
+                                            assetsAudioPlayer.play();
                                             Navigator.of(context).pop();
                                           },
                                         ),
@@ -82,6 +95,9 @@ class ShowItem extends StatelessWidget {
                               );
                             },
                           );
+                          final assetsAudioPlayer = AssetsAudioPlayer();
+                          assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                          assetsAudioPlayer.play();
                         },
                         child: Padding(
                             padding: const EdgeInsets.all(10.0),
@@ -116,7 +132,7 @@ class ShowItem extends StatelessWidget {
                                             allpets?[idx].item_name ?? "",
                                             style: TextStyle(
                                               fontWeight: FontWeight.w700,
-                                              fontSize: 16,
+                                              fontSize: 17,
                                             ),
                                           ),
                                           Text(

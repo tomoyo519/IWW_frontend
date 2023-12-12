@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
+import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/utils/extension/string.ext.dart';
 import 'package:iww_frontend/utils/extension/timeofday.ext.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
@@ -33,14 +34,13 @@ class _MyTodoTileState extends State<MyTodoTile> {
   Widget build(BuildContext context) {
     DateTime yesterday = DateTime.now().subtract(Duration(days: 1));
     bool isDelayed = DateTime.parse(widget.todo.todoDate).isBefore(yesterday);
+    double fs = MediaQuery.of(context).size.width * 0.01;
 
     return Container(
       padding: EdgeInsets.symmetric(
-        vertical: 5,
+        vertical: 3 * fs,
       ),
-      // margin: EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        // color: Color.fromARGB(255, 246, 246, 246),
         border: Border(
           bottom: BorderSide(
             width: 1,
@@ -54,7 +54,7 @@ class _MyTodoTileState extends State<MyTodoTile> {
         children: [
           Checkbox(
             checkColor: Colors.white,
-            activeColor: Colors.orange,
+            activeColor: AppTheme.primary,
             value: widget.todo.todoDone,
             onChanged: (bool? value) async {
               // * ==== 투두가 체크되었을 때의 콜백 ==== * //
@@ -77,7 +77,7 @@ class _MyTodoTileState extends State<MyTodoTile> {
                   widget.todo.todoName,
                   textAlign: TextAlign.start,
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 4.5 * fs,
                     fontWeight: FontWeight.w600,
                     color: widget.todo.todoDone ? Colors.black26 : Colors.black,
                   ),
@@ -86,7 +86,7 @@ class _MyTodoTileState extends State<MyTodoTile> {
                   toViewDate(widget.todo.todoDate, widget.todo.todoStart),
                   textAlign: TextAlign.start,
                   style: TextStyle(
-                    fontSize: 13,
+                    fontSize: 3.5 * fs,
                     color: widget.todo.todoDone
                         ? Colors.black26
                         : isDelayed
@@ -98,7 +98,7 @@ class _MyTodoTileState extends State<MyTodoTile> {
             ),
           ),
           widget.todo.grpId == null
-              ? SizedBox(width: 0)
+              ? SizedBox.shrink()
               : Icon(Icons.groups_outlined)
         ],
       ),

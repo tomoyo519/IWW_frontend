@@ -2,8 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
+import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/style/button.dart';
 import 'package:iww_frontend/style/button.type.dart';
+import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/_navigation/enum/app_route.dart';
 import 'package:iww_frontend/view/modals/custom_fullscreen_modal.dart';
@@ -11,45 +13,64 @@ import 'package:iww_frontend/view/modals/custom_pet_modal.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
-void showTodoApprovedModal(BuildContext context, {required String message}) {
+Future<Object?> showTodoApprovedModal(BuildContext context,
+    {required String message}) {
   Size screen = MediaQuery.of(context).size;
-  Item pet = context.read<UserInfo>().mainPet;
 
-  showCustomFullScreenModal(
+  Map<String, dynamic> data = jsonDecode(message);
+  String itemPath = data['item_path'];
+  String approveMessege = data['message']!;
+
+  return showCustomFullScreenModal(
     context: context,
     builder: (context) => TodoApprovedModal(
-      pet: pet,
+      itemPath: itemPath,
       screen: screen,
-      approveMessege: message,
+      approveMessege: approveMessege,
     ),
   );
 }
 
+extension DoubleExt on double {
+  double x(double mul) => this * mul;
+}
+
 //
 class TodoApprovedModal extends StatelessWidget {
-  final Item pet;
+  final String itemPath;
   final Size screen;
   String approveMessege;
-
+  final assetsAudioPlayer = AssetsAudioPlayer();
   TodoApprovedModal({
     super.key,
-    required this.pet,
+    required this.itemPath,
     required this.screen,
     required this.approveMessege,
   });
 
   @override
   Widget build(BuildContext context) {
+    assetsAudioPlayer.open(Audio("assets/coin.mp3"));
+    assetsAudioPlayer.play();
+    double fs = MediaQuery.of(context).size.width * 0.01;
+
     return MyPetModal(
-      pet: pet,
+      itemPath: itemPath,
       screen: screen,
       title: "그룹 할일 인증 완료!",
       content: Column(
         children: [
           Padding(
             padding: const EdgeInsets.only(bottom: 10),
-            child: Text(approveMessege),
+            child: Text(
+              approveMessege,
+              style: TextStyle(
+                fontSize: 3.5 * fs,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.only(bottom: 10),
@@ -63,14 +84,14 @@ class TodoApprovedModal extends StatelessWidget {
                   vertical: 10,
                 ),
                 child: Row(
-                  children: const [
+                  children: [
                     _StateBadge(
                       title: "10",
                       desc: "경험치 상승",
                       icon: Icon(
                         Icons.keyboard_double_arrow_up_rounded,
-                        color: Colors.orange,
-                        size: 20,
+                        color: AppTheme.secondary,
+                        size: 6 * fs,
                       ),
                     ),
                     _StateBadge(
@@ -78,8 +99,8 @@ class TodoApprovedModal extends StatelessWidget {
                       desc: "캐시 보상",
                       icon: Icon(
                         Icons.monetization_on_outlined,
-                        color: Colors.orange,
-                        size: 18,
+                        color: AppTheme.primary,
+                        size: 6 * fs,
                       ),
                     ),
                   ],
@@ -92,25 +113,16 @@ class TodoApprovedModal extends StatelessWidget {
               Expanded(
                 flex: 1,
                 child: MyButton(
-                  full: true,
                   text: "닫기",
-                  type: MyButtonType.secondary,
-                  onpressed: (_) => Navigator.pop(context),
-                ),
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              Expanded(
-                flex: 1,
-                child: MyButton(
-                  text: "상점 바로가기",
-                  onpressed: (_) {
+                  type: MyButtonType.shaded,
+                  onpressed: (_) async {
                     Navigator.pop(context);
-                    context.read<AppNavigator>().navigate(AppRoute.shop);
+                    final assetsAudioPlayer = AssetsAudioPlayer();
+                    assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                    assetsAudioPlayer.play();
                   },
                 ),
-              )
+              ),
             ],
           )
         ],
@@ -137,16 +149,17 @@ class _StateBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double fs = MediaQuery.of(context).size.width * 0.01;
     return Expanded(
       child: Column(
         children: [
           Text(
             title,
             style: TextStyle(
-              fontSize: 20,
+              fontSize: 7 * fs,
               fontFamily: 'IBMPlexSansKR',
               fontWeight: FontWeight.w900,
-              color: Color(0xfff08636),
+              color: AppTheme.tertiary,
             ),
           ),
           Padding(
@@ -160,9 +173,7 @@ class _StateBadge extends StatelessWidget {
                 ),
                 Text(
                   desc,
-                  style: TextStyle(
-                      // fontWeight: FontWeight.bold,
-                      ),
+                  style: TextStyle(fontSize: 4 * fs),
                 ),
               ],
             ),

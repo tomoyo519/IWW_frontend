@@ -6,6 +6,7 @@ import 'package:iww_frontend/datasource/localStorage.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/auth/login_result.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
+import 'package:iww_frontend/model/mypage/reward.model.dart';
 import 'package:iww_frontend/model/user/attendance.model.dart';
 import 'package:iww_frontend/model/user/get-user-by-contact.dto.dart';
 import 'package:iww_frontend/model/user/user.model.dart';
@@ -175,17 +176,47 @@ class UserRepository {
 
   Future<List<UserAttandance>?> fetUserAtt(userId) async {
     try {
-      return RemoteDataSource.get("/attendance/${userId}").then((res) {
+      return RemoteDataSource.get("/attendance/$userId").then((res) {
         if (res.statusCode == 200) {
           var jsonData = json.decode(res.body);
-
-          LOG.log('${jsonData["result"]}');
           return List<UserAttandance>.from(
               jsonData["result"].map((item) => UserAttandance.fromJson(item)));
         }
+        return null;
       });
     } catch (err) {
       return null;
     }
+  }
+
+  Future<Map<String, dynamic>?> fetchUserTier(userId) async {
+    try {
+      return await RemoteDataSource.get('/user/$userId/statistics').then((res) {
+        if (res.statusCode == 200) {
+          var json = jsonDecode(res.body);
+          return json['result'];
+        }
+        return null;
+      });
+    } catch (error) {
+      return null;
+    }
+  }
+
+  // 유저 로그인이 완료된 경우 오늘자 투두 생성
+  // 로그인에 따른 리워드가 있는 경우 반환
+  Future<Rewards?> initializeTodos(int userId) async {
+    return await RemoteDataSource.post("/todo/user/$userId").then(
+      (response) {
+        if (response.statusCode == 201) {
+          var jsonBody = jsonDecode(response.body);
+          LOG.log("Initialize todo: $jsonBody");
+
+          if (jsonBody['user_achi'] != null) {
+            return Rewards.fromJson(jsonBody['user_achi']);
+          }
+        }
+      },
+    );
   }
 }

@@ -35,10 +35,23 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final Size screenSize = MediaQuery.of(context).size;
+    final double targetHeight = screenSize.height;
+    final double targetWidth = screenSize.height * _controller!.value.aspectRatio;
+
     return Scaffold(
-      body: _controller!.value.isInitialized
-          ? VideoPlayer(_controller!)
-          : Center(child: CircularProgressIndicator()),
+      body: Center(
+        child: _controller!.value.isInitialized
+            ? FittedBox(
+                fit: BoxFit.cover,
+                child: SizedBox(
+                  width: targetWidth,
+                  height: targetHeight,
+                  child: VideoPlayer(_controller!),
+                ),
+              )
+            : CircularProgressIndicator(),
+      ),
     );
   }
 

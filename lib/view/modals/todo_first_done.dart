@@ -6,11 +6,14 @@ import 'package:iww_frontend/view/modals/custom_pet_modal.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
-void showTodoDoneModal(BuildContext context) {
+Future<Object?> showTodoDoneModal(BuildContext context) {
   Size screen = MediaQuery.of(context).size;
   Item pet = context.read<UserInfo>().mainPet;
-
+  final assetsAudioPlayer = AssetsAudioPlayer();
+  assetsAudioPlayer.open(Audio("assets/coin.mp3"));
+  assetsAudioPlayer.play();
   Widget background = SizedBox(
     width: double.infinity,
     height: double.infinity,
@@ -19,10 +22,11 @@ void showTodoDoneModal(BuildContext context) {
     ),
   );
 
-  showCustomFullScreenModal(
+// TODO - 투두 완료 소리 넣기.
+  return showCustomFullScreenModal(
     context: context,
     builder: (context) => MyPetModal(
-      pet: pet,
+      itemPath: pet.path!,
       screen: screen,
       title: '오늘의 첫 할일 달성!',
       backgroud: background,
@@ -57,7 +61,17 @@ void showTodoDoneModal(BuildContext context) {
           ),
           MyButton(
             // full: true,
-            onpressed: (_) => Navigator.pop(context),
+            onpressed: (_) async {
+              Navigator.pop(context, true);
+              final assetsAudioPlayer = AssetsAudioPlayer();
+
+              assetsAudioPlayer.open(
+                Audio("assets/main.mp3"),
+              );
+
+              assetsAudioPlayer.play();
+              ;
+            },
             text: "닫기",
           ),
         ],

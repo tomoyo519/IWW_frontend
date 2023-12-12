@@ -40,6 +40,8 @@ class GroupDetail {
   final String regAt;
   final String userName;
   final String catName;
+  final String catImg;
+  final int? catId;
 
   GroupDetail({
     required this.grpId,
@@ -48,6 +50,8 @@ class GroupDetail {
     required this.regAt,
     required this.userName,
     required this.catName,
+    required this.catImg,
+    this.catId,
   });
 
   factory GroupDetail.fromJson(Map<String, dynamic> json) {
@@ -58,6 +62,8 @@ class GroupDetail {
       regAt: json['reg_at'],
       userName: json['user_name'] ?? 'user',
       catName: json['cat_name'],
+      catImg: json['cat_img'],
+      catId: json['cat_id'] ?? 0, // TODO: 수정
     );
   }
 
@@ -68,6 +74,8 @@ class GroupDetail {
       'grp_desc': grpDesc,
       'reg_at': regAt,
       'user_name': userName,
+      'cat_id': catId,
+      'cat_img': catImg,
       'cat_name': catName,
     };
   }

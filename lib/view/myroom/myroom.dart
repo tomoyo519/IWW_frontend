@@ -5,11 +5,13 @@ import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';
 import 'package:iww_frontend/view/inventory/newinventory.dart';
+import 'package:iww_frontend/view/test/test.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:iww_frontend/view/myroom/render_page.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 class MyRoom extends StatelessWidget {
   const MyRoom({super.key});
@@ -25,7 +27,10 @@ class MyRoom extends StatelessWidget {
     // 내비게이터 설정
     final nav = context.read<AppNavigator>();
     int roomOwner = nav.arg != null ? int.parse(nav.arg!) : userId;
-    nav.title = '친구의방';
+    if (roomOwner != userId) {
+      // 방 주인이 유저가 아니면 홈 라벨 지우기
+      nav.title = '';
+    }
 
     LOG.log('Room page: user id $userId, owner id $roomOwner');
 
@@ -33,19 +38,13 @@ class MyRoom extends StatelessWidget {
       ChangeNotifierProvider<CommentsProvider>(
           create: (_) => CommentsProvider(
                 userId.toString(),
-                userId.toString(),
+                roomOwner.toString(),
                 commentRepository,
               )),
       ChangeNotifierProvider<MyRoomViewModel>(
           create: (_) => MyRoomViewModel(userId, roomRepository, roomOwner)),
-      ChangeNotifierProvider(create: (_) => MyRoomState()),
     ], child: MyRoomPage());
   }
-}
-
-// 인벤토리 뷰 토글을 위한 상태관리
-class MyRoomState extends ChangeNotifier {
-  // TODO 필요에 따라서 사용
 }
 
 // 마이룸 기본 페이지
@@ -126,6 +125,8 @@ class _MyRoomPageState extends State<MyRoomPage> {
         return RenderPage();
       // case 1:
       //   return InventoryPage();
+      case 3:
+        return FontTestPage();
       default:
         return Center(
             child: SizedBox(
@@ -137,45 +138,134 @@ class _MyRoomPageState extends State<MyRoomPage> {
     return SpeedDial(
       overlayOpacity: 0.0,
       animatedIcon: AnimatedIcons.view_list,
+      onOpen: () async {
+        final assetsAudioPlayer = AssetsAudioPlayer();
+        assetsAudioPlayer.open(Audio("assets/main.mp3"));
+        assetsAudioPlayer.play();
+      },
+      onClose: () async {
+        final assetsAudioPlayer = AssetsAudioPlayer();
+        assetsAudioPlayer.open(Audio("assets/main.mp3"));
+        assetsAudioPlayer.play();
+      },
       children: [
         SpeedDialChild(
+          elevation: 0.0,
+          labelWidget: Container(
+            padding: EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Text(
+              "마이홈",
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
           shape: CircleBorder(),
           child: CircleAvatar(
             // 원형 아이콘
             backgroundColor: Colors.white,
-            child: Icon(Icons.home),
+            child: Icon(
+              Icons.home,
+              color: Colors.black,
+            ),
           ),
           // label: '마이홈',
           // labelBackgroundColor: Colors.green, // 투
 
-          onTap: () => setState(() {
-            _selectedIndex = 0;
-          }),
+          onTap: () async {
+            setState(() {
+              _selectedIndex = 0;
+            });
+            final assetsAudioPlayer = AssetsAudioPlayer();
+            assetsAudioPlayer.open(Audio("assets/main.mp3"));
+            assetsAudioPlayer.play();
+          },
         ),
         SpeedDialChild(
           shape: CircleBorder(),
-          onTap: _showInventorySheet,
+          labelWidget: Container(
+            padding: EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Text(
+              "인벤토리",
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+          onTap: () async {
+            final assetsAudioPlayer = AssetsAudioPlayer();
+            assetsAudioPlayer.open(Audio("assets/main.mp3"));
+            assetsAudioPlayer.play();
+            return _showInventorySheet();
+          },
           child: CircleAvatar(
             backgroundColor: (Colors.white),
-            child: Icon(Icons.work_rounded),
+            child: Icon(
+              Icons.work_rounded,
+              color: Colors.black,
+            ),
           ),
           // label: '인벤토리',
         ),
         SpeedDialChild(
+          labelWidget: Container(
+            padding: EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Text(
+              "방명록",
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
           shape: CircleBorder(),
           // label: '방명록',
-          onTap: _showComments,
+          // onTap: ,
+          onTap: () async {
+            final assetsAudioPlayer = AssetsAudioPlayer();
+            assetsAudioPlayer.open(Audio("assets/main.mp3"));
+            assetsAudioPlayer.play();
+            return _showComments();
+          },
+
           // child: Icon(Icons.local_post_office),
-          child: Icon(Icons.comment_rounded),
+          child: Icon(
+            Icons.comment_rounded,
+            color: Colors.black,
+          ),
           // label: '방명록',
         ),
         SpeedDialChild(
           shape: CircleBorder(),
-          child: Icon(Icons.group),
+          child: Icon(
+            Icons.group,
+            color: Colors.black,
+          ),
+          labelWidget: Container(
+            padding: EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Text(
+              "친구목록",
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
           // label: '친구목록',
-          onTap: () => setState(() {
-            _selectedIndex = 3;
-          }),
+          onTap: () async {
+            setState(() {
+              _selectedIndex = 3;
+            });
+            final assetsAudioPlayer = AssetsAudioPlayer();
+            assetsAudioPlayer.open(Audio("assets/main.mp3"));
+            assetsAudioPlayer.play();
+          },
         ),
       ],
       child: Icon(Icons.menu),

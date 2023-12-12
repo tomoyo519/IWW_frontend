@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
+import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 class Preset {
   final String animationName;
@@ -22,27 +26,16 @@ class Preset {
 }
 
 class MyPet extends StatefulWidget {
-  final String newSrc;
-  final bool isDead;
+  MyPet({super.key, required this.firstSrc});
 
-  const MyPet({Key? key, required this.newSrc, required this.isDead})
-      : super(key: key);
+  String firstSrc;
 
   @override
   State<MyPet> createState() => _MyPetState();
 }
 
 class _MyPetState extends State<MyPet> {
-  int _petActionIndex = 1;
-
   final Map<String, Preset> presets = {
-    '비석': Preset(
-      animationName: 'Idle',
-      cameraOrbit: '30deg 80deg 8m',
-      cameraTarget: '0.3m 0.9m 0.4m',
-      autoRotate: false,
-      rotationPerSecond: '0rad',
-    ),
     // 움직임
     'Walk': Preset(
       animationName: 'Walk',
@@ -65,7 +58,21 @@ class _MyPetState extends State<MyPet> {
       autoRotate: true,
       rotationPerSecond: '0.6rad',
     ),
-    // 이하 제자리
+    'Run': Preset(
+      animationName: 'Run',
+      cameraOrbit: '0deg 70deg 8m',
+      cameraTarget: '0.7m 0.7m 0m',
+      autoRotate: true,
+      rotationPerSecond: '1.2rad',
+    ),
+    'Fly': Preset(
+      animationName: 'Fly',
+      cameraOrbit: '0deg 70deg 8m',
+      cameraTarget: '0.7m 0.7m 0m',
+      autoRotate: true,
+      rotationPerSecond: '1.2rad',
+    ),
+    // 제자리
     'Idle': Preset(
       animationName: 'Idle',
       cameraOrbit: '30deg 80deg 0m',
@@ -74,10 +81,17 @@ class _MyPetState extends State<MyPet> {
       rotationPerSecond: '0rad',
     ),
     'Jump': Preset(
-        animationName: 'Jump',
-        cameraOrbit: '30deg 80deg 0m',
+      animationName: 'Jump',
+      cameraOrbit: '30deg 80deg 0m',
       cameraTarget: '0.5m 0.8m 0.8m',
-        autoRotate: false,
+      autoRotate: false,
+      rotationPerSecond: '0rad',
+    ),
+    'Sit': Preset(
+      animationName: 'Sit',
+      cameraOrbit: '30deg 80deg 0m',
+      cameraTarget: '0.5m 0.8m 0.8m',
+      autoRotate: false,
       rotationPerSecond: '0rad',
     ),
     'Bounce': Preset(
@@ -101,118 +115,210 @@ class _MyPetState extends State<MyPet> {
       autoRotate: false,
       rotationPerSecond: '0rad',
     ),
+    'Eat': Preset(
+      animationName: 'Eat',
+      cameraOrbit: '30deg 80deg 0m',
+      cameraTarget: '0.5m 0.8m 0.8m',
+      autoRotate: false,
+      rotationPerSecond: '0rad',
+    ),
   };
 
-  final Map<String, Map<String, dynamic>> petModels = {
-    '비석_00': {
-      'src': 'assets/tomb.glb',
-      'motions': ['Idle']
-    },
-    '기본펫': {
-      'src': 'assets/pets/small_fox.glb',
-      'motions': ['Idle', 'Walk', 'Jump']
-    },
-    '구미호_01': {
-      'src': 'assets/pets/small_fox.glb',
-      'motions': ['Idle', 'Walk', 'Jump']
-    },
-    '구미호_02': {
-      'src': 'assets/pets/mid_fox.glb',
-      'motions': [
-        'Idle',
-        'Walk',
-        'Jump',
-        'Roll',
-        'Swim',
-        'Spin',
-        'Bounce',
-        'Clicked'
-      ]
-    },
-    '구미호_03': {
-      'src': 'assets/pets/kitsune.glb',
-      'motions': [
-        'Idle',
-        'Walk',
-        'Jump',
-        'Roll',
-        'Swim',
-        'Spin',
-        'Bounce',
-        'Clicked'
-      ]
-    },
-    '용_01': {
-      'src': 'assets/pets/monitor_lizard.glb',
-      'motions': ['Idle', 'Walk', 'Jump']
-    },
-    '용_02': {
-      'src': 'assets/pets/horned_lizard.glb',
-      'motions': ['Idle', 'Walk', 'Jump']
-    },    
-    '용_03': {
-      'src': 'assets/pets/chinese_dragon.glb',
-      'motions': ['Idle', 'Walk', 'Jump']
-    },
-    '불사조_01': {
-      'src': 'assets/pets/pink_robin.glb',
-      'motions': ['Idle', 'Walk', 'Jump']
-    },
-    '불사조_02': {
-      'src': 'assets/pets/archers_buzzard.glb',
-      'motions': ['Idle', 'Walk', 'Jump']
-    },
-    '불사조_03': {
-      'src': 'assets/pets/pheonix.glb',
-      'motions': ['Idle', 'Walk', 'Jump']
-    },
+  // NOTE 모든 모델 파일은 .glb 포맷 사용
+  final Map<String, List<String>> motions = {
+    'small_fox': ['Spin', 'Walk', 'Jump', 'Sit', 'Bounce', 'Idle'],
+    'mid_fox': [
+      'Spin',
+      'Walk',
+      'Jump',
+      'Roll',
+      'Swim',
+      'Idle',
+      'Bounce',
+      'Clicked'
+    ],
+    'kitsune': [
+      'Spin',
+      'Walk',
+      'Spin',
+      'Jump',
+      'Sit',
+      'Roll',
+      'Swim',
+      'Bounce',
+      'Clicked'
+    ],
+    'monitor_lizard': ['Spin', 'Walk', 'Jump', 'Idle', 'Bounce', 'Sit'],
+    'horned_lizard': ['Spin', 'Walk', 'Jump', 'Idle', 'Bounce', 'Run', 'Roll'],
+    'chinese_dragon': ['Spin', 'Walk', 'Jump', 'Idle', 'Bounce'],
+    'pink_robin': [
+      'Spin',
+      'Walk',
+      'Jump',
+      'Fly',
+      'Clicked',
+      'Eat',
+      'Sit',
+    ],
+    'archers_buzzard': [
+      'Spin',
+      'Walk',
+      'Jump',
+      'Idle',
+      'Bounce',
+      'Eat',
+      'Clicked',
+      'Fly',
+      'Roll',
+      'Sit',
+    ],
+    'phoenix': [
+      'Spin',
+      'Walk',
+      'Jump',
+      'Clicked',
+      'Idle',
+      'Fly',
+      'Swim',
+      'Run',
+      'Roll',
+      'Bounce',
+      'Eat',
+      'Sit',
+    ],
   };
+
+  void happyMotion(BuildContext context) {
+    OverlayEntry overlayEntry;
+    final assetsAudioPlayer = AssetsAudioPlayer();
+
+    // 효과음 재생
+    assetsAudioPlayer.open(Audio("assets/happy.mp3"));
+    assetsAudioPlayer.play();
+
+    overlayEntry = OverlayEntry(
+      builder: (BuildContext context) => Positioned(
+        top: MediaQuery.of(context).size.height / 2, // 화면 중앙으로 위치 지정
+        left: MediaQuery.of(context).size.width / 2 - 150,
+        child: Material(
+          color: Colors.transparent,
+          child: Image.asset('assets/happy.png', height: 100, width: 100),
+        ),
+      ),
+    );
+
+    double time = 0;
+    bool isOverlayAdded = false;
+
+    LOG.log('#### 펫이 통통 튑니다! ####');
+
+    Timer.periodic(Duration(milliseconds: 600), (timer) {
+      time += 0.6;
+      setState(() {
+        _petActionIndex = 0; // SPIN
+      });
+
+      if (!isOverlayAdded && time >= 0.8) {
+        Overlay.of(context)?.insert(overlayEntry);
+        isOverlayAdded = true;
+      }
+
+      if (time >= 2.4) {
+        timer.cancel();
+        setState(() {
+          _petActionIndex = 1; // WALK
+        });
+        overlayEntry.remove();
+      }
+    });
+  }
+
+  late String petAsset;
+  late Preset p;
+  int _petActionIndex = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    petAsset = widget.firstSrc;
+    p = presets[motions[petAsset]![_petActionIndex]]!;
+    LOG.log('#### 펫이 생성되었습니다! ####');
+  }
 
   @override
   Widget build(BuildContext context) {
+    final myRoomState = context.watch<MyRoomViewModel>();
+    final userInfo = context.read<UserInfo>();
+    myRoomState.happyMotion = () => happyMotion(context);
+
+    petAsset = myRoomState.findPetAsset();
+    p = presets[motions[petAsset]![_petActionIndex]]!;
+
     // 모델 및 프리셋 선택
-    String targetResouce = '${widget.newSrc}_$_petActionIndex';
-    Map<String, dynamic> selectedModel = petModels[widget.newSrc]!;
-    Preset p = presets[selectedModel['motions']![_petActionIndex]]!;
+    bool isDead = (userInfo.userHp == 0); // NOTE 현재는 본인의 체력상태만 가져옵니다.
 
-    // 체력이 0이면 비석으로 변경
-    if (widget.isDead) {
-      targetResouce = '비석_00_0';
-      selectedModel = petModels['비석_00']!;
-      p = presets['비석']!;
-    }
-    LOG.log('[마이펫 렌더링] key: $targetResouce');
+    LOG.log('[마이펫 렌더링]'); // FIXME log 확인용
 
-    return GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () {
-          LOG.log('아니 왜 안바뀌는데 $_petActionIndex');
-          setState(() {
-            _petActionIndex = (_petActionIndex + 1) %
-                (selectedModel['motions']!.length as int);
-          });
-        },
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.5,
-          child: IgnorePointer(
-            ignoring: true,
-            child: ModelViewer(
-              key: ValueKey(targetResouce),
-              src: selectedModel['src'],
-              animationName: p.animationName,
-              cameraTarget: p.cameraTarget,
-              cameraOrbit: p.cameraOrbit,
-              autoRotate: p.autoRotate,
-              rotationPerSecond: p.rotationPerSecond,
-              // 이하 고정값
-              interactionPrompt: InteractionPrompt.none,
-              cameraControls: false,
-              autoPlay: true,
-              shadowIntensity: 1,
-              disableZoom: true,
-              autoRotateDelay: 0,
-            ),
+    // 펫이 죽었으므로 비석 렌더링
+    if (isDead) {
+      return SizedBox(
+        height: MediaQuery.of(context).size.height * 0.5,
+        child: IgnorePointer(
+          ignoring: true,
+          child: ModelViewer(
+            key: ValueKey('비석'),
+            src: 'assets/tomb.glb',
+            animationName: 'Idle',
+            cameraTarget: '0.3m 0.9m 0.4m',
+            cameraOrbit: '30deg 80deg 8m',
+            autoRotate: false,
+            rotationPerSecond: '0rad',
+            // 이하 고정값
+            interactionPrompt: InteractionPrompt.none,
+            cameraControls: false,
+            autoPlay: true,
+            shadowIntensity: 1,
+            disableZoom: true,
+            autoRotateDelay: 0,
           ),
-        ));
+        ),
+      );
+      // 펫이 잘 살아 있으면 펫 렌더링
+    } else {
+      return GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () async {
+            LOG.log('아니 왜 안바뀌는데 $_petActionIndex');
+            setState(() {
+              _petActionIndex =
+                  (_petActionIndex + 1) % (motions[petAsset]!.length);
+            });
+            final assetsAudioPlayer = AssetsAudioPlayer();
+            assetsAudioPlayer.open(Audio("assets/main.mp3"));
+            assetsAudioPlayer.play();
+          },
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.5,
+            child: IgnorePointer(
+              ignoring: true,
+              child: ModelViewer(
+                key: ValueKey('$petAsset - $_petActionIndex'),
+                src: 'assets/pets/$petAsset.glb',
+                animationName: p.animationName,
+                cameraTarget: p.cameraTarget,
+                cameraOrbit: p.cameraOrbit,
+                autoRotate: p.autoRotate,
+                rotationPerSecond: p.rotationPerSecond,
+                // 이하 고정값
+                interactionPrompt: InteractionPrompt.none,
+                cameraControls: false,
+                autoPlay: true,
+                shadowIntensity: 1,
+                disableZoom: true,
+                autoRotateDelay: 0,
+              ),
+            ),
+          ));
+    }
   }
 }

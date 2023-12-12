@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/style/button.dart';
+import 'package:iww_frontend/utils/categories.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
 import 'package:iww_frontend/view/modals/custom_snackbar.dart';
 import 'package:iww_frontend/view/modals/todo_editor.dart';
-
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:iww_frontend/view/todo/fields/label_list_modal.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
@@ -251,10 +252,13 @@ class _NewGroupState extends State<NewGroup> {
                           child: Container(
                             width: MediaQuery.of(context).size.width * 0.15,
                             alignment: Alignment.center,
-                            child: Text((viewModel.groupData['cat_id'] != null)
-                                ? LabelListModal
-                                    .labels[(viewModel.groupData['cat_id'])]
-                                : LabelListModal.labels[0]),
+                            child: Text(
+                              (viewModel.groupData['cat_id'] != null)
+                                  ? TodoCategory
+                                      .category![viewModel.groupData['cat_id']]
+                                      .name
+                                  : TodoCategory.category![0].name,
+                            ),
                           ),
                         ),
                       ],
@@ -396,8 +400,16 @@ class _NewGroupState extends State<NewGroup> {
                               Text('그룹 루틴 추가 하기')
                             ]),
                           ),
-                          onPressed: () =>
-                              showTodoEditModal<MyGroupViewModel>(context),
+                          onPressed: () async {
+                            showTodoEditModal<MyGroupViewModel>(context);
+                            final assetsAudioPlayer = AssetsAudioPlayer();
+
+                            assetsAudioPlayer.open(
+                              Audio("assets/main.mp3"),
+                            );
+
+                            assetsAudioPlayer.play();
+                          },
                         ),
                       ),
                     ),
@@ -406,8 +418,15 @@ class _NewGroupState extends State<NewGroup> {
                     height: 40,
                     child: MyButton(
                       full: true,
-                      onpressed: (context) {
+                      onpressed: (context) async {
                         _createGroup(context);
+                        final assetsAudioPlayer = AssetsAudioPlayer();
+
+                        assetsAudioPlayer.open(
+                          Audio("assets/main.mp3"),
+                        );
+
+                        assetsAudioPlayer.play();
                         print('새로운 그룹 만들기');
                       },
                       text: "새로운 그룹 만들기",

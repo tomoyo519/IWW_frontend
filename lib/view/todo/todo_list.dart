@@ -6,15 +6,15 @@ import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/model/todo/todo_update.dto.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_common/spinner.dart';
+import 'package:iww_frontend/view/home/attendance.dart';
 import 'package:iww_frontend/view/modals/todo_editor.dart';
 import 'package:iww_frontend/view/todo/todo_empty.dart';
 import 'package:iww_frontend/view/todo/todo_my_tile.dart';
-import 'package:iww_frontend/view/todo/todo_editor.dart';
 import 'package:iww_frontend/view/todo/todo_group_tile.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
-import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 class ToDoList extends StatefulWidget {
   ToDoList({super.key});
@@ -41,14 +41,14 @@ class _ToDoListState extends State<ToDoList> with TickerProviderStateMixin {
     _sublist = [
       SubTodoList(
         idx: 0,
-        title: "그룹 인증 할일",
+        title: "그룹 할일",
         items: [],
         isOpen: true,
         builder: groupTodoBuiler,
       ),
       SubTodoList(
         idx: 1,
-        title: "오늘의 할일",
+        title: "나의 할일",
         items: [],
         isOpen: true,
         builder: normalTodoBuilder,
@@ -80,73 +80,78 @@ class _ToDoListState extends State<ToDoList> with TickerProviderStateMixin {
     _sublist[0].items = viewModel.groupTodos;
     _sublist[1].items = viewModel.normalTodos;
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: viewModel.waiting
-          ? Spinner()
-          : viewModel.groupTodos.isEmpty && viewModel.todos.isEmpty
-              ? TodoListEmpty()
-              : SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      for (SubTodoList sub in _sublist) ...[
-                        GestureDetector(
-                          onTap: () => _toggle(sub),
-                          child: SizedBox(
-                            width: double.infinity,
-                            height: 60,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  sub.title,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 20,
-                                  ),
+    double fs = MediaQuery.of(context).size.width * 0.01;
+    UserInfo userinfo = context.read<UserInfo>();
+
+    return viewModel.waiting
+        ? Spinner()
+        : viewModel.groupTodos.isEmpty && viewModel.todos.isEmpty
+            ? TodoListEmpty()
+            : SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5 * fs),
+                      child: Expanded(
+                          child: Attendance(
+                        attDays: userinfo.attendance,
+                      )),
+                    ),
+                    for (SubTodoList sub in _sublist) ...[
+                      GestureDetector(
+                        onTap: () async {
+                          _toggle(sub);
+                          final assetsAudioPlayer = AssetsAudioPlayer();
+                          assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                          assetsAudioPlayer.play();
+                        },
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 10 * fs,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                sub.title,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 5 * fs,
                                 ),
-                                if (sub.isOpen == true)
-                                  Icon(Icons.keyboard_arrow_down)
-                                else
-                                  Icon(Icons.keyboard_arrow_left)
-                                // AnimatedBuilder(
-                                //   animation: _animation,
-                                //   builder: (context, child) {
-                                //     if (sub.isOpen == false) {
-                                //       return Transform.rotate(
-                                //         angle: _animation.value * 1 * pi,
-                                //         child: Icon(Icons.keyboard_arrow_down),
-                                //       );
-                                //     } else {
-                                //       return Icon(
-                                //           Icons.keyboard_arrow_left_rounded);
-                                //     }
-                                //   },
-                                // ),
-                              ],
-                            ),
+                              ),
+                              if (sub.isOpen == true)
+                                Icon(
+                                  Icons.keyboard_arrow_down,
+                                  size: 6 * fs,
+                                )
+                              else
+                                Icon(
+                                  Icons.keyboard_arrow_left,
+                                  size: 6 * fs,
+                                )
+                            ],
                           ),
                         ),
-                        if (sub.items.isNotEmpty) ...[
-                          AnimatedSize(
-                            duration: Duration(milliseconds: 300),
-                            child: sub.isOpen
-                                ? Column(children: [
+                      ),
+                      if (sub.items.isNotEmpty) ...[
+                        AnimatedSize(
+                          duration: Duration(milliseconds: 300),
+                          child: sub.isOpen
+                              ? Padding(
+                                  padding: EdgeInsets.only(bottom: 3 * fs),
+                                  child: Column(children: [
                                     for (Todo todo in sub.items)
                                       sub.builder(todo, context)
-                                  ])
-                                : SizedBox(width: double.infinity, height: 0),
-                          )
-                        ]
+                                  ]),
+                                )
+                              : SizedBox(width: double.infinity, height: 0),
+                        )
                       ]
-                    ],
-                  ),
+                    ]
+                  ],
                 ),
-    );
+              );
   }
 
   // ****************************** //

@@ -19,31 +19,56 @@ class MyRoomViewModel with ChangeNotifier {
   List<Item> _initialRoomObjects = [];
   bool _hasChanges = false; // 현재 방에 변경사항이 있는지 여부
 
+  VoidCallback? happyMotion;
+  bool _isDisposed = false;
+  set setHappyMotion(VoidCallback action) {
+    happyMotion = action;
+    notifyListeners();
+  }
+
+  bool iswait = true;
+  bool get waiting => iswait;
+  set waiting(bool val) {
+    iswait = val;
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
+  }
+
+  // FIXME 생성자에서 비동기 작업은 안된다.
   MyRoomViewModel(this._userId, this._roomRepository, this._roomOwner) {
-    fetchMyRoom(_roomOwner);
-    fetchPet(_userId);
-    fetchItem(_userId);
+    // fetchMyRoom(_roomOwner);
+    // fetchPet(_userId);
+    // fetchItem(_userId);
   }
 
-  Future<void> fetchMyRoom(userId) async {
-    roomObjects = await _roomRepository.getItemsOfMyRoom(userId);
+  Future<int> fetchMyRoom() async {
+    LOG.log('fetchMyRoom: $_roomOwner');
+    roomObjects = await _roomRepository.getItemsOfMyRoom(_roomOwner);
     setInitialRoomObjects();
+    waiting = false;
     notifyListeners();
+
+    return _roomOwner;
   }
 
-  Future<void> fetchPet(userId) async {
-    pets = await _roomRepository.getPetsOfInventory(userId);
+  Future<int> fetchInventory() async {
+    LOG.log('fetchInventory: $_userId');
+    pets = await _roomRepository.getPetsOfInventory(_userId);
+    items = await _roomRepository.getItemsOfInventory(_userId);
+    waiting = false;
     notifyListeners();
-  }
 
-  Future<void> fetchItem(userId) async {
-    items = await _roomRepository.getItemsOfInventory(userId);
-    notifyListeners();
+    return _userId;
   }
 
   // 현재 viewModel의 roomObject를 DB에 저장
   Future<void> applyChanges() async {
-    _roomRepository.applyChanges(
+    await _roomRepository.applyChanges(
         _userId, roomObjects.map((e) => e.id).toList());
     setInitialRoomObjects();
   }
@@ -52,6 +77,12 @@ class MyRoomViewModel with ChangeNotifier {
   void toggleItem(Item target) {
     for (Item now in roomObjects) {
       if (now.id == target.id) {
+        // 펫과 배경화면은 삭제 불가능
+        if (now.itemType == itemTypeOfPet ||
+            now.itemType == itemTypeOfBackground) {
+          return;
+        }
+
         roomObjects.remove(now);
         notifyListeners();
         return;
@@ -70,15 +101,21 @@ class MyRoomViewModel with ChangeNotifier {
     }
 
     // 중복되는 경우가 하나도 없을경우 -> 아이템 삽입
-    roomObjects.add(target);
+    if (target.id == 105) {
+      roomObjects.insert(0, target);
+    } else {
+      roomObjects.add(target);
+    }
+
     notifyListeners();
   }
 
+  get getUserId => _userId;
   get getRoomOwner => _roomOwner;
 
   set roomOwner(int userId) {
     _roomOwner = userId;
-    fetchMyRoom(userId);
+    fetchMyRoom();
     notifyListeners();
   }
 
@@ -127,23 +164,43 @@ class MyRoomViewModel with ChangeNotifier {
     );
   }
 
-  String findPetName() {
+  String findPetAsset() {
     for (var element in roomObjects) {
       if (element.itemType == itemTypeOfPet) {
-        return element.name;
+        return element.path!.split('.')[0];
       }
     }
-    LOG.log("NO PET MODEL. default: 구미호_01");
-    return '구미호_01';
+    return 'small_fox';
   }
 
   String findPetNickName() {
+    // FIXME 본인 뿐만 아니라 다른사람의 펫 정보도 가져올 수 있어야 함.
     for (var element in roomObjects) {
       if (element.itemType == itemTypeOfPet) {
         return element.petName!;
       }
     }
+
     return '이름을 지어주세요!';
+  }
+
+  Item getPetItem() {
+    for (Item element in roomObjects) {
+      if (element.itemType == itemTypeOfPet) {
+        LOG.log('[Pet Item]: ${element.toString()}');
+        return element;
+      }
+    }
+
+    return Item(
+      id: -1,
+      name: 'none',
+      path: 'small_fox.png',
+      itemType: 1,
+      petExp: 123,
+      totalExp: 987,
+      petName: 'error',
+    );
   }
 
   bool get hasChanges => _hasChanges;

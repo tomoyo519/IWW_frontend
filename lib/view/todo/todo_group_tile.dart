@@ -1,17 +1,14 @@
 // ignore_for_file: constant_identifier_names
-
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/group/group.model.dart';
-import 'package:iww_frontend/model/group/groupDetail.model.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/service/event.service.dart';
+import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/style/button.dart';
 import 'package:iww_frontend/style/button.type.dart';
 import 'package:iww_frontend/utils/extension/string.ext.dart';
@@ -23,7 +20,9 @@ import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_exif_rotation/flutter_exif_rotation.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
+// 출처: https://islet4you.tistory.com/entry/Flutter-Sound-재생하기 [hoony's web study:티스토리]
 // Todo Extension으로 스타일 만들기
 enum GroupTodoState {
   DONE,
@@ -53,7 +52,6 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
   late File _imageFile;
   late GroupTodoState todoState;
   late Group group;
-
   final _picker = ImagePicker();
   final scroll = ScrollController();
 
@@ -76,24 +74,24 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
   @override
   Widget build(BuildContext context) {
     UserInfo userInfo = context.read<UserInfo>();
+    double fs = MediaQuery.of(context).size.width * 0.01;
 
     return Container(
       margin: EdgeInsets.only(bottom: 10),
       padding: EdgeInsets.symmetric(
-        horizontal: 15,
-        vertical: 10,
+        horizontal: 4 * fs,
+        vertical: 3 * fs,
       ),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(3 * fs),
         color: Color.fromARGB(255, 246, 246, 246),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
-            flex: 8,
             child: GestureDetector(
-              onTap: () {
+              onTap: () async {
                 //  클릭하면 그룹 상세화면으로 이동
                 Navigator.push(
                   context,
@@ -103,6 +101,11 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                       providers: [
                         ChangeNotifierProvider.value(
                             value: context.read<UserInfo>()),
+                        ChangeNotifierProvider(
+                            create: (_) => MyGroupViewModel(
+                                Provider.of<GroupRepository>(context,
+                                    listen: false),
+                                context.read<UserInfo>().userId)),
                         ChangeNotifierProvider(
                           create: (_) => GroupDetailModel(
                               Provider.of<GroupRepository>(context,
@@ -118,42 +121,46 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                     ),
                   ),
                 );
+                final assetsAudioPlayer = AssetsAudioPlayer();
+                assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                assetsAudioPlayer.play();
               },
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    widget.todo.todoName,
-                    style: TextStyle(
-                      fontSize: 16,
-                      decoration: todoState == GroupTodoState.APPROVED
-                          ? TextDecoration.lineThrough // 완료된 경우
-                          : TextDecoration.none, // 아직 미완
-                      color: todoState == GroupTodoState.APPROVED
-                          ? Colors.black45
-                          : Colors.black87,
-                      fontWeight: FontWeight.w600,
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 2 * fs),
+                    child: Text(
+                      widget.todo.todoName,
+                      style: TextStyle(
+                        fontSize: 4.5 * fs,
+                        decoration: todoState == GroupTodoState.APPROVED
+                            ? TextDecoration.lineThrough // 완료된 경우
+                            : TextDecoration.none, // 아직 미완
+                        color: todoState == GroupTodoState.APPROVED
+                            ? Colors.black45
+                            : Colors.black87,
+                        fontWeight: FontWeight.w600,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 7,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(right: 3),
+                        padding: EdgeInsets.only(right: fs),
                         child: Icon(
                           Icons.timer_outlined,
-                          size: 15,
+                          size: 4 * fs,
                         ),
                       ),
                       Text(
                         toViewDate(widget.todo.todoDate, null),
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 3.5 * fs,
                         ),
                       ),
                     ],
@@ -162,18 +169,25 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
               ),
             ),
           ),
-          Expanded(
-            flex: 2,
-            child: MyButton(
-              type: MyButtonType.primary,
-              text: todoState == GroupTodoState.UNDONE
-                  ? "인증하기"
-                  : todoState == GroupTodoState.DONE
-                      ? "인증 대기중"
-                      : "✔ 인증 완료",
-              onpressed: (context) => _onGrpTodoCheck(context, widget.todo),
-              enabled: todoState == GroupTodoState.UNDONE,
-            ),
+          MyButton(
+            type: MyButtonType.primary,
+            text: todoState == GroupTodoState.UNDONE
+                ? "체크하기"
+                : todoState == GroupTodoState.DONE
+                    ? "확인 대기중"
+                    : "✔ 확인완료",
+            onpressed: (context) async {
+              _onGrpTodoCheck(context, widget.todo);
+
+              final assetsAudioPlayer = AssetsAudioPlayer();
+
+              assetsAudioPlayer.open(
+                Audio("assets/main.mp3"),
+              );
+
+              assetsAudioPlayer.play();
+            },
+            enabled: todoState == GroupTodoState.UNDONE,
           ),
         ],
       ),
@@ -274,9 +288,23 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
             Animation<double> secondaryAnimation,
           ) {
             return AlertDialog(
+              surfaceTintColor: Colors.white,
+              backgroundColor: Colors.white,
               actions: [
                 TextButton(
-                  child: Text('할일 완료!'),
+                  style: TextButton.styleFrom(
+                      backgroundColor: AppTheme.primary,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10))),
+                  child: Text(
+                    '할일 완료!',
+                    style: TextStyle(
+                      // 여기에서 스타일을 적용합니다.
+                      fontSize: 16, // 글자 크기
+                      color: Colors.white, // 글자 색상
+                      fontWeight: FontWeight.w500, // 글자 두께
+                    ),
+                  ),
                   onPressed: () async {
                     // * ==== 버튼 눌렀을때의 로직 ==== * //
                     final viewModel = context.read<TodoViewModel>();
@@ -304,6 +332,9 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                     };
                     EventService.sendEvent('confirmRequest', data);
                     if (context.mounted) {
+                      final assetsAudioPlayer = AssetsAudioPlayer();
+                      assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                      assetsAudioPlayer.play();
                       Navigator.pop(context, true);
                     }
                   },

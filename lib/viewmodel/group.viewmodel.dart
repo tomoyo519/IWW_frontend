@@ -1,10 +1,12 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/routine/routine.model.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/model/group/group.model.dart';
 import 'package:iww_frontend/model/group/groupDetail.model.dart';
+import 'package:iww_frontend/utils/categories.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
 import 'package:iww_frontend/model/user/user.model.dart';
@@ -71,6 +73,8 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
       List<Group>? data = await _groupRepository.getMyGroupList(userId);
       data?.sort((a, b) => a.grpName.compareTo(b.grpName));
       groups = data ?? [];
+
+      await TodoCategory.initialize();
 
       waiting = false;
       notifyListeners();

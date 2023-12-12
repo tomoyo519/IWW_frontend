@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/_navigation/enum/app_route.dart';
-import 'package:iww_frontend/view/modals/greeting.dart';
 import 'package:iww_frontend/view/modals/login_achieve_modal.dart';
 import 'package:iww_frontend/view/modals/todo_approved_modal.dart';
 import 'package:iww_frontend/view/modals/todo_confirm_modal.dart';
@@ -22,10 +21,12 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 class Event {
   final EventType type;
   final String? message;
+  bool? background;
 
   Event({
     required this.type,
     this.message,
+    this.background,
   });
 }
 
@@ -56,7 +57,6 @@ extension EventTypeExtension on EventType {
       case EventType.confirmResponse:
       case EventType.newComment:
         return "socket";
-      case EventType.onAppLogin:
       case EventType.onSnsAuth:
       case EventType.onAchieve:
       case EventType.onTodoDone:
@@ -69,20 +69,18 @@ extension EventTypeExtension on EventType {
     }
   }
 
-  void run(BuildContext context, {String? message}) async {
-    AppNavigator nav = Provider.of<AppNavigator>(context, listen: false);
-
+  Future<Object?> show(BuildContext context, {String? message}) async {
     switch (this) {
       // ==== UI ==== //
       case EventType.onFirstTodoDone:
-        showTodoDoneModal(context);
-        break;
+        return showTodoDoneModal(context);
+
       case EventType.onTodoDone:
-        showCustomSnackBar(
-          context,
-          text: message ?? "",
-          icon: Lottie.asset("assets/star.json"),
-        );
+        // showCustomSnackBar(
+        //   context,
+        //   text: message ?? "",
+        //   icon: Lottie.asset("assets/star.json"),
+        // );
         break;
       case EventType.onSnsAuth:
         showCustomSnackBar(
@@ -91,19 +89,21 @@ extension EventTypeExtension on EventType {
           icon: Icon(Icons.mail),
         );
       case EventType.onAchieve:
-        showLoginAchieveModal(context, message!);
-        break;
+        return showLoginAchieveModal(context, message!);
       case EventType.onPetEvolve:
-        showPetEvolveModal(context);
-        break;
-      case EventType.onAppLogin:
-        showGreetingModal(context);
-        break;
+        //TODO - 진화 시 소리넣기
+        return showPetEvolveModal(context);
       case EventType.onTodoApproved:
-        if (message != null) {
-          showTodoApprovedModal(context, message: message);
-        }
+        return showTodoApprovedModal(context, message: message!);
+      default:
         break;
+    }
+  }
+
+  void run(BuildContext context, {String? message}) async {
+    AppNavigator nav = Provider.of<AppNavigator>(context, listen: false);
+
+    switch (this) {
       // ==== SOCKET ==== //
       case EventType.friendRequest:
       case EventType.friendResponse:
@@ -137,6 +137,14 @@ class EventService {
   static late IO.Socket socket;
   static late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   late UserInfo userInfo; // unique
+  DateTime? lastNoti; // 중복된 알림 수신 방지용 타임스탬프
+
+  bool filterEvents() {
+    DateTime secondEarlier = DateTime.now().subtract(Duration(seconds: 1));
+    bool rtn = (lastNoti != null && lastNoti!.isAfter(secondEarlier));
+    lastNoti = DateTime.now();
+    return rtn;
+  }
 
   EventService.initialize(this.userInfo) {
     print(_userId);
@@ -160,6 +168,7 @@ class EventService {
       _handleConfirmRequest(data);
     });
     socket.on('confirmResponse', (data) {
+      if (filterEvents()) return; // 추가
       _handleConfirmResponse(data);
     });
     socket.on('newComment', (data) {
@@ -340,8 +349,12 @@ class EventService {
     //   payload: payload,
     // );
 
+    Map<String, dynamic> message = {
+      'message': data['message'],
+    };
+
     // 유저 정보 갱신
-    await userInfo.handleGroupCheck();
+    await userInfo.handleGroupCheck(message: message);
   }
 
   Future _handleNewComment(dynamic data) async {

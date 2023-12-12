@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/shop/shop.model.dart';
 import 'package:iww_frontend/repository/shop.repository.dart';
+import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/modals/custom_fullscreen_modal.dart';
 import 'package:lottie/lottie.dart';
 import 'package:iww_frontend/view/shop/layout/show_item.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 class ShopPage extends StatelessWidget {
   const ShopPage({super.key});
@@ -23,7 +25,7 @@ class ShopItems extends StatefulWidget {
   State<ShopItems> createState() => _ShopItems();
 }
 
-class _ShopItems extends State<ShopItems> {
+class _ShopItems extends State<ShopItems> with SingleTickerProviderStateMixin {
   List<ShopInfo>? allpets;
   List<dynamic>? allfuns;
   List<dynamic>? allemot;
@@ -31,14 +33,25 @@ class _ShopItems extends State<ShopItems> {
   bool isPetLoading = true;
   bool isFunLoading = true;
   final ShopRepository shopRepository = ShopRepository();
-
+  late TabController _tabController;
   @override
   void initState() {
     super.initState();
-    fetchFriend();
+    if (mounted) {
+      fetchFriend();
+    }
     // 상점 신제품 알려주는 모달
     // Future.delayed(Duration.zero, () async {
     //   WidgetsBinding.instance.addPostFrameCallback((_) => _showDialog(context));
+    _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(() {
+      if (_tabController.indexIsChanging) {
+        // 효과음 재생 코드
+        final assetsAudioPlayer = AssetsAudioPlayer();
+        assetsAudioPlayer.open(Audio("assets/main.mp3"));
+        assetsAudioPlayer.play();
+      }
+    });
     // });
   }
 
@@ -59,15 +72,42 @@ class _ShopItems extends State<ShopItems> {
               child: AlertDialog(
                 surfaceTintColor: Colors.white,
                 backgroundColor: Colors.white,
-                content: Text("아이템 구매가 완료 되었어요!"),
+                title: Center(
+                  child: Text(
+                    "아이템 구매가 완료 되었어요!",
+                    style: TextStyle(
+                      // 여기에서 스타일을 적용합니다.
+                      fontSize: 20, // 글자 크기
+                      color: Colors.black, // 글자 색상
+                      fontWeight: FontWeight.w500, // 글자 두께
+                    ),
+                  ),
+                ),
                 actions: <Widget>[
                   TextButton(
-                    onPressed: () {
-                      // 다이얼로그 닫기
+                    child: Text('확인',
+                        style: TextStyle(fontSize: 17, color: Colors.white)),
+                    style: TextButton.styleFrom(
+                        backgroundColor: AppTheme.primary,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10))),
+                    onPressed: () async {
                       Navigator.of(context).pop();
+                      final assetsAudioPlayer = AssetsAudioPlayer();
+                      assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                      assetsAudioPlayer.play();
                     },
-                    child: Text('확인'),
                   ),
+                  // TextButton(
+                  //   onPressed: () async {
+                  //     // 다이얼로그 닫기
+                  //     Navigator.of(context).pop();
+                  //     final assetsAudioPlayer = AssetsAudioPlayer();
+                  //     assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                  //     assetsAudioPlayer.play();
+                  //   },
+                  //   child: Text('확인'),
+                  // ),
                 ],
               ),
             );
@@ -89,14 +129,35 @@ class _ShopItems extends State<ShopItems> {
               child: AlertDialog(
                 surfaceTintColor: Colors.white,
                 backgroundColor: Colors.white,
-                content: Text("캐시가 부족합니다. \n 할일을 완료 하고 캐시를 획득 해볼까요?"),
+                title: Center(
+                  child: Text(
+                    "캐시가 부족합니다.\n할일 완료 후 캐시를 획득 해볼까요?",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      // 여기에서 스타일을 적용합니다.
+                      fontSize: 20, // 글자 크기
+                      color: Colors.black, // 글자 색상
+                      fontWeight: FontWeight.w500, // 글자 두께
+                    ),
+                  ),
+                ),
                 actions: <Widget>[
                   TextButton(
-                    onPressed: () {
+                    style: TextButton.styleFrom(
+                        backgroundColor: AppTheme.primary,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10))),
+                    onPressed: () async {
                       // 다이얼로그 닫기
                       Navigator.of(context).pop();
+                      final assetsAudioPlayer = AssetsAudioPlayer();
+                      assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                      assetsAudioPlayer.play();
                     },
-                    child: Text('확인'),
+                    child: Text(
+                      '확인',
+                      style: TextStyle(fontSize: 15, color: Colors.white),
+                    ),
                   ),
                 ],
               ),
@@ -131,17 +192,19 @@ class _ShopItems extends State<ShopItems> {
       child: Column(
         children: [
           TabBar(
+            controller: _tabController,
+            labelStyle: TextStyle(fontSize: 20),
             labelColor: Colors.black,
             indicatorColor: Colors.black,
             indicatorSize: TabBarIndicatorSize.tab,
             tabs: <Widget>[
-              Tab(text: ("애완동물")),
+              Tab(text: "애완동물"),
               Tab(text: "가구"),
-              // Tab(text: "이모티콘"),
             ],
           ),
           Expanded(
             child: TabBarView(
+              controller: _tabController,
               children: <Widget>[
                 if (allpets != null && allpets!.isEmpty)
                   Lottie.asset('assets/empty.json',
