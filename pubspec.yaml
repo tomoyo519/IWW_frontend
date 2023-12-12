@@ -86,7 +86,7 @@ flutter:
     - assets/furniture/
     - assets/category/
     - assets/achi/
-    - assets/splash/DoWith_splash.mp4
+    - assets/splash/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
   # For details regarding adding assets from package dependencies, see
