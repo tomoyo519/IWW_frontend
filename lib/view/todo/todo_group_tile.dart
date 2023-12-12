@@ -91,7 +91,7 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
         children: [
           Expanded(
             child: GestureDetector(
-              onTap: () {
+              onTap: () async {
                 //  클릭하면 그룹 상세화면으로 이동
                 Navigator.push(
                   context,
@@ -121,6 +121,9 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                     ),
                   ),
                 );
+                final assetsAudioPlayer = AssetsAudioPlayer();
+                assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                assetsAudioPlayer.play();
               },
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,

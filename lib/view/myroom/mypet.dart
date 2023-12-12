@@ -287,12 +287,15 @@ class _MyPetState extends State<MyPet> {
     } else {
       return GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTap: () {
+          onTap: () async {
             LOG.log('아니 왜 안바뀌는데 $_petActionIndex');
             setState(() {
-              _petActionIndex = (_petActionIndex + 1) %
-                  (motions[petAsset]!.length);
+              _petActionIndex =
+                  (_petActionIndex + 1) % (motions[petAsset]!.length);
             });
+            final assetsAudioPlayer = AssetsAudioPlayer();
+            assetsAudioPlayer.open(Audio("assets/main.mp3"));
+            assetsAudioPlayer.play();
           },
           child: SizedBox(
             height: MediaQuery.of(context).size.height * 0.5,

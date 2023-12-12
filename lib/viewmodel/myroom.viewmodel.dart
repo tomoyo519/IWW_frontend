@@ -20,10 +20,23 @@ class MyRoomViewModel with ChangeNotifier {
   bool _hasChanges = false; // 현재 방에 변경사항이 있는지 여부
 
   VoidCallback? happyMotion;
-
+  bool _isDisposed = false;
   set setHappyMotion(VoidCallback action) {
     happyMotion = action;
     notifyListeners();
+  }
+
+  bool iswait = true;
+  bool get waiting => iswait;
+  set waiting(bool val) {
+    iswait = val;
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
   }
 
   // FIXME 생성자에서 비동기 작업은 안된다.
@@ -37,6 +50,7 @@ class MyRoomViewModel with ChangeNotifier {
     LOG.log('fetchMyRoom: $_roomOwner');
     roomObjects = await _roomRepository.getItemsOfMyRoom(_roomOwner);
     setInitialRoomObjects();
+    waiting = false;
     notifyListeners();
 
     return _roomOwner;
@@ -46,6 +60,7 @@ class MyRoomViewModel with ChangeNotifier {
     LOG.log('fetchInventory: $_userId');
     pets = await _roomRepository.getPetsOfInventory(_userId);
     items = await _roomRepository.getItemsOfInventory(_userId);
+    waiting = false;
     notifyListeners();
 
     return _userId;
