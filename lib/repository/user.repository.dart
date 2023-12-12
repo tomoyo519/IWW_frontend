@@ -179,8 +179,6 @@ class UserRepository {
       return RemoteDataSource.get("/attendance/$userId").then((res) {
         if (res.statusCode == 200) {
           var jsonData = json.decode(res.body);
-
-          LOG.log('${jsonData["result"]}');
           return List<UserAttandance>.from(
               jsonData["result"].map((item) => UserAttandance.fromJson(item)));
         }

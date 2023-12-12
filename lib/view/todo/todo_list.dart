@@ -40,14 +40,14 @@ class _ToDoListState extends State<ToDoList> with TickerProviderStateMixin {
     _sublist = [
       SubTodoList(
         idx: 0,
-        title: "그룹 인증 할일",
+        title: "그룹 할일",
         items: [],
         isOpen: true,
         builder: groupTodoBuiler,
       ),
       SubTodoList(
         idx: 1,
-        title: "오늘의 할일",
+        title: "나의 할일",
         items: [],
         isOpen: true,
         builder: normalTodoBuilder,

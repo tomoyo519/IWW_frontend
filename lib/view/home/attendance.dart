@@ -36,7 +36,7 @@ class Attendance extends StatelessWidget {
               children: [
                 Center(
                   child: Wrap(
-                    // spacing: -22.0, // 각 자식 사이의 수평 간격. 음수로 설정하면 자식들이 겹치게 됩니다.
+                    spacing: -3 * fs, // 각 자식 사이의 수평 간격. 음수로 설정하면 자식들이 겹치게 됩니다.
                     children: List<Widget>.generate(7, (index) {
                       return attDays.contains(index.toString())
                           ? ElevatedButton(
@@ -45,10 +45,12 @@ class Attendance extends StatelessWidget {
                                 backgroundColor:
                                     Colors.green, // 버튼 배경색을 초록색으로 설정
                                 shape: CircleBorder(),
+                                elevation: 0,
                               ),
                               child: Icon(
                                 Icons.check,
                                 color: Colors.white, // 아이콘 색상
+                                size: 4.5 * fs,
                               ),
                             )
                           // Container(
@@ -60,10 +62,11 @@ class Attendance extends StatelessWidget {
                           //     ),
                           //     child:
                           //   )
-                          : TextButton(
+                          : ElevatedButton(
                               onPressed: () {},
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.grey[100],
+                                elevation: 0,
                                 shape: CircleBorder(),
                               ),
                               child: Text(
@@ -82,6 +85,7 @@ class Attendance extends StatelessWidget {
                                                         : "토",
                                 style: TextStyle(
                                   color: Colors.black,
+                                  fontSize: 4 * fs,
                                 ),
                               ),
                             );

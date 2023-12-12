@@ -169,10 +169,10 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
           MyButton(
             type: MyButtonType.primary,
             text: todoState == GroupTodoState.UNDONE
-                ? "인증요청"
+                ? "체크하기"
                 : todoState == GroupTodoState.DONE
-                    ? "인증대기"
-                    : "✔ 인증완료",
+                    ? "확인 대기중"
+                    : "✔ 확인완료",
             onpressed: (context) async {
               _onGrpTodoCheck(context, widget.todo);
 
