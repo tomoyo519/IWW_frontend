@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/model/user/user.model.dart';
+import 'package:iww_frontend/utils/logger.dart';
 
 ///** 할일 완료 응답 객체
 /// */
@@ -25,6 +26,7 @@ class TodoCheckDto {
   });
 
   factory TodoCheckDto.fromJson(Map<String, dynamic> data) {
+    LOG.log(data.toString());
     return TodoCheckDto(
       userId: data['user_id'],
       userCash: data['user_cash'],

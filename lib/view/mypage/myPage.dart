@@ -32,7 +32,6 @@ class _MyPageState extends State<MyPage> {
     // TODO: implement initState
     super.initState();
     staticData = context.read<UserInfo>().tier;
-    LOG.log(emoji: 2, staticData.toString());
     getRewards();
   }
 
