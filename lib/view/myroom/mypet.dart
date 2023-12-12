@@ -198,11 +198,11 @@ class _MyPetState extends State<MyPet> {
 
     overlayEntry = OverlayEntry(
       builder: (BuildContext context) => Positioned(
-        top: MediaQuery.of(context).size.height / 2, // 화면 중앙으로 위치 지정
-        left: MediaQuery.of(context).size.width / 2 - 150,
+        top: MediaQuery.of(context).size.height / 2 + 27, // 화면 중앙으로 위치 지정
+        left: MediaQuery.of(context).size.width / 2 - 144,
         child: Material(
           color: Colors.transparent,
-          child: Image.asset('assets/happy.png', height: 100, width: 100),
+          child: Image.asset('assets/happy3.png', height: 100, width: 100),
         ),
       ),
     );
