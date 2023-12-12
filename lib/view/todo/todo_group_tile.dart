@@ -332,6 +332,9 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
                     };
                     EventService.sendEvent('confirmRequest', data);
                     if (context.mounted) {
+                      final assetsAudioPlayer = AssetsAudioPlayer();
+                      assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                      assetsAudioPlayer.play();
                       Navigator.pop(context, true);
                     }
                   },
