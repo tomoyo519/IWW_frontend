@@ -246,7 +246,7 @@ class _GroupDetailState extends State<GroupDetail> {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 15),
                           child: Text(
-                            "인증 현황 보기",
+                            "그룹원들의 달성 현황",
                             style: TextStyle(
                               fontSize: 4.5 * fs,
                               fontWeight: FontWeight.w900,
@@ -274,7 +274,7 @@ class _GroupDetailState extends State<GroupDetail> {
                                           fontWeight: FontWeight.w900),
                                     ),
                                     Text(
-                                      "인증해요",
+                                      "반복해요",
                                       style: TextStyle(fontSize: 3.5 * fs),
                                     ),
                                   ],
@@ -291,7 +291,7 @@ class _GroupDetailState extends State<GroupDetail> {
                                           fontWeight: FontWeight.w900),
                                     ),
                                     Text(
-                                      "인증완료",
+                                      "달성완료",
                                       style: TextStyle(fontSize: 3.5 * fs),
                                     ),
                                   ],
@@ -638,7 +638,7 @@ class _GroupDetailState extends State<GroupDetail> {
                                             Expanded(
                                               child: MyButton(
                                                 type: MyButtonType.primary,
-                                                text: "인증 현황 보기",
+                                                text: "그룹원들의 달성 현황",
                                                 onpressed: (context) async {
                                                   _setRoutinePicture(
                                                       groupRoutine[i].routId);
