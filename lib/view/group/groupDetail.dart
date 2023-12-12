@@ -353,7 +353,12 @@ class _GroupDetailState extends State<GroupDetail> {
                   .map(
                     (each) => each.toAppbarWidget(
                       // 앱 바 아이콘 클릭시 해당 인덱스로 변경
-                      onPressed: () => nav.push(each.idx),
+                      onPressed: () async {
+                        nav.push(each.idx);
+                        final assetsAudioPlayer = AssetsAudioPlayer();
+                        assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                        assetsAudioPlayer.play();
+                      },
                       child: each.icon,
                     ),
                   )

@@ -128,68 +128,75 @@ class PetTab extends StatelessWidget {
     var myRoomViewModel = context.watch<MyRoomViewModel>();
     LOG.log('소유한 펫의 개수 : ${myRoomViewModel.pets.length}');
     // 펫 탭 구현
-    return myRoomViewModel.pets.isEmpty
-        ? Center(
-            child: Text("펫이 없어요. 상점에서 구입해볼까요?"),
-          )
-        : ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: myRoomViewModel.pets.length,
-            itemBuilder: (context, index) {
-              return GestureDetector(
-                  onTap: () async {
-                    final assetsAudioPlayer = AssetsAudioPlayer();
-                    assetsAudioPlayer.open(Audio("assets/main.mp3"));
-                    assetsAudioPlayer.play();
-                    Item i = myRoomViewModel.pets[index];
-                    myRoomViewModel.toggleItem(i);
-                  },
-                  child: Container(
-                    width: 90,
-                    height: 100, // 각 펫 카드의 너비
-                    margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                    decoration: BoxDecoration(
-                      color: myRoomViewModel.roomObjects
-                              .map((e) => e.id)
-                              .contains(myRoomViewModel.pets[index].id)
-                          ? Colors.blue[100]
-                          : Colors.white,
-                      border: myRoomViewModel.roomObjects
-                              .map((e) => e.id)
-                              .contains(myRoomViewModel.pets[index].id)
-                          ? Border.all(color: Colors.blue.shade700, width: 2)
-                          : null,
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: myRoomViewModel.roomObjects
-                              .map((e) => e.id)
-                              .contains(myRoomViewModel.pets[index].id)
-                          ? [
-                              BoxShadow(
-                                color: Colors.blue.withOpacity(0.5),
-                                spreadRadius: 3,
-                                blurRadius: 5,
-                                offset: Offset(0, 3),
-                              ),
-                            ]
-                          : [],
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(myRoomViewModel.pets[index].name),
-                        // 여기에 펫 이미지, 이름 등을 표시
-                        ClipRRect(
+    return myRoomViewModel.waiting
+        ? Lottie.asset('assets/spinner.json',
+            repeat: true,
+            animate: true,
+            height: MediaQuery.of(context).size.height * 0.3)
+        : myRoomViewModel.pets.isEmpty
+            ? Center(
+                child: Text("펫이 없어요. 상점에서 구입해볼까요?"),
+              )
+            : ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: myRoomViewModel.pets.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                      onTap: () async {
+                        final assetsAudioPlayer = AssetsAudioPlayer();
+                        assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                        assetsAudioPlayer.play();
+                        Item i = myRoomViewModel.pets[index];
+                        myRoomViewModel.toggleItem(i);
+                      },
+                      child: Container(
+                        width: 90,
+                        height: 100, // 각 펫 카드의 너비
+                        margin:
+                            EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                        decoration: BoxDecoration(
+                          color: myRoomViewModel.roomObjects
+                                  .map((e) => e.id)
+                                  .contains(myRoomViewModel.pets[index].id)
+                              ? Colors.blue[100]
+                              : Colors.white,
+                          border: myRoomViewModel.roomObjects
+                                  .map((e) => e.id)
+                                  .contains(myRoomViewModel.pets[index].id)
+                              ? Border.all(
+                                  color: Colors.blue.shade700, width: 2)
+                              : null,
                           borderRadius: BorderRadius.circular(10),
-                          child: Image.asset(
-                            'assets/thumbnail/${myRoomViewModel.pets[index].path!}',
-                            fit: BoxFit.cover,
-                            height: 70,
-                          ),
+                          boxShadow: myRoomViewModel.roomObjects
+                                  .map((e) => e.id)
+                                  .contains(myRoomViewModel.pets[index].id)
+                              ? [
+                                  BoxShadow(
+                                    color: Colors.blue.withOpacity(0.5),
+                                    spreadRadius: 3,
+                                    blurRadius: 5,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ]
+                              : [],
                         ),
-                      ],
-                    ),
-                  ));
-            }); // 펫 탭 내용
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(myRoomViewModel.pets[index].name),
+                            // 여기에 펫 이미지, 이름 등을 표시
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.asset(
+                                'assets/thumbnail/${myRoomViewModel.pets[index].path!}',
+                                fit: BoxFit.cover,
+                                height: 70,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ));
+                }); // 펫 탭 내용
   }
 }
 
