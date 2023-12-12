@@ -30,6 +30,8 @@ class MyRoom extends StatelessWidget {
     if (roomOwner != userId) {
       // 방 주인이 유저가 아니면 홈 라벨 지우기
       nav.title = '';
+      LOG.log(emoji: 2, roomOwner.toString());
+      LOG.log(emoji: 1, userId.toString());
     }
 
     LOG.log('Room page: user id $userId, owner id $roomOwner');

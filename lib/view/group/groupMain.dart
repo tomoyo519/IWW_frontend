@@ -74,17 +74,20 @@ class _MyGroupState extends State<MyGroup> with SingleTickerProviderStateMixin {
       width: screen.width,
       height: screen.height,
       padding: EdgeInsets.only(
-        top: 3 * fs,
-        left: 3 * fs,
-        right: 3 * fs,
-      ),
+          // top: 3 * fs,
+          // left: 3 * fs,
+          // right: 3 * fs,
+          ),
       child: DefaultTabController(
         length: 2,
         child: Column(
           children: [
             TabBar(
               controller: _tabController,
-              labelStyle: TextStyle(fontSize: 20),
+              labelStyle: TextStyle(
+                fontSize: 20,
+                fontFamily: AppTheme.font,
+              ),
               labelColor: Colors.black,
               indicatorColor: Colors.black,
               indicatorSize: TabBarIndicatorSize.tab,

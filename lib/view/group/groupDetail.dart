@@ -766,9 +766,12 @@ class _GroupDetailState extends State<GroupDetail> {
                               final assetsAudioPlayer = AssetsAudioPlayer();
                               assetsAudioPlayer.open(Audio("assets/main.mp3"));
                               assetsAudioPlayer.play();
-                              nav.push(AppRoute.room,
-                                  argument:
-                                      groupMems[index]["user_id"].toString());
+                              nav.push(
+                                AppRoute.room,
+                                argument:
+                                    groupMems[index]["user_id"].toString(),
+                                title: groupMems[index]["user_name"],
+                              );
                               Navigator.pop(context);
                             },
                             child: Column(

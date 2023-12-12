@@ -52,7 +52,7 @@ class AppNavigator extends ChangeNotifier {
     _stack = [];
     _stack.add(route.index);
     _argument = argument;
-    _title = null;
+    _title = title;
     notifyListeners();
   }
 
@@ -60,7 +60,7 @@ class AppNavigator extends ChangeNotifier {
     _idx = route.index;
     _stack.add(route.index);
     _argument = argument;
-    _title = null;
+    _title = title;
     LOG.log('[AppNav] push page $_idx, stack $_stack');
     notifyListeners();
   }
@@ -69,7 +69,7 @@ class AppNavigator extends ChangeNotifier {
     _stack.removeLast();
     _idx = _stack.isEmpty ? 0 : _stack.last;
     _argument = argument;
-    _title = null;
+    _title = title;
     LOG.log('[AppNav] pop page, stack $_stack');
     notifyListeners();
   }

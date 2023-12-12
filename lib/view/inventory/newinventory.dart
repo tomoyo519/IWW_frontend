@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
+import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
@@ -43,7 +44,10 @@ Widget inventorySheet(BuildContext context, MyRoomViewModel myRoomViewModel,
                   onTap: (index) {
                     playSound();
                   },
-                  labelStyle: TextStyle(fontSize: 20),
+                  labelStyle: TextStyle(
+                    fontSize: 20,
+                    fontFamily: AppTheme.font,
+                  ),
                   labelColor: Colors.black,
                   indicatorColor: Colors.black,
                   indicatorSize: TabBarIndicatorSize.tab,

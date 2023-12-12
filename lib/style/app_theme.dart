@@ -22,41 +22,44 @@ class AppTheme {
 
   static ThemeData getapptheme() {
     return ThemeData(
-      useMaterial3: true,
-      fontFamily: font,
-      scaffoldBackgroundColor: Colors.white,
-      primaryColorLight: primary,
-      primaryColor: primary,
-      textTheme: TextTheme(
-        titleLarge: TextStyle(
-            fontSize: 22, color: Colors.black, fontWeight: FontWeight.bold),
-        titleMedium: TextStyle(
-            fontSize: 20, color: Colors.black, fontWeight: FontWeight.w700),
-        titleSmall: TextStyle(fontSize: 18, color: Colors.black),
-        headlineLarge: TextStyle(
-            fontSize: 24, color: Colors.black, fontWeight: FontWeight.w800),
-        headlineMedium: TextStyle(fontSize: 22, color: Colors.black),
-        headlineSmall: TextStyle(fontSize: 20, color: Colors.black),
-        bodyLarge: TextStyle(fontSize: 18, color: Colors.black87),
-        bodyMedium: TextStyle(fontSize: 16, color: Colors.black87),
-        bodySmall: TextStyle(fontSize: 14, color: Colors.black87),
-      ),
-      appBarTheme: AppBarTheme(
-        backgroundColor: Colors.white,
-        titleTextStyle: TextStyle(
-          fontSize: 24,
-          fontFamily: font,
-          color: Colors.black87,
-          fontWeight: FontWeight.w900,
+        useMaterial3: true,
+        fontFamily: font,
+        scaffoldBackgroundColor: Colors.white,
+        primaryColorLight: primary,
+        primaryColor: primary,
+        textTheme: TextTheme(
+          titleLarge: TextStyle(
+              fontSize: 22, color: Colors.black, fontWeight: FontWeight.bold),
+          titleMedium: TextStyle(
+              fontSize: 20, color: Colors.black, fontWeight: FontWeight.w700),
+          titleSmall: TextStyle(fontSize: 18, color: Colors.black),
+          headlineLarge: TextStyle(
+              fontSize: 24, color: Colors.black, fontWeight: FontWeight.w800),
+          headlineMedium: TextStyle(fontSize: 22, color: Colors.black),
+          headlineSmall: TextStyle(fontSize: 20, color: Colors.black),
+          bodyLarge: TextStyle(fontSize: 18, color: Colors.black87),
+          bodyMedium: TextStyle(fontSize: 16, color: Colors.black87),
+          bodySmall: TextStyle(fontSize: 14, color: Colors.black87),
         ),
-      ),
-      textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(
-          textStyle: TextStyle(
-            color: primary,
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.white,
+          titleTextStyle: TextStyle(
+            fontSize: 24,
+            fontFamily: font,
+            color: Colors.black87,
+            fontWeight: FontWeight.w900,
           ),
         ),
-      ),
-    );
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            textStyle: TextStyle(
+              color: primary,
+            ),
+          ),
+        ),
+        tabBarTheme: TabBarTheme(
+            labelStyle: TextStyle(
+          fontFamily: font,
+        )));
   }
 }

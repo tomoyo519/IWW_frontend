@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/group/group.model.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
+import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/view/group/groupDetail.dart';
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
@@ -144,9 +145,11 @@ class _GroupListState extends State<GroupList> {
                                               myGroups[i].grpName,
                                               textAlign: TextAlign.left,
                                               style: TextStyle(
-                                                  fontSize: 18,
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w800),
+                                                fontSize: 18,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w800,
+                                                fontFamily: AppTheme.font,
+                                              ),
                                             ),
                                           ),
                                           Padding(
