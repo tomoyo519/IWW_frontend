@@ -38,7 +38,7 @@ class MyRoom extends StatelessWidget {
       ChangeNotifierProvider<CommentsProvider>(
           create: (_) => CommentsProvider(
                 userId.toString(),
-                userId.toString(),
+                roomOwner.toString(),
                 commentRepository,
               )),
       ChangeNotifierProvider<MyRoomViewModel>(
