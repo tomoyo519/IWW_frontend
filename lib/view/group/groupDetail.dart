@@ -181,36 +181,23 @@ class _GroupDetailState extends State<GroupDetail> {
     );
   }
 
-  void _setRoutinePicture(int routId) async {
-    await RemoteDataSource.get('/routine/${widget.groupId}').then((res) {
+  void _setRoutinePicture(int routId, String routRepeat) async {
+    // 클릭시, 그룹 구성원의 사진 인증 보여주는 기능
+    // if (routine != null) {
+    await RemoteDataSource.get("/group/${widget.groupId}/user/$routId/image")
+        .then((res) {
       if (res.statusCode == 200) {
-        List<dynamic> jsonList = jsonDecode(res.body)['result'];
+        var json = jsonDecode(res.body);
+        LOG.log(res.body);
         setState(() {
-          routines =
-              jsonList.map((e) => Routine.fromJson(e, routId: routId)).toList();
+          routineImgs = (json["result"] as List)
+              .map((item) => GroupImg.fromJson(item))
+              .toList();
         });
       }
+      LOG.log('thisisroutineImgs: $routineImgs');
     });
-
-    // 지금 보여주는 루틴 가져오기
-    Routine? rout = routines?.where((e) => e.routId == routId).first;
-
-    // 클릭시, 그룹 구성원의 사진 인증 보여주는 기능
-    if (rout != null) {
-      await RemoteDataSource.get("/group/${widget.groupId}/user/$routId/image")
-          .then((res) {
-        if (res.statusCode == 200) {
-          var json = jsonDecode(res.body);
-          LOG.log(res.body);
-          setState(() {
-            routineImgs = (json["result"] as List)
-                .map((item) => GroupImg.fromJson(item))
-                .toList();
-          });
-        }
-        LOG.log('thisisroutineImgs: $routineImgs');
-      });
-    }
+    // }
     // ignore: use_build_context_synchronously
 
     // ignore: use_build_context_synchronously
@@ -268,7 +255,7 @@ class _GroupDetailState extends State<GroupDetail> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      rout!.routRepeat.toWeekRepeat().name,
+                                      routRepeat,
                                       style: TextStyle(
                                           fontSize: 4 * fs,
                                           fontWeight: FontWeight.w900),
@@ -621,6 +608,10 @@ class _GroupDetailState extends State<GroupDetail> {
                                                     ),
                                                     _RoutineBadge(
                                                       content: repeat.weekday
+                                                          .where((element) =>
+                                                              element
+                                                                  .selected ==
+                                                              true)
                                                           .map((e) => e.name)
                                                           .join('・')
                                                           .toString(),
@@ -641,7 +632,12 @@ class _GroupDetailState extends State<GroupDetail> {
                                                 text: "그룹원들의 달성 현황",
                                                 onpressed: (context) async {
                                                   _setRoutinePicture(
-                                                      groupRoutine[i].routId);
+                                                    groupRoutine[i].routId,
+                                                    groupRoutine[i]
+                                                        .routRepeat
+                                                        .toWeekRepeat()
+                                                        .name,
+                                                  );
                                                   final assetsAudioPlayer =
                                                       AssetsAudioPlayer();
 

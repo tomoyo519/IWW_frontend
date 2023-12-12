@@ -348,10 +348,10 @@ class _NewGroupState extends State<NewGroup> {
                             itemCount: viewModel.groupRoutine.length,
                             itemBuilder: (c, i) {
                               return GestureDetector(
-                                onLongPress: () {
-                                  _showTodoEditor(
-                                      context, viewModel.groupRoutine[i]);
-                                },
+                                // onLongPress: () {
+                                //   _showTodoEditor(
+                                //       context, viewModel.groupRoutine[i]);
+                                // },
                                 child: Container(
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(12),

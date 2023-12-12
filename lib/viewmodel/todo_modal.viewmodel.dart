@@ -45,7 +45,7 @@ class TodoModalViewModel<T extends ChangeNotifier> extends ChangeNotifier {
     fields.add(cateField);
     fields.add(timeField);
 
-    if (T is MyGroupViewModel) {
+    if (T == MyGroupViewModel) {
       fields.add(routField);
     }
   }
@@ -63,22 +63,35 @@ class TodoModalViewModel<T extends ChangeNotifier> extends ChangeNotifier {
 
   // * === pack status as request === * //
   Map<String, dynamic> _createData(int userId) {
-    var data = {
-      'user_id': userId,
-      "todo_name": _todoName,
-      "todo_desc": _todoDesc,
-      "todo_label": _todoCate,
-      "todo_done": _todoDone,
-      "todo_start": _todoSrt.toDataString(),
-      "todo_end": _todoEnd.toDataString(),
-      "todo_deleted": false,
-    };
+    if (mode == TodoModalMode.normal) {
+      var data = {
+        // 투두인 경우
+        'user_id': userId,
+        "todo_name": _todoName,
+        "todo_desc": _todoDesc,
+        "todo_label": _todoCate,
+        "todo_done": _todoDone,
+        "todo_start": _todoSrt.toDataString(),
+        "todo_end": _todoEnd.toDataString(),
+      };
 
-    if (!isNewTodo) {
-      // 투두 수정인 경우
-      data['todo_id'] = todo!.todoId;
+      if (!isNewTodo) {
+        // 투두 수정인 경우
+        data['todo_id'] = todo!.todoId;
+      }
+      return data;
+    } else {
+      // 루틴인 경우
+      var data = {
+        "rout_name": _todoName,
+        "rout_desc": _todoDesc,
+        "rout_repeat": _todoRout.toRadixString(2).padLeft(7, '0'),
+        "rout_srt": _todoSrt.toDataString(),
+        "rout_end": _todoEnd.toDataString()
+      };
+
+      return data;
     }
-    return data;
   }
 
   // * === 필드 목록 === * //
@@ -137,6 +150,32 @@ class TodoModalViewModel<T extends ChangeNotifier> extends ChangeNotifier {
   // 7. 날짜 필드 (사용자가 수정 X)
   DateTime? _todoDate;
   DateTime? get todoDate => _todoDate;
+
+  // 8. 루틴
+  int _todoRout = 0; // 선택되지 않음
+  int get todoRout => _todoRout;
+  set todoRout(int val) {
+    _todoRout = val;
+    notifyListeners();
+  }
+
+  String get todoRoutStr {
+    List<String> week = ['월', '화', '수', '목', '금', '토', '일'];
+    if (_todoRout == 0) return "없음";
+
+    String rtn = '';
+    week.asMap().forEach((idx, val) {
+      if (_todoRout & (1 << idx) != 0) {
+        rtn += val;
+      }
+    });
+
+    if (rtn == '월화수목금토일') {
+      rtn = '매일';
+    }
+
+    return rtn;
+  }
 
   // * === check all fields exist === * //
   bool get isValid {

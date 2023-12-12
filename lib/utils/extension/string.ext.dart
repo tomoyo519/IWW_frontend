@@ -37,22 +37,25 @@ extension StringExt on String? {
     int idx = 0;
     int selected = 0;
     Map<int, String> weekdays = {
-      1: "월",
-      2: "화",
-      3: "수",
-      4: "목",
-      5: "금",
-      6: "토",
-      0: "일"
+      0: "월",
+      1: "화",
+      2: "수",
+      3: "목",
+      4: "금",
+      5: "토",
+      6: "일"
     };
 
     List<WeekDay> weekday = this!.split('').map((e) {
       if (e == '1') selected++;
+
       return WeekDay(idx: idx, name: weekdays[idx++]!, selected: e == '1');
     }).toList();
 
-    String name = selected == 7 ? '매일' : '주 $selected 회';
-
+    String name = selected == 7 ? '매일' : '주 $selected회';
+    LOG.log(emoji: 2, this ?? 'dots');
+    LOG.log(emoji: 2, selected.toString() ?? 'dots');
+    LOG.log(emoji: 2, name ?? 'dots');
     return WeekRepeat(count: selected, weekday: weekday, name: name);
   }
 }
