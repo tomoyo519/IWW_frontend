@@ -53,6 +53,7 @@ class AppNavigator extends ChangeNotifier {
     _stack.add(route.index);
     _argument = argument;
     _title = null;
+    LOG.log(argument ?? '000000');
     notifyListeners();
   }
 

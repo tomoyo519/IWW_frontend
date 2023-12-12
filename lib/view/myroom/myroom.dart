@@ -3,6 +3,7 @@ import 'package:iww_frontend/repository/comment.repository.dart';
 import 'package:iww_frontend/repository/room.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
+import 'package:iww_frontend/view/friends/friendMain.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';
 import 'package:iww_frontend/view/inventory/newinventory.dart';
 import 'package:iww_frontend/view/test/test.dart';
@@ -126,7 +127,8 @@ class _MyRoomPageState extends State<MyRoomPage> {
       // case 1:
       //   return InventoryPage();
       case 3:
-        return FontTestPage();
+        // return FontTestPage();
+        return MyFriend();
       default:
         return Center(
             child: SizedBox(

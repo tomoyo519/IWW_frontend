@@ -62,11 +62,13 @@ class FriendRepository {
       LOG.log("Get friends: ${response.statusCode}");
       if (response.statusCode == 200) {
         Map<String, dynamic> data = jsonDecode(response.body);
+        LOG.log(response.body);
         List<dynamic> resultList = data["result"];
 
         // user_id, user_name, total_exp, pet_name 네 개의 필드 수신
-        friends =
-            resultList.map((dynamic item) => FriendInfo.fromJson(item)).toList();
+        friends = resultList
+            .map((dynamic item) => FriendInfo.fromJson(item))
+            .toList();
 
         LOG.log('친구 숫자!: ${friends.length}, total: ${data['total']}');
       }
