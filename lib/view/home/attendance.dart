@@ -34,14 +34,9 @@ class Attendance extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Wrap(
-                //   children: const [
-                //     Text("출석 체크"),
-                //   ],
-                // ),
                 Center(
                   child: Wrap(
-                    spacing: -22.0, // 각 자식 사이의 수평 간격. 음수로 설정하면 자식들이 겹치게 됩니다.
+                    // spacing: -22.0, // 각 자식 사이의 수평 간격. 음수로 설정하면 자식들이 겹치게 됩니다.
                     children: List<Widget>.generate(7, (index) {
                       return attDays.contains(index.toString())
                           ? ElevatedButton(

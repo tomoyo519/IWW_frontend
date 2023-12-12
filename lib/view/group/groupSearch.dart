@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
+import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/utils/categories.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
@@ -105,7 +106,7 @@ class _GroupSearchState extends State<GroupSearch> {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: labelNum == index
-                              ? Colors.orange
+                              ? AppTheme.primary
                               : Colors.transparent, //회색으로, 그 외의 버튼은 흰색으로 변경
                           padding: EdgeInsets.all(2), // 패딩을 조절
                           elevation: 0, shape: StadiumBorder(), // 모서리를 완전히 둥글게

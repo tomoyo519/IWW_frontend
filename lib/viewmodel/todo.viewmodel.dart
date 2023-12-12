@@ -97,7 +97,7 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
     _todayTotal = todayTodo.length;
     _todayDone = todayTodo.where((todo) => todo.todoDone == true).length;
 
-    LOG.log("Fetched data group todo ${data.length}");
+    LOG.log("[TODO] today total: $_todayTotal, done: $_todayDone");
     waiting = false;
   }
 

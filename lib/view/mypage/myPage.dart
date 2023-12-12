@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/auth/auth_status.dart';
 import 'package:iww_frontend/service/auth.service.dart';
+import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/view/mypage/announcement.dart';
 import 'package:iww_frontend/view/mypage/myInfoEdit.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
@@ -30,6 +31,8 @@ class _MyPageState extends State<MyPage> {
     LOG.log('야호?');
     // TODO: implement initState
     super.initState();
+    staticData = context.read<UserInfo>().tier;
+    LOG.log(emoji: 2, staticData.toString());
     getRewards();
   }
 
@@ -52,18 +55,19 @@ class _MyPageState extends State<MyPage> {
         }
       }
     });
-    var statistics =
-        await RemoteDataSource.get('/user/${userId}/statistics').then((res) {
-      if (res.statusCode == 200) {
-        var json = jsonDecode(res.body);
-        LOG.log('${res.body}');
-        setState(() {
-          if (mounted) {
-            staticData = json["result"];
-          }
-        });
-      }
-    });
+
+    // var statistics =
+    //     await RemoteDataSource.get('/user/${userId}/statistics').then((res) {
+    //   if (res.statusCode == 200) {
+    //     var json = jsonDecode(res.body);
+    //     LOG.log('${res.body}');
+    //     setState(() {
+    //       if (mounted) {
+    //         staticData = json["result"];
+    //       }
+    //     });
+    //   }
+    // });
   }
 
   getLevel() {
@@ -263,7 +267,7 @@ class _MyPageState extends State<MyPage> {
                                             barRadius: Radius.circular(10),
                                             linearStrokeCap: LinearStrokeCap
                                                 .butt, // 이 속성을 추가하여 끝 부분이 둥글게 나오지 않도록 합니다.
-                                            progressColor: Colors.orange,
+                                            progressColor: AppTheme.primary,
                                           ),
                                         ),
                                       ),

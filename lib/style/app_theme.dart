@@ -9,7 +9,7 @@ class AppTheme {
   static String font = 'NanumSquareRound';
 
   // * ==== Button Colors ==== * //
-  static Color primary = Color(0xfff08636);
+  static Color primary = Color.fromARGB(255, 240, 166, 54);
   static Color onPrimary = Colors.white;
   static Color secondary = Color.fromARGB(255, 133, 39, 176);
   static Color onSecondary = Colors.white;
@@ -25,6 +25,7 @@ class AppTheme {
       useMaterial3: true,
       fontFamily: font,
       scaffoldBackgroundColor: Colors.white,
+      primaryColorLight: primary,
       primaryColor: primary,
       textTheme: TextTheme(
         titleLarge: TextStyle(
@@ -41,11 +42,19 @@ class AppTheme {
         bodySmall: TextStyle(fontSize: 14, color: Colors.black87),
       ),
       appBarTheme: AppBarTheme(
+        backgroundColor: Colors.white,
         titleTextStyle: TextStyle(
-          fontFamily: font,
-          color: Colors.black,
           fontSize: 24,
+          fontFamily: font,
+          color: Colors.black87,
           fontWeight: FontWeight.w900,
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          textStyle: TextStyle(
+            color: primary,
+          ),
         ),
       ),
     );

@@ -85,7 +85,7 @@ class TodoProgress extends StatelessWidget {
                         _TodayBadge(
                           title: "달성",
                           data: model.todayDone,
-                          color: Colors.orange,
+                          color: AppTheme.primary,
                         ),
                         _TodayBadge(
                           title: "미달성",
@@ -128,7 +128,7 @@ class TodoProgress extends StatelessWidget {
                 style: TextStyle(fontSize: 3.5 * fs),
               ),
               barRadius: Radius.circular(10),
-              progressColor: Colors.orange,
+              progressColor: AppTheme.primary,
               backgroundColor: Colors.white,
             ),
           ),

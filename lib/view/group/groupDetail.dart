@@ -12,6 +12,7 @@ import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/model/group/groupImg.model.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:iww_frontend/service/event.service.dart';
+import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/style/button.dart';
 import 'package:iww_frontend/style/button.type.dart';
 import 'package:iww_frontend/utils/extension/string.ext.dart';
@@ -20,7 +21,9 @@ import 'package:iww_frontend/view/_common/appbar.dart';
 import 'dart:convert';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
+import 'package:iww_frontend/view/_navigation/app_page.model.dart';
 import 'package:iww_frontend/view/_navigation/enum/app_route.dart';
+import 'package:iww_frontend/view/_navigation/extension/app_page.ext.dart';
 import 'package:iww_frontend/view/todo/todo_editor.dart';
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
@@ -179,19 +182,15 @@ class _GroupDetailState extends State<GroupDetail> {
   }
 
   void _setRoutinePicture(int routId) async {
-    // 첫 번째 루틴 로드인 경우 상태 불러와서 세트
-    if (routines == null) {
-      await RemoteDataSource.get('/routine/${widget.groupId}').then((res) {
-        if (res.statusCode == 200) {
-          List<dynamic> jsonList = jsonDecode(res.body)['result'];
-          setState(() {
-            routines = jsonList
-                .map((e) => Routine.fromJson(e, routId: routId))
-                .toList();
-          });
-        }
-      });
-    }
+    await RemoteDataSource.get('/routine/${widget.groupId}').then((res) {
+      if (res.statusCode == 200) {
+        List<dynamic> jsonList = jsonDecode(res.body)['result'];
+        setState(() {
+          routines =
+              jsonList.map((e) => Routine.fromJson(e, routId: routId)).toList();
+        });
+      }
+    });
 
     // 지금 보여주는 루틴 가져오기
     Routine? rout = routines?.where((e) => e.routId == routId).first;
@@ -213,7 +212,6 @@ class _GroupDetailState extends State<GroupDetail> {
       });
     }
     // ignore: use_build_context_synchronously
-    Size screen = MediaQuery.of(context).size;
 
     // ignore: use_build_context_synchronously
     showModalBottomSheet(
@@ -221,6 +219,8 @@ class _GroupDetailState extends State<GroupDetail> {
       isScrollControlled: true,
       useRootNavigator: true,
       builder: (BuildContext context) {
+        Size screen = MediaQuery.of(context).size;
+        double fs = screen.width * 0.01;
         return Container(
           height: screen.height * 0.8,
           width: screen.width,
@@ -235,12 +235,7 @@ class _GroupDetailState extends State<GroupDetail> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: EdgeInsets.only(
-                  top: 30,
-                  left: 20,
-                  right: 20,
-                  bottom: 20,
-                ),
+                padding: EdgeInsets.all(20),
                 child: SizedBox(
                   height: screen.height * 0.15,
                   width: screen.width,
@@ -253,7 +248,7 @@ class _GroupDetailState extends State<GroupDetail> {
                           child: Text(
                             "인증 현황 보기",
                             style: TextStyle(
-                              fontSize: 26,
+                              fontSize: 4.5 * fs,
                               fontWeight: FontWeight.w900,
                             ),
                           ),
@@ -263,7 +258,7 @@ class _GroupDetailState extends State<GroupDetail> {
                         flex: 1,
                         child: DecoratedBox(
                           decoration: BoxDecoration(
-                            color: Colors.black12,
+                            color: Colors.grey.shade100,
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Row(
@@ -275,10 +270,13 @@ class _GroupDetailState extends State<GroupDetail> {
                                     Text(
                                       rout!.routRepeat.toWeekRepeat().name,
                                       style: TextStyle(
-                                          fontSize: 25,
+                                          fontSize: 4 * fs,
                                           fontWeight: FontWeight.w900),
                                     ),
-                                    Text("인증해요"),
+                                    Text(
+                                      "인증해요",
+                                      style: TextStyle(fontSize: 3.5 * fs),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -289,10 +287,13 @@ class _GroupDetailState extends State<GroupDetail> {
                                     Text(
                                       '${routineImgs?.length ?? 0}건',
                                       style: TextStyle(
-                                          fontSize: 25,
+                                          fontSize: 4 * fs,
                                           fontWeight: FontWeight.w900),
                                     ),
-                                    Text("인증완료"),
+                                    Text(
+                                      "인증완료",
+                                      style: TextStyle(fontSize: 3.5 * fs),
+                                    ),
                                   ],
                                 ),
                               )
@@ -343,10 +344,21 @@ class _GroupDetailState extends State<GroupDetail> {
   Widget build(BuildContext context) {
     AppNavigator nav = context.read<AppNavigator>();
     Size screen = MediaQuery.of(context).size;
-    UserInfo userInfo = context.read<UserInfo>();
+    final List<AppPage> appbars = nav.APPBAR_PAGES;
+
     return !isLoading && groupDetail != null
         ? Scaffold(
-            appBar: MyAppBar(),
+            appBar: MyAppBar(
+              actions: appbars
+                  .map(
+                    (each) => each.toAppbarWidget(
+                      // 앱 바 아이콘 클릭시 해당 인덱스로 변경
+                      onPressed: () => nav.push(each.idx),
+                      child: each.icon,
+                    ),
+                  )
+                  .toList(),
+            ),
             body: SingleChildScrollView(
               child: Column(children: [
                 // 1. 상단 이미지
@@ -555,7 +567,8 @@ class _GroupDetailState extends State<GroupDetail> {
                                             right: 0,
                                             child: IconButton(
                                               style: IconButton.styleFrom(
-                                                backgroundColor: Colors.orange,
+                                                backgroundColor:
+                                                    AppTheme.primary,
                                                 padding: EdgeInsets.all(0),
                                               ),
                                               icon: Icon(
@@ -718,7 +731,7 @@ class _GroupDetailState extends State<GroupDetail> {
                       // ElevatedButton(
                       //   style: ElevatedButton.styleFrom(
                       //     // 스타일 설정 추가
-                      //     backgroundColor: Colors.orange, // 버튼 배경색을 오렌지색으로 설정
+                      //     backgroundColor: AppTheme.primary, // 버튼 배경색을 오렌지색으로 설정
                       //   ),
                       //   onPressed: () {},
                       //   child: Container(
@@ -882,7 +895,7 @@ class _GroupDetailState extends State<GroupDetail> {
               actions: [
                 TextButton(
                   style: TextButton.styleFrom(
-                      backgroundColor: Colors.orange,
+                      backgroundColor: AppTheme.primary,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10))),
                   child: Text(

@@ -8,6 +8,7 @@ import 'package:iww_frontend/model/group/group.model.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/service/event.service.dart';
+import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/style/button.dart';
 import 'package:iww_frontend/style/button.type.dart';
 import 'package:iww_frontend/utils/extension/string.ext.dart';
@@ -289,7 +290,7 @@ class _GroupTodoTileState extends State<GroupTodoTile> {
               actions: [
                 TextButton(
                   style: TextButton.styleFrom(
-                      backgroundColor: Colors.orange,
+                      backgroundColor: AppTheme.primary,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10))),
                   child: Text(

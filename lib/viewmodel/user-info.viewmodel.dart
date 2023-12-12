@@ -6,37 +6,30 @@ import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
-import 'package:iww_frontend/model/auth/login_result.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
 import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/service/reward.service.dart';
+import 'package:iww_frontend/view/home/attendance.dart';
 
 class UserInfo extends ChangeNotifier {
-  Item _mainPet;
-  Rewards? _reward;
-  UserModel _user;
-  List<UserAttandance> _attendances;
+  late Item _mainPet;
+  late Rewards? _reward;
+  late UserModel _user;
+  late Map<String, dynamic>? _tier;
+  late List<UserAttandance> _attendances;
   final AuthService _authService;
   final UserRepository _repository;
 
-  UserInfo(
-    this._user,
-    this._mainPet,
-    this._repository,
-    this._reward,
-    this._attendances,
-    this._authService,
-  ) {
-    // FIXME: 업적 달성 모달 항상 뜨도록 설정
-    // _reward = Rewards(
-    //   achiName: '첫 로그인',
-    //   achiDesc: 'achiDesc',
-    //   isHidden: false,
-    //   achiImg: 'assets/achi/login.png',
-    // );
-    _setUserState(_user, _mainPet, reward: _reward, attd: _attendances);
+  UserInfo(this._repository, this._authService) {
+    UserModel user = _authService.user!;
+    Item mainPet = _authService.mainPet!;
+    Rewards? reward = _authService.reward;
+    List<UserAttandance> attd = _authService.attendance ?? [];
+    Map<String, dynamic>? tier = _authService.tier;
+
+    _setUserState(user, mainPet, reward: reward, attd: attd, tier: tier);
   }
 
   // === Status === //
@@ -55,6 +48,9 @@ class UserInfo extends ChangeNotifier {
   UserModel get userModel => _user;
   List<String> get attendance =>
       _attendances.map((e) => e.day_of_week.toString()).toList();
+
+  // Map<String, dynamic>? _tier;
+  Map<String, dynamic>? get tier => _tier;
 
   int get userId => _user.user_id;
   String get userName => _userName;
@@ -174,8 +170,13 @@ class UserInfo extends ChangeNotifier {
   }
 
   // Fetch해온 유저 정보를 상태로 세팅
-  void _setUserState(UserModel newUser, Item newPet,
-      {Rewards? reward, List<UserAttandance>? attd}) {
+  void _setUserState(
+    UserModel newUser,
+    Item newPet, {
+    Rewards? reward,
+    List<UserAttandance>? attd,
+    Map<String, dynamic>? tier,
+  }) {
     // * Set new user info * //
     _user = newUser;
     _userName = newUser.user_name;
@@ -189,6 +190,7 @@ class UserInfo extends ChangeNotifier {
     _petExp = newPet.petExp;
     _itemName = newPet.name;
     _petName = newPet.petName ?? '';
+
     _authService.mainPet = newPet;
 
     // * Set other info * //
@@ -196,6 +198,8 @@ class UserInfo extends ChangeNotifier {
     if (attd != null) {
       _attendances = attd;
     }
+
+    _tier = tier;
     notifyListeners();
   }
 

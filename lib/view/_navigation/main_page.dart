@@ -3,6 +3,7 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/service/event.service.dart';
+import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_navigation/extension/app_page.ext.dart';
 import 'package:iww_frontend/view/_navigation/extension/app_route.ext.dart';
@@ -79,7 +80,7 @@ class _MainPageState extends State<MainPage> {
 
       // ignore: use_build_context_synchronously
       bool? completed = await type.show(context, message: message) as bool?;
-      await Future.delayed(Duration(seconds: 3)); // 이벤트 사이 간격 조정
+      await Future.delayed(Duration(seconds: 1)); // 이벤트 사이 간격 조정
       LOG.log('event completed? $completed');
       _waiting = false;
     }
@@ -140,26 +141,28 @@ class _MainPageState extends State<MainPage> {
           ? SizedBox(
               height: MediaQuery.of(context).size.height * 0.08,
               child: BottomNavigationBar(
-                  iconSize: 6 * fs,
-                  currentIndex: nav.current.idx.index,
-                  onTap: (idx) async {
-                    final assetsAudioPlayer = AssetsAudioPlayer();
-                    assetsAudioPlayer.open(Audio("assets/main.mp3"));
-                    assetsAudioPlayer.play();
-                    nav.navigate(idx.route);
-                  },
-                  items: bottoms
-                      .map((page) => BottomNavigationBarItem(
-                            icon: page.icon,
-                            label: page.label,
-                          ))
-                      .toList(),
-                  type: BottomNavigationBarType.fixed,
+                iconSize: 6 * fs,
+                currentIndex: nav.current.idx.index,
+                onTap: (idx) async {
+                  final assetsAudioPlayer = AssetsAudioPlayer();
+                  assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                  assetsAudioPlayer.play();
+                  nav.navigate(idx.route);
+                },
+                items: bottoms
+                    .map((page) => BottomNavigationBarItem(
+                          icon: page.icon,
+                          label: page.label,
+                        ))
+                    .toList(),
+                type: BottomNavigationBarType.fixed,
 
-                  // 선택된 페이지 컬러
-                  selectedFontSize: 3 * fs,
-                  unselectedFontSize: 3 * fs,
-                  selectedItemColor: Colors.orange),
+                // 선택된 페이지 컬러
+                selectedFontSize: 3 * fs,
+                unselectedFontSize: 3 * fs,
+                selectedItemColor: AppTheme.primary,
+                backgroundColor: Colors.white,
+              ),
             )
           : null,
     );
