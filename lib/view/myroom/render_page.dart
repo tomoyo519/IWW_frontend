@@ -48,6 +48,7 @@ class PetArea extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final myRoomState = context.read<MyRoomViewModel>();
+    final userInfo = context.read<UserInfo>();
 
     return FutureBuilder<int>(
         future:
@@ -69,7 +70,8 @@ class PetArea extends StatelessWidget {
                     bottom: MediaQuery.of(context).size.height * 0.01 - 30,
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.width,
-                    child: MyPet(),
+                    child:
+                        MyPet(firstSrc: userInfo.mainPet.path!.split('.')[0]),
                   );
                 });
           }

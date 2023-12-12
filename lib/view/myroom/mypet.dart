@@ -26,7 +26,9 @@ class Preset {
 }
 
 class MyPet extends StatefulWidget {
-  const MyPet({super.key});
+  MyPet({super.key, required this.firstSrc});
+
+  String firstSrc;
 
   @override
   State<MyPet> createState() => _MyPetState();
@@ -231,7 +233,17 @@ class _MyPetState extends State<MyPet> {
     });
   }
 
+  late String petAsset;
+  late Preset p;
   int _petActionIndex = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    petAsset = widget.firstSrc;
+    p = presets[motions[petAsset]![_petActionIndex]]!;
+    LOG.log('#### 펫이 생성되었습니다! ####');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -239,9 +251,10 @@ class _MyPetState extends State<MyPet> {
     final userInfo = context.read<UserInfo>();
     myRoomState.happyMotion = () => happyMotion(context);
 
+    petAsset = myRoomState.findPetAsset();
+    p = presets[motions[petAsset]![_petActionIndex]]!;
+
     // 모델 및 프리셋 선택
-    String petAsset = myRoomState.findPetAsset();
-    Preset p = presets[motions[petAsset]![_petActionIndex]]!;
     bool isDead = (userInfo.userHp == 0); // NOTE 현재는 본인의 체력상태만 가져옵니다.
 
     LOG.log('[마이펫 렌더링]'); // FIXME log 확인용
