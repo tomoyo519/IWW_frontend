@@ -141,26 +141,28 @@ class _MainPageState extends State<MainPage> {
           ? SizedBox(
               height: MediaQuery.of(context).size.height * 0.08,
               child: BottomNavigationBar(
-                  iconSize: 6 * fs,
-                  currentIndex: nav.current.idx.index,
-                  onTap: (idx) async {
-                    final assetsAudioPlayer = AssetsAudioPlayer();
-                    assetsAudioPlayer.open(Audio("assets/main.mp3"));
-                    assetsAudioPlayer.play();
-                    nav.navigate(idx.route);
-                  },
-                  items: bottoms
-                      .map((page) => BottomNavigationBarItem(
-                            icon: page.icon,
-                            label: page.label,
-                          ))
-                      .toList(),
-                  type: BottomNavigationBarType.fixed,
+                iconSize: 6 * fs,
+                currentIndex: nav.current.idx.index,
+                onTap: (idx) async {
+                  final assetsAudioPlayer = AssetsAudioPlayer();
+                  assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                  assetsAudioPlayer.play();
+                  nav.navigate(idx.route);
+                },
+                items: bottoms
+                    .map((page) => BottomNavigationBarItem(
+                          icon: page.icon,
+                          label: page.label,
+                        ))
+                    .toList(),
+                type: BottomNavigationBarType.fixed,
 
-                  // 선택된 페이지 컬러
-                  selectedFontSize: 3 * fs,
-                  unselectedFontSize: 3 * fs,
-                  selectedItemColor: AppTheme.primary),
+                // 선택된 페이지 컬러
+                selectedFontSize: 3 * fs,
+                unselectedFontSize: 3 * fs,
+                selectedItemColor: AppTheme.primary,
+                backgroundColor: Colors.white,
+              ),
             )
           : null,
     );

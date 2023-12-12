@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
+import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/utils/extension/string.ext.dart';
 import 'package:iww_frontend/utils/extension/timeofday.ext.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
@@ -53,7 +54,7 @@ class _MyTodoTileState extends State<MyTodoTile> {
         children: [
           Checkbox(
             checkColor: Colors.white,
-            activeColor: Colors.orange,
+            activeColor: AppTheme.primary,
             value: widget.todo.todoDone,
             onChanged: (bool? value) async {
               // * ==== 투두가 체크되었을 때의 콜백 ==== * //

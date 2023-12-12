@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:iww_frontend/style/app_theme.dart';
 import 'package:lottie/lottie.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
 
@@ -50,7 +51,7 @@ class ShowItem extends StatelessWidget {
                                                   fontSize: 17,
                                                   color: Colors.white)),
                                           style: TextButton.styleFrom(
-                                              backgroundColor: Colors.orange,
+                                              backgroundColor: AppTheme.primary,
                                               shape: RoundedRectangleBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(

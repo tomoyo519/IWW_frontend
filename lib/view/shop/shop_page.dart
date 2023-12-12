@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/shop/shop.model.dart';
 import 'package:iww_frontend/repository/shop.repository.dart';
+import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/modals/custom_fullscreen_modal.dart';
 import 'package:lottie/lottie.dart';
@@ -87,7 +88,7 @@ class _ShopItems extends State<ShopItems> with SingleTickerProviderStateMixin {
                     child: Text('확인',
                         style: TextStyle(fontSize: 17, color: Colors.white)),
                     style: TextButton.styleFrom(
-                        backgroundColor: Colors.orange,
+                        backgroundColor: AppTheme.primary,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10))),
                     onPressed: () async {
@@ -143,7 +144,7 @@ class _ShopItems extends State<ShopItems> with SingleTickerProviderStateMixin {
                 actions: <Widget>[
                   TextButton(
                     style: TextButton.styleFrom(
-                        backgroundColor: Colors.orange,
+                        backgroundColor: AppTheme.primary,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10))),
                     onPressed: () async {

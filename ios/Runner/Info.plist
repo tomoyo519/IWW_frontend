@@ -29,7 +29,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>kakao4bb83cffe0b95b0507b6d419d10e3beb</string>
+				<string>dowithapp</string>
 			</array>
 		</dict>
 	</array>
@@ -47,6 +47,20 @@
 	<dict>
 		<key>NSExceptionDomains</key>
 		<dict>
+			<key>glock34.iptime.org</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+			<key>glock34.iptime.org:8088</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
 			<key>localhost</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>

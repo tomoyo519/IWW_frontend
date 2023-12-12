@@ -12,6 +12,7 @@ import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/model/group/groupImg.model.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:iww_frontend/service/event.service.dart';
+import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/style/button.dart';
 import 'package:iww_frontend/style/button.type.dart';
 import 'package:iww_frontend/utils/extension/string.ext.dart';
@@ -566,7 +567,8 @@ class _GroupDetailState extends State<GroupDetail> {
                                             right: 0,
                                             child: IconButton(
                                               style: IconButton.styleFrom(
-                                                backgroundColor: Colors.orange,
+                                                backgroundColor:
+                                                    AppTheme.primary,
                                                 padding: EdgeInsets.all(0),
                                               ),
                                               icon: Icon(
@@ -729,7 +731,7 @@ class _GroupDetailState extends State<GroupDetail> {
                       // ElevatedButton(
                       //   style: ElevatedButton.styleFrom(
                       //     // 스타일 설정 추가
-                      //     backgroundColor: Colors.orange, // 버튼 배경색을 오렌지색으로 설정
+                      //     backgroundColor: AppTheme.primary, // 버튼 배경색을 오렌지색으로 설정
                       //   ),
                       //   onPressed: () {},
                       //   child: Container(
@@ -893,7 +895,7 @@ class _GroupDetailState extends State<GroupDetail> {
               actions: [
                 TextButton(
                   style: TextButton.styleFrom(
-                      backgroundColor: Colors.orange,
+                      backgroundColor: AppTheme.primary,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10))),
                   child: Text(
