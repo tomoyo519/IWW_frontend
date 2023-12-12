@@ -189,7 +189,7 @@ class TodoViewModel extends ChangeNotifier implements BaseTodoViewModel {
   @override
   Future<bool> updateTodo(String userId, Map<String, dynamic> data) async {
     int todoId = data['todo_id'];
-    Todo? updated = await _repository.updateTodo(userId, data);
+    Todo? updated = await _repository.updateTodo(todoId, data);
     if (updated != null) {
       int idx = _todos.indexWhere((t) => t.todoId == todoId);
       LOG.log(jsonEncode(data));
