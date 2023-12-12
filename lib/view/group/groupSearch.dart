@@ -152,7 +152,7 @@ class _GroupSearchState extends State<GroupSearch> {
                           String picturePath =
                               'assets/category/${groupList![i].catImg}';
                           return TextButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 var userInfo = context.read<UserInfo>();
 
                                 Navigator.push(
@@ -182,6 +182,10 @@ class _GroupSearchState extends State<GroupSearch> {
                                     ),
                                   ),
                                 );
+                                final assetsAudioPlayer = AssetsAudioPlayer();
+                                assetsAudioPlayer
+                                    .open(Audio("assets/main.mp3"));
+                                assetsAudioPlayer.play();
                               },
                               child: Container(
                                 alignment: Alignment.center,
@@ -216,58 +220,70 @@ class _GroupSearchState extends State<GroupSearch> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Text(
-                                              groupList![i].grpName,
-                                              textAlign: TextAlign.left,
-                                              style: TextStyle(
-                                                  fontSize: 18,
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w800),
-                                            ),
-                                            Text(
-                                              groupList![i].grpDesc ??
-                                                  "그룹에 대한 설명입니다.",
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.grey,
+                                            Padding(
+                                              padding: EdgeInsets.all(3),
+                                              child: Text(
+                                                groupList![i].grpName,
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    color: Colors.black,
+                                                    fontWeight:
+                                                        FontWeight.w800),
                                               ),
                                             ),
-                                            Row(
-                                              children: [
-                                                Container(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 6,
-                                                      vertical: 2),
-                                                  alignment: Alignment.center,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            30),
-                                                    border: Border.all(
-                                                        color: const Color
-                                                            .fromARGB(255, 171,
-                                                            169, 169)),
-                                                  ),
-                                                  child: Padding(
+                                            Padding(
+                                              padding: EdgeInsets.all(3),
+                                              child: Text(
+                                                groupList![i].grpDesc ??
+                                                    "그룹에 대한 설명입니다.",
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.all(3),
+                                              child: Row(
+                                                children: [
+                                                  Container(
                                                     padding:
-                                                        const EdgeInsets.all(
-                                                            3.0),
-                                                    child: Text(
-                                                      '${groupList![i].catName}',
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: TextStyle(
-                                                        fontSize: 14,
-                                                        color: Colors.grey[800],
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 6,
+                                                            vertical: 2),
+                                                    alignment: Alignment.center,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              30),
+                                                      border: Border.all(
+                                                          color: const Color
+                                                              .fromARGB(255,
+                                                              171, 169, 169)),
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              3.0),
+                                                      child: Text(
+                                                        '${groupList![i].catName}',
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          color:
+                                                              Colors.grey[800],
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
-                                                ),
-                                                Text(
-                                                    ' 멤버 ${groupList![i].memCnt}명',
-                                                    style:
-                                                        TextStyle(fontSize: 14))
-                                              ],
+                                                  Text(
+                                                      ' 멤버 ${groupList![i].memCnt}명',
+                                                      style: TextStyle(
+                                                          fontSize: 14))
+                                                ],
+                                              ),
                                             ),
                                           ],
                                         ),

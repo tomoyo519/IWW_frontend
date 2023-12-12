@@ -103,12 +103,15 @@ void showTodoConfirmModal(BuildContext context, String? message) {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             GestureDetector(
-              onTap: () {
+              onTap: () async {
                 // 사진 전체 화면으로 확대
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (_) => FullScreenImage(
                       '${Secrets.REMOTE_SERVER_URL}/group-image/' + todoImg),
                 ));
+                final assetsAudioPlayer = AssetsAudioPlayer();
+                assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                assetsAudioPlayer.play();
               },
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8), // 모서리 반경 설정
@@ -160,6 +163,9 @@ void showTodoConfirmModal(BuildContext context, String? message) {
                 var data = {'userId': user.userId, 'todoId': todoId};
                 EventService.sendEvent('confirmResponse', data);
               }
+              final assetsAudioPlayer = AssetsAudioPlayer();
+              assetsAudioPlayer.open(Audio("assets/main.mp3"));
+              assetsAudioPlayer.play();
               Navigator.of(context).pop();
             },
             style: TextButton.styleFrom(

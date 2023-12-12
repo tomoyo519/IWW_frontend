@@ -14,6 +14,7 @@ import 'package:iww_frontend/view/todo/todo_group_tile.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 class ToDoList extends StatefulWidget {
   ToDoList({super.key});
@@ -100,7 +101,12 @@ class _ToDoListState extends State<ToDoList> with TickerProviderStateMixin {
                     ),
                     for (SubTodoList sub in _sublist) ...[
                       GestureDetector(
-                        onTap: () => _toggle(sub),
+                        onTap: () async {
+                          _toggle(sub);
+                          final assetsAudioPlayer = AssetsAudioPlayer();
+                          assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                          assetsAudioPlayer.play();
+                        },
                         child: SizedBox(
                           width: double.infinity,
                           height: 10 * fs,

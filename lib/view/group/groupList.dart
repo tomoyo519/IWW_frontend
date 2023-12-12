@@ -138,59 +138,70 @@ class _GroupListState extends State<GroupList> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            myGroups[i].grpName,
-                                            textAlign: TextAlign.left,
-                                            style: TextStyle(
-                                                fontSize: 18,
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.w800),
-                                          ),
-                                          Text(
-                                            myGroups[i].grpDesc ??
-                                                "그룹에 대한 설명입니다.",
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.grey,
+                                          Padding(
+                                            padding: EdgeInsets.all(3),
+                                            child: Text(
+                                              myGroups[i].grpName,
+                                              textAlign: TextAlign.left,
+                                              style: TextStyle(
+                                                  fontSize: 18,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w800),
                                             ),
                                           ),
-                                          Row(
-                                            children: [
-                                              Container(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 6,
-                                                    vertical:
-                                                        2), // Container 위젯의 padding 속성 사용
-                                                alignment: Alignment
-                                                    .center, // Container 위젯의 alignment 속성 사용
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(30),
-                                                  border: Border.all(
-                                                      color:
-                                                          const Color.fromARGB(
-                                                              255,
-                                                              171,
-                                                              169,
-                                                              169)),
-                                                ),
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(3.0),
-                                                  child: Text(
-                                                    '${myGroups[i].catName}',
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                      color: Colors.grey[800],
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                left: 3, top: 3, bottom: 3),
+                                            child: Text(
+                                              myGroups[i].grpDesc ??
+                                                  "그룹에 대한 설명입니다.",
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.all(3),
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 6,
+                                                      vertical:
+                                                          2), // Container 위젯의 padding 속성 사용
+                                                  alignment: Alignment
+                                                      .center, // Container 위젯의 alignment 속성 사용
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            30),
+                                                    border: Border.all(
+                                                        color: const Color
+                                                            .fromARGB(255, 171,
+                                                            169, 169)),
+                                                  ),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            3.0),
+                                                    child: Text(
+                                                      '${myGroups[i].catName}',
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.grey[800],
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                              Text(' 멤버 ${myGroups[i].memCnt}명',
-                                                  style:
-                                                      TextStyle(fontSize: 14))
-                                            ],
+                                                Text(
+                                                    ' 멤버 ${myGroups[i].memCnt}명',
+                                                    style:
+                                                        TextStyle(fontSize: 14))
+                                              ],
+                                            ),
                                           ),
                                         ],
                                       ),

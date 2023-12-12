@@ -198,11 +198,11 @@ class _MyPetState extends State<MyPet> {
 
     overlayEntry = OverlayEntry(
       builder: (BuildContext context) => Positioned(
-        top: MediaQuery.of(context).size.height / 2, // 화면 중앙으로 위치 지정
-        left: MediaQuery.of(context).size.width / 2 - 150,
+        top: MediaQuery.of(context).size.height / 2 + 27, // 화면 중앙으로 위치 지정
+        left: MediaQuery.of(context).size.width / 2 - 144,
         child: Material(
           color: Colors.transparent,
-          child: Image.asset('assets/happy.png', height: 100, width: 100),
+          child: Image.asset('assets/happy3.png', height: 100, width: 100),
         ),
       ),
     );
@@ -287,12 +287,15 @@ class _MyPetState extends State<MyPet> {
     } else {
       return GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTap: () {
+          onTap: () async {
             LOG.log('아니 왜 안바뀌는데 $_petActionIndex');
             setState(() {
-              _petActionIndex = (_petActionIndex + 1) %
-                  (motions[petAsset]!.length);
+              _petActionIndex =
+                  (_petActionIndex + 1) % (motions[petAsset]!.length);
             });
+            final assetsAudioPlayer = AssetsAudioPlayer();
+            assetsAudioPlayer.open(Audio("assets/main.mp3"));
+            assetsAudioPlayer.play();
           },
           child: SizedBox(
             height: MediaQuery.of(context).size.height * 0.5,
