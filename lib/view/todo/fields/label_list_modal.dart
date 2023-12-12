@@ -9,7 +9,7 @@ import 'package:iww_frontend/view/_common/bottom_sheet_header.dart';
 class LabelListModal extends StatefulWidget {
   final content;
   final Function(int) setLabel;
-  List<Category>? category;
+  // List<Category>? category;
 
   LabelListModal({
     super.key,
@@ -34,13 +34,16 @@ class _LabelListModalState extends State<LabelListModal> {
   @override
   void initState() {
     super.initState();
-    TodoCategory.initialize().then(
-      (value) => waiting = false,
-    );
+    TodoCategory.initialize().then((value) {
+      setState(() {
+        waiting = false;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    LOG.log(TodoCategory.category![0].name);
     return waiting // 로딩중
         ? SizedBox.shrink()
         : Column(
@@ -51,7 +54,7 @@ class _LabelListModalState extends State<LabelListModal> {
               Expanded(
                 child: ListView.builder(
                     itemCount: widget.content == "label"
-                        ? widget.category!.length
+                        ? TodoCategory.category!.length
                         : LabelListModal.routines.length,
                     itemBuilder: (c, i) {
                       return TextButton(
@@ -60,7 +63,7 @@ class _LabelListModalState extends State<LabelListModal> {
                             Navigator.pop(context);
                           },
                           child: widget.content == "label"
-                              ? Text(widget.category![i].name)
+                              ? Text(TodoCategory.category![i].name)
                               : Text(LabelListModal.routines[i]));
                     }),
               ),
