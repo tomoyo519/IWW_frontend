@@ -226,10 +226,11 @@ class _GroupSearchState extends State<GroupSearch> {
                                                 groupList![i].grpName,
                                                 textAlign: TextAlign.left,
                                                 style: TextStyle(
-                                                    fontSize: 18,
-                                                    color: Colors.black,
-                                                    fontWeight:
-                                                        FontWeight.w800),
+                                                  fontSize: 18,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w800,
+                                                  fontFamily: AppTheme.font,
+                                                ),
                                               ),
                                             ),
                                             Padding(

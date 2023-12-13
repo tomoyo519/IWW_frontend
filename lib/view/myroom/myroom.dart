@@ -35,8 +35,6 @@ class MyRoom extends StatelessWidget {
       nav.title = '';
     }
 
-    LOG.log('Room page: user id $userId, owner id $roomOwner');
-
     return MultiProvider(providers: [
       ChangeNotifierProvider<CommentsProvider>(
           create: (_) => CommentsProvider(

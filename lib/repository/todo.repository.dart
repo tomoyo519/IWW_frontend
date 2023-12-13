@@ -61,10 +61,10 @@ class TodoRepository {
   /// ================== ///
   ///       Update       ///
   /// ================== ///
-  Future<Todo?> updateTodo(String id, Map<String, dynamic> data) async {
+  Future<Todo?> updateTodo(int todoId, Map<String, dynamic> data) async {
     var json = jsonEncode(data);
     return await RemoteDataSource.put(
-      "/todo/$id",
+      "/todo/$todoId",
       body: json,
     ).then((response) {
       if (response.statusCode == 200) {

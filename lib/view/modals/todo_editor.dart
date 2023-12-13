@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/utils/categories.dart';
 import 'package:iww_frontend/view/todo/modals/todo_create_modal.dart';
+import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/todo_modal.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +19,9 @@ void showTodoEditModal<T extends ChangeNotifier>(
   UserInfo userInfo = context.read<UserInfo>();
   T viewmodel = context.read<T>();
 
+  TodoModalMode mode =
+      T == MyGroupViewModel ? TodoModalMode.group : TodoModalMode.normal;
+
   await TodoCategory.initialize().then((_) {
     showModalBottomSheet(
       isScrollControlled: true,
@@ -31,7 +35,7 @@ void showTodoEditModal<T extends ChangeNotifier>(
             ChangeNotifierProvider<T>.value(value: viewmodel),
             ChangeNotifierProvider(
                 create: (_) => TodoModalViewModel<T>(
-                      mode: TodoModalMode.normal,
+                      mode: mode,
                       todo: todo,
                     ))
           ],

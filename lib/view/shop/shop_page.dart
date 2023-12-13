@@ -193,7 +193,10 @@ class _ShopItems extends State<ShopItems> with SingleTickerProviderStateMixin {
         children: [
           TabBar(
             controller: _tabController,
-            labelStyle: TextStyle(fontSize: 20),
+            labelStyle: TextStyle(
+              fontSize: 20,
+              fontFamily: AppTheme.font,
+            ),
             labelColor: Colors.black,
             indicatorColor: Colors.black,
             indicatorSize: TabBarIndicatorSize.tab,

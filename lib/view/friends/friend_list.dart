@@ -45,34 +45,37 @@ class _FriendListState extends State<FriendList> {
     return Column(
       children: [
         Expanded(
-          child: ListView.builder(
-            itemCount: friends.length,
-            itemBuilder: (context, index) {
-              FriendInfo friend = friends[index];
+            child: ListView.builder(
+          itemCount: friends.length,
+          itemBuilder: (context, index) {
+            FriendInfo friend = friends[index];
 
-              return Card(
-                child: InkWell(
-                  onTap: () async {
-                    // 사용자 화면으로 이동해야 합니다.
-                    final assetsAudioPlayer = AssetsAudioPlayer();
-                    assetsAudioPlayer.open(Audio("assets/main.mp3"));
-                    assetsAudioPlayer.play();
-                    nav.navigate(AppRoute.room, argument: friend.userId.toString());
-                    Navigator.pop(context);
-                  },
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundImage: AssetImage(
-                          'assets/kingfisher.png'), // TODO 사용자 펫의 이미지로 수정
-                    ),
-                    title: Text(friend.userName),
-                    subtitle: Text('${friend.petName}, 총 경험치  : ${friend.totalExp}'),
+            return Card(
+              child: InkWell(
+                onTap: () async {
+                  // 사용자 화면으로 이동해야 합니다.
+                  final assetsAudioPlayer = AssetsAudioPlayer();
+                  assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                  assetsAudioPlayer.play();
+                  nav.navigate(
+                    AppRoute.room,
+                    argument: friend.userId.toString(),
+                  );
+                  // Navigator.pop(context);
+                },
+                child: ListTile(
+                  leading: CircleAvatar(
+                    backgroundImage: AssetImage(
+                        'assets/kingfisher.png'), // TODO 사용자 펫의 이미지로 수정
                   ),
+                  title: Text(friend.userName),
+                  subtitle:
+                      Text('${friend.petName}, 총 경험치  : ${friend.totalExp}'),
                 ),
-              );
-            },
-          )
-        )
+              ),
+            );
+          },
+        ))
       ],
     );
   }

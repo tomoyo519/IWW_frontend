@@ -43,8 +43,8 @@ class Routine {
       : routName = json['rout_name'] ?? json['todo_name'],
         routDesc = json['rout_desc'],
         routRepeat = json['rout_repeat'] ?? '1111111',
-        grpId = json['grp_id'],
-        routId = json['rout_id'] ?? routId,
+        grpId = json['grp_id'] ?? 0,
+        routId = json['rout_id'] ?? routId ?? 0,
         routSrt = json['rout_srt'],
         routEnd = json['rout_end'];
 
