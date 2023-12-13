@@ -64,9 +64,12 @@ void showFriendRequestModal(BuildContext context, String? message) {
                 //     "req_type": '1',
                 // };
                 // await notificationRepository.updateNoti(noti.notiId, data);
-                // await friendRepository.createFriend(userId, friendId);
-                // var eventData = {"senderId": userId, "receiverId": friendId};
-                // EventService.sendEvent("friendResponse", eventData);
+                await friendRepository.createFriend(user.userId, senderId);
+                var eventData = {
+                  "senderId": user.userId,
+                  "receiverId": senderId
+                };
+                EventService.sendEvent("friendResponse", eventData);
               },
               child: Text('수락'),
             ),
