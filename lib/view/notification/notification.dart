@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/repository/friend.repository.dart';
 import 'package:iww_frontend/repository/notification.repository.dart';
+import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/model/notification/notification.model.dart'
     as model;
@@ -22,6 +24,7 @@ class _MyNotificationState extends State<MyNotification> {
   List<model.Notification> notifications = [];
   final NotificationRepository notificationRepository =
       NotificationRepository();
+  final FriendRepository friendRepository = FriendRepository();
 
   @override
   void initState() {
@@ -115,6 +118,8 @@ class _MyNotificationState extends State<MyNotification> {
 
   Widget? buildTrailWidget(model.Notification noti) {
     if (noti.notiType == '0' && noti.reqType == '0') {
+      int userId = int.parse(noti.receiverId);
+      int friendId = int.parse(noti.senderId);
       return Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -125,6 +130,9 @@ class _MyNotificationState extends State<MyNotification> {
                   "req_type": '1',
                 };
                 await notificationRepository.updateNoti(noti.notiId, data);
+                await friendRepository.createFriend(userId, friendId);
+                var eventData = {"senderId": userId, "receiverId": friendId};
+                EventService.sendEvent("friendResponse", eventData);
                 if (mounted) {
                   fetchNoti(context);
                 }

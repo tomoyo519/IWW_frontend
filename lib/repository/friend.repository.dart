@@ -80,13 +80,7 @@ class FriendRepository {
   }
 
   // 친구 생성
-  Future<bool> createFriend(int friendId) async {
-    int? userId = await _getUser();
-    if (userId == null) {
-      // TODO: 예외처리 (백그라운드 로그인)
-      return false;
-    }
-
+  Future<bool> createFriend(int userId, int friendId) async {
     return await RemoteDataSource.post(
       "/friend",
       body: {
@@ -100,13 +94,7 @@ class FriendRepository {
   }
 
   // 친구 삭제
-  Future<bool> deleteFriend(num friendId) async {
-    int? userId = await _getUser();
-    if (userId == null) {
-      // TODO: 예외처리 (백그라운드 로그인)
-      return false;
-    }
-
+  Future<bool> deleteFriend(int userId, int friendId) async {
     return await RemoteDataSource.delete(
       "/friend",
       body: {
@@ -116,8 +104,30 @@ class FriendRepository {
     ).then((response) => (response.statusCode == 200));
   }
 
-  Future<int?> _getUser() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    return pref.getInt("user_id");
+  // Future<int?> _getUser() async {
+  //   SharedPreferences pref = await SharedPreferences.getInstance();
+  //   return pref.getInt("user_id");
+  // }
+
+  Future<int> getFriendStatus(int userId, int friendId) async {
+    int status = 4;
+
+    await RemoteDataSource.get("/friend/$userId/$friendId").then((response) {
+      LOG.log("Get friend status : ${response.statusCode}");
+      if (response.statusCode == 200) {
+        LOG.log("Is $friendId my friend? : ${response.body}");
+        Map<String, dynamic> data = jsonDecode(response.body);
+        String result = data['msg'];
+        if (result != 'nothing') {
+          if (result == 'friend') status = 1;
+          if (result == 'requested') status = 2;
+          if (result == 'request') status = 3;
+        }
+      }
+    }).catchError((onError) {
+      LOG.log("getFriendStatus 에러발생!! $onError");
+    });
+
+    return status;
   }
 }

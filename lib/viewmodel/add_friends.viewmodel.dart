@@ -47,13 +47,13 @@ class FindContactViewModel extends ChangeNotifier {
     //     ?.pushNamedAndRemoveUntil("/todo", (route) => false);
   }
 
-  // 친구추가
-  Future<bool> createFriend(int friendId) async {
-    return await friendRepository.createFriend(friendId);
-  }
+  // // 친구추가
+  // Future<bool> createFriend(int friendId) async {
+  //   return await friendRepository.createFriend(friendId);
+  // }
 
-  // 친구삭제
-  Future<bool> deleteFriend(int friendId) async {
-    return await friendRepository.deleteFriend(friendId);
-  }
+  // // 친구삭제
+  // Future<bool> deleteFriend(int friendId) async {
+  //   return await friendRepository.deleteFriend(friendId);
+  // }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/comment.repository.dart';
+import 'package:iww_frontend/repository/friend.repository.dart';
 import 'package:iww_frontend/repository/room.repository.dart';
+import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/friends/friendMain.dart';
@@ -42,8 +44,13 @@ class MyRoom extends StatelessWidget {
                 roomOwner.toString(),
                 commentRepository,
               )),
-      ChangeNotifierProvider<MyRoomViewModel>(
-          create: (_) => MyRoomViewModel(userId, roomRepository, roomOwner)),
+      ChangeNotifierProvider<MyRoomViewModel>(create: (_) {
+        var viewModel = MyRoomViewModel(userId, roomRepository, roomOwner);
+        if (roomOwner != userId) {
+          viewModel.fetchFriendStatus();
+        }
+        return viewModel;
+      }),
     ], child: MyRoomPage());
   }
 }
@@ -137,6 +144,181 @@ class _MyRoomPageState extends State<MyRoomPage> {
   }
 
   SpeedDial buildSpeedDial() {
+    var myRoomViewModel = Provider.of<MyRoomViewModel>(context);
+    int userId = myRoomViewModel.getUserId;
+    int ownerId = myRoomViewModel.getRoomOwner;
+    FriendRepository friendRepository = FriendRepository();
+
+    SpeedDialChild friendStatusChild;
+    switch (myRoomViewModel.friendStatus) {
+      case 0: // 내 방일 때
+        friendStatusChild = SpeedDialChild(
+          shape: CircleBorder(),
+          child: Icon(
+            Icons.group,
+            color: Colors.black,
+          ),
+          labelWidget: Container(
+            padding: EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Text(
+              "친구목록",
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+          // label: '친구목록',
+          onTap: () async {
+            setState(() {
+              _selectedIndex = 3;
+            });
+            final assetsAudioPlayer = AssetsAudioPlayer();
+            assetsAudioPlayer.open(Audio("assets/main.mp3"));
+            assetsAudioPlayer.play();
+          },
+        );
+        break;
+      case 1: // 친구 상태
+        friendStatusChild = SpeedDialChild(
+          shape: CircleBorder(),
+          child: Icon(
+            Icons.favorite,
+            color: Colors.red,
+          ),
+          labelWidget: Container(
+            padding: EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Text(
+              "친구입니다.",
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+          // label: '친구목록',
+          onTap: () {},
+        );
+        break;
+      case 2:
+        friendStatusChild = SpeedDialChild(
+          shape: CircleBorder(),
+          child: Icon(
+            Icons.hourglass_empty,
+            color: Colors.black,
+          ),
+          labelWidget: Container(
+            padding: EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Text(
+              "친구 요청 중입니다.",
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+          // label: '친구목록',
+          onTap: () {},
+        );
+        break;
+      case 3:
+        friendStatusChild = SpeedDialChild(
+          shape: CircleBorder(),
+          child: Icon(
+            Icons.check,
+            color: Colors.black,
+          ),
+          labelWidget: Container(
+            padding: EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Text(
+              "친구 수락",
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+          // label: '친구목록',
+          onTap: () async {
+            myRoomViewModel.friendStatus = 1;
+            await friendRepository.createFriend(userId, ownerId);
+            var data = {'senderId': userId, 'receiverId': ownerId};
+            EventService.sendEvent("friendResponse", data);            
+          },
+        );
+        break;
+      case 4: // 아무 상태도 아님
+        // friendStatusChild = SpeedDialChild(
+        //   child: Icon(Icons.person_add, color: Colors.black),
+        //   labelWidget: Text("친구 요청"),
+        //   onTap: () async {
+        //     // 친구 요청 보내기 로직
+        //     // 요청 후 상태 업데이트 필요
+        //     setState(() {
+        //       myRoomViewModel.friendStatus = 2; // 요청 보낸 상태로 업데이트
+        //     });
+        //   },
+        // );
+        friendStatusChild = SpeedDialChild(
+          shape: CircleBorder(),
+          child: Icon(
+            Icons.person_add,
+            color: Colors.black,
+          ),
+          labelWidget: Container(
+            padding: EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Text(
+              "친구 요청",
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+          // label: '친구목록',
+          onTap: () {
+            myRoomViewModel.friendStatus = 2;
+            friendRepository.createFriend(userId, ownerId);
+            var data = {'senderId': userId, 'receiverId': ownerId};
+            EventService.sendEvent("friendRequest", data);
+          },
+        );
+        break;
+      default:
+        friendStatusChild = SpeedDialChild(
+          shape: CircleBorder(),
+          child: Icon(
+            Icons.group,
+            color: Colors.black,
+          ),
+          labelWidget: Container(
+            padding: EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Text(
+              "친구목록",
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+          // label: '친구목록',
+          onTap: () async {
+            setState(() {
+              _selectedIndex = 3;
+            });
+            final assetsAudioPlayer = AssetsAudioPlayer();
+            assetsAudioPlayer.open(Audio("assets/main.mp3"));
+            assetsAudioPlayer.play();
+          },
+        );
+    }
+
     return SpeedDial(
       overlayOpacity: 0.0,
       animatedIcon: AnimatedIcons.view_list,
@@ -242,33 +424,7 @@ class _MyRoomPageState extends State<MyRoomPage> {
           ),
           // label: '방명록',
         ),
-        SpeedDialChild(
-          shape: CircleBorder(),
-          child: Icon(
-            Icons.group,
-            color: Colors.black,
-          ),
-          labelWidget: Container(
-            padding: EdgeInsets.all(8.0),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            child: Text(
-              "친구목록",
-              style: TextStyle(color: Colors.black),
-            ),
-          ),
-          // label: '친구목록',
-          onTap: () async {
-            setState(() {
-              _selectedIndex = 3;
-            });
-            final assetsAudioPlayer = AssetsAudioPlayer();
-            assetsAudioPlayer.open(Audio("assets/main.mp3"));
-            assetsAudioPlayer.play();
-          },
-        ),
+        friendStatusChild,
       ],
       child: Icon(Icons.menu),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/repository/friend.repository.dart';
 import 'package:iww_frontend/repository/room.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
@@ -9,7 +10,8 @@ class MyRoomViewModel with ChangeNotifier {
   final itemTypeOfFurniture = 2;
   final itemTypeOfPetMotion = 3;
   final itemTypeOfBackground = 4;
-
+  
+  int friendStatus = 0;
   final RoomRepository _roomRepository;
   final int _userId; // 로그인한 사용자의 id
   List<Item> items = []; // 사용자의 인벤토리
@@ -71,6 +73,13 @@ class MyRoomViewModel with ChangeNotifier {
     await _roomRepository.applyChanges(
         _userId, roomObjects.map((e) => e.id).toList());
     setInitialRoomObjects();
+  }
+
+  Future<void> fetchFriendStatus() async {
+    FriendRepository friendRepository = FriendRepository();
+    // 이 부분에서 실제 친구 상태를 가져오는 로직을 구현합니다.
+    friendStatus = await friendRepository.getFriendStatus(_userId, _roomOwner);
+    notifyListeners();
   }
 
   // 선택한 아이템을 myroom에 넣거나 빼는 함수

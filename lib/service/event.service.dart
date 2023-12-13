@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/_navigation/enum/app_route.dart';
+import 'package:iww_frontend/view/modals/friend_request_modal.dart';
 import 'package:iww_frontend/view/modals/login_achieve_modal.dart';
 import 'package:iww_frontend/view/modals/todo_approved_modal.dart';
 import 'package:iww_frontend/view/modals/todo_confirm_modal.dart';
@@ -106,6 +107,8 @@ extension EventTypeExtension on EventType {
     switch (this) {
       // ==== SOCKET ==== //
       case EventType.friendRequest:
+        showFriendRequestModal(context, message);
+        break;
       case EventType.friendResponse:
       case EventType.confirmResponse:
         if (message != null) {
@@ -262,6 +265,7 @@ class EventService {
     String payload = jsonEncode({
       'type': 'friendRequest',
       'senderId': data['senderId'],
+      'senderName': data['senderName'],
       'receiverId': data['receiverId'],
       'message': data['message']
     });
