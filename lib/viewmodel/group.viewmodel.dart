@@ -120,7 +120,8 @@ class MyGroupViewModel extends ChangeNotifier implements BaseTodoViewModel {
   @override
   // EditorModal에서 폼 데이터를 가져와서 상태로 지정
   Future<bool> createTodo(Map<String, dynamic> data) async {
-    Routine routine = Routine.fromTodoJson(data);
+    LOG.log(data.toString());
+    Routine routine = Routine.fromJson(data);
 
     if (_groupRoutine.length < 3) {
       _groupRoutine.add(routine);

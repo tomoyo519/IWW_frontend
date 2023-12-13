@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:iww_frontend/service/event.service.dart';
+import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:photo_view/photo_view.dart';
@@ -157,6 +158,7 @@ void showTodoConfirmModal(BuildContext context, String? message) {
               bool result =
                   await todoRepository.confirmGroupTodo(todoId.toString());
 
+              LOG.log('$result');
               if (result) {
                 var data = {'userId': user.userId, 'todoId': todoId};
                 EventService.sendEvent('confirmResponse', data);

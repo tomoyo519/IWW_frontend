@@ -4,7 +4,6 @@ import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'friendRank.dart';
 
-
 class MyFriend extends StatelessWidget {
   const MyFriend({super.key});
 
@@ -16,13 +15,12 @@ class MyFriend extends StatelessWidget {
         initialIndex: 0,
         length: 2,
         child: Scaffold(
-          appBar: AppBar(
-            bottom: TabBar(tabs: const [
-              Tab(icon: Icon(Icons.group)),
-              Tab(icon: Icon(Icons.leaderboard))
-            ]),
-          ),
-          body: TabBarView(children: [FriendList(userId: userId), FriendRank()]),
+          appBar: TabBar(tabs: const [
+            Tab(icon: Icon(Icons.group)),
+            Tab(icon: Icon(Icons.leaderboard))
+          ]),
+          body:
+              TabBarView(children: [FriendList(userId: userId), FriendRank()]),
         ));
   }
 }

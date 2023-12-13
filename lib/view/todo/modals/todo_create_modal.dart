@@ -208,6 +208,8 @@ class TodoCreateModal<T extends ChangeNotifier> extends StatelessWidget {
       case 1:
         TimeOfDay currtime = viewmodel.todoSrt ?? TimeOfDay.now();
         return currtime.toViewString();
+      case 2:
+        return viewmodel.todoRoutStr;
       default:
         return "";
     }
@@ -257,11 +259,9 @@ class _DayPicker<T extends ChangeNotifier> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screen = MediaQuery.of(context).size;
+    final viewmodel = context.watch<TodoModalViewModel<T>>();
 
     List<String> week = ['월', '화', '수', '목', '금', '토', '일'];
-
-    DateTime now = DateTime.now();
-    String today = DateFormat('M월 y일 aaa 요일', 'ko_KO').format(now);
 
     return SizedBox(
       width: double.infinity,
@@ -278,14 +278,29 @@ class _DayPicker<T extends ChangeNotifier> extends StatelessWidget {
                 for (int i = 0; i < 7; i++)
                   Container(
                     decoration: BoxDecoration(
-                      color:
-                          today == week[i] ? Colors.black12 : AppTheme.primary,
+                      color: ((viewmodel.todoRout & (1 << i)) != 0)
+                          ? AppTheme.primary
+                          : AppTheme.shaded,
                       borderRadius: BorderRadius.circular(100),
                     ),
                     width: 40,
                     height: 40,
                     child: Center(
-                      child: Text(week[i]),
+                      child: TextButton(
+                        child: Text(
+                          week[i],
+                          style: TextStyle(
+                            color: ((viewmodel.todoRout & (1 << i)) != 0)
+                                ? AppTheme.onPrimary
+                                : AppTheme.onShaded,
+                          ),
+                        ),
+                        onPressed: () {
+                          // 탭할때마다 요일 선택
+                          int weekFlag = 1 << i;
+                          viewmodel.todoRout ^= weekFlag;
+                        },
+                      ),
                     ),
                   ),
               ],

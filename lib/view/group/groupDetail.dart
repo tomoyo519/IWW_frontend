@@ -181,36 +181,23 @@ class _GroupDetailState extends State<GroupDetail> {
     );
   }
 
-  void _setRoutinePicture(int routId) async {
-    await RemoteDataSource.get('/routine/${widget.groupId}').then((res) {
+  void _setRoutinePicture(int routId, String routRepeat) async {
+    // 클릭시, 그룹 구성원의 사진 인증 보여주는 기능
+    // if (routine != null) {
+    await RemoteDataSource.get("/group/${widget.groupId}/user/$routId/image")
+        .then((res) {
       if (res.statusCode == 200) {
-        List<dynamic> jsonList = jsonDecode(res.body)['result'];
+        var json = jsonDecode(res.body);
+        LOG.log(res.body);
         setState(() {
-          routines =
-              jsonList.map((e) => Routine.fromJson(e, routId: routId)).toList();
+          routineImgs = (json["result"] as List)
+              .map((item) => GroupImg.fromJson(item))
+              .toList();
         });
       }
+      LOG.log('thisisroutineImgs: $routineImgs');
     });
-
-    // 지금 보여주는 루틴 가져오기
-    Routine? rout = routines?.where((e) => e.routId == routId).first;
-
-    // 클릭시, 그룹 구성원의 사진 인증 보여주는 기능
-    if (rout != null) {
-      await RemoteDataSource.get("/group/${widget.groupId}/user/$routId/image")
-          .then((res) {
-        if (res.statusCode == 200) {
-          var json = jsonDecode(res.body);
-          LOG.log(res.body);
-          setState(() {
-            routineImgs = (json["result"] as List)
-                .map((item) => GroupImg.fromJson(item))
-                .toList();
-          });
-        }
-        LOG.log('thisisroutineImgs: $routineImgs');
-      });
-    }
+    // }
     // ignore: use_build_context_synchronously
 
     // ignore: use_build_context_synchronously
@@ -268,7 +255,7 @@ class _GroupDetailState extends State<GroupDetail> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      rout!.routRepeat.toWeekRepeat().name,
+                                      routRepeat,
                                       style: TextStyle(
                                           fontSize: 4 * fs,
                                           fontWeight: FontWeight.w900),
@@ -532,7 +519,10 @@ class _GroupDetailState extends State<GroupDetail> {
                 ),
 
                 Padding(
-                  padding: const EdgeInsets.all(20.0),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
+                  ),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -546,107 +536,46 @@ class _GroupDetailState extends State<GroupDetail> {
                 ),
 
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   child: Expanded(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: groupRoutine.length,
-                      itemBuilder: (c, i) {
-                        WeekRepeat repeat =
-                            groupRoutine[i].routRepeat.toWeekRepeat();
-
-                        return groupRoutine.isNotEmpty
-                            ? Container(
-                                margin: EdgeInsets.all(10),
-                                padding: EdgeInsets.all(15),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                      color: Colors.black26, width: 1),
-                                ),
-                                child: Stack(
-                                  children: [
-                                    myGroup == true // 내가 가입한 그룹인 경우 수정버튼 표시
-                                        ? Positioned(
-                                            top: 0,
-                                            right: 0,
-                                            child: IconButton(
-                                              style: IconButton.styleFrom(
-                                                backgroundColor:
-                                                    AppTheme.primary,
-                                                padding: EdgeInsets.all(0),
-                                              ),
-                                              icon: Icon(
-                                                Icons.edit_outlined,
-                                                color: Colors.black54,
-                                                size: 20,
-                                              ),
-                                              onPressed: () async {
-                                                _showTodoEditor(
-                                                    context, groupRoutine[i]);
-                                                final assetsAudioPlayer =
-                                                    AssetsAudioPlayer();
-
-                                                assetsAudioPlayer.open(
-                                                  Audio("assets/main.mp3"),
-                                                );
-
-                                                assetsAudioPlayer.play();
-                                              },
-                                            ),
-                                          )
-                                        : SizedBox.shrink(),
-                                    Column(
-                                      children: [
-                                        ConstrainedBox(
-                                          constraints: BoxConstraints(
-                                            minHeight: 50,
-                                            minWidth: double.infinity,
-                                          ),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                groupRoutine[i].routName,
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.w900,
-                                                  fontSize: 18,
+                    child: Column(
+                      children: [
+                        if (groupRoutine.isNotEmpty)
+                          for (int i = 0; i < groupRoutine.length; i++) ...[
+                            Builder(builder: (context) {
+                              WeekRepeat repeat =
+                                  groupRoutine[i].routRepeat.toWeekRepeat();
+                              return Container(
+                                  margin: EdgeInsets.all(10),
+                                  padding: EdgeInsets.all(15),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                        color: Colors.black26, width: 1),
+                                  ),
+                                  child: Stack(
+                                    children: [
+                                      myGroup == true // 내가 가입한 그룹인 경우 수정버튼 표시
+                                          ? Positioned(
+                                              top: 0,
+                                              right: 0,
+                                              child: IconButton(
+                                                style: IconButton.styleFrom(
+                                                  backgroundColor:
+                                                      AppTheme.primary,
+                                                  padding: EdgeInsets.all(0),
                                                 ),
-                                              ),
-                                              Row(
-                                                children: [
-                                                  _RoutineBadge(
-                                                    content:
-                                                        '${repeat.name} 반복',
-                                                  ),
-                                                  if (repeat.count != 7) ...[
-                                                    SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    _RoutineBadge(
-                                                      content: repeat.weekday
-                                                          .map((e) => e.name)
-                                                          .join('・')
-                                                          .toString(),
-                                                    ),
-                                                  ]
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            Expanded(
-                                              child: MyButton(
-                                                type: MyButtonType.primary,
-                                                text: "그룹원들의 달성 현황",
-                                                onpressed: (context) async {
-                                                  _setRoutinePicture(
-                                                      groupRoutine[i].routId);
+                                                icon: Icon(
+                                                  Icons.edit_outlined,
+                                                  color: Colors.black54,
+                                                  size: 20,
+                                                ),
+                                                onPressed: () async {
+                                                  _showTodoEditor(
+                                                      context, groupRoutine[i]);
                                                   final assetsAudioPlayer =
                                                       AssetsAudioPlayer();
 
@@ -657,31 +586,106 @@ class _GroupDetailState extends State<GroupDetail> {
                                                   assetsAudioPlayer.play();
                                                 },
                                               ),
+                                            )
+                                          : SizedBox.shrink(),
+                                      Column(
+                                        children: [
+                                          ConstrainedBox(
+                                            constraints: BoxConstraints(
+                                              minHeight: 50,
+                                              minWidth: double.infinity,
                                             ),
-                                            // SizedBox(
-                                            //   width: 10,
-                                            // ),
-                                            // Expanded(
-                                            //   child: MyButton(
-                                            //     type: MyButtonType.primary,
-                                            //     text:
-                                            //         "인증하기", // TODO: 실제 정보가 아닙니다.
-                                            //     onpressed: (context) =>
-                                            //         _onGrpRoutCheck(
-                                            //       context,
-                                            //       groupRoutine[i].grpId,
-                                            //       userInfo.userId,
-                                            //     ),
-                                            //   ),
-                                            // ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ))
-                            : Text("조회된 그룹이 없습니다.");
-                      },
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  groupRoutine[i].routName,
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w900,
+                                                    fontSize: 18,
+                                                  ),
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    _RoutineBadge(
+                                                      content:
+                                                          '${repeat.name} 반복',
+                                                    ),
+                                                    if (repeat.count != 7) ...[
+                                                      SizedBox(
+                                                        width: 10,
+                                                      ),
+                                                      _RoutineBadge(
+                                                        content: repeat.weekday
+                                                            .where((element) =>
+                                                                element
+                                                                    .selected ==
+                                                                true)
+                                                            .map((e) => e.name)
+                                                            .join('・')
+                                                            .toString(),
+                                                      ),
+                                                    ]
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              Expanded(
+                                                child: MyButton(
+                                                  type: MyButtonType.primary,
+                                                  text: "그룹원들의 달성 현황",
+                                                  onpressed: (context) async {
+                                                    _setRoutinePicture(
+                                                      groupRoutine[i].routId,
+                                                      groupRoutine[i]
+                                                          .routRepeat
+                                                          .toWeekRepeat()
+                                                          .name,
+                                                    );
+                                                    final assetsAudioPlayer =
+                                                        AssetsAudioPlayer();
+
+                                                    assetsAudioPlayer.open(
+                                                      Audio("assets/main.mp3"),
+                                                    );
+
+                                                    assetsAudioPlayer.play();
+                                                  },
+                                                ),
+                                              ),
+                                              // SizedBox(
+                                              //   width: 10,
+                                              // ),
+                                              // Expanded(
+                                              //   child: MyButton(
+                                              //     type: MyButtonType.primary,
+                                              //     text:
+                                              //         "인증하기", // TODO: 실제 정보가 아닙니다.
+                                              //     onpressed: (context) =>
+                                              //         _onGrpRoutCheck(
+                                              //       context,
+                                              //       groupRoutine[i].grpId,
+                                              //       userInfo.userId,
+                                              //     ),
+                                              //   ),
+                                              // ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ));
+                            })
+                          ]
+                        else
+                          Text("조회된 그룹이 없습니다.")
+                      ],
                     ),
                   ),
                 ),
@@ -758,10 +762,16 @@ class _GroupDetailState extends State<GroupDetail> {
                   child: LayoutBuilder(
                     builder:
                         (BuildContext context, BoxConstraints constraints) {
+                      double fs = MediaQuery.of(context).size.width * 0.01;
                       return GridView.builder(
                         shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            childAspectRatio: 2 / 1, crossAxisCount: 3),
+                          childAspectRatio: 2 / 1,
+                          crossAxisCount: 3,
+                          crossAxisSpacing: 2 * fs,
+                          mainAxisSpacing: 2 * fs,
+                        ),
                         itemCount: groupMems.isEmpty ? 0 : groupMems.length,
                         itemBuilder: (context, index) {
                           return InkWell(
@@ -770,31 +780,38 @@ class _GroupDetailState extends State<GroupDetail> {
                               final assetsAudioPlayer = AssetsAudioPlayer();
                               assetsAudioPlayer.open(Audio("assets/main.mp3"));
                               assetsAudioPlayer.play();
-                              nav.push(AppRoute.room,
-                                  argument:
-                                      groupMems[index]["user_id"].toString());
+                              nav.push(
+                                AppRoute.room,
+                                argument:
+                                    groupMems[index]["user_id"].toString(),
+                                title: groupMems[index]["user_name"],
+                              );
                               Navigator.pop(context);
                             },
                             child: Column(
                               children: [
                                 Container(
-                                  height: 50,
+                                  height: 12 * fs,
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
                                           color: Colors.grey, width: 1)),
                                   alignment: Alignment.center,
-                                  margin: EdgeInsets.all(2),
-                                  padding: EdgeInsets.all(2),
+                                  // margin: EdgeInsets.all(2),
+                                  // padding: EdgeInsets.all(2),
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceEvenly,
                                     children: [
                                       Icon(Icons.account_circle_rounded),
-                                      Text(
-                                        groupMems[index]["user_name"] ?? "",
-                                        style: TextStyle(
-                                          fontSize: 18,
+                                      SizedBox(
+                                        width: 18 * fs,
+                                        child: Text(
+                                          groupMems[index]["user_name"] ?? "",
+                                          style: TextStyle(
+                                            fontSize: 4 * fs,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
                                         ),
                                       )
                                     ],
@@ -817,7 +834,7 @@ class _GroupDetailState extends State<GroupDetail> {
                       height: 40,
                       child: TextButton(
                         style: TextButton.styleFrom(
-                            backgroundColor: Color(0xFF3A00E5),
+                            backgroundColor: AppTheme.secondary,
                             shape: RoundedRectangleBorder(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10)))),
@@ -841,7 +858,7 @@ class _GroupDetailState extends State<GroupDetail> {
                       height: 40,
                       child: TextButton(
                         style: TextButton.styleFrom(
-                            backgroundColor: Color(0xFF3A00E5),
+                            backgroundColor: AppTheme.secondary,
                             shape: RoundedRectangleBorder(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10)))),
@@ -859,10 +876,17 @@ class _GroupDetailState extends State<GroupDetail> {
                 ]
               ]),
             ))
-        : Lottie.asset('assets/spinner.json',
-            repeat: true,
-            animate: true,
-            height: MediaQuery.of(context).size.height * 0.3);
+        : DecoratedBox(
+            decoration: BoxDecoration(
+              color: Colors.white,
+            ),
+            child: Lottie.asset(
+              'assets/spinner.json',
+              repeat: true,
+              animate: true,
+              height: MediaQuery.of(context).size.height * 0.3,
+            ),
+          );
   }
 
   // 그룹 사진 업로드

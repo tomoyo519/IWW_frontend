@@ -3,6 +3,7 @@ import 'package:iww_frontend/repository/comment.repository.dart';
 import 'package:iww_frontend/repository/room.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
+import 'package:iww_frontend/view/friends/friendMain.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';
 import 'package:iww_frontend/view/inventory/newinventory.dart';
 import 'package:iww_frontend/view/test/test.dart';
@@ -31,8 +32,6 @@ class MyRoom extends StatelessWidget {
       // 방 주인이 유저가 아니면 홈 라벨 지우기
       nav.title = '';
     }
-
-    LOG.log('Room page: user id $userId, owner id $roomOwner');
 
     return MultiProvider(providers: [
       ChangeNotifierProvider<CommentsProvider>(
@@ -126,7 +125,8 @@ class _MyRoomPageState extends State<MyRoomPage> {
       // case 1:
       //   return InventoryPage();
       case 3:
-        return FontTestPage();
+        // return FontTestPage();
+        return MyFriend();
       default:
         return Center(
             child: SizedBox(
