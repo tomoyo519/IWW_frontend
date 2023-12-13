@@ -11,7 +11,7 @@ class AppTheme {
   // * ==== Button Colors ==== * //
   static Color primary = Color.fromARGB(255, 240, 166, 54);
   static Color onPrimary = Colors.white;
-  static Color secondary = Color.fromARGB(255, 133, 39, 176);
+  static Color secondary = Color.fromARGB(255, 82, 39, 176);
   static Color onSecondary = Colors.white;
   static Color tertiary = Color(0xff57c7c9);
   static Color onTertiary = Colors.white;
@@ -50,16 +50,30 @@ class AppTheme {
             fontWeight: FontWeight.w900,
           ),
         ),
-        textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(
-            textStyle: TextStyle(
-              color: primary,
-            ),
+        textButtonTheme: TextButtonThemeData(style:
+            ButtonStyle(overlayColor: MaterialStateProperty.resolveWith<Color?>(
+          (Set<MaterialState> states) {
+            if (states.contains(MaterialState.pressed)) {
+              return Colors.transparent; // 터치 시 색상 변경 없음
+            }
+            return null; // 기본값을 사용
+          },
+        ))),
+        tabBarTheme: TabBarTheme(
+          labelStyle: TextStyle(
+            fontFamily: font,
           ),
         ),
-        tabBarTheme: TabBarTheme(
-            labelStyle: TextStyle(
-          fontFamily: font,
-        )));
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ButtonStyle(
+              overlayColor: MaterialStateProperty.resolveWith<Color?>(
+            (Set<MaterialState> states) {
+              if (states.contains(MaterialState.pressed)) {
+                return Colors.transparent; // 터치 시 색상 변경 없음
+              }
+              return null; // 기본값을 사용
+            },
+          )),
+        ));
   }
 }

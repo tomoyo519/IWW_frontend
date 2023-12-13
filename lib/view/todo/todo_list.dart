@@ -13,6 +13,7 @@ import 'package:iww_frontend/view/todo/todo_my_tile.dart';
 import 'package:iww_frontend/view/todo/todo_group_tile.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
 
@@ -84,7 +85,12 @@ class _ToDoListState extends State<ToDoList> with TickerProviderStateMixin {
     UserInfo userinfo = context.read<UserInfo>();
 
     return viewModel.waiting
-        ? Spinner()
+        ? Lottie.asset(
+            'assets/spinner.json',
+            repeat: true,
+            animate: true,
+            height: MediaQuery.of(context).size.height * 0.3,
+          )
         : viewModel.groupTodos.isEmpty && viewModel.todos.isEmpty
             ? TodoListEmpty()
             : SingleChildScrollView(

@@ -762,10 +762,16 @@ class _GroupDetailState extends State<GroupDetail> {
                   child: LayoutBuilder(
                     builder:
                         (BuildContext context, BoxConstraints constraints) {
+                      double fs = MediaQuery.of(context).size.width * 0.01;
                       return GridView.builder(
                         shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            childAspectRatio: 2 / 1, crossAxisCount: 3),
+                          childAspectRatio: 2 / 1,
+                          crossAxisCount: 3,
+                          crossAxisSpacing: 2 * fs,
+                          mainAxisSpacing: 2 * fs,
+                        ),
                         itemCount: groupMems.isEmpty ? 0 : groupMems.length,
                         itemBuilder: (context, index) {
                           return InkWell(
@@ -785,23 +791,27 @@ class _GroupDetailState extends State<GroupDetail> {
                             child: Column(
                               children: [
                                 Container(
-                                  height: 50,
+                                  height: 12 * fs,
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
                                           color: Colors.grey, width: 1)),
                                   alignment: Alignment.center,
-                                  margin: EdgeInsets.all(2),
-                                  padding: EdgeInsets.all(2),
+                                  // margin: EdgeInsets.all(2),
+                                  // padding: EdgeInsets.all(2),
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceEvenly,
                                     children: [
                                       Icon(Icons.account_circle_rounded),
-                                      Text(
-                                        groupMems[index]["user_name"] ?? "",
-                                        style: TextStyle(
-                                          fontSize: 18,
+                                      SizedBox(
+                                        width: 18 * fs,
+                                        child: Text(
+                                          groupMems[index]["user_name"] ?? "",
+                                          style: TextStyle(
+                                            fontSize: 4 * fs,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
                                         ),
                                       )
                                     ],
@@ -824,7 +834,7 @@ class _GroupDetailState extends State<GroupDetail> {
                       height: 40,
                       child: TextButton(
                         style: TextButton.styleFrom(
-                            backgroundColor: Color(0xFF3A00E5),
+                            backgroundColor: AppTheme.secondary,
                             shape: RoundedRectangleBorder(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10)))),
@@ -848,7 +858,7 @@ class _GroupDetailState extends State<GroupDetail> {
                       height: 40,
                       child: TextButton(
                         style: TextButton.styleFrom(
-                            backgroundColor: Color(0xFF3A00E5),
+                            backgroundColor: AppTheme.secondary,
                             shape: RoundedRectangleBorder(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10)))),
@@ -866,10 +876,17 @@ class _GroupDetailState extends State<GroupDetail> {
                 ]
               ]),
             ))
-        : Lottie.asset('assets/spinner.json',
-            repeat: true,
-            animate: true,
-            height: MediaQuery.of(context).size.height * 0.3);
+        : DecoratedBox(
+            decoration: BoxDecoration(
+              color: Colors.white,
+            ),
+            child: Lottie.asset(
+              'assets/spinner.json',
+              repeat: true,
+              animate: true,
+              height: MediaQuery.of(context).size.height * 0.3,
+            ),
+          );
   }
 
   // 그룹 사진 업로드

@@ -48,19 +48,25 @@ class AppNavigator extends ChangeNotifier {
 
   // * ====== navigator methods ====== * //
   void navigate(AppRoute route, {String? argument, String? title}) {
-    _idx = route.index;
-    _stack = [];
-    _stack.add(route.index);
     _argument = argument;
     _title = title;
+
+    if (route.index != _idx) {
+      _stack = [];
+      _idx = route.index;
+      _stack.add(route.index);
+    }
     notifyListeners();
   }
 
   void push(AppRoute route, {String? argument, String? title}) {
-    _idx = route.index;
-    _stack.add(route.index);
     _argument = argument;
     _title = title;
+
+    if (route.index != _idx) {
+      _idx = route.index;
+      _stack.add(route.index);
+    }
     LOG.log('[AppNav] push page $_idx, stack $_stack');
     notifyListeners();
   }
