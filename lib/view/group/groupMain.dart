@@ -70,14 +70,9 @@ class _MyGroupState extends State<MyGroup> with SingleTickerProviderStateMixin {
     Size screen = MediaQuery.of(context).size;
     double fs = screen.width * 0.01;
 
-    return Container(
+    return SizedBox(
       width: screen.width,
       height: screen.height,
-      padding: EdgeInsets.only(
-          // top: 3 * fs,
-          // left: 3 * fs,
-          // right: 3 * fs,
-          ),
       child: DefaultTabController(
         length: 2,
         child: Column(
@@ -114,7 +109,7 @@ class _MyGroupState extends State<MyGroup> with SingleTickerProviderStateMixin {
                       GroupList(),
                       // ==== Group Create Floating Button ==== //
                       Positioned(
-                        right: 2 * fs,
+                        right: 5 * fs,
                         bottom: 5 * fs,
                         child: IconButton(
                           onPressed: () async {
