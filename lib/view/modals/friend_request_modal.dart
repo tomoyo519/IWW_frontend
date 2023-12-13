@@ -17,9 +17,10 @@ void showFriendRequestModal(BuildContext context, String? message) {
 
   // message에서 필요한 데이터 파싱
   Map<String, dynamic> data = jsonDecode(message);
+  String msg = data['message'];
   int senderId = data['senderId'];
   String senderName = data['senderName'];
-  String msg = data['message'];
+  int notiId = data['notiId'];
 
   showDialog(
       context: context,
@@ -34,16 +35,26 @@ void showFriendRequestModal(BuildContext context, String? message) {
                     MaterialStateProperty.all<Color>(Colors.grey[300]!),
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(10),
-                    ),
-                  ),
+                      borderRadius: BorderRadius.circular(10)),
                 ),
               ),
-              onPressed: () {
+              onPressed: () async {
                 // 거절 버튼 로직
+                Map<String, dynamic> data = {
+                  "noti_id": notiId.toString(),
+                  "req_type": '2',
+                };
+                await friendRepository.createFriend(user.userId, senderId);
+                await notificationRepository.updateNoti(
+                    notiId.toString(), data);
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                }
               },
-              child: Text('거절'),
+              child: Text(
+                '거절',
+                style: TextStyle(color: Colors.grey[600]),
+              ),
             ),
             TextButton(
               style: ButtonStyle(
@@ -51,27 +62,27 @@ void showFriendRequestModal(BuildContext context, String? message) {
                     MaterialStateProperty.all<Color>(Colors.orange),
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      bottomRight: Radius.circular(10),
-                    ),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
               ),
               onPressed: () async {
                 // 수락 버튼 로직
-                // Map<String, dynamic> data = {
-                //     "noti_id": noti.notiId,
-                //     "req_type": '1',
-                // };
-                // await notificationRepository.updateNoti(noti.notiId, data);
-                await friendRepository.createFriend(user.userId, senderId);
-                var eventData = {
-                  "senderId": user.userId,
-                  "receiverId": senderId
+                Map<String, dynamic> data = {
+                  "noti_id": notiId.toString(),
+                  "req_type": '1',
                 };
-                EventService.sendEvent("friendResponse", eventData);
+                await friendRepository.createFriend(user.userId, senderId);
+                await notificationRepository.updateNoti(
+                    notiId.toString(), data);
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                }
               },
-              child: Text('수락'),
+              child: Text(
+                '수락',
+                style: TextStyle(color: Colors.grey[800]),
+              ),
             ),
           ],
         );

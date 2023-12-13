@@ -264,10 +264,11 @@ class EventService {
 
     String payload = jsonEncode({
       'type': 'friendRequest',
+      'message': data['message'],
       'senderId': data['senderId'],
       'senderName': data['senderName'],
       'receiverId': data['receiverId'],
-      'message': data['message']
+      'notiId': data['notiId'],
     });
 
     await flutterLocalNotificationsPlugin.show(

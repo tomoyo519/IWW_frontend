@@ -244,10 +244,12 @@ class _MyRoomPageState extends State<MyRoomPage> {
           ),
           // label: '친구목록',
           onTap: () async {
-            myRoomViewModel.friendStatus = 1;
+            setState(() {
+              myRoomViewModel.friendStatus = 1; // myRoomViewModel 인스턴스 사용
+            });
             await friendRepository.createFriend(userId, ownerId);
             var data = {'senderId': userId, 'receiverId': ownerId};
-            EventService.sendEvent("friendResponse", data);            
+            EventService.sendEvent("friendResponse", data);
           },
         );
         break;
@@ -282,7 +284,9 @@ class _MyRoomPageState extends State<MyRoomPage> {
           ),
           // label: '친구목록',
           onTap: () {
-            myRoomViewModel.friendStatus = 2;
+            setState(() {
+              myRoomViewModel.friendStatus = 2; // myRoomViewModel 인스턴스 사용
+            });
             friendRepository.createFriend(userId, ownerId);
             var data = {'senderId': userId, 'receiverId': ownerId};
             EventService.sendEvent("friendRequest", data);
@@ -367,34 +371,35 @@ class _MyRoomPageState extends State<MyRoomPage> {
             assetsAudioPlayer.play();
           },
         ),
-        SpeedDialChild(
-          shape: CircleBorder(),
-          labelWidget: Container(
-            padding: EdgeInsets.all(8.0),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8.0),
+        if (myRoomViewModel.isMyRoom())
+          SpeedDialChild(
+            shape: CircleBorder(),
+            labelWidget: Container(
+              padding: EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              child: Text(
+                "인벤토리",
+                style: TextStyle(color: Colors.black),
+              ),
             ),
-            child: Text(
-              "인벤토리",
-              style: TextStyle(color: Colors.black),
+            onTap: () async {
+              final assetsAudioPlayer = AssetsAudioPlayer();
+              assetsAudioPlayer.open(Audio("assets/main.mp3"));
+              assetsAudioPlayer.play();
+              return _showInventorySheet();
+            },
+            child: CircleAvatar(
+              backgroundColor: (Colors.white),
+              child: Icon(
+                Icons.work_rounded,
+                color: Colors.black,
+              ),
             ),
+            // label: '인벤토리',
           ),
-          onTap: () async {
-            final assetsAudioPlayer = AssetsAudioPlayer();
-            assetsAudioPlayer.open(Audio("assets/main.mp3"));
-            assetsAudioPlayer.play();
-            return _showInventorySheet();
-          },
-          child: CircleAvatar(
-            backgroundColor: (Colors.white),
-            child: Icon(
-              Icons.work_rounded,
-              color: Colors.black,
-            ),
-          ),
-          // label: '인벤토리',
-        ),
         SpeedDialChild(
           labelWidget: Container(
             padding: EdgeInsets.all(8.0),

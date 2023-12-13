@@ -120,8 +120,8 @@ class FriendRepository {
         String result = data['msg'];
         if (result != 'nothing') {
           if (result == 'friend') status = 1;
-          if (result == 'requested') status = 2;
-          if (result == 'request') status = 3;
+          if (result == 'request') status = 2;
+          if (result == 'requested') status = 3;
         }
       }
     }).catchError((onError) {

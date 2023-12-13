@@ -131,8 +131,8 @@ class _MyNotificationState extends State<MyNotification> {
                 };
                 await notificationRepository.updateNoti(noti.notiId, data);
                 await friendRepository.createFriend(userId, friendId);
-                var eventData = {"senderId": userId, "receiverId": friendId};
-                EventService.sendEvent("friendResponse", eventData);
+                // var eventData = {"senderId": userId, "receiverId": friendId};
+                // EventService.sendEvent("friendResponse", eventData);
                 if (mounted) {
                   fetchNoti(context);
                 }
