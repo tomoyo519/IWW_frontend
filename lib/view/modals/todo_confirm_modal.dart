@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/todo.repository.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:iww_frontend/service/event.service.dart';
+import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -77,27 +78,28 @@ void showTodoConfirmModal(BuildContext context, String? message) {
       return AlertDialog(
         surfaceTintColor: Colors.white,
         backgroundColor: Colors.white,
-        titlePadding: EdgeInsets.all(0),
-        title: Container(
-          decoration: BoxDecoration(
-              color: Color.fromARGB(255, 254, 204, 129),
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-          padding: EdgeInsets.all(10),
-          child: Text(
-            '그룹 할일 인증',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        // title: Text(
-        //   '그룹 할일 인증',
-        //   style: TextStyle(
-        //     fontWeight: FontWeight.bold,
+        // titlePadding: EdgeInsets.all(0),
+        // title: Container(
+        //   decoration: BoxDecoration(
+        //       color: Color.fromARGB(255, 254, 204, 129),
+        //       borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+        //   padding: EdgeInsets.all(10),
+        //   child: Text(
+        //     '그룹 할일 인증',
+        //     textAlign: TextAlign.center,
+        //     style: TextStyle(
+        //       color: Colors.black,
+        //       fontWeight: FontWeight.bold,
+        //     ),
         //   ),
         // ),
+        title: Text(
+          '그룹 할일 인증',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -123,7 +125,7 @@ void showTodoConfirmModal(BuildContext context, String? message) {
             ),
             SizedBox(height: 10),
             Text(
-              "$senderName님의 \"$todoName\"",
+              "$senderName님의 \"$todoName\"에 대한 사진입니다. 확인해주시겠습니까?",
               style: TextStyle(
                 fontSize: 18,
               ),
@@ -150,7 +152,8 @@ void showTodoConfirmModal(BuildContext context, String? message) {
                 borderRadius: BorderRadius.circular(8), // 모서리 반경 조절
               ),
             ),
-            child: Text('취소'),
+            child: Text('취소',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           ),
           TextButton(
             onPressed: () async {
@@ -169,7 +172,7 @@ void showTodoConfirmModal(BuildContext context, String? message) {
               Navigator.of(context).pop();
             },
             style: TextButton.styleFrom(
-              backgroundColor: const Color.fromARGB(255, 54, 180, 58),
+              backgroundColor: AppTheme.primary,
               foregroundColor: Colors.white,
               // backgroundColor: Color.fromARGB(255, 254, 204, 129),
               // foregroundColor: Colors.grey[900],
@@ -178,7 +181,10 @@ void showTodoConfirmModal(BuildContext context, String? message) {
                 borderRadius: BorderRadius.circular(8), // 모서리 반경 조절
               ),
             ),
-            child: Text('인증 완료'),
+            child: Text(
+              '인증 완료',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       );
