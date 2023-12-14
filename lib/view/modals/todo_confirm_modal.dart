@@ -94,7 +94,7 @@ void showTodoConfirmModal(BuildContext context, String? message) {
         //   ),
         // ),
         title: Text(
-          '그룹 할일 인증',
+          '그룹 할일 확인',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -182,7 +182,7 @@ void showTodoConfirmModal(BuildContext context, String? message) {
               ),
             ),
             child: Text(
-              '인증 완료',
+              '확인 완료',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
