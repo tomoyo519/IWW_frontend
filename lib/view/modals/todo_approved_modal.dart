@@ -59,7 +59,7 @@ class TodoApprovedModal extends StatelessWidget {
     return MyPetModal(
       itemPath: itemPath,
       screen: screen,
-      title: "그룹 할일 인증 완료!",
+      title: "그룹 할일 확인 완료!",
       content: Column(
         children: [
           Padding(
