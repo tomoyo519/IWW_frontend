@@ -13,6 +13,13 @@ class RoomRepository {
           .map((item) => Item.fromJson(item))
           .toList();
 
+      int index = items.indexWhere((item) => item.id == 105);
+      if (index != -1) {
+        Item itemToMove = items[index];
+        items.removeAt(index);
+        items.insert(0, itemToMove);
+      }
+
       return items;
     });
   }

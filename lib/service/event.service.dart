@@ -12,9 +12,11 @@ import 'package:iww_frontend/view/modals/todo_confirm_modal.dart';
 import 'package:iww_frontend/view/modals/pet_evolve_modal.dart';
 import 'package:iww_frontend/view/modals/todo_first_done.dart';
 import 'package:iww_frontend/view/modals/custom_snackbar.dart';
+import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:lottie/lottie.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -288,12 +290,20 @@ class EventService {
     var generalDetails =
         NotificationDetails(android: androidDetails, iOS: iOSDetails);
 
+    // final MyRoomViewModel myRoomViewModel = Provider.of<MyRoomViewModel>(context, listen: false);
+
     String payload = jsonEncode({
       'type': 'friendResponse',
       'senderId': data['senderId'],
       'receiverId': data['receiverId'],
       'message': data['message']
     });
+
+    // int currentRoomOwnerId = myRoomViewModel.getRoomOwner;
+
+    // if (senderId == currentRoomOwnerId) {
+    //   await myRoomViewModel.fetchFriendStatus();
+    // }
 
     await flutterLocalNotificationsPlugin.show(
       1,
