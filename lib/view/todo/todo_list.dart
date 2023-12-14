@@ -170,6 +170,9 @@ class _ToDoListState extends State<ToDoList> with TickerProviderStateMixin {
 
     // 할일 상태를 완료됨으로 변경
     todomodel.checkTodoState(todo, value, userId, null);
+    final assetsAudioPlayer = AssetsAudioPlayer();
+    assetsAudioPlayer.open(Audio("assets/main.mp3"));
+    assetsAudioPlayer.play();
 
     // 리워드 계산
     TodoCheckDto? result = await todomodel.checkNormalTodo(todo.todoId, value);
