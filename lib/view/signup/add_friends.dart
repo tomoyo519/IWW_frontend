@@ -95,26 +95,26 @@ class _ContactListTile extends StatefulWidget {
 class _ContactListTileState extends State<_ContactListTile> {
   bool isAdded = false;
 
-  Future<void> _onClickAddFriend(BuildContext context) async {
-    final viewModel = context.read<FindContactViewModel>();
-    if (isAdded == false) {
-      // 기존 친구가 아닌 경우 추가
-      if (await viewModel.createFriend(widget.friendId)) {
-        setState(() {
-          isAdded = true;
-          // viewModel.friendCnt++;
-        });
-      }
-    } else {
-      // 친구로 추가되었던 경우 삭제
-      if (await viewModel.deleteFriend(widget.friendId)) {
-        setState(() {
-          isAdded = false;
-          // viewModel.friendCnt--;
-        });
-      }
-    }
-  }
+  // Future<void> _onClickAddFriend(BuildContext context) async {
+  //   final viewModel = context.read<FindContactViewModel>();
+  //   if (isAdded == false) {
+  //     // 기존 친구가 아닌 경우 추가
+  //     if (await viewModel.createFriend(widget.friendId)) {
+  //       setState(() {
+  //         isAdded = true;
+  //         // viewModel.friendCnt++;
+  //       });
+  //     }
+  //   } else {
+  //     // 친구로 추가되었던 경우 삭제
+  //     if (await viewModel.deleteFriend(widget.friendId)) {
+  //       setState(() {
+  //         isAdded = false;
+  //         // viewModel.friendCnt--;
+  //       });
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -163,7 +163,8 @@ class _ContactListTileState extends State<_ContactListTile> {
           child: IconButton(
               iconSize: 20,
               color: isAdded ? Colors.white : Colors.black87,
-              onPressed: () => _onClickAddFriend(context),
+              // onPressed: () => _onClickAddFriend(context),
+              onPressed: () {},
               icon:
                   Icon(isAdded ? Icons.check : Icons.person_add_alt_1_rounded)),
         )

@@ -20,6 +20,7 @@ class RenderPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var myRoomViewModel = Provider.of<MyRoomViewModel>(context);
     return Expanded(
       child: Stack(
         fit: StackFit.expand,
@@ -29,11 +30,12 @@ class RenderPage extends StatelessWidget {
           // 펫 렌더링
           const PetArea(),
           // 상단 상태바
-          Positioned(
-              left: 0,
-              right: 0,
-              top: MediaQuery.of(context).size.height * 0.01,
-              child: StatusBar()),
+          if (myRoomViewModel.isMyRoom()) 
+            Positioned(
+                left: 0,
+                right: 0,
+                top: MediaQuery.of(context).size.height * 0.01,
+                child: StatusBar())
         ],
       ),
     );

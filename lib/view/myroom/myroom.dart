@@ -40,8 +40,13 @@ class MyRoom extends StatelessWidget {
                 roomOwner.toString(),
                 commentRepository,
               )),
-      ChangeNotifierProvider<MyRoomViewModel>(
-          create: (_) => MyRoomViewModel(userId, roomRepository, roomOwner)),
+      ChangeNotifierProvider<MyRoomViewModel>(create: (_) {
+        var viewModel = MyRoomViewModel(userId, roomRepository, roomOwner);
+        if (roomOwner != userId) {
+          viewModel.fetchFriendStatus();
+        }
+        return viewModel;
+      }),
     ], child: MyRoomPage());
   }
 }
