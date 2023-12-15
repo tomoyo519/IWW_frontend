@@ -50,7 +50,7 @@ class Attendance extends StatelessWidget {
                               child: Icon(
                                 Icons.check,
                                 color: Colors.white, // 아이콘 색상
-                                size: 4.5 * fs,
+                                size: 4 * fs,
                               ),
                             )
                           // Container(
