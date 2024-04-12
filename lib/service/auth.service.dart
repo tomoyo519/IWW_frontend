@@ -147,6 +147,7 @@ class AuthService extends ChangeNotifier {
 
     // 로컬에 저장된 토큰 확인
     var token = await LocalStorage.readKey('jwt');
+    LOG.log(token!);
     if (token == null) {
       status = AuthStatus.failed;
       waiting = false;

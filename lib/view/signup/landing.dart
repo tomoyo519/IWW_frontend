@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/auth/auth_status.dart';
 import 'package:iww_frontend/model/auth/login_result.dart';
 import 'package:iww_frontend/service/auth.service.dart';
+import 'package:iww_frontend/view/modals/signup_modal.dart';
 import 'package:iww_frontend/view/signup/signup.dart';
 import 'package:provider/provider.dart';
 
@@ -55,7 +56,19 @@ class LandingPage extends StatelessWidget {
                   )
                 ],
               ),
-            )
+            ),
+            ElevatedButton(
+              onPressed: () {
+                showModalBottomSheet(
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (BuildContext context) {
+                    return SignUpModal();
+                  },
+                );
+              },
+              child: Text("일반 로그인"),
+            ),
           ],
         ),
       ),
