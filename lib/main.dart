@@ -1,32 +1,19 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'dart:convert';
-import 'package:iww_frontend/utils/categories.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/auth/auth_status.dart';
-import 'package:iww_frontend/model/item/item.model.dart';
-import 'package:iww_frontend/model/mypage/reward.model.dart';
-import 'package:iww_frontend/model/todo/todo.model.dart';
-import 'package:iww_frontend/model/user/attendance.model.dart';
 import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/providers.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/style/app_theme.dart';
-import 'package:iww_frontend/style/button.dart';
-import 'package:iww_frontend/utils/logger.dart';
-import 'package:iww_frontend/view/_common/bottom_sheet_header.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/view/_common/loading.dart';
 import 'package:iww_frontend/view/_navigation/main_page.dart';
 import 'package:iww_frontend/view/signup/landing.dart';
-import 'package:iww_frontend/view/todo/modals/todo_create_modal.dart';
-import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
-import 'package:iww_frontend/viewmodel/todo_modal.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
-import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -132,6 +119,7 @@ class RenderPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AppNavigator nav = context.read<AppNavigator>();
     AuthService authService = context.watch<AuthService>();
     UserInfo? userInfo;
 
@@ -145,6 +133,8 @@ class RenderPage extends StatelessWidget {
       EventService.setUserId(user.user_id);
       EventService.initialize(userInfo);
     }
+
+    nav.setToDefault();
 
     return authService.waiting
         ? LoadingPage()

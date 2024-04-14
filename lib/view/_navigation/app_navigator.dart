@@ -24,8 +24,9 @@ class AppNavigator extends ChangeNotifier {
   }
 
   // * ===== navigation status ===== * //
+  static const defaultIdx = 2;
   List<int> _stack = [];
-  int _idx = 2;
+  int _idx = defaultIdx;
 
   // 현재 페이지
   String? _title; // 지정
@@ -77,6 +78,12 @@ class AppNavigator extends ChangeNotifier {
     _argument = argument;
     _title = title;
     LOG.log('[AppNav] pop page, stack $_stack');
+    notifyListeners();
+  }
+
+  void setToDefault() {
+    _stack = [];
+    _idx = defaultIdx;
     notifyListeners();
   }
 

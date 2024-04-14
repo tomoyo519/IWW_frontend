@@ -11,7 +11,6 @@ import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/service/reward.service.dart';
-import 'package:iww_frontend/view/home/attendance.dart';
 
 class UserInfo extends ChangeNotifier {
   late Item _mainPet;
@@ -34,7 +33,7 @@ class UserInfo extends ChangeNotifier {
 
   // === Status === //
   late String _userName;
-  late String _userTel;
+  late String? _userTel;
   late int _userHp;
   late int _userCash;
 
@@ -54,7 +53,7 @@ class UserInfo extends ChangeNotifier {
 
   int get userId => _user.user_id;
   String get userName => _userName;
-  String get userTel => _userTel;
+  String? get userTel => _userTel;
   String? get itemName => _itemName;
 
   int get userCash => _userCash;
@@ -115,14 +114,11 @@ class UserInfo extends ChangeNotifier {
     try {
       var json = {
         "user_name": myname,
-        "user_tel": userInfo._userTel,
-        "user_kakao_id": userInfo.userModel.user_kakao_id
       };
       LOG.log('왜안찍혀????? $json');
       return await RemoteDataSource.put('/user/${userInfo.userId}',
               body: jsonEncode(json))
           .then((res) {
-        LOG.log('${res.statusCode}');
         if (res.statusCode == 200) {
           userName = myname;
           return true;
