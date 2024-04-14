@@ -92,11 +92,7 @@ class _MyPageState extends State<MyPage> {
   @override
   Widget build(BuildContext context) {
     final userInfo = context.watch<UserInfo>();
-    String formattedNumber = userInfo.userTel.substring(0, 3) +
-        '-' +
-        userInfo.userTel.substring(3, 7) +
-        '-' +
-        userInfo.userTel.substring(7, 11);
+
     return isLoading
         ? Center(
             child: Lottie.asset('assets/spinner.json',
@@ -137,18 +133,6 @@ class _MyPageState extends State<MyPage> {
                                               const EdgeInsets.only(left: 8.0),
                                           child: Text(
                                             userInfo.userName,
-                                            textAlign: TextAlign.left,
-                                            style: TextStyle(
-                                              fontSize: 17,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 8.0, top: 4.0),
-                                          child: Text(
-                                            formattedNumber,
                                             textAlign: TextAlign.left,
                                             style: TextStyle(
                                               fontSize: 17,

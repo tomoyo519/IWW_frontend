@@ -5,8 +5,8 @@ class UserModel {
   // DB의 유저 테이블 컬럼
   final int user_id;
   final String user_name;
-  final String user_tel;
-  final String user_kakao_id;
+  final String? user_tel;
+  final String? user_kakao_id;
   final int user_hp;
   final int user_cash;
   final int login_cnt;

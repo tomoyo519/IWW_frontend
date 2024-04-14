@@ -14,7 +14,6 @@ import 'package:iww_frontend/model/user/attendance.model.dart';
 import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
-import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_talk.dart';
 import 'package:uni_links/uni_links.dart';
@@ -147,7 +146,6 @@ class AuthService extends ChangeNotifier {
 
     // 로컬에 저장된 토큰 확인
     var token = await LocalStorage.readKey('jwt');
-    LOG.log(token!);
     if (token == null) {
       status = AuthStatus.failed;
       waiting = false;
@@ -197,7 +195,6 @@ class AuthService extends ChangeNotifier {
     }
   }
 
-  // 서비스 서버로부터 응답을 받아 인증 정보를 처리합니다.
   // 서비스 서버로부터 응답을 받아 인증 정보를 처리합니다.
   Future<void> _authorize(String link, {bool? signup}) async {
     Map<String, String> params = Uri.parse(link).queryParameters;

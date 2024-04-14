@@ -1,21 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/style/app_theme.dart';
-import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:percent_indicator/percent_indicator.dart' as pi;
-
-// 할일 상태 바
-// class TodoProgress extends StatefulWidget {
-//   TodoProgress({super.key});
-
-//   @override
-//   State<TodoProgress> createState() => _TodoProgressState();
-// }
 
 class TodoProgress extends StatelessWidget {
   const TodoProgress({super.key});
@@ -141,7 +131,7 @@ class TodoProgress extends StatelessWidget {
 class _TodayBadge extends StatelessWidget {
   final String title;
   final int? data;
-  Color? color;
+  final Color? color;
 
   _TodayBadge({
     required this.title,
