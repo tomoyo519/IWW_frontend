@@ -136,21 +136,19 @@ class RenderPage extends StatelessWidget {
 
     nav.setToDefault();
 
-    return authService.waiting
-        ? LoadingPage()
-        : authService.status != AuthStatus.initialized
-            ? LandingPage()
-            : MultiProvider(
-                providers: [
-                  // 인증된 사용자의 경우 아래와 같은 정보 주입
-                  ChangeNotifierProvider.value(
-                    value: context.read<AppNavigator>(),
-                  ),
-                  ChangeNotifierProvider.value(
-                    value: userInfo!,
-                  ),
-                ],
-                child: MainPage(), // lib/view/main_page.dart
-              );
+    return authService.status != AuthStatus.initialized
+        ? LandingPage()
+        : MultiProvider(
+            providers: [
+              // 인증된 사용자의 경우 아래와 같은 정보 주입
+              ChangeNotifierProvider.value(
+                value: context.read<AppNavigator>(),
+              ),
+              ChangeNotifierProvider.value(
+                value: userInfo!,
+              ),
+            ],
+            child: MainPage(), // lib/view/main_page.dart
+          );
   }
 }
