@@ -1,13 +1,12 @@
 import 'dart:async';
 
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:provider/provider.dart';
-import 'package:assets_audio_player/assets_audio_player.dart';
 
 class Preset {
   final String animationName;

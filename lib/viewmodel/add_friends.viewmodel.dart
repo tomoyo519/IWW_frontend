@@ -1,12 +1,10 @@
+import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/main.dart';
 import 'package:iww_frontend/model/user/get-user-by-contact.dto.dart';
 import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/repository/friend.repository.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
-import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:contacts_service/contacts_service.dart';
 
 class FindContactViewModel extends ChangeNotifier {
   final UserRepository userRepository;

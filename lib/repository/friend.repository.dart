@@ -1,11 +1,9 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
+import 'package:iww_frontend/model/friend/friend.model.dart';
 import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/utils/logger.dart';
-import 'package:iww_frontend/model/friend/friend.model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class FriendRepository {
   List<UserModel> dummy = [

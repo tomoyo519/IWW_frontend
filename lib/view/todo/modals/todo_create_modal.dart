@@ -4,12 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/style/app_theme.dart';
-import 'package:iww_frontend/utils/extension/int.ext.dart';
 import 'package:iww_frontend/utils/extension/timeofday.ext.dart';
 import 'package:iww_frontend/utils/logger.dart';
-import 'package:iww_frontend/viewmodel/base_todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/todo_modal.viewmodel.dart';
-import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
 enum TodoModalMode { normal, group }

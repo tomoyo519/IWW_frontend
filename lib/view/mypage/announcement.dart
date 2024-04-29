@@ -1,14 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
-import 'package:iww_frontend/view/mypage/announcement_single.dart';
-import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
-import 'package:provider/provider.dart';
-import 'package:iww_frontend/utils/logger.dart';
-import 'package:lottie/lottie.dart';
 import 'package:iww_frontend/model/mypage/announcement.model.dart';
+import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/view/mypage/announcement_single.dart';
+import 'package:lottie/lottie.dart';
 
 class Announcement extends StatefulWidget {
   const Announcement({super.key});
