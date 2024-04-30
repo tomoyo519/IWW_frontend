@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/item/item.model.dart';
-import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/friends/friendMain.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';
@@ -21,23 +20,27 @@ class RenderPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var myRoomViewModel = Provider.of<MyRoomViewModel>(context);
-    return Expanded(
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          // 배경, 가구 렌더링
-          const RoomArea(),
-          // 펫 렌더링
-          const PetArea(),
-          // 상단 상태바
-          if (myRoomViewModel.isMyRoom()) 
-            Positioned(
-                left: 0,
-                right: 0,
-                top: MediaQuery.of(context).size.height * 0.01,
-                child: StatusBar())
-        ],
-      ),
+    return Column(
+      children: [
+        Expanded(
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // 배경, 가구 렌더링
+              const RoomArea(),
+              // 펫 렌더링
+              const PetArea(),
+              // 상단 상태바
+              if (myRoomViewModel.isMyRoom())
+                Positioned(
+                    left: 0,
+                    right: 0,
+                    top: MediaQuery.of(context).size.height * 0.01,
+                    child: StatusBar())
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

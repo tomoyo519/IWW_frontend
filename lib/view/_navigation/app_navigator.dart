@@ -84,7 +84,6 @@ class AppNavigator extends ChangeNotifier {
   void setToDefault() {
     _stack = [];
     _idx = defaultIdx;
-    notifyListeners();
   }
 
   // * ===== Page Getters ==== * //
