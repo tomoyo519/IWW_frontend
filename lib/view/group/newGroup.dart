@@ -1,19 +1,22 @@
-import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/model/routine/routine.model.dart';
-import 'package:iww_frontend/model/todo/todo.model.dart';
-import 'package:iww_frontend/repository/group.repository.dart';
+import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/style/button.dart';
 import 'package:iww_frontend/utils/categories.dart';
-import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
+import 'package:iww_frontend/view/modals/custom_snackbar.dart';
 import 'package:iww_frontend/view/modals/todo_editor.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:iww_frontend/view/todo/fields/label_list_modal.dart';
-import 'package:iww_frontend/view/todo/todo_editor.dart';
-import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
-import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
+import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
+
+import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
+import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
+import 'package:iww_frontend/view/todo/todo_editor.dart';
+import 'package:iww_frontend/model/todo/todo.model.dart';
+import 'package:iww_frontend/model/routine/routine.model.dart';
 
 class NewGroup extends StatefulWidget {
   const NewGroup({super.key});

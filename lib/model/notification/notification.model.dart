@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 class Notification {
   String notiId;
   String receiverId;

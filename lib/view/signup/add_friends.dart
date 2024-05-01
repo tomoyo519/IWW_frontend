@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/main.dart';
 import 'package:iww_frontend/repository/friend.repository.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';

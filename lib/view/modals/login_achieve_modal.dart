@@ -1,12 +1,16 @@
 import 'dart:convert';
 
-import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/mypage/reward.model.dart';
 import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/style/button.dart';
+import 'package:iww_frontend/style/button.type.dart';
+import 'package:iww_frontend/view/_navigation/app_navigator.dart';
+import 'package:iww_frontend/view/_navigation/enum/app_route.dart';
 import 'package:iww_frontend/view/modals/custom_fullscreen_modal.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 // static method
 Future<Object?> showLoginAchieveModal(BuildContext context, String message) {

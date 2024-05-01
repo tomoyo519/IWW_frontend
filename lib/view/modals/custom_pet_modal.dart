@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iww_frontend/model/item/item.model.dart';
 
 class MyPetModal extends StatefulWidget {
   MyPetModal({

@@ -9,8 +9,10 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/utils/logger.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/_navigation/enum/app_route.dart';
+import 'package:iww_frontend/view/shop/shop_page.dart';
 import 'package:provider/provider.dart';
 
 class CarouselSliderDemo extends StatelessWidget {

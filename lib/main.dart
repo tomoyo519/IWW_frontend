@@ -10,6 +10,7 @@ import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/service/auth.service.dart';
+import 'package:iww_frontend/view/_common/loading.dart';
 import 'package:iww_frontend/view/_navigation/main_page.dart';
 import 'package:iww_frontend/view/signup/landing.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';

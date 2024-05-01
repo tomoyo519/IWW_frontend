@@ -1,13 +1,16 @@
-import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
+
 import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/style/app_theme.dart';
+import 'package:iww_frontend/utils/logger.dart';
+
 import 'package:iww_frontend/view/group/groupList.dart';
 import 'package:iww_frontend/view/group/groupSearch.dart';
 import 'package:iww_frontend/view/group/newGroup.dart';
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 // ==== 종속성 주입을 위한 페이지 위젯 ==== //
 class MyGroupPage extends StatelessWidget {

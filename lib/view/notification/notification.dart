@@ -1,11 +1,11 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/model/notification/notification.model.dart'
-    as model;
 import 'package:iww_frontend/repository/friend.repository.dart';
 import 'package:iww_frontend/repository/notification.repository.dart';
+import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/utils/logger.dart';
+import 'package:iww_frontend/model/notification/notification.model.dart'
+    as model;
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/_navigation/enum/app_route.dart';
 import 'package:iww_frontend/view/modals/todo_confirm_modal.dart';

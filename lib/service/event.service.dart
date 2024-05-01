@@ -1,23 +1,25 @@
 // ignore_for_file: constant_identifier_names
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/_navigation/enum/app_route.dart';
-import 'package:iww_frontend/view/modals/custom_snackbar.dart';
 import 'package:iww_frontend/view/modals/friend_request_modal.dart';
 import 'package:iww_frontend/view/modals/login_achieve_modal.dart';
-import 'package:iww_frontend/view/modals/pet_evolve_modal.dart';
 import 'package:iww_frontend/view/modals/todo_approved_modal.dart';
 import 'package:iww_frontend/view/modals/todo_confirm_modal.dart';
+import 'package:iww_frontend/view/modals/pet_evolve_modal.dart';
 import 'package:iww_frontend/view/modals/todo_first_done.dart';
+import 'package:iww_frontend/view/modals/custom_snackbar.dart';
+import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
+import 'package:lottie/lottie.dart';
+import 'package:iww_frontend/secrets/secrets.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class Event {
   final EventType type;
@@ -99,7 +101,6 @@ extension EventTypeExtension on EventType {
       default:
         break;
     }
-    return null;
   }
 
   void run(BuildContext context, {String? message}) async {

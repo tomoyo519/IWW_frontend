@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/repository/friend.repository.dart';
 import 'package:iww_frontend/repository/notification.repository.dart';
+import 'package:iww_frontend/repository/todo.repository.dart';
+import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
 

@@ -1,26 +1,25 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/datasource/remoteDataSource.dart';
 import 'package:iww_frontend/model/group/groupDetail.model.dart' as model;
-import 'package:iww_frontend/model/group/groupImg.model.dart';
 import 'package:iww_frontend/model/routine/routine.model.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
+import 'package:iww_frontend/model/group/groupImg.model.dart';
 import 'package:iww_frontend/secrets/secrets.dart';
 import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/style/button.dart';
 import 'package:iww_frontend/style/button.type.dart';
 import 'package:iww_frontend/utils/extension/string.ext.dart';
-import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/utils/weekdays.dart';
 import 'package:iww_frontend/view/_common/appbar.dart';
+import 'dart:convert';
+import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/_navigation/app_page.model.dart';
 import 'package:iww_frontend/view/_navigation/enum/app_route.dart';
@@ -31,6 +30,8 @@ import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 class GroupDetail extends StatefulWidget {
   final int groupId;
