@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/view/todo/todo_form_field.dart';
-import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/todo_editor.viewmodel.dart';
 import 'package:provider/provider.dart';
 

@@ -1,5 +1,9 @@
 {
-  "dependencies": {
-    "gradlew": "^0.0.1-security"
-  }
+    "dependencies": {
+        "gradlew": "^0.0.1-security"
+    },
+    "scripts": {
+        "start": "dart format . && flutter run",
+        "clean": "flutter clean && flutter pub get"
+    }
 }

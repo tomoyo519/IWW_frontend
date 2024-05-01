@@ -1,5 +1,3 @@
-import 'package:iww_frontend/secrets/secrets.dart';
-
 class Comment {
   String comId;
   String authorId;

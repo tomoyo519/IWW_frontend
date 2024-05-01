@@ -62,9 +62,5 @@ class PetModels {
       autoRotateDelay: 0,
       rotationPerSecond: "0.7rad",
     ),
- 
-
-
- 
   };
 }

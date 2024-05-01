@@ -344,11 +344,10 @@ class CommentInputField extends StatelessWidget {
             onPressed: () async {
               if (controller.text.isNotEmpty) {
                 await commentsProvider.addComment(controller.text);
-                  // 댓글 새로고침
+                // 댓글 새로고침
                 commentsProvider.fetchComment();
                 controller.clear();
                 FocusScope.of(context).unfocus();
-            
               }
             },
           ),

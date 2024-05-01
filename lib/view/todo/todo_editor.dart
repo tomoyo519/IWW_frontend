@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/todo/todo.model.dart';
 import 'package:iww_frontend/view/_common/bottom_sheet_header.dart';
-import 'package:iww_frontend/view/todo/fields/date.dart';
 import 'package:iww_frontend/view/todo/fields/desc.dart';
 import 'package:iww_frontend/view/todo/fields/label.dart';
 import 'package:iww_frontend/view/todo/fields/name.dart';

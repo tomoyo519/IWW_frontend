@@ -1,23 +1,22 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:iww_frontend/model/auth/auth_status.dart';
 import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/providers.dart';
 import 'package:iww_frontend/repository/user.repository.dart';
+import 'package:iww_frontend/secrets/secrets.dart';
+import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/service/event.service.dart';
 import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
-import 'package:iww_frontend/service/auth.service.dart';
-import 'package:iww_frontend/view/_common/loading.dart';
 import 'package:iww_frontend/view/_navigation/main_page.dart';
 import 'package:iww_frontend/view/signup/landing.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
-import 'package:provider/provider.dart';
-import 'package:iww_frontend/secrets/secrets.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_template.dart';
+import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   // * ======================= * //

@@ -10,7 +10,7 @@ class MyRoomViewModel with ChangeNotifier {
   final itemTypeOfFurniture = 2;
   final itemTypeOfPetMotion = 3;
   final itemTypeOfBackground = 4;
-  
+
   int friendStatus = 0;
   final RoomRepository _roomRepository;
   final int _userId; // 로그인한 사용자의 id
