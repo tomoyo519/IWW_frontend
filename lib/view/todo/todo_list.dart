@@ -98,12 +98,8 @@ class _ToDoListState extends State<ToDoList> with TickerProviderStateMixin {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 5 * fs),
-                      child: Expanded(
-                          child: Attendance(
-                        attDays: userinfo.attendance,
-                      )),
+                    Attendance(
+                      attDays: userinfo.attendance,
                     ),
                     for (SubTodoList sub in _sublist) ...[
                       GestureDetector(

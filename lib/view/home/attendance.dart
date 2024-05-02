@@ -21,7 +21,7 @@ class Attendance extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.only(bottom: 3 * fs),
+              padding: EdgeInsets.symmetric(vertical: 5 * fs),
               child: Text(
                 "출석 체크",
                 style: TextStyle(
