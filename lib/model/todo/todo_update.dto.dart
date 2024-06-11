@@ -1,7 +1,3 @@
-import 'dart:convert';
-
-import 'package:iww_frontend/model/todo/todo.model.dart';
-import 'package:iww_frontend/model/user/user.model.dart';
 import 'package:iww_frontend/utils/logger.dart';
 
 ///** 할일 완료 응답 객체

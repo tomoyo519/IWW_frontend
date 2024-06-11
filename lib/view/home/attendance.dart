@@ -1,11 +1,4 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/datasource/remoteDataSource.dart';
-import 'package:iww_frontend/model/user/attendance.model.dart';
-import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
-import 'package:provider/provider.dart';
-import 'package:iww_frontend/utils/logger.dart';
 
 class Attendance extends StatelessWidget {
   // late UserInfo userInfo;

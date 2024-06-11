@@ -5,7 +5,6 @@ import 'package:iww_frontend/repository/friend.repository.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/_navigation/enum/app_route.dart';
-import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:provider/provider.dart';
 
 class FriendList extends StatefulWidget {

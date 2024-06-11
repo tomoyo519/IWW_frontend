@@ -1,19 +1,16 @@
-import 'dart:convert';
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:iww_frontend/datasource/remoteDataSource.dart';
+import 'package:iww_frontend/model/group/group.model.dart';
 import 'package:iww_frontend/repository/group.repository.dart';
 import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/utils/categories.dart';
 import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
-import 'groupDetail.dart';
 import 'package:lottie/lottie.dart';
-import 'package:iww_frontend/view/todo/fields/label_list_modal.dart';
 import 'package:provider/provider.dart';
-import 'package:iww_frontend/model/group/group.model.dart';
-import 'package:assets_audio_player/assets_audio_player.dart';
+
+import 'groupDetail.dart';
 
 class GroupSearch extends StatefulWidget {
   const GroupSearch({super.key});

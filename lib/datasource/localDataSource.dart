@@ -1,5 +1,3 @@
-
-
 /// Local DataSource로는 sqlite 사용
 
 // @DriftDatabase()

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/service/auth.service.dart';
 import 'package:iww_frontend/style/button.dart';
 import 'package:iww_frontend/style/button.type.dart';
 import 'package:iww_frontend/style/textfield.dart';

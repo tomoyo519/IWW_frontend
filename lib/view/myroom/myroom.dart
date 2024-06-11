@@ -1,20 +1,18 @@
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:iww_frontend/repository/comment.repository.dart';
 import 'package:iww_frontend/repository/friend.repository.dart';
 import 'package:iww_frontend/repository/room.repository.dart';
 import 'package:iww_frontend/service/event.service.dart';
-import 'package:iww_frontend/utils/logger.dart';
 import 'package:iww_frontend/view/_navigation/app_navigator.dart';
 import 'package:iww_frontend/view/friends/friendMain.dart';
 import 'package:iww_frontend/view/guestbook/guestbook.dart';
 import 'package:iww_frontend/view/inventory/newinventory.dart';
-import 'package:iww_frontend/view/test/test.dart';
+import 'package:iww_frontend/view/myroom/render_page.dart';
+import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
-import 'package:iww_frontend/viewmodel/myroom.viewmodel.dart';
-import 'package:iww_frontend/view/myroom/render_page.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:assets_audio_player/assets_audio_player.dart';
 
 class MyRoom extends StatelessWidget {
   const MyRoom({super.key});
@@ -371,32 +369,31 @@ class _MyRoomPageState extends State<MyRoomPage> {
         ),
         if (myRoomViewModel.isMyRoom())
           SpeedDialChild(
-            shape: CircleBorder(),
-            labelWidget: Container(
-              padding: EdgeInsets.all(8.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8.0),
+              shape: CircleBorder(),
+              labelWidget: Container(
+                padding: EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: Text(
+                  "인벤토리",
+                  style: TextStyle(color: Colors.black),
+                ),
               ),
-              child: Text(
-                "인벤토리",
-                style: TextStyle(color: Colors.black),
-              ),
-            ),
-            onTap: () async {
-              final assetsAudioPlayer = AssetsAudioPlayer();
-              assetsAudioPlayer.open(Audio("assets/main.mp3"));
-              assetsAudioPlayer.play();
-              return _showInventorySheet();
-            },
-            child: CircleAvatar(
-              backgroundColor: (Colors.white),
-              child: Icon(
-                Icons.work_rounded,
-                color: Colors.black,
-              ),
-            )
-          ),
+              onTap: () async {
+                final assetsAudioPlayer = AssetsAudioPlayer();
+                assetsAudioPlayer.open(Audio("assets/main.mp3"));
+                assetsAudioPlayer.play();
+                return _showInventorySheet();
+              },
+              child: CircleAvatar(
+                backgroundColor: (Colors.white),
+                child: Icon(
+                  Icons.work_rounded,
+                  color: Colors.black,
+                ),
+              )),
         SpeedDialChild(
           labelWidget: Container(
             padding: EdgeInsets.all(8.0),

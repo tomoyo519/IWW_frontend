@@ -1,14 +1,13 @@
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:iww_frontend/model/shop/shop.model.dart';
 import 'package:iww_frontend/repository/shop.repository.dart';
 import 'package:iww_frontend/style/app_theme.dart';
 import 'package:iww_frontend/utils/logger.dart';
-import 'package:iww_frontend/view/modals/custom_fullscreen_modal.dart';
-import 'package:lottie/lottie.dart';
 import 'package:iww_frontend/view/shop/layout/show_item.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
-import 'package:assets_audio_player/assets_audio_player.dart';
 
 class ShopPage extends StatelessWidget {
   const ShopPage({super.key});

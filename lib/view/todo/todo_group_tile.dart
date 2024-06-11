@@ -1,7 +1,9 @@
 // ignore_for_file: constant_identifier_names
-import 'dart:convert';
 import 'dart:io';
+
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_exif_rotation/flutter_exif_rotation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:iww_frontend/model/group/group.model.dart';
@@ -19,8 +21,6 @@ import 'package:iww_frontend/viewmodel/group.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/todo.viewmodel.dart';
 import 'package:iww_frontend/viewmodel/user-info.viewmodel.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_exif_rotation/flutter_exif_rotation.dart';
-import 'package:assets_audio_player/assets_audio_player.dart';
 
 // 출처: https://islet4you.tistory.com/entry/Flutter-Sound-재생하기 [hoony's web study:티스토리]
 // Todo Extension으로 스타일 만들기

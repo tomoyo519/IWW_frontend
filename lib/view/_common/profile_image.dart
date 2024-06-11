@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:iww_frontend/secrets/secrets.dart';
 
 class ProfileImage extends StatelessWidget {
   final double width;
