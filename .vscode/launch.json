@@ -5,18 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "DoWith_frontend",
+            "name": "dowith_frontend",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "DoWith_frontend (profile mode)",
+            "name": "dowith_frontend (profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "DoWith_frontend (release mode)",
+            "name": "dowith_frontend (release mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"
